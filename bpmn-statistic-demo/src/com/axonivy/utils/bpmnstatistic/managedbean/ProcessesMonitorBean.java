@@ -16,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.utils.bpmnstatistic.utils.ProcessesMonitorUtils;
 
-import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.viewer.api.ProcessViewer;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
@@ -48,9 +47,7 @@ public class ProcessesMonitorBean {
 		if (StringUtils.isNoneBlank(selectedPid)) {
 			ProcessesMonitorUtils.showStatisticData(selectedPid);
 		}
-		ProcessesMonitorUtils.getStatisticData(getSelectedIProcessWebStartable()).stream()
-				.forEach(arrow -> Ivy.log().warn(arrow.toString()));
-		;
+		ProcessesMonitorUtils.getStatisticData(getSelectedIProcessWebStartable());
 	}
 
 	private IProcessWebStartable getSelectedIProcessWebStartable() {

@@ -11,6 +11,14 @@ public class WorkflowProgress implements Serializable {
 	private String originElementId;
 	private String targetElementId;
 	private Date startTimeStamp;
+
+	@Override
+	public String toString() {
+		return "WorkflowProgress [processRawPid=" + processRawPid + ", arrowId=" + arrowId + ", originElementId="
+				+ originElementId + ", targetElementId=" + targetElementId + ", startTimeStamp=" + startTimeStamp
+				+ ", endTimeStamp=" + endTimeStamp + ", duration=" + duration + ", caseId=" + caseId + "]";
+	}
+
 	private Date endTimeStamp;
 	private Duration duration;
 	private Long caseId;

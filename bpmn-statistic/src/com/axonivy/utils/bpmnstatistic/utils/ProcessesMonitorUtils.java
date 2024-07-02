@@ -45,6 +45,7 @@ public class ProcessesMonitorUtils {
 	private static final String UPDATE_ADDITION_INFORMATION_FUNCTION = "updateAdditionalInformation('%s')";
 	private static final WorkflowProgressRepository repo = WorkflowProgressRepository.getInstance();
 	private static final int DEFAULT_INITIAL_NUMBER = 0;
+	private static int maxFrequency = 0;
 
 	private ProcessesMonitorUtils() {
 	};
@@ -111,6 +112,7 @@ public class ProcessesMonitorUtils {
 			flow.setEndTimeStamp(new Date());
 			flow.setDuration(
 					Duration.between(flow.getEndTimeStamp().toInstant(), flow.getStartTimeStamp().toInstant()));
+			repo.save(flow);
 		});
 	}
 
@@ -128,7 +130,7 @@ public class ProcessesMonitorUtils {
 				break;
 			}
 			tries += 1;
-		} while (tries < 5);
+		} while (tries < 10);
 		return results;
 	}
 
@@ -154,8 +156,6 @@ public class ProcessesMonitorUtils {
 		String processGuid = pid.getRawPid().split("-")[0];
 		IProjectProcessManager manager = IProcessManager.instance().getProjectDataModelFor(pmv);
 		Process process = manager.findProcess(processGuid, true).getModel();
-		Ivy.log().warn("getProcessElementFromPmvAndPid" + process.getProcessElements().size());
-
 		return process.getProcessElements();
 	}
 
@@ -166,7 +166,7 @@ public class ProcessesMonitorUtils {
 
 	private static Arrow convertSequenceFlowToArrow(SequenceFlow flow) {
 		Arrow result = new Arrow();
-		result.setArrowId(flow.getPid().toString().split("-")[0]);
+		result.setArrowId(flow.getPid().toString().split("-")[1]);
 		result.setLabel(flow.getName());
 		result.setFrequency(DEFAULT_INITIAL_NUMBER);
 		result.setFrequency(DEFAULT_INITIAL_NUMBER);
@@ -176,35 +176,30 @@ public class ProcessesMonitorUtils {
 
 	public static List<Arrow> getStatisticData(IProcessWebStartable processStart) {
 		List<Arrow> results = new ArrayList<>();
+		maxFrequency = 0;
 		Map<String, Arrow> arrowMap = new HashMap<String, Arrow>();
-		Ivy.log().warn("getStatisticData" + processStart);
 		if (Objects.nonNull(processStart)) {
-
-			int maxFrequency = 0;
 			PID pid = processStart.pid();
 			List<ProcessElement> processElements = getProcessElementFromPmvAndPid(
 					(IWorkflowProcessModelVersion) processStart.pmv(), pid);
 			processElements.forEach(element -> results.addAll(convertProcessElementInfoToArrows(element)));
 			results.stream().forEach(arrow -> arrowMap.put(arrow.getArrowId(), arrow));
 			List<WorkflowProgress> recordedProgresses = repo.findByProcessRawPid(pid.toString());
-			recordedProgresses.stream().forEach(
-					record -> updateArrowByWorkflowProgress(arrowMap.get(record.getArrowId()), record, maxFrequency));
+			recordedProgresses.stream()
+					.forEach(record -> updateArrowByWorkflowProgress(arrowMap.get(record.getArrowId()), record));
 			arrowMap.keySet().stream().forEach(key -> {
 				Arrow currentArrow = arrowMap.get(key);
-				currentArrow.setRatio((float) (currentArrow.getFrequency() / maxFrequency));
+				currentArrow.setRatio((float) currentArrow.getFrequency() / maxFrequency);
 			});
 		}
 		return results;
 	}
 
-	private static void updateArrowByWorkflowProgress(Arrow arrow, WorkflowProgress progress, int maxFrequency) {
-		if (Objects.isNull(arrow)) {
-			return;
-		}
+	private static int updateArrowByWorkflowProgress(Arrow arrow, WorkflowProgress progress) {
 		int currentFrequency = arrow.getFrequency();
 		arrow.setMedianDuration(((arrow.getMedianDuration() * currentFrequency) + progress.getDuration().toSeconds())
 				/ (currentFrequency + 1));
 		arrow.setFrequency(arrow.getFrequency() + 1);
-		maxFrequency = maxFrequency < currentFrequency + 1 ? currentFrequency + 1 : maxFrequency;
+		return maxFrequency = maxFrequency < currentFrequency + 1 ? currentFrequency + 1 : maxFrequency;
 	}
 }

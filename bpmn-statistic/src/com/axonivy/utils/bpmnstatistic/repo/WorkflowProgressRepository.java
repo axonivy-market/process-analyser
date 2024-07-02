@@ -25,7 +25,7 @@ public class WorkflowProgressRepository {
 	}
 
 	public void save(WorkflowProgress progress) {
-		Ivy.repo().save(progress).getId();
+		Ivy.repo().save(progress);
 	}
 
 	public List<WorkflowProgress> findByProcessRawPid(String id) {
@@ -35,7 +35,6 @@ public class WorkflowProgressRepository {
 	public List<WorkflowProgress> findByTargetElementIdAndCaseId(String elementId, Long caseId) {
 		List<WorkflowProgress> result = new ArrayList<WorkflowProgress>();
 		int queryListSize = 0;
-//		Thread.sleep(2000);
 		do {
 			List<WorkflowProgress> queryList = createSearchQuery().textField("targetElementId")
 					.isEqualToIgnoringCase(elementId).and().numberField("caseId").isEqualTo(caseId)
