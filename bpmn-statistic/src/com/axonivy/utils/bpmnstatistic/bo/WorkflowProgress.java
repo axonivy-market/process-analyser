@@ -14,8 +14,20 @@ public class WorkflowProgress implements Serializable {
 	private Date endTimeStamp;
 	private Duration duration;
 	private Long caseId;
-	
-	
+
+	public WorkflowProgress(String processRawPid, String arrowId, String originElementId, String targetElementId,
+			Long caseId) {
+		this.processRawPid = processRawPid;
+		this.arrowId = arrowId;
+		this.originElementId = originElementId;
+		this.targetElementId = targetElementId;
+		this.caseId = caseId;
+		this.startTimeStamp = new Date();
+	};
+
+	public WorkflowProgress() {
+	}
+
 	public Long getCaseId() {
 		return caseId;
 	}

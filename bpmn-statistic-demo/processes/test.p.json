@@ -11,6 +11,12 @@
       "config" : {
         "callSignature" : "abcdef",
         "outLink" : "abcdef.ivp",
+        "input" : {
+          "code" : [
+            "import com.axonivy.utils.bpmnstatistic.utils.ProcessesMonitorUtils;",
+            "ProcessesMonitorUtils.updateWorkflowInfo(\"19049D222ECE29FA-f0\");"
+          ]
+        },
         "case" : { }
       },
       "visual" : {
@@ -28,6 +34,16 @@
     }, {
       "id" : "f3",
       "type" : "Script",
+      "config" : {
+        "security" : "system",
+        "output" : {
+          "code" : [
+            "//TODO: i wanna go home code",
+            "import com.axonivy.utils.bpmnstatistic.utils.ProcessesMonitorUtils;",
+            "ProcessesMonitorUtils.updateWorkflowInfo(\"19049D222ECE29FA-f3\");"
+          ]
+        }
+      },
       "visual" : {
         "at" : { "x" : 224, "y" : 64 }
       },
@@ -37,6 +53,17 @@
     }, {
       "id" : "f5",
       "type" : "TaskSwitchEvent",
+      "config" : {
+        "output" : {
+          "code" : [
+            "import com.axonivy.utils.bpmnstatistic.utils.ProcessesMonitorUtils;",
+            "import com.axonivy.utils.bpmnstatistic.bo.WorkflowProgress;",
+            "",
+            "ProcessesMonitorUtils.updateWorkflowInfo(\"19049D222ECE29FA-f5\");",
+            "ProcessesMonitorUtils.updateWorkflowInfo(\"19049D222ECE29FA-f1\");"
+          ]
+        }
+      },
       "visual" : {
         "at" : { "x" : 352, "y" : 64 }
       },

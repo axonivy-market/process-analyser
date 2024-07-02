@@ -2,15 +2,18 @@ package com.axonivy.utils.bpmnstatistic.bo;
 
 public class Arrow {
 	private String arrowId;
-	private Float value;
+	private Float ratio;
 	private String label;
 	private int frequency;
 	private double medianDuration;
 
-	public Arrow(String id, Float value, String label) {
+	public Arrow(String id, Float ratio, String label) {
 		this.arrowId = id;
-		this.value = value;
+		this.ratio = ratio;
 		this.label = label;
+	}
+
+	public Arrow() {
 	}
 
 	public String getArrowId() {
@@ -21,12 +24,12 @@ public class Arrow {
 		this.arrowId = arrowId;
 	}
 
-	public Float getValue() {
-		return value;
+	public Float getRatio() {
+		return ratio;
 	}
 
-	public void setValue(Float value) {
-		this.value = value;
+	public void setRatio(Float ratio) {
+		this.ratio = ratio;
 	}
 
 	public String getLabel() {
@@ -55,7 +58,7 @@ public class Arrow {
 
 	@Override
 	public String toString() {
-		return "Arrow [arrowId=" + arrowId + ", value=" + value + ", label=" + label + ", frequency=" + frequency
+		return "Arrow [arrowId=" + arrowId + ", ratio=" + ratio + ", label=" + label + ", frequency=" + frequency
 				+ ", medianDuration=" + medianDuration + "]";
 	}
 }
