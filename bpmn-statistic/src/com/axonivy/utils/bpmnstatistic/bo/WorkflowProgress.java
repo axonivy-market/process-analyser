@@ -1,7 +1,6 @@
 package com.axonivy.utils.bpmnstatistic.bo;
 
 import java.io.Serializable;
-import java.time.Duration;
 import java.util.Date;
 
 public class WorkflowProgress implements Serializable {
@@ -10,18 +9,12 @@ public class WorkflowProgress implements Serializable {
 	private String arrowId;
 	private String originElementId;
 	private String targetElementId;
-	private Date startTimeStamp;
-
-	@Override
-	public String toString() {
-		return "WorkflowProgress [processRawPid=" + processRawPid + ", arrowId=" + arrowId + ", originElementId="
-				+ originElementId + ", targetElementId=" + targetElementId + ", startTimeStamp=" + startTimeStamp
-				+ ", endTimeStamp=" + endTimeStamp + ", duration=" + duration + ", caseId=" + caseId + "]";
-	}
-
+	private Date startTimeStamp;	
 	private Date endTimeStamp;
-	private Duration duration;
+	private Long duration;
 	private Long caseId;
+
+	
 
 	public WorkflowProgress(String processRawPid, String arrowId, String originElementId, String targetElementId,
 			Long caseId) {
@@ -60,11 +53,11 @@ public class WorkflowProgress implements Serializable {
 		this.endTimeStamp = endTimeStamp;
 	}
 
-	public Duration getDuration() {
+	public Long getDuration() {
 		return duration;
 	}
 
-	public void setDuration(Duration duration) {
+	public void setDuration(Long duration) {
 		this.duration = duration;
 	}
 
@@ -98,5 +91,12 @@ public class WorkflowProgress implements Serializable {
 
 	public void setTargetElementId(String targetElementId) {
 		this.targetElementId = targetElementId;
+	}
+	
+	@Override
+	public String toString() {
+		return "WorkflowProgress [processRawPid=" + processRawPid + ", arrowId=" + arrowId + ", originElementId="
+				+ originElementId + ", targetElementId=" + targetElementId + ", startTimeStamp=" + startTimeStamp
+				+ ", endTimeStamp=" + endTimeStamp + ", duration=" + duration + ", caseId=" + caseId + "]";
 	}
 }

@@ -14,8 +14,10 @@ import javax.faces.bean.ViewScoped;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.axonivy.utils.bpmnstatistic.bo.Arrow;
 import com.axonivy.utils.bpmnstatistic.utils.ProcessesMonitorUtils;
 
+import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.viewer.api.ProcessViewer;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
@@ -28,26 +30,30 @@ public class ProcessesMonitorBean {
 	private String selectedModuleName;
 	private String selectedProcessDiagramUrl;
 	private String selectedPid;
+	private List<Arrow> arrows;
+
 
 	@PostConstruct
 	private void init() {
 		processesMap = ProcessesMonitorUtils.getProcessesWithPmv();
 	}
+	
 
 	public void onChangeSelectedProcessName() {
 		if (StringUtils.isNotBlank(selectedProcessName) && StringUtils.isNotBlank(selectedModuleName)) {
 			Optional.ofNullable(getSelectedIProcessWebStartable()).ifPresent(process -> {
 				selectedPid = process.pid().getParent().toString();
 				selectedProcessDiagramUrl = ProcessViewer.of(process).url().toWebLink().getAbsolute();
+				arrows = ProcessesMonitorUtils.getStatisticData(getSelectedIProcessWebStartable());
 			});
 		}
 	}
 
 	public void showStatisticData() {
+		Ivy.log().error("showStatisticData");
 		if (StringUtils.isNoneBlank(selectedPid)) {
 			ProcessesMonitorUtils.showStatisticData(selectedPid);
 		}
-		ProcessesMonitorUtils.getStatisticData(getSelectedIProcessWebStartable());
 	}
 
 	private IProcessWebStartable getSelectedIProcessWebStartable() {
@@ -90,5 +96,14 @@ public class ProcessesMonitorBean {
 
 	public String getSelectedProcessDiagramUrl() {
 		return selectedProcessDiagramUrl;
+	}
+	
+
+	public List<Arrow> getArrows() {
+		return arrows;
+	}
+
+	public void setArrows(List<Arrow> arrows) {
+		this.arrows = arrows;
 	}
 }

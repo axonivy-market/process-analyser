@@ -13,7 +13,8 @@
 				#{ivy.cms.co('/Dialogs/com/axonivy/process/mining/demo/Demo/PageHeader')}
 			</h3>
 			<h:form id="form">
-				<p:fieldset legend="#{ivy.cms.co('/Dialogs/com/axonivy/process/mining/demo/Demo/ProcessInformation')}">
+				<p:fieldset
+					legend="#{ivy.cms.co('/Dialogs/com/axonivy/process/mining/demo/Demo/ProcessInformation')}">
 					<div class="ui-fluid ">
 						<div class="p-field p-grid p-align-baseline">
 							<h:panelGroup layout="block">
@@ -49,17 +50,43 @@
 											listener="#{processesMonitorBean.onChangeSelectedProcessName()}" />
 									</p:selectOneMenu>
 								</div>
+
 							</h:panelGroup>
 
 						</div>
 					</div>
 				</p:fieldset>
 				<br />
+					<h:panelGroup id="arrow-statistics" layout="block" class="card">
+						<p:dataTable var="arrow" value="#{processesMonitorBean.arrows}">
+							<p:column
+								headerText="#{ivy.cms.co('/Dialogs/com/axonivy/process/mining/demo/Demo/ArrowId')}">
+								<h:outputText value="#{arrow.arrowId}" />
+							</p:column>
+							<p:column
+								headerText="#{ivy.cms.co('/Dialogs/com/axonivy/process/mining/demo/Demo/Label')}">
+								<h:outputText value="#{arrow.label}" />
+							</p:column>
+							<p:column
+								headerText="#{ivy.cms.co('/Dialogs/com/axonivy/process/mining/demo/Demo/Frequency')}">
+								<h:outputText value="#{arrow.frequency}" />
+							</p:column>
+							<p:column
+								headerText="#{ivy.cms.co('/Dialogs/com/axonivy/process/mining/demo/Demo/Ratio')}">
+								<h:outputText value="#{arrow.ratio}" />
+							</p:column>
+							<p:column
+								headerText="#{ivy.cms.co('/Dialogs/com/axonivy/process/mining/demo/Demo/MedianDuration')}">
+								<h:outputText value="#{arrow.medianDuration}" />
+							</p:column>
+						</p:dataTable>
+					</h:panelGroup>
+				<br />
 				<ic:com.axonivy.utils.bpmnstatistic.ProcessViewer
 					processViewerId="process-diagram-iframe"
-					srcUrl="#{processesMonitorBean.selectedProcessDiagramUrl}" 
+					srcUrl="#{processesMonitorBean.selectedProcessDiagramUrl}"
 					actionListener="#{processesMonitorBean.showStatisticData()}"
-					btnLabel="#{ivy.cms.co('/Dialogs/com/axonivy/process/mining/demo/Demo/ShowStatistic')}"/>
+					btnLabel="#{ivy.cms.co('/Dialogs/com/axonivy/process/mining/demo/Demo/ShowStatistic')}" />
 			</h:form>
 		</ui:define>
 	</ui:composition>

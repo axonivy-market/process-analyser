@@ -5,11 +5,16 @@ Dialogs:
         mining:
           demo:
             Demo:
+              ArrowId: Arrow Id
+              Frequency: Frequency
+              Label: Label
+              MedianDuration: Median Duration
               PageHeader: Process Monitor Page
               PleaseSelectModule: Please select a module
               PleaseSelectProcess: Please select a process
               ProcessInformation: Process Information
               ProcessViewer: Process Viewer
+              Ratio: Ratio
               RequireMessage: Please select a process
               ShowStatistic: Show Statistic
               Title: Process Mining Demo
