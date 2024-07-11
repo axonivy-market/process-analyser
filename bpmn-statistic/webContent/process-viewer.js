@@ -19,7 +19,7 @@ function getProcessDiagramIframe() {
   return $("#process-diagram-iframe").contents();
 }
 
-function addElementFrequency(elementId,frequencyRatio,backgroundColor,textColor) {
+function addElementFrequency(elementId, frequencyRatio, backgroundColor, textColor) {
   getProcessDiagramIframe()
     .find(`#sprotty_${elementId}`)
     .append(
@@ -48,24 +48,23 @@ function loadIframe(recheckIndicator) {
   }
 }
 
-function renderAdditionalInformation() {
+function renderAdditionalInformation(innerText) {
   const pool = getProcessDiagramIframe().find(".pool");
   console.log(pool);
-  if (pool) {
-    let rectPool =pool.find("rect.sprotty-node");
-    let height = Number(rectPool.css("height").replace("px","")) + 30;
-    pool.append(prepareAdditionalInformationPanel("aloha",height));
+  if (pool != undefined) {
+    let rectPool = pool.find("rect.sprotty-node");
+    let height = Number(rectPool.css("height").replace("px", "")) + 30;
+    pool.append(prepareAdditionalInformationPanel(innerText, height));
   }
 }
 
 function prepareAdditionalInformationPanel(innerText, top) {
-  return `
-    <svg>
-      <text class="sprotty-label label" x="100" y="${top}">
-        <tspan>
-          ${innerText}
-        </tspan>
-      </text>
-    </svg>
-  `;
+  var svgNS = "http://www.w3.org/2000/svg";
+  var newText = document.createElementNS(svgNS, "text");
+  newText.setAttributeNS(null, "x", 100);
+  newText.setAttributeNS(null, "class", "sprotty-label label");
+  newText.setAttributeNS(null, "y", top);
+  var textNode = document.createTextNode(innerText);
+  newText.appendChild(textNode);
+  return newText;
 }

@@ -17,7 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import com.axonivy.utils.bpmnstatistic.bo.Arrow;
 import com.axonivy.utils.bpmnstatistic.utils.ProcessesMonitorUtils;
 
-import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.viewer.api.ProcessViewer;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
@@ -50,9 +49,9 @@ public class ProcessesMonitorBean {
 	}
 
 	public void showStatisticData() {
-		Ivy.log().error("showStatisticData");
 		if (StringUtils.isNoneBlank(selectedPid)) {
 			ProcessesMonitorUtils.showStatisticData(selectedPid);
+			ProcessesMonitorUtils.showAdditionalInformation("15", "11.02", "12.08");
 		}
 	}
 

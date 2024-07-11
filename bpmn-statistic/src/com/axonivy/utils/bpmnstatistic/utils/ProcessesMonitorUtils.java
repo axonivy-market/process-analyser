@@ -38,7 +38,7 @@ public class ProcessesMonitorUtils {
 	private static final int DEFAULT_BACKGROUND_COLOR_LEVEL = 1;
 	private static final int HIGHEST_LEVEL_OF_BACKGROUND_COLOR = 6;
 	private static final String ADDIATION_INFORMATION_FORMAT = "%s instances (investigation period:%s - %s)";
-	private static final String UPDATE_ADDITION_INFORMATION_FUNCTION = "updateAdditionalInformation('%s')";
+	private static final String UPDATE_ADDITION_INFORMATION_FUNCTION = "renderAdditionalInformation('%s')";
 	private static final WorkflowProgressRepository repo = WorkflowProgressRepository.getInstance();
 	private static final int DEFAULT_INITIAL_NUMBER = 0;
 	private static int maxFrequency = 0;
@@ -93,7 +93,7 @@ public class ProcessesMonitorUtils {
 		return String.valueOf(Ivy.var().get(String.format(FREQUENCY_BACKGROUND_COLOR_LEVEL_VARIABLE_PATTERN, level)));
 	}
 
-	public void showAdditionalInformation(String instancesCount, String fromDate, String toDate) {
+	public static void showAdditionalInformation(String instancesCount, String fromDate, String toDate) {
 		String additionalInformation = String.format(ADDIATION_INFORMATION_FORMAT, instancesCount, fromDate, toDate);
 		PF.current().executeScript(String.format(UPDATE_ADDITION_INFORMATION_FUNCTION, additionalInformation));
 	}
