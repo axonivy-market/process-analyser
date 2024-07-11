@@ -1,7 +1,6 @@
 package com.axonivy.utils.bpmnstatistic.utils;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +8,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PF;
 
@@ -26,7 +24,6 @@ import ch.ivyteam.ivy.process.model.Process;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.value.PID;
-import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.IWorkflowProcessModelVersion;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
@@ -100,56 +97,6 @@ public class ProcessesMonitorUtils {
 	public void showAdditionalInformation(String instancesCount, String fromDate, String toDate) {
 		String additionalInformation = String.format(ADDIATION_INFORMATION_FORMAT, instancesCount, fromDate, toDate);
 		PF.current().executeScript(String.format(UPDATE_ADDITION_INFORMATION_FUNCTION, additionalInformation));
-	}
-
-	private static void updateExistingWorkflowInfoForElement(String elementId, Long caseId) {
-		elementId = elementId.split("-")[1];
-		List<WorkflowProgress> oldArrows = getprocessedProcessedFlow(elementId, caseId);
-		if (CollectionUtils.isEmpty(oldArrows)) {
-			return;
-		}
-		oldArrows.stream().forEach(flow -> {
-			flow.setEndTimeStamp(new Date());
-			flow.setDuration(
-					(flow.getEndTimeStamp().getTime()- flow.getStartTimeStamp().getTime())/MILISECOND_IN_SECOND);
-			repo.save(flow);
-		});
-	}
-
-	private static List<WorkflowProgress> getprocessedProcessedFlow(String elementId, Long caseId) {
-		int tries = 0;
-		List<WorkflowProgress> results = new ArrayList<>();
-		do {
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				Ivy.log().error(e.getMessage());
-			}
-			results = repo.findByTargetElementIdAndCaseId(elementId, caseId);
-			if (results.size() != 0) {
-				break;
-			}
-			tries += 1;
-		} while (tries < 10);
-		return results;
-	}
-
-	public static void updateWorkflowInfo(String elementId) {
-		Long caseId = Ivy.wf().getCurrentCase().getId();
-		ITask currentTask = Ivy.wf().getCurrentTask();
-		PID pid = currentTask.getStart().getProcessElementId();
-		IWorkflowProcessModelVersion pmv = currentTask.getProcessModelVersion();
-		ProcessElement targetElement = getProcessElementFromPmvAndPid(pmv, pid).stream()
-				.filter(element -> element.getPid().toString().equalsIgnoreCase(elementId)).findAny().orElse(null);
-		if (Objects.nonNull(targetElement)) {
-			updateExistingWorkflowInfoForElement(targetElement.getPid().toString(), caseId);
-			targetElement.getOutgoing().stream().forEach(flow -> {
-				WorkflowProgress progress = new WorkflowProgress(pid.toString(), flow.getPid().toString().split("-")[1],
-						targetElement.getPid().toString().split("-")[1],
-						flow.getTarget().getPid().toString().split("-")[1], caseId);
-				repo.save(progress);
-			});
-		}
 	}
 
 	private static List<ProcessElement> getProcessElementFromPmvAndPid(IWorkflowProcessModelVersion pmv, PID pid) {

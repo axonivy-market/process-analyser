@@ -17,6 +17,12 @@
         "task" : {
           "name" : "Search a Flight"
         },
+        "input" : {
+          "code" : [
+            "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+            "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-f0\");"
+          ]
+        },
         "tags" : "demo"
       },
       "visual" : {
