@@ -13,19 +13,13 @@ function removeDefaultFrequency() {
 function santizeDiagram() {
   removeDefaultFrequency();
   removeExecutedClass();
-  renderAdditionalInformation();
 }
 
 function getProcessDiagramIframe() {
   return $("#process-diagram-iframe").contents();
 }
 
-function addElementFrequency(
-  elementId,
-  frequencyRatio,
-  backgroundColor,
-  textColor
-) {
+function addElementFrequency(elementId,frequencyRatio,backgroundColor,textColor) {
   getProcessDiagramIframe()
     .find(`#sprotty_${elementId}`)
     .append(
@@ -59,9 +53,6 @@ function renderAdditionalInformation() {
   console.log(pool);
   if (pool) {
     let rectPool =pool.find("rect.sprotty-node");
-    console.log(rectPool);
-    console.log(rectPool.css("height"));
-    console.log(rectPool.css("height").replace("px",""));
     let height = Number(rectPool.css("height").replace("px","")) + 30;
     pool.append(prepareAdditionalInformationPanel("aloha",height));
   }

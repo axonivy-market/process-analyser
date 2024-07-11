@@ -16,6 +16,7 @@ import ch.ivyteam.ivy.process.IProjectProcessManager;
 import ch.ivyteam.ivy.process.model.Process;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.value.PID;
+import ch.ivyteam.ivy.security.exec.Sudo;
 import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.IWorkflowProcessModelVersion;
 
@@ -25,21 +26,24 @@ public class WorkflowUtils {
 	private static final int MILISECOND_IN_SECOND = 1000;
 
 	public static void updateWorkflowInfo(String elementId) {
-		Long caseId = Ivy.wf().getCurrentCase().getId();
-		ITask currentTask = Ivy.wf().getCurrentTask();
-		PID pid = currentTask.getStart().getProcessElementId();
-		IWorkflowProcessModelVersion pmv = currentTask.getProcessModelVersion();
-		ProcessElement targetElement = getProcessElementFromPmvAndPid(pmv, pid).stream()
-				.filter(element -> element.getPid().toString().equalsIgnoreCase(elementId)).findAny().orElse(null);
-		if (Objects.nonNull(targetElement)) {
-			updateExistingWorkflowInfoForElement(targetElement.getPid().toString(), caseId);
-			targetElement.getOutgoing().stream().forEach(flow -> {
-				WorkflowProgress progress = new WorkflowProgress(pid.toString(), flow.getPid().toString().split("-")[1],
-						targetElement.getPid().toString().split("-")[1],
-						flow.getTarget().getPid().toString().split("-")[1], caseId);
-				repo.save(progress);
-			});
-		}
+		Sudo.run(()->{ 
+			
+			Long caseId = Ivy.wf().getCurrentCase().getId();
+			ITask currentTask = Ivy.wf().getCurrentTask();
+			PID pid = currentTask.getStart().getProcessElementId();
+			IWorkflowProcessModelVersion pmv = currentTask.getProcessModelVersion();
+			ProcessElement targetElement = getProcessElementFromPmvAndPid(pmv, pid).stream()
+					.filter(element -> element.getPid().toString().equalsIgnoreCase(elementId)).findAny().orElse(null);
+			if (Objects.nonNull(targetElement)) {
+				updateExistingWorkflowInfoForElement(targetElement.getPid().toString(), caseId);
+				targetElement.getOutgoing().stream().forEach(flow -> {
+					WorkflowProgress progress = new WorkflowProgress(pid.toString(), flow.getPid().toString().split("-")[1],
+							targetElement.getPid().toString().split("-")[1],
+							flow.getTarget().getPid().toString().split("-")[1], caseId);
+					repo.save(progress);
+				});
+			}
+		});
 	}
 
 	private static List<WorkflowProgress> getprocessedProcessedFlow(String elementId, Long caseId) {
