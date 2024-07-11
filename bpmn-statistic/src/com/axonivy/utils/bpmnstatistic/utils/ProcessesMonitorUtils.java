@@ -41,7 +41,6 @@ public class ProcessesMonitorUtils {
 	private static final String UPDATE_ADDITION_INFORMATION_FUNCTION = "updateAdditionalInformation('%s')";
 	private static final WorkflowProgressRepository repo = WorkflowProgressRepository.getInstance();
 	private static final int DEFAULT_INITIAL_NUMBER = 0;
-	private static final int MILISECOND_IN_SECOND = 1000;
 	private static int maxFrequency = 0;
 
 	private ProcessesMonitorUtils() {
@@ -144,9 +143,9 @@ public class ProcessesMonitorUtils {
 
 	private static int updateArrowByWorkflowProgress(Arrow arrow, WorkflowProgress progress) {
 		int currentFrequency = arrow.getFrequency();
-		if(Objects.nonNull(progress.getDuration())) {			
-			arrow.setMedianDuration(((arrow.getMedianDuration() * currentFrequency) + progress.getDuration())
-					/ (currentFrequency + 1));
+		if (Objects.nonNull(progress.getDuration())) {
+			arrow.setMedianDuration(
+					((arrow.getMedianDuration() * currentFrequency) + progress.getDuration()) / (currentFrequency + 1));
 		}
 		arrow.setFrequency(arrow.getFrequency() + 1);
 		return maxFrequency = maxFrequency < currentFrequency + 1 ? currentFrequency + 1 : maxFrequency;

@@ -1,6 +1,5 @@
 package com.axonivy.utils.bpmnstatistic.utils;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +22,7 @@ import ch.ivyteam.ivy.workflow.IWorkflowProcessModelVersion;
 @SuppressWarnings("restriction")
 public class WorkflowUtils {
 	private static final WorkflowProgressRepository repo = WorkflowProgressRepository.getInstance();
+	private static final int MILISECOND_IN_SECOND = 1000;
 
 	public static void updateWorkflowInfo(String elementId) {
 		Long caseId = Ivy.wf().getCurrentCase().getId();
@@ -76,8 +76,13 @@ public class WorkflowUtils {
 		oldArrows.stream().forEach(flow -> {
 			flow.setEndTimeStamp(new Date());
 			flow.setDuration(
-					Duration.between(flow.getEndTimeStamp().toInstant(), flow.getStartTimeStamp().toInstant()));
+					(flow.getEndTimeStamp().getTime() - flow.getStartTimeStamp().getTime()) / MILISECOND_IN_SECOND);
 			repo.save(flow);
 		});
+	}
+
+	public static Boolean isWorkflowInfoUpdatedByPidAnd(String pid, Boolean condition) {
+		updateWorkflowInfo(pid);
+		return condition;
 	}
 }
