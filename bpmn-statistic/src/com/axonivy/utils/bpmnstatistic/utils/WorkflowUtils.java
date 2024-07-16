@@ -15,7 +15,6 @@ import ch.ivyteam.ivy.process.IProcessManager;
 import ch.ivyteam.ivy.process.IProjectProcessManager;
 import ch.ivyteam.ivy.process.model.Process;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
-import ch.ivyteam.ivy.process.model.value.PID;
 import ch.ivyteam.ivy.security.exec.Sudo;
 import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.IWorkflowProcessModelVersion;
@@ -26,18 +25,17 @@ public class WorkflowUtils {
 	private static final int MILISECOND_IN_SECOND = 1000;
 
 	public static void updateWorkflowInfo(String elementId) {
-		Sudo.run(()->{ 
-			
+		Sudo.run(() -> {
+			String processPid = elementId.split("-")[0];
 			Long caseId = Ivy.wf().getCurrentCase().getId();
 			ITask currentTask = Ivy.wf().getCurrentTask();
-			PID pid = currentTask.getStart().getProcessElementId();
 			IWorkflowProcessModelVersion pmv = currentTask.getProcessModelVersion();
-			ProcessElement targetElement = getProcessElementFromPmvAndPid(pmv, pid).stream()
+			ProcessElement targetElement = getProcessElementFromPmvAndPid(pmv, processPid).stream()
 					.filter(element -> element.getPid().toString().equalsIgnoreCase(elementId)).findAny().orElse(null);
 			if (Objects.nonNull(targetElement)) {
 				updateExistingWorkflowInfoForElement(targetElement.getPid().toString(), caseId);
 				targetElement.getOutgoing().stream().forEach(flow -> {
-					WorkflowProgress progress = new WorkflowProgress(pid.toString(), flow.getPid().toString().split("-")[1],
+					WorkflowProgress progress = new WorkflowProgress(processPid, flow.getPid().toString().split("-")[1],
 							targetElement.getPid().toString().split("-")[1],
 							flow.getTarget().getPid().toString().split("-")[1], caseId);
 					repo.save(progress);
@@ -64,10 +62,9 @@ public class WorkflowUtils {
 		return results;
 	}
 
-	private static List<ProcessElement> getProcessElementFromPmvAndPid(IWorkflowProcessModelVersion pmv, PID pid) {
-		String processGuid = pid.getRawPid().split("-")[0];
+	private static List<ProcessElement> getProcessElementFromPmvAndPid(IWorkflowProcessModelVersion pmv, String pid) {
 		IProjectProcessManager manager = IProcessManager.instance().getProjectDataModelFor(pmv);
-		Process process = manager.findProcess(processGuid, true).getModel();
+		Process process = manager.findProcess(pid, true).getModel();
 		return process.getProcessElements();
 	}
 

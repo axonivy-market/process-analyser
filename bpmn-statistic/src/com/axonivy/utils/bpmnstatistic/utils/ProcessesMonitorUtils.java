@@ -23,7 +23,6 @@ import ch.ivyteam.ivy.process.IProjectProcessManager;
 import ch.ivyteam.ivy.process.model.Process;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
-import ch.ivyteam.ivy.process.model.value.PID;
 import ch.ivyteam.ivy.workflow.IWorkflowProcessModelVersion;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
@@ -98,10 +97,9 @@ public class ProcessesMonitorUtils {
 		PF.current().executeScript(String.format(UPDATE_ADDITION_INFORMATION_FUNCTION, additionalInformation));
 	}
 
-	private static List<ProcessElement> getProcessElementFromPmvAndPid(IWorkflowProcessModelVersion pmv, PID pid) {
-		String processGuid = pid.getRawPid().split("-")[0];
+	private static List<ProcessElement> getProcessElementFromPmvAndPid(IWorkflowProcessModelVersion pmv, String pid) {
 		IProjectProcessManager manager = IProcessManager.instance().getProjectDataModelFor(pmv);
-		Process process = manager.findProcess(processGuid, true).getModel();
+		Process process = manager.findProcess(pid, true).getModel();
 		return process.getProcessElements();
 	}
 
@@ -125,12 +123,12 @@ public class ProcessesMonitorUtils {
 		maxFrequency = 0;
 		Map<String, Arrow> arrowMap = new HashMap<String, Arrow>();
 		if (Objects.nonNull(processStart)) {
-			PID pid = processStart.pid();
+			String processRawPid = processStart.pid().toString().split("-")[0];
 			List<ProcessElement> processElements = getProcessElementFromPmvAndPid(
-					(IWorkflowProcessModelVersion) processStart.pmv(), pid);
+					(IWorkflowProcessModelVersion) processStart.pmv(), processRawPid);
 			processElements.forEach(element -> results.addAll(convertProcessElementInfoToArrows(element)));
 			results.stream().forEach(arrow -> arrowMap.put(arrow.getArrowId(), arrow));
-			List<WorkflowProgress> recordedProgresses = repo.findByProcessRawPid(pid.toString());
+			List<WorkflowProgress> recordedProgresses = repo.findByProcessRawPid(processRawPid);
 			recordedProgresses.stream()
 					.forEach(record -> updateArrowByWorkflowProgress(arrowMap.get(record.getArrowId()), record));
 			arrowMap.keySet().stream().forEach(key -> {
