@@ -1,0 +1,123 @@
+{
+  "format" : "10.0.0",
+  "id" : "190A58A4E3D99BAD",
+  "config" : {
+    "data" : "com.axonivy.utils.bpmnstatistic.demo.Data"
+  },
+  "elements" : [ {
+      "id" : "f0",
+      "type" : "RequestStart",
+      "name" : "flightPayment.ivp",
+      "config" : {
+        "callSignature" : "flightPayment",
+        "outLink" : "flightPayment.ivp",
+        "input" : {
+          "code" : [
+            "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+            "WorkflowUtils.updateWorkflowInfo(\"190A58A4E3D99BAD-f0\");"
+          ]
+        },
+        "case" : { }
+      },
+      "visual" : {
+        "at" : { "x" : 96, "y" : 384 }
+      },
+      "connect" : { "id" : "f4", "to" : "f3", "label" : {
+          "name" : [
+            "create new task",
+            "to validate payment"
+          ],
+          "offset" : { "x" : 5, "y" : -26 }
+        } }
+    }, {
+      "id" : "f1",
+      "type" : "TaskEnd",
+      "visual" : {
+        "at" : { "x" : 880, "y" : 384 }
+      }
+    }, {
+      "id" : "f3",
+      "type" : "TaskSwitchEvent",
+      "config" : {
+        "task" : {
+          "name" : "Check payment method",
+          "code" : [
+            "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+            "WorkflowUtils.updateWorkflowInfo(\"190A58A4E3D99BAD-f3\");"
+          ]
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 264, "y" : 384 }
+      },
+      "connect" : { "id" : "f6", "to" : "f5" }
+    }, {
+      "id" : "f5",
+      "type" : "Script",
+      "name" : "validate payment method",
+      "config" : {
+        "output" : {
+          "code" : [
+            "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+            "WorkflowUtils.updateWorkflowInfo(\"190A58A4E3D99BAD-f5\");",
+            "Thread.sleep(Math.random()*10000);"
+          ]
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 392, "y" : 384 }
+      },
+      "connect" : { "id" : "f8", "to" : "f7" }
+    }, {
+      "id" : "f7",
+      "type" : "TaskSwitchEvent",
+      "config" : {
+        "task" : {
+          "name" : "Confirm payment information",
+          "code" : [
+            "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+            "WorkflowUtils.updateWorkflowInfo(\"190A58A4E3D99BAD-f7\");"
+          ]
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 536, "y" : 384 }
+      },
+      "connect" : { "id" : "f10", "to" : "f9", "label" : {
+          "name" : [
+            "save record from",
+            "e-wallet"
+          ],
+          "offset" : { "x" : -6, "y" : 30 }
+        } }
+    }, {
+      "id" : "f9",
+      "type" : "Script",
+      "name" : [
+        "record payment",
+        "from e-wallet"
+      ],
+      "config" : {
+        "output" : {
+          "code" : [
+            "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+            "WorkflowUtils.updateWorkflowInfo(\"190A58A4E3D99BAD-f9\");",
+            "Thread.sleep(Math.random()*10000);",
+            "WorkflowUtils.updateWorkflowInfo(\"190A58A4E3D99BAD-f1\");"
+          ]
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 720, "y" : 384 }
+      },
+      "connect" : { "id" : "f2", "to" : "f1" }
+    } ],
+  "layout" : {
+    "lanes" : [ {
+        "name" : "FlightPaymentDemo",
+        "offset" : 208,
+        "size" : 384,
+        "lanes" : [ ]
+      } ]
+  }
+}
