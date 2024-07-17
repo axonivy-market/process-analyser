@@ -50,7 +50,6 @@ function loadIframe(recheckIndicator) {
 
 function renderAdditionalInformation(innerText) {
   const pool = getProcessDiagramIframe().find(".pool");
-  console.log(pool);
   if (pool != undefined) {
     let rectPool = pool.find("rect.sprotty-node");
     let height = Number(rectPool.css("height").replace("px", "")) + 30;

@@ -13,6 +13,7 @@ import org.primefaces.PF;
 
 import com.axonivy.utils.bpmnstatistic.bo.Arrow;
 import com.axonivy.utils.bpmnstatistic.bo.WorkflowProgress;
+import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
 import com.axonivy.utils.bpmnstatistic.enums.IvyVariable;
 import com.axonivy.utils.bpmnstatistic.repo.WorkflowProgressRepository;
 import com.axonivy.utils.bpmnstatistic.service.IvyTaskOccurrenceService;
@@ -29,17 +30,7 @@ import ch.ivyteam.ivy.workflow.start.IWebStartable;
 
 @SuppressWarnings("restriction")
 public class ProcessesMonitorUtils {
-	private static final String PORTAL_START_REQUEST_PATH = "/DefaultApplicationHomePage.ivp";
-	private static final String PORTAL_IN_TEAMS_REQUEST_PATH = "InTeams.ivp";
-	private static final String REMOVE_DEFAULT_HIGHLIGHT_JS_FUNCTION = "santizeDiagram();";
-	private static final String UPDATE_FREQUENCY_COUNT_FOR_TASK_FUNCTION = "addElementFrequency('%s', '%s', '%s', '%s');";
-	private static final String FREQUENCY_BACKGROUND_COLOR_LEVEL_VARIABLE_PATTERN = "frequencyBackgroundColorLevel%s";
-	private static final int DEFAULT_BACKGROUND_COLOR_LEVEL = 1;
-	private static final int HIGHEST_LEVEL_OF_BACKGROUND_COLOR = 6;
-	private static final String ADDIATION_INFORMATION_FORMAT = "%s instances (investigation period:%s - %s)";
-	private static final String UPDATE_ADDITION_INFORMATION_FUNCTION = "renderAdditionalInformation('%s')";
 	private static final WorkflowProgressRepository repo = WorkflowProgressRepository.getInstance();
-	private static final int DEFAULT_INITIAL_NUMBER = 0;
 	private static int maxFrequency = 0;
 
 	private ProcessesMonitorUtils() {
@@ -60,9 +51,9 @@ public class ProcessesMonitorUtils {
 	}
 
 	private static boolean isNotPortalHomeAndMSTeamsProcess(IWebStartable process) {
-
 		String relativeEncoded = process.getLink().getRelativeEncoded();
-		return !StringUtils.endsWithAny(relativeEncoded, PORTAL_START_REQUEST_PATH, PORTAL_IN_TEAMS_REQUEST_PATH);
+		return !StringUtils.endsWithAny(relativeEncoded, ProcessMonitorConstants.PORTAL_START_REQUEST_PATH,
+				ProcessMonitorConstants.PORTAL_IN_TEAMS_REQUEST_PATH);
 	}
 
 	public static void showStatisticData(String pid) {
@@ -70,11 +61,11 @@ public class ProcessesMonitorUtils {
 		HashMap<String, Integer> taskCountMap = IvyTaskOccurrenceService.countTaskOccurrencesByProcessId(pid);
 		int maxFrequency = findMaxFrequency(taskCountMap);
 		String textColorRGBCode = String.valueOf(Ivy.var().get(IvyVariable.FREQUENCY_NUMBER_COLOR.getVariableName()));
-		PF.current().executeScript(REMOVE_DEFAULT_HIGHLIGHT_JS_FUNCTION);
+		PF.current().executeScript(ProcessMonitorConstants.REMOVE_DEFAULT_HIGHLIGHT_JS_FUNCTION);
 		for (Entry<String, Integer> entry : taskCountMap.entrySet()) {
 			String backgroundColorRGBCode = getRGBCodefromFrequency(maxFrequency, entry.getValue());
-			PF.current().executeScript(String.format(UPDATE_FREQUENCY_COUNT_FOR_TASK_FUNCTION, entry.getKey(),
-					entry.getValue(), backgroundColorRGBCode, textColorRGBCode));
+			PF.current().executeScript(String.format(ProcessMonitorConstants.UPDATE_FREQUENCY_COUNT_FOR_TASK_FUNCTION,
+					entry.getKey(), entry.getValue(), backgroundColorRGBCode, textColorRGBCode));
 		}
 	}
 
@@ -87,14 +78,17 @@ public class ProcessesMonitorUtils {
 	}
 
 	private static String getRGBCodefromFrequency(int max, int current) {
-		int level = (int) (max == 0 ? DEFAULT_BACKGROUND_COLOR_LEVEL
-				: Math.ceil(current * HIGHEST_LEVEL_OF_BACKGROUND_COLOR / max));
-		return String.valueOf(Ivy.var().get(String.format(FREQUENCY_BACKGROUND_COLOR_LEVEL_VARIABLE_PATTERN, level)));
+		int level = (int) (max == 0 ? ProcessMonitorConstants.DEFAULT_BACKGROUND_COLOR_LEVEL
+				: Math.ceil(current * ProcessMonitorConstants.HIGHEST_LEVEL_OF_BACKGROUND_COLOR / max));
+		return String.valueOf(Ivy.var()
+				.get(String.format(ProcessMonitorConstants.FREQUENCY_BACKGROUND_COLOR_LEVEL_VARIABLE_PATTERN, level)));
 	}
 
 	public static void showAdditionalInformation(String instancesCount, String fromDate, String toDate) {
-		String additionalInformation = String.format(ADDIATION_INFORMATION_FORMAT, instancesCount, fromDate, toDate);
-		PF.current().executeScript(String.format(UPDATE_ADDITION_INFORMATION_FUNCTION, additionalInformation));
+		String additionalInformation = String.format(ProcessMonitorConstants.ADDITIONAL_INFORMATION_FORMAT,
+				instancesCount, fromDate, toDate);
+		PF.current().executeScript(
+				String.format(ProcessMonitorConstants.UPDATE_ADDITIONAL_INFORMATION_FUNCTION, additionalInformation));
 	}
 
 	private static List<ProcessElement> getProcessElementFromPmvAndPid(IWorkflowProcessModelVersion pmv, String pid) {
@@ -110,11 +104,11 @@ public class ProcessesMonitorUtils {
 
 	private static Arrow convertSequenceFlowToArrow(SequenceFlow flow) {
 		Arrow result = new Arrow();
-		result.setArrowId(flow.getPid().toString().split("-")[1]);
+		result.setArrowId(flow.getPid().toString().split(ProcessMonitorConstants.MINUS_SIGN)[1]);
 		result.setLabel(flow.getName());
-		result.setFrequency(DEFAULT_INITIAL_NUMBER);
-		result.setFrequency(DEFAULT_INITIAL_NUMBER);
-		result.setMedianDuration(DEFAULT_INITIAL_NUMBER);
+		result.setFrequency(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
+		result.setFrequency(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
+		result.setMedianDuration(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
 		return result;
 	}
 
@@ -123,7 +117,7 @@ public class ProcessesMonitorUtils {
 		maxFrequency = 0;
 		Map<String, Arrow> arrowMap = new HashMap<String, Arrow>();
 		if (Objects.nonNull(processStart)) {
-			String processRawPid = processStart.pid().toString().split("-")[0];
+			String processRawPid = processStart.pid().toString().split(ProcessMonitorConstants.MINUS_SIGN)[0];
 			List<ProcessElement> processElements = getProcessElementFromPmvAndPid(
 					(IWorkflowProcessModelVersion) processStart.pmv(), processRawPid);
 			processElements.forEach(element -> results.addAll(convertProcessElementInfoToArrows(element)));

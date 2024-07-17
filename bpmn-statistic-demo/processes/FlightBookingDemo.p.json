@@ -215,7 +215,7 @@
             "name" : "Yes",
             "segment" : 0.5,
             "offset" : { "x" : -159, "y" : -34 }
-          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAnd(\"18F3D6C205210455-f4\", in.isBackToSearchPage)" },
+          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(\"18F3D6C205210455-f4\", in.isBackToSearchPage)" },
         { "id" : "f6", "to" : "S21", "label" : {
             "name" : "No"
           } }
@@ -233,7 +233,7 @@
             "name" : "Yes",
             "segment" : 0.5,
             "offset" : { "x" : -215, "y" : 30 }
-          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAnd(\"18F3D6C205210455-f7\", in.isBackToSubmitInformationPage)" },
+          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(\"18F3D6C205210455-f7\", in.isBackToSubmitInformationPage)" },
         { "id" : "f10", "to" : "f12", "via" : [ { "x" : 1016, "y" : 392 } ], "label" : {
             "name" : "No",
             "offset" : { "x" : 46, "y" : 33 }
@@ -383,7 +383,7 @@
             "name" : "Yes",
             "segment" : 0.52,
             "offset" : { "x" : -8, "y" : -1 }
-          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAnd(\"18F3D6C205210455-f12\", in.isChargeLater)" },
+          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(\"18F3D6C205210455-f12\", in.isChargeLater)" },
         { "id" : "f15", "to" : "S23", "label" : {
             "name" : "No"
           } }
@@ -555,7 +555,7 @@
       "connect" : [
         { "id" : "f13", "to" : "S23", "label" : {
             "name" : "Yes"
-          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAnd(\"18F3D6C205210455-f17\", in.isPaid)" },
+          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(\"18F3D6C205210455-f17\", in.isPaid)" },
         { "id" : "f19", "to" : "f1", "label" : {
             "name" : "No",
             "segment" : 0.27,

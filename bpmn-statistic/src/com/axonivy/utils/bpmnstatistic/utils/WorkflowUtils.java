@@ -8,6 +8,7 @@ import java.util.Objects;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.axonivy.utils.bpmnstatistic.bo.WorkflowProgress;
+import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
 import com.axonivy.utils.bpmnstatistic.repo.WorkflowProgressRepository;
 
 import ch.ivyteam.ivy.environment.Ivy;
@@ -26,7 +27,7 @@ public class WorkflowUtils {
 
 	public static void updateWorkflowInfo(String elementId) {
 		Sudo.run(() -> {
-			String processPid = elementId.split("-")[0];
+			String processPid = elementId.split(ProcessMonitorConstants.MINUS_SIGN)[0];
 			Long caseId = Ivy.wf().getCurrentCase().getId();
 			ITask currentTask = Ivy.wf().getCurrentTask();
 			IWorkflowProcessModelVersion pmv = currentTask.getProcessModelVersion();
@@ -35,9 +36,9 @@ public class WorkflowUtils {
 			if (Objects.nonNull(targetElement)) {
 				updateExistingWorkflowInfoForElement(targetElement.getPid().toString(), caseId);
 				targetElement.getOutgoing().stream().forEach(flow -> {
-					WorkflowProgress progress = new WorkflowProgress(processPid, flow.getPid().toString().split("-")[1],
-							targetElement.getPid().toString().split("-")[1],
-							flow.getTarget().getPid().toString().split("-")[1], caseId);
+					WorkflowProgress progress = new WorkflowProgress(processPid, flow.getPid().toString().split(ProcessMonitorConstants.MINUS_SIGN)[1],
+							targetElement.getPid().toString().split(ProcessMonitorConstants.MINUS_SIGN)[1],
+							flow.getTarget().getPid().toString().split(ProcessMonitorConstants.MINUS_SIGN)[1], caseId);
 					repo.save(progress);
 				});
 			}
@@ -69,7 +70,7 @@ public class WorkflowUtils {
 	}
 
 	private static void updateExistingWorkflowInfoForElement(String elementId, Long caseId) {
-		elementId = elementId.split("-")[1];
+		elementId = elementId.split(ProcessMonitorConstants.MINUS_SIGN)[1];
 		List<WorkflowProgress> oldArrows = getprocessedProcessedFlow(elementId, caseId);
 		if (CollectionUtils.isEmpty(oldArrows)) {
 			return;
@@ -82,7 +83,7 @@ public class WorkflowUtils {
 		});
 	}
 
-	public static Boolean isWorkflowInfoUpdatedByPidAnd(String pid, Boolean condition) {
+	public static Boolean isWorkflowInfoUpdatedByPidAndAdditionalCondition(String pid, Boolean condition) {
 		updateWorkflowInfo(pid);
 		return condition;
 	}

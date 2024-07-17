@@ -2,7 +2,7 @@ package com.axonivy.utils.bpmnstatistic.bo;
 
 public class Arrow {
 	private String arrowId;
-	private Float ratio;
+	private float ratio;
 	private String label;
 	private int frequency;
 	private double medianDuration;
@@ -24,11 +24,11 @@ public class Arrow {
 		this.arrowId = arrowId;
 	}
 
-	public Float getRatio() {
+	public float getRatio() {
 		return ratio;
 	}
 
-	public void setRatio(Float ratio) {
+	public void setRatio(float ratio) {
 		this.ratio = ratio;
 	}
 
