@@ -11,5 +11,5 @@ public class ProcessMonitorConstants {
 	public static final String ADDITIONAL_INFORMATION_FORMAT = "%s instances (investigation period:%s - %s)";
 	public static final String UPDATE_ADDITIONAL_INFORMATION_FUNCTION = "renderAdditionalInformation('%s')";
 	public static final int DEFAULT_INITIAL_STATISTIC_NUMBER = 0;
-	public static final String MINUS_SIGN = "-";
+	public static final String HYPHEN_SIGN = "-";
 }

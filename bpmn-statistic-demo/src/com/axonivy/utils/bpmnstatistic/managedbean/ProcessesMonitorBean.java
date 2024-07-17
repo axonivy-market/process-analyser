@@ -48,9 +48,11 @@ public class ProcessesMonitorBean {
 		}
 	}
 
+
 	public void showStatisticData() {
 		if (StringUtils.isNoneBlank(selectedPid)) {
 			ProcessesMonitorUtils.showStatisticData(selectedPid);
+			//Mock data for instances count from a time range. Remove it when implement feature of time filter
 			ProcessesMonitorUtils.showAdditionalInformation("15", "11.02", "12.08");
 		}
 	}

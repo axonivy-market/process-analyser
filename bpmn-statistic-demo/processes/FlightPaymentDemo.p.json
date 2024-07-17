@@ -33,7 +33,7 @@
       "id" : "f1",
       "type" : "TaskEnd",
       "visual" : {
-        "at" : { "x" : 880, "y" : 384 }
+        "at" : { "x" : 960, "y" : 384 }
       }
     }, {
       "id" : "f3",
@@ -67,7 +67,7 @@
       "visual" : {
         "at" : { "x" : 392, "y" : 384 }
       },
-      "connect" : { "id" : "f8", "to" : "f7" }
+      "connect" : { "id" : "f12", "to" : "f11" }
     }, {
       "id" : "f7",
       "type" : "TaskSwitchEvent",
@@ -81,7 +81,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 536, "y" : 384 }
+        "at" : { "x" : 616, "y" : 384 }
       },
       "connect" : { "id" : "f10", "to" : "f9", "label" : {
           "name" : [
@@ -108,9 +108,19 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 720, "y" : 384 }
+        "at" : { "x" : 800, "y" : 384 }
       },
       "connect" : { "id" : "f2", "to" : "f1" }
+    }, {
+      "id" : "f11",
+      "type" : "Alternative",
+      "visual" : {
+        "at" : { "x" : 520, "y" : 384 }
+      },
+      "connect" : [
+        { "id" : "f8", "to" : "f7", "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(\"190A58A4E3D99BAD-f11\", true)" },
+        { "id" : "f13", "to" : "f9", "via" : [ { "x" : 520, "y" : 272 }, { "x" : 800, "y" : 272 } ] }
+      ]
     } ],
   "layout" : {
     "lanes" : [ {

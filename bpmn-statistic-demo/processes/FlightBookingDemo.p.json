@@ -159,11 +159,7 @@
                 "out" : "in",
                 "out.isBackToSearchPage" : "result.isBackToSearchPage",
                 "out.isChargeLater" : "result.isChargeLater"
-              },
-              "code" : [
-                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S20-f3\");"
-              ]
+              }
             }
           },
           "visual" : {
@@ -286,7 +282,7 @@
             "call" : {
               "code" : [
                 "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S20-f3\");"
+                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S21-f3\");"
               ]
             },
             "output" : {
@@ -659,12 +655,6 @@
                 "role" : "SYSTEM"
               },
               "skipTasklist" : true,
-              "code" : [
-                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S40-f1\");"
-              ]
-            },
-            "output" : {
               "code" : [
                 "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
                 "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S40-f1\");"

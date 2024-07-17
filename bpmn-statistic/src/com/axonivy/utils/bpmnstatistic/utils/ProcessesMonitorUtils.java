@@ -104,7 +104,7 @@ public class ProcessesMonitorUtils {
 
 	private static Arrow convertSequenceFlowToArrow(SequenceFlow flow) {
 		Arrow result = new Arrow();
-		result.setArrowId(flow.getPid().toString().split(ProcessMonitorConstants.MINUS_SIGN)[1]);
+		result.setArrowId(flow.getPid().toString().split(ProcessMonitorConstants.HYPHEN_SIGN)[1]);
 		result.setLabel(flow.getName());
 		result.setFrequency(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
 		result.setFrequency(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
@@ -117,7 +117,7 @@ public class ProcessesMonitorUtils {
 		maxFrequency = 0;
 		Map<String, Arrow> arrowMap = new HashMap<String, Arrow>();
 		if (Objects.nonNull(processStart)) {
-			String processRawPid = processStart.pid().toString().split(ProcessMonitorConstants.MINUS_SIGN)[0];
+			String processRawPid = processStart.pid().toString().split(ProcessMonitorConstants.HYPHEN_SIGN)[0];
 			List<ProcessElement> processElements = getProcessElementFromPmvAndPid(
 					(IWorkflowProcessModelVersion) processStart.pmv(), processRawPid);
 			processElements.forEach(element -> results.addAll(convertProcessElementInfoToArrows(element)));
