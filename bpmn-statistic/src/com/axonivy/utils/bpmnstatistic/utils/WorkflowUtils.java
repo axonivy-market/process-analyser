@@ -18,6 +18,7 @@ import ch.ivyteam.ivy.process.IProjectProcessManager;
 import ch.ivyteam.ivy.process.model.Process;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.security.exec.Sudo;
+import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.IWorkflowProcessModelVersion;
 
 @SuppressWarnings("restriction")
@@ -31,7 +32,7 @@ public class WorkflowUtils {
 	public static void updateWorkflowInfo(String elementId) {
 		processRawPid = elementId.split(ProcessMonitorConstants.HYPHEN_SIGN)[0];
 		currentCaseId = getCurrentCaseId();
-		IWorkflowProcessModelVersion pmv = Ivy.wf().getCurrentTask().getProcessModelVersion();
+		IWorkflowProcessModelVersion pmv = getCurrentTask().getProcessModelVersion();
 		targetElement = getProcessElementFromPmvAndPid(pmv).stream()
 				.filter(element -> element.getPid().toString().equalsIgnoreCase(elementId)).findAny().orElse(null);
 		if (Objects.nonNull(targetElement)) {
@@ -43,6 +44,12 @@ public class WorkflowUtils {
 	private static long getCurrentCaseId() {
 		return Sudo.get(() -> {
 			return Ivy.wf().getCurrentCase().getId();
+		});
+	}
+
+	private static ITask getCurrentTask() {
+		return Sudo.get(() -> {
+			return Ivy.wf().getCurrentTask();
 		});
 	}
 

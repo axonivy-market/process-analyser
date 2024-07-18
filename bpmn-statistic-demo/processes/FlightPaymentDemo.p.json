@@ -93,10 +93,7 @@
     }, {
       "id" : "f9",
       "type" : "Script",
-      "name" : [
-        "record payment",
-        "from e-wallet"
-      ],
+      "name" : "record payment",
       "config" : {
         "output" : {
           "code" : [
@@ -114,12 +111,24 @@
     }, {
       "id" : "f11",
       "type" : "Alternative",
+      "name" : [
+        "is e-waller",
+        "payment?"
+      ],
       "visual" : {
-        "at" : { "x" : 520, "y" : 384 }
+        "at" : { "x" : 520, "y" : 384 },
+        "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
-        { "id" : "f8", "to" : "f7", "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(\"190A58A4E3D99BAD-f11\", true)" },
-        { "id" : "f13", "to" : "f9", "via" : [ { "x" : 520, "y" : 272 }, { "x" : 800, "y" : 272 } ] }
+        { "id" : "f8", "to" : "f7", "label" : {
+            "name" : "no",
+            "offset" : { "x" : 1, "y" : -10 }
+          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(\"190A58A4E3D99BAD-f11\", true)" },
+        { "id" : "f13", "to" : "f9", "via" : [ { "x" : 520, "y" : 272 }, { "x" : 800, "y" : 272 } ], "label" : {
+            "name" : "yes",
+            "segment" : 1.52,
+            "offset" : { "x" : -9, "y" : 14 }
+          } }
       ]
     } ],
   "layout" : {
