@@ -49,28 +49,37 @@ function loadIframe(recheckIndicator) {
 }
 
 function renderAdditionalInformation(innerText) {
-  const pool = getProcessDiagramIframe().find(".pool");
-  if (pool != undefined && isAdditionalInformationRendered(pool)) {
-    let rectPool = pool.find("rect.sprotty-node");
-    let height = Number(rectPool.css("height").replace("px", "")) + 30;
-    pool.append(prepareAdditionalInformationPanel(innerText, height));
+  const sprotty = getProcessDiagramIframe().find("#sprotty");
+  if (isAdditionalInformationNotRendered(sprotty)) {
+    sprotty.append(createBarWithText(innerText));
   }
 }
 
-function isAdditionalInformationRendered(pool) {
-  if (pool.find("rect.sprotty-node").find("addtional-information")) {
-    return true;
-  }
-  return false;
+function isAdditionalInformationNotRendered(sprottyNode) {
+  return sprottyNode.find("#additional-information").length != 1;
 }
 
-function prepareAdditionalInformationPanel(innerText, top) {
-  var svgNS = "http://www.w3.org/2000/svg";
-  var newText = document.createElementNS(svgNS, "text");
-  newText.setAttributeNS(null, "x", 150);
+function createText(innerText) {
+  var newText = document.createElementNS("http://www.w3.org/1999/xhtml", "text");
   newText.setAttributeNS(null, "class", "sprotty-label label addtional-information");
-  newText.setAttributeNS(null, "y", top);
   var textNode = document.createTextNode(innerText);
   newText.appendChild(textNode);
   return newText;
+}
+
+function createBarWithText(text) {
+  let bar = createDivWithClass("ivy-viewport-bar");
+  bar.setAttribute("id", "additional-information")
+  bar.setAttribute("style", "left: 1rem; right: auto");
+  let innerBox = createDivWithClass("viewport-bar");
+  let innerText = createText(text);
+  innerBox.appendChild(innerText);
+  bar.appendChild(innerBox)
+  return bar;
+}
+
+function createDivWithClass(cssClass) {
+  let div = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
+  div.setAttribute("class", cssClass);
+  return div;
 }
