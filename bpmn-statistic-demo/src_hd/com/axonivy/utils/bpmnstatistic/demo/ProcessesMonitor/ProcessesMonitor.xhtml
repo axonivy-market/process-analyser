@@ -57,30 +57,30 @@
 					</div>
 				</p:fieldset>
 				<br />
-					<h:panelGroup id="arrow-statistics" layout="block" class="card">
-						<p:dataTable var="arrow" value="#{processesMonitorBean.arrows}">
-							<p:column
-								headerText="#{ivy.cms.co('/Dialogs/com/axonivy/process/mining/demo/Demo/ArrowId')}">
-								<h:outputText value="#{arrow.arrowId}" />
-							</p:column>
-							<p:column
-								headerText="#{ivy.cms.co('/Dialogs/com/axonivy/process/mining/demo/Demo/Label')}">
-								<h:outputText value="#{arrow.label}" />
-							</p:column>
-							<p:column
-								headerText="#{ivy.cms.co('/Dialogs/com/axonivy/process/mining/demo/Demo/Frequency')}">
-								<h:outputText value="#{arrow.frequency}" />
-							</p:column>
-							<p:column
-								headerText="#{ivy.cms.co('/Dialogs/com/axonivy/process/mining/demo/Demo/Ratio')}">
-								<h:outputText value="#{arrow.ratio}" />
-							</p:column>
-							<p:column
-								headerText="#{ivy.cms.co('/Dialogs/com/axonivy/process/mining/demo/Demo/MedianDuration')}">
-								<h:outputText value="#{arrow.medianDuration}" />
-							</p:column>
-						</p:dataTable>
-					</h:panelGroup>
+				<h:panelGroup id="arrow-statistics" layout="block" class="card">
+					<p:dataTable var="arrow" value="#{processesMonitorBean.arrows}">
+						<p:column
+							headerText="#{ivy.cms.co('/Dialogs/com/axonivy/process/mining/demo/Demo/ArrowId')}">
+							<h:outputText value="#{arrow.arrowId}" />
+						</p:column>
+						<p:column
+							headerText="#{ivy.cms.co('/Dialogs/com/axonivy/process/mining/demo/Demo/Label')}">
+							<h:outputText value="#{arrow.label}" />
+						</p:column>
+						<p:column
+							headerText="#{ivy.cms.co('/Dialogs/com/axonivy/process/mining/demo/Demo/Frequency')}">
+							<h:outputText value="#{arrow.frequency}" />
+						</p:column>
+						<p:column
+							headerText="#{ivy.cms.co('/Dialogs/com/axonivy/process/mining/demo/Demo/Ratio')}">
+							<h:outputText value="#{arrow.ratio}" />
+						</p:column>
+						<p:column
+							headerText="#{ivy.cms.co('/Dialogs/com/axonivy/process/mining/demo/Demo/MedianDuration')}">
+							<h:outputText value="#{arrow.medianDuration}" />
+						</p:column>
+					</p:dataTable>
+				</h:panelGroup>
 				<br />
 				<ic:com.axonivy.utils.bpmnstatistic.ProcessViewer
 					processViewerId="process-diagram-iframe"

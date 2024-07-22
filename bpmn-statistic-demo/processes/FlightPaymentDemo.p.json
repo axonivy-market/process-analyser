@@ -88,7 +88,7 @@
             "save record from",
             "e-wallet"
           ],
-          "offset" : { "x" : -6, "y" : 30 }
+          "offset" : { "x" : 2, "y" : -34 }
         } }
     }, {
       "id" : "f9",
