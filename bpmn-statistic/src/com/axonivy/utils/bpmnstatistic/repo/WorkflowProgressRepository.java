@@ -10,7 +10,6 @@ import ch.ivyteam.ivy.environment.Ivy;
 
 public class WorkflowProgressRepository {
   private static int DEFAULT_SEARCH_LIMIT = 5000;
-
   private static final WorkflowProgressRepository instance = new WorkflowProgressRepository();
 
   private WorkflowProgressRepository() {
@@ -29,20 +28,32 @@ public class WorkflowProgressRepository {
   }
 
   public List<WorkflowProgress> findByProcessRawPid(String id) {
-    return createSearchQuery().textField("processRawPid").containsAllWords(id).execute().getAll();
+    List<WorkflowProgress> results = new ArrayList<WorkflowProgress>();
+    int count = 0;
+    int querySize;
+    do {
+      List<WorkflowProgress> currentResult = createSearchQuery().textField("processRawPid").containsAllWords(id)
+          .limit(count, DEFAULT_SEARCH_LIMIT).execute().getAll();
+      results.addAll(currentResult);
+      querySize = currentResult.size();
+      count += querySize;
+    } while (querySize == DEFAULT_SEARCH_LIMIT);
+    return results;
   }
 
   public List<WorkflowProgress> findByTargetElementIdAndCaseId(String elementId, Long caseId) {
-    List<WorkflowProgress> result = new ArrayList<WorkflowProgress>();
-    int queryListSize = 0;
+    List<WorkflowProgress> results = new ArrayList<WorkflowProgress>();
+    int count = 0;
+    int querySize;
     do {
-      List<WorkflowProgress> queryList = createSearchQuery().textField("targetElementId")
+      List<WorkflowProgress> currentResult = createSearchQuery().textField("targetElementId")
           .isEqualToIgnoringCase(elementId).and().numberField("caseId").isEqualTo(caseId)
-          .limit(result.size(), DEFAULT_SEARCH_LIMIT).execute().getAll();
-      queryListSize = queryList.size();
-      result.addAll(queryList);
-    } while (queryListSize != 0 && queryListSize % DEFAULT_SEARCH_LIMIT == 0);
-    return result;
+          .limit(count, DEFAULT_SEARCH_LIMIT).execute().getAll();
+      results.addAll(currentResult);
+      querySize = currentResult.size();
+      count += querySize;
+    } while (querySize == DEFAULT_SEARCH_LIMIT);
+    return results;
   }
 
   private Query<WorkflowProgress> createSearchQuery() {
