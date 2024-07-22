@@ -17,6 +17,12 @@
         "task" : {
           "name" : "Search a Flight"
         },
+        "input" : {
+          "code" : [
+            "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+            "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-f0\");"
+          ]
+        },
         "tags" : "demo"
       },
       "visual" : {
@@ -54,7 +60,13 @@
           "name" : "Search for a Flight",
           "config" : {
             "dialogId" : "com.axonivy.utils.bpmnstatistic.demo.SearchingFlight",
-            "startMethod" : "start()"
+            "startMethod" : "start()",
+            "call" : {
+              "code" : [
+                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S10-f3\");"
+              ]
+            }
           },
           "visual" : {
             "at" : { "x" : 392, "y" : 256 }
@@ -74,7 +86,11 @@
           "name" : "Re-search a flight",
           "config" : {
             "task" : {
-              "name" : "Re-search a flight"
+              "name" : "Re-search a flight",
+              "code" : [
+                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S10-f8\");"
+              ]
             }
           },
           "visual" : {
@@ -104,7 +120,7 @@
           "id" : "S20-g1",
           "type" : "EmbeddedEnd",
           "visual" : {
-            "at" : { "x" : 520, "y" : 256 }
+            "at" : { "x" : 512, "y" : 256 }
           },
           "parentConnector" : "f5"
         }, {
@@ -113,7 +129,11 @@
           "name" : "Submit personal and payment info",
           "config" : {
             "task" : {
-              "name" : "Submit Personal and Payment Info"
+              "name" : "Submit Personal and Payment Info",
+              "code" : [
+                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S20-f1\");"
+              ]
             }
           },
           "visual" : {
@@ -128,6 +148,12 @@
           "config" : {
             "dialogId" : "com.axonivy.utils.bpmnstatistic.demo.SubmitPersonalInformation",
             "startMethod" : "start()",
+            "call" : {
+              "code" : [
+                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S20-f3\");"
+              ]
+            },
             "output" : {
               "map" : {
                 "out" : "in",
@@ -154,7 +180,11 @@
           "name" : "Rework submit personal and payment info",
           "config" : {
             "task" : {
-              "name" : "Rework for submit Personal and Payment Info"
+              "name" : "Rework for submit Personal and Payment Info",
+              "code" : [
+                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S20-f5\");"
+              ]
             }
           },
           "visual" : {
@@ -181,7 +211,7 @@
             "name" : "Yes",
             "segment" : 0.5,
             "offset" : { "x" : -159, "y" : -34 }
-          }, "condition" : "in.isBackToSearchPage" },
+          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(\"18F3D6C205210455-f4\", in.isBackToSearchPage)" },
         { "id" : "f6", "to" : "S21", "label" : {
             "name" : "No"
           } }
@@ -199,7 +229,7 @@
             "name" : "Yes",
             "segment" : 0.5,
             "offset" : { "x" : -215, "y" : 30 }
-          }, "condition" : "in.isBackToSubmitInformationPage" },
+          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(\"18F3D6C205210455-f7\", in.isBackToSubmitInformationPage)" },
         { "id" : "f10", "to" : "f12", "via" : [ { "x" : 1016, "y" : 392 } ], "label" : {
             "name" : "No",
             "offset" : { "x" : 46, "y" : 33 }
@@ -230,7 +260,11 @@
           "name" : "Display booking information",
           "config" : {
             "task" : {
-              "name" : "Display booking information"
+              "name" : "Display booking information",
+              "code" : [
+                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S21-f1\");"
+              ]
             }
           },
           "visual" : {
@@ -245,6 +279,12 @@
           "config" : {
             "dialogId" : "com.axonivy.utils.bpmnstatistic.demo.DisplayBookingInformation",
             "startMethod" : "start()",
+            "call" : {
+              "code" : [
+                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S21-f3\");"
+              ]
+            },
             "output" : {
               "map" : {
                 "out" : "in",
@@ -292,7 +332,11 @@
               "responsible" : {
                 "role" : "SYSTEM"
               },
-              "skipTasklist" : true
+              "skipTasklist" : true,
+              "code" : [
+                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S22-f1\");"
+              ]
             }
           },
           "visual" : {
@@ -335,7 +379,7 @@
             "name" : "Yes",
             "segment" : 0.52,
             "offset" : { "x" : -8, "y" : -1 }
-          }, "condition" : "in.isChargeLater" },
+          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(\"18F3D6C205210455-f12\", in.isChargeLater)" },
         { "id" : "f15", "to" : "S23", "label" : {
             "name" : "No"
           } }
@@ -377,7 +421,11 @@
               "responsible" : {
                 "role" : "SYSTEM"
               },
-              "skipTasklist" : true
+              "skipTasklist" : true,
+              "code" : [
+                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S23-f1\");"
+              ]
             }
           },
           "visual" : {
@@ -389,6 +437,14 @@
           "id" : "S23-f3",
           "type" : "Script",
           "name" : "Create booking",
+          "config" : {
+            "output" : {
+              "code" : [
+                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S23-f3\");"
+              ]
+            }
+          },
           "visual" : {
             "at" : { "x" : 176, "y" : 304 }
           },
@@ -403,7 +459,11 @@
               "responsible" : {
                 "role" : "SYSTEM"
               },
-              "skipTasklist" : true
+              "skipTasklist" : true,
+              "code" : [
+                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S23-f6\");"
+              ]
             }
           },
           "visual" : {
@@ -446,7 +506,11 @@
               "responsible" : {
                 "role" : "SYSTEM"
               },
-              "skipTasklist" : true
+              "skipTasklist" : true,
+              "code" : [
+                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S25-f1\");"
+              ]
             }
           },
           "visual" : {
@@ -458,6 +522,14 @@
           "id" : "S25-f3",
           "type" : "Script",
           "name" : "Hold seats script",
+          "config" : {
+            "output" : {
+              "code" : [
+                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S25-f3\");"
+              ]
+            }
+          },
           "visual" : {
             "at" : { "x" : 328, "y" : 256 }
           },
@@ -479,7 +551,7 @@
       "connect" : [
         { "id" : "f13", "to" : "S23", "label" : {
             "name" : "Yes"
-          }, "condition" : "in.isPaid" },
+          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(\"18F3D6C205210455-f17\", in.isPaid)" },
         { "id" : "f19", "to" : "f1", "label" : {
             "name" : "No",
             "segment" : 0.27,
@@ -511,7 +583,11 @@
           "name" : "Charge for ticket",
           "config" : {
             "task" : {
-              "name" : "Charge for ticket"
+              "name" : "Charge for ticket",
+              "code" : [
+                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S60-f1\");"
+              ]
             }
           },
           "visual" : {
@@ -526,6 +602,12 @@
           "config" : {
             "dialogId" : "com.axonivy.utils.bpmnstatistic.demo.ChargeForTickets",
             "startMethod" : "start()",
+            "call" : {
+              "code" : [
+                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S60-f3\");"
+              ]
+            },
             "output" : {
               "map" : {
                 "out" : "in",
@@ -572,7 +654,11 @@
               "responsible" : {
                 "role" : "SYSTEM"
               },
-              "skipTasklist" : true
+              "skipTasklist" : true,
+              "code" : [
+                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S40-f1\");"
+              ]
             }
           },
           "visual" : {
