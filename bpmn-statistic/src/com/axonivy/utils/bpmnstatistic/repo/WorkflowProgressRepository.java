@@ -30,25 +30,29 @@ public class WorkflowProgressRepository {
   public List<WorkflowProgress> findByProcessRawPid(String id) {
     List<WorkflowProgress> results = new ArrayList<WorkflowProgress>();
     int count = 0;
+    int querySize;
     do {
       List<WorkflowProgress> currentResult = createSearchQuery().textField("processRawPid").containsAllWords(id)
-          .limit(count, count + DEFAULT_SEARCH_LIMIT).execute().getAll();
+          .limit(count, DEFAULT_SEARCH_LIMIT).execute().getAll();
+      querySize = currentResult.size();
       results.addAll(currentResult);
-      count += results.size();
-    } while (results.size() == DEFAULT_SEARCH_LIMIT);
+      count += querySize;
+    } while (querySize == DEFAULT_SEARCH_LIMIT);
     return results;
   }
 
   public List<WorkflowProgress> findByTargetElementIdAndCaseId(String elementId, Long caseId) {
     List<WorkflowProgress> results = new ArrayList<WorkflowProgress>();
     int count = 0;
+    int querySize;
     do {
       List<WorkflowProgress> currentResult = createSearchQuery().textField("targetElementId")
           .isEqualToIgnoringCase(elementId).and().numberField("caseId").isEqualTo(caseId)
-          .limit(count, count + DEFAULT_SEARCH_LIMIT).execute().getAll();
+          .limit(count, DEFAULT_SEARCH_LIMIT).execute().getAll();
+      querySize = currentResult.size();
       results.addAll(currentResult);
-      count += results.size();
-    } while (results.size() == DEFAULT_SEARCH_LIMIT);
+      count += querySize;
+    } while (querySize == DEFAULT_SEARCH_LIMIT);
     return results;
   }
 
