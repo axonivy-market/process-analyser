@@ -34,8 +34,8 @@ public class WorkflowProgressRepository {
     do {
       List<WorkflowProgress> currentResult = createSearchQuery().textField("processRawPid").containsAllWords(id)
           .limit(count, DEFAULT_SEARCH_LIMIT).execute().getAll();
-      querySize = currentResult.size();
       results.addAll(currentResult);
+      querySize = currentResult.size();
       count += querySize;
     } while (querySize == DEFAULT_SEARCH_LIMIT);
     return results;
@@ -49,8 +49,8 @@ public class WorkflowProgressRepository {
       List<WorkflowProgress> currentResult = createSearchQuery().textField("targetElementId")
           .isEqualToIgnoringCase(elementId).and().numberField("caseId").isEqualTo(caseId)
           .limit(count, DEFAULT_SEARCH_LIMIT).execute().getAll();
-      querySize = currentResult.size();
       results.addAll(currentResult);
+      querySize = currentResult.size();
       count += querySize;
     } while (querySize == DEFAULT_SEARCH_LIMIT);
     return results;
