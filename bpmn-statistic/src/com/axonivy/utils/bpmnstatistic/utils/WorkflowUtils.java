@@ -25,19 +25,16 @@ import ch.ivyteam.ivy.workflow.IWorkflowProcessModelVersion;
 public class WorkflowUtils {
   private static final WorkflowProgressRepository repo = WorkflowProgressRepository.getInstance();
   private static final int MILISECOND_IN_SECOND = 1000;
-  private static long currentCaseId;
-  private static ProcessElement targetElement;
-  private static String processRawPid;
 
   public static void updateWorkflowInfo(String elementId) {
-    processRawPid = elementId.split(ProcessMonitorConstants.HYPHEN_SIGN)[0];
-    currentCaseId = getCurrentCaseId();
+    String processRawPid = elementId.split(ProcessMonitorConstants.HYPHEN_SIGN)[0];
+    long currentCaseId = getCurrentCaseId();
     IWorkflowProcessModelVersion pmv = getCurrentTask().getProcessModelVersion();
-    targetElement = getProcessElementFromPmvAndPid(pmv).stream()
+    ProcessElement targetElement = getProcessElementFromPmvAndPid(pmv, processRawPid).stream()
         .filter(element -> element.getPid().toString().equalsIgnoreCase(elementId)).findAny().orElse(null);
     if (Objects.nonNull(targetElement)) {
-      updateExistingWorkflowInfoForElementWithDefinedStartElementId(elementId);
-      initiateWorkflowProgressFromCurrentElement();
+      updateExistingWorkflowInfoForElementWithDefinedStartElementId(elementId, currentCaseId);
+      initiateWorkflowProgressFromCurrentElement(targetElement, currentCaseId, processRawPid);
     }
   }
 
@@ -53,13 +50,15 @@ public class WorkflowUtils {
     });
   }
 
-  private static List<ProcessElement> getProcessElementFromPmvAndPid(IWorkflowProcessModelVersion pmv) {
+  private static List<ProcessElement> getProcessElementFromPmvAndPid(IWorkflowProcessModelVersion pmv,
+      String processRawPid) {
     IProjectProcessManager manager = IProcessManager.instance().getProjectDataModelFor(pmv);
     Process process = manager.findProcess(processRawPid, true).getModel();
     return process.getProcessElements();
   }
 
-  private static void updateExistingWorkflowInfoForElementWithDefinedStartElementId(String elementId) {
+  private static void updateExistingWorkflowInfoForElementWithDefinedStartElementId(String elementId,
+      long currentCaseId) {
     elementId = getElementRawId(elementId);
     List<WorkflowProgress> oldArrows = getprocessedProcessedFlow(elementId, currentCaseId);
     if (CollectionUtils.isEmpty(oldArrows)) {
@@ -93,7 +92,8 @@ public class WorkflowUtils {
     repo.save(flow);
   }
 
-  private static void initiateWorkflowProgressFromCurrentElement() {
+  private static void initiateWorkflowProgressFromCurrentElement(ProcessElement targetElement, long currentCaseId,
+      String processRawPid) {
     targetElement.getOutgoing().stream().forEach(flow -> {
       WorkflowProgress progress = new WorkflowProgress(processRawPid, getElementRawId(flow.getPid().toString()),
           getElementRawId(targetElement.getPid().toString()), getElementRawId(flow.getTarget().getPid().toString()),
