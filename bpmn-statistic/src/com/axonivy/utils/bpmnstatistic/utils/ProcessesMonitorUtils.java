@@ -137,8 +137,8 @@ public class ProcessesMonitorUtils {
     if (Objects.nonNull(progress.getDuration())) {
       arrow.setMedianDuration(
           ((arrow.getMedianDuration() * currentFrequency) + progress.getDuration()) / (currentFrequency + 1));
+      arrow.setFrequency(arrow.getFrequency() + 1);
     }
-    arrow.setFrequency(arrow.getFrequency() + 1);
     return maxFrequency = maxFrequency < currentFrequency + 1 ? currentFrequency + 1 : maxFrequency;
   }
 }
