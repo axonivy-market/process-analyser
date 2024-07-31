@@ -13,6 +13,9 @@ public class WorkflowProgress implements Serializable {
   private Date endTimeStamp;
   private Long duration;
   private Long caseId;
+  private String condition;
+  private boolean isFromAlternativeOrigin;
+  private boolean isConditionTrue;
 
   public WorkflowProgress(String processRawPid, String arrowId, String originElementId, String targetElementId,
       Long caseId) {
@@ -96,5 +99,29 @@ public class WorkflowProgress implements Serializable {
     return "WorkflowProgress [processRawPid=" + processRawPid + ", arrowId=" + arrowId + ", originElementId="
         + originElementId + ", targetElementId=" + targetElementId + ", startTimeStamp=" + startTimeStamp
         + ", endTimeStamp=" + endTimeStamp + ", duration=" + duration + ", caseId=" + caseId + "]";
+  }
+
+  public String getCondition() {
+    return condition;
+  }
+
+  public void setCondition(String condition) {
+    this.condition = condition;
+  }
+
+  public boolean isFromAlternativeOrigin() {
+    return isFromAlternativeOrigin;
+  }
+
+  public void setFromAlternativeOrigin(boolean isFromAlternativeOrigin) {
+    this.isFromAlternativeOrigin = isFromAlternativeOrigin;
+  }
+
+  public boolean isConditionTrue() {
+    return isConditionTrue;
+  }
+
+  public void setConditionTrue(boolean isConditionTrue) {
+    this.isConditionTrue = isConditionTrue;
   }
 }

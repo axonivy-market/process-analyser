@@ -27,6 +27,14 @@ public class WorkflowProgressRepository {
     Ivy.repo().save(progress);
   }
 
+  public void delete(WorkflowProgress progress) {
+    Ivy.repo().delete(progress);
+  }
+
+  public void save(List<WorkflowProgress> progresses) {
+    progresses.stream().forEach(progress -> save(progress));
+  }
+
   public List<WorkflowProgress> findByProcessRawPid(String id) {
     List<WorkflowProgress> results = new ArrayList<WorkflowProgress>();
     int count = 0;

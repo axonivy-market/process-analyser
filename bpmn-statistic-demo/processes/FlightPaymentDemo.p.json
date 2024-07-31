@@ -123,7 +123,7 @@
         { "id" : "f8", "to" : "f7", "label" : {
             "name" : "no",
             "offset" : { "x" : 1, "y" : -10 }
-          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(\"190A58A4E3D99BAD-f11\", true)" },
+          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(\"190A58A4E3D99BAD-f11\", true,\"abc\")" },
         { "id" : "f13", "to" : "f9", "via" : [ { "x" : 520, "y" : 272 }, { "x" : 800, "y" : 272 } ], "label" : {
             "name" : "yes",
             "segment" : 1.52,

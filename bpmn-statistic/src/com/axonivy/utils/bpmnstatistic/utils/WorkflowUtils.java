@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.utils.bpmnstatistic.bo.WorkflowProgress;
 import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
@@ -17,6 +19,7 @@ import ch.ivyteam.ivy.process.IProcessManager;
 import ch.ivyteam.ivy.process.IProjectProcessManager;
 import ch.ivyteam.ivy.process.model.Process;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
+import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
 import ch.ivyteam.ivy.security.exec.Sudo;
 import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.IWorkflowProcessModelVersion;
@@ -29,16 +32,60 @@ public class WorkflowUtils {
   private static ProcessElement targetElement;
   private static String processRawPid;
 
-  public static void updateWorkflowInfo(String elementId) {
-    processRawPid = elementId.split(ProcessMonitorConstants.HYPHEN_SIGN)[0];
-    currentCaseId = getCurrentCaseId();
+  private static void updateWorkflowInfo(String fromElementPid, Boolean conditionIsTrue, String toElementPid) {
+    Long currentCaseId = getCurrentCaseId();
+    String processRawPid = fromElementPid.split(ProcessMonitorConstants.HYPHEN_SIGN)[0];
     IWorkflowProcessModelVersion pmv = getCurrentTask().getProcessModelVersion();
-    targetElement = getProcessElementFromPmvAndPid(pmv).stream()
-        .filter(element -> element.getPid().toString().equalsIgnoreCase(elementId)).findAny().orElse(null);
-    if (Objects.nonNull(targetElement)) {
-      updateExistingWorkflowInfoForElementWithDefinedStartElementId(elementId);
-      initiateWorkflowProgressFromCurrentElement();
+    ProcessElement targetElement = getProcessElementFromPmvAndPid(pmv, processRawPid).stream()
+        .filter(element -> element.getPid().toString().equalsIgnoreCase(fromElementPid)).findAny().orElse(null);
+    if (Objects.isNull(targetElement)) {
+      return;
     }
+    updateIncomingWorkflowInfoForElement(fromElementPid, currentCaseId);
+
+    // Initiate default outgoing from process
+    List<WorkflowProgress> outGoingWorkFlowProgress = initiateOutGoingWorkflowProgress(targetElement, currentCaseId,
+        processRawPid);
+    if (targetElement instanceof Alternative) {
+
+      // Looking for workflow record which is non-failed
+      List<WorkflowProgress> persit = repo
+          .findByTargetElementIdAndCaseId(getElementRawId(targetElement.getPid().toString()), currentCaseId);
+      if (CollectionUtils.isEmpty(persit)) {
+        // Keep non-failed flow only
+        handleNewAlternativeWorkFlow(conditionIsTrue, toElementPid, outGoingWorkFlowProgress);
+      } else {
+        // Not save default outgoing from process if db have non-failed condition flow
+        outGoingWorkFlowProgress = new ArrayList<WorkflowProgress>();
+        updateRecoredWorkflow(conditionIsTrue, toElementPid, persit);
+      }
+    }
+    if (CollectionUtils.isNotEmpty(outGoingWorkFlowProgress)) {
+      repo.save(outGoingWorkFlowProgress);
+    }
+  }
+
+  private static void handleNewAlternativeWorkFlow(Boolean conditionIsTrue, String toElementPid,
+      List<WorkflowProgress> outGoingWorkFlowProgress) {
+    if (conditionIsTrue) {
+      outGoingWorkFlowProgress = List.of(outGoingWorkFlowProgress.stream()
+          .filter(flow -> isWorkFlowProgressWithTargetElementPid(flow, toElementPid)).findAny().orElse(null));
+    } else {
+      outGoingWorkFlowProgress.removeIf(flow -> isWorkFlowProgressWithTargetElementPid(flow, toElementPid));
+    }
+  }
+
+  private static void updateRecoredWorkflow(Boolean conditionIsTrue, String toElementPid,
+      List<WorkflowProgress> persit) {
+    if (conditionIsTrue) {
+      persit.stream().filter(flow -> !isWorkFlowProgressWithTargetElementPid(flow, toElementPid)).forEach(repo::delete);
+    } else {
+      persit.stream().filter(flow -> isWorkFlowProgressWithTargetElementPid(flow, toElementPid)).forEach(repo::delete);
+    }
+  }
+
+  public static void updateWorkflowInfo(String elementId) {
+    updateWorkflowInfo(elementId, null, null);
   }
 
   private static long getCurrentCaseId() {
@@ -59,9 +106,9 @@ public class WorkflowUtils {
     return process.getProcessElements();
   }
 
-  private static void updateExistingWorkflowInfoForElementWithDefinedStartElementId(String elementId) {
+  private static void updateIncomingWorkflowInfoForElement(String elementId, Long caseId) {
     elementId = getElementRawId(elementId);
-    List<WorkflowProgress> oldArrows = getprocessedProcessedFlow(elementId, currentCaseId);
+    List<WorkflowProgress> oldArrows = getprocessedProcessedFlow(elementId, caseId);
     if (CollectionUtils.isEmpty(oldArrows)) {
       return;
     }
@@ -93,13 +140,21 @@ public class WorkflowUtils {
     repo.save(flow);
   }
 
-  private static void initiateWorkflowProgressFromCurrentElement() {
+  private static List<WorkflowProgress> initiateOutGoingWorkflowProgress(ProcessElement targetElement,
+      long currentCaseId, String processRawPid) {
+    List<WorkflowProgress> results = new ArrayList<>();
     targetElement.getOutgoing().stream().forEach(flow -> {
-      WorkflowProgress progress = new WorkflowProgress(processRawPid, getElementRawId(flow.getPid().toString()),
-          getElementRawId(targetElement.getPid().toString()), getElementRawId(flow.getTarget().getPid().toString()),
-          currentCaseId);
-      repo.save(progress);
+      WorkflowProgress progress = new WorkflowProgress();
+      progress.setProcessRawPid(processRawPid);
+      progress.setArrowId(getElementRawId(flow.getPid().toString()));
+      progress.setOriginElementId(getElementRawId(targetElement.getPid().toString()));
+      progress.setTargetElementId(getElementRawId(flow.getTarget().getPid().toString()));
+      progress.setCaseId(currentCaseId);
+      progress.setFromAlternativeOrigin(targetElement instanceof Alternative);
+      progress.setCondition(flow.getCondition());
+      results.add(progress);
     });
+    return results;
   }
 
   private static String getElementRawId(String elementid) {
@@ -110,8 +165,28 @@ public class WorkflowUtils {
     return elementid.substring(firstHyphen + 1);
   }
 
-  public static Boolean isWorkflowInfoUpdatedByPidAndAdditionalCondition(String pid, Boolean condition) {
-    updateWorkflowInfo(pid);
+  public static Boolean isWorkflowInfoUpdatedByPidAndAdditionalCondition(String fromElementPid, Boolean condition,
+      String toElementPid) {
+    updateWorkflowInfo(fromElementPid, condition, toElementPid);
     return condition;
+  }
+
+  private static boolean isWorkFlowProgressWithTargetElementPid(WorkflowProgress flow, String toElementPid) {
+    String extractedTargetElementPid = StringUtils.isBlank(flow.getCondition()) ? StringUtils.EMPTY
+        : extractLastQuotedContents(flow.getCondition());
+    return StringUtils.equals(extractedTargetElementPid, toElementPid);
+  }
+
+  public static String extractLastQuotedContents(String input) {
+    String regex = "\"([^\"]*)\"";
+    Pattern pattern = Pattern.compile(regex);
+    Matcher matcher = pattern.matcher(input);
+
+    List<String> contents = new ArrayList<>();
+
+    while (matcher.find()) {
+      contents.add(matcher.group(1));
+    }
+    return contents.size() == 0 ? StringUtils.EMPTY : contents.get(contents.size() - 1);
   }
 }
