@@ -28,9 +28,6 @@ import ch.ivyteam.ivy.workflow.IWorkflowProcessModelVersion;
 public class WorkflowUtils {
   private static final WorkflowProgressRepository repo = WorkflowProgressRepository.getInstance();
   private static final int MILISECOND_IN_SECOND = 1000;
-  private static long currentCaseId;
-  private static ProcessElement targetElement;
-  private static String processRawPid;
 
   private static void updateWorkflowInfo(String fromElementPid, Boolean conditionIsTrue, String toElementPid) {
     Long currentCaseId = getCurrentCaseId();
@@ -100,7 +97,8 @@ public class WorkflowUtils {
     });
   }
 
-  private static List<ProcessElement> getProcessElementFromPmvAndPid(IWorkflowProcessModelVersion pmv) {
+  private static List<ProcessElement> getProcessElementFromPmvAndPid(IWorkflowProcessModelVersion pmv,
+      String processRawPid) {
     IProjectProcessManager manager = IProcessManager.instance().getProjectDataModelFor(pmv);
     Process process = manager.findProcess(processRawPid, true).getModel();
     return process.getProcessElements();
