@@ -42,6 +42,10 @@ public class ProcessesMonitorBean {
         selectedPid = process.pid().getParent().toString();
         selectedProcessDiagramUrl = ProcessViewer.of(process).url().toWebLink().getAbsolute();
         arrows = ProcessesMonitorUtils.getStatisticData(getSelectedIProcessWebStartable());
+        for (Arrow arrow : arrows) {
+          arrow.setMedianDuration(Math.floor(arrow.getMedianDuration() * 100) / 100);
+          arrow.setRatio((float) (Math.floor(arrow.getRatio() * 100) / 100));
+        }
       });
     }
   }
