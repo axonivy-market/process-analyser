@@ -5,6 +5,39 @@
     "data" : "com.axonivy.utils.bpmnstatistic.demo.Data"
   },
   "elements" : [ {
+      "id" : "S10",
+      "type" : "EmbeddedProcess",
+      "name" : "Sub 1",
+      "elements" : [ {
+          "id" : "S10-f15",
+          "type" : "Script",
+          "visual" : {
+            "at" : { "x" : 192, "y" : 160 }
+          },
+          "connect" : { "id" : "S10-f1", "to" : "S10-g1" }
+        }, {
+          "id" : "S10-g0",
+          "type" : "EmbeddedStart",
+          "name" : "in 1",
+          "visual" : {
+            "at" : { "x" : 64, "y" : 160 }
+          },
+          "parentConnector" : "f19",
+          "connect" : { "id" : "S10-f0", "to" : "S10-f15" }
+        }, {
+          "id" : "S10-g1",
+          "type" : "EmbeddedEnd",
+          "name" : "out 1",
+          "visual" : {
+            "at" : { "x" : 320, "y" : 160 }
+          },
+          "parentConnector" : "f20"
+        } ],
+      "visual" : {
+        "at" : { "x" : 272, "y" : 544 }
+      },
+      "connect" : { "id" : "f20", "to" : "f17" }
+    }, {
       "id" : "f0",
       "type" : "RequestStart",
       "name" : "flightPayment.ivp",
@@ -132,13 +165,38 @@
         { "id" : "f8", "to" : "f7", "label" : {
             "name" : "no",
             "offset" : { "x" : 1, "y" : -10 }
-          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(\"190A58A4E3D99BAD-f11\", true,\"190A58A4E3D99BAD-f7\")" },
+          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(\"190A58A4E3D99BAD-f11\", false,\"190A58A4E3D99BAD-f7\")" },
         { "id" : "f13", "to" : "f9", "via" : [ { "x" : 624, "y" : 272 }, { "x" : 872, "y" : 272 } ], "label" : {
             "name" : "yes",
             "segment" : 1.52,
             "offset" : { "x" : -9, "y" : 14 }
           } }
       ]
+    }, {
+      "id" : "f14",
+      "type" : "RequestStart",
+      "name" : "start.ivp",
+      "config" : {
+        "callSignature" : "start",
+        "outLink" : "start.ivp",
+        "input" : {
+          "code" : [
+            "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
+            "WorkflowUtils.updateWorkflowInfo(\"190A58A4E3D99BAD-f14\");"
+          ]
+        },
+        "case" : { }
+      },
+      "visual" : {
+        "at" : { "x" : 80, "y" : 544 }
+      },
+      "connect" : { "id" : "f19", "to" : "S10" }
+    }, {
+      "id" : "f17",
+      "type" : "TaskEnd",
+      "visual" : {
+        "at" : { "x" : 464, "y" : 544 }
+      }
     } ],
   "layout" : {
     "lanes" : [ {

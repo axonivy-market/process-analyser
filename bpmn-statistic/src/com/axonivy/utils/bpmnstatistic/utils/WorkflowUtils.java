@@ -18,7 +18,9 @@ import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.IProcessManager;
 import ch.ivyteam.ivy.process.IProjectProcessManager;
 import ch.ivyteam.ivy.process.model.Process;
+import ch.ivyteam.ivy.process.model.element.EmbeddedProcessElement;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
+import ch.ivyteam.ivy.process.model.element.event.start.EmbeddedStart;
 import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
 import ch.ivyteam.ivy.security.exec.Sudo;
 import ch.ivyteam.ivy.workflow.ITask;
@@ -46,23 +48,30 @@ public class WorkflowUtils {
 
     if (targetElement instanceof Alternative) {
 
-      // Looking for workflow record which is non-failed
-      List<WorkflowProgress> persit = repo
-          .findByInprogressAlternativeIdAndCaseId(getElementRawId(targetElement.getPid().toString()), currentCaseId);
-
-      if (CollectionUtils.isEmpty(persit)) {
-
-        // Keep non-failed flow only
-        handleNewAlternativeWorkFlow(conditionIsTrue, toElementPid, outGoingWorkFlowProgress);
-      } else {
-        // Not save default outgoing from process if db have non-failed condition flow
-        outGoingWorkFlowProgress = new ArrayList<WorkflowProgress>();
-        updateRecoredWorkflow(conditionIsTrue, toElementPid, persit);
-      }
+      outGoingWorkFlowProgress = handleOutGoingWorkFlowForAlternative(conditionIsTrue, toElementPid, targetElement,
+          outGoingWorkFlowProgress);
     }
     if (CollectionUtils.isNotEmpty(outGoingWorkFlowProgress)) {
       repo.save(outGoingWorkFlowProgress);
     }
+  }
+
+  private static List<WorkflowProgress> handleOutGoingWorkFlowForAlternative(Boolean conditionIsTrue,
+      String toElementPid, ProcessElement targetElement, List<WorkflowProgress> outGoingWorkFlowProgress) {
+    // Looking for workflow record which is non-failed
+    List<WorkflowProgress> persit = repo
+        .findByInprogressAlternativeIdAndCaseId(getElementRawId(targetElement.getPid().toString()), getCurrentCaseId());
+
+    if (CollectionUtils.isEmpty(persit)) {
+
+      // Keep non-failed flow only
+      handleNewAlternativeWorkFlow(conditionIsTrue, toElementPid, outGoingWorkFlowProgress);
+    } else {
+      // Not save default outgoing from process if db have non-failed condition flow
+      outGoingWorkFlowProgress = new ArrayList<WorkflowProgress>();
+      updateRecoredWorkflow(conditionIsTrue, toElementPid, persit);
+    }
+    return outGoingWorkFlowProgress;
   }
 
   private static List<WorkflowProgress> handleNewAlternativeWorkFlow(Boolean conditionIsTrue, String toElementPid,
@@ -160,7 +169,21 @@ public class WorkflowUtils {
       progress.setCondition(flow.getCondition());
       progress.setStartTimeStamp(new Date());
       results.add(progress);
-      Ivy.log().warn("initiateOutGoingWorkflowProgress: " + progress.isFromInProgessAlternativeOrigin());
+      var y = flow.getEmbeddedTarget().orElse(null);
+      Ivy.log().warn("initiateOutGoingWorkflowProgress: " + y.getConnectedOuterProcessElement());
+      Ivy.log().warn("initiateOutGoingWorkflowProgress: " + y.getConnectedOuterSequenceFlow().getPid());
+      Ivy.log().warn("initiateOutGoingWorkflowProgress: " + y.getConnectedOuterSequenceFlow().getTarget());
+      EmbeddedProcessElement x = (EmbeddedProcessElement) y.getConnectedOuterSequenceFlow().getTarget();
+//      x.getEmbeddedProcess().g().forEach(z -> Ivy.log().fatal(z.getPid()));
+      x.getEmbeddedProcess().getProcessElements().forEach(z -> {
+        if (z instanceof EmbeddedStart) {
+          Ivy.log().fatal("found roif" + z.getPid());
+          EmbeddedStart k = (EmbeddedStart) z;
+          Ivy.log().fatal(k.getConnectedOuterProcessElement());
+          Ivy.log().fatal(k.getConnectedOuterSequenceFlow().getPid());
+        }
+      });
+
     });
     return results;
   }
