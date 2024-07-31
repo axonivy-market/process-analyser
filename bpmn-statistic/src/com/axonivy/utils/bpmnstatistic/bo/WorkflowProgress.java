@@ -14,7 +14,7 @@ public class WorkflowProgress implements Serializable {
   private Long duration;
   private Long caseId;
   private String condition;
-  private boolean isFromAlternativeOrigin;
+  private boolean isFromInProgessAlternativeOrigin;
   private boolean isConditionTrue;
 
   public WorkflowProgress(String processRawPid, String arrowId, String originElementId, String targetElementId,
@@ -98,7 +98,9 @@ public class WorkflowProgress implements Serializable {
   public String toString() {
     return "WorkflowProgress [processRawPid=" + processRawPid + ", arrowId=" + arrowId + ", originElementId="
         + originElementId + ", targetElementId=" + targetElementId + ", startTimeStamp=" + startTimeStamp
-        + ", endTimeStamp=" + endTimeStamp + ", duration=" + duration + ", caseId=" + caseId + "]";
+        + ", endTimeStamp=" + endTimeStamp + ", duration=" + duration + ", caseId=" + caseId + ", condition="
+        + condition + ", isFromInProgessAlternativeOrigin=" + isFromInProgessAlternativeOrigin + ", isConditionTrue="
+        + isConditionTrue + "]";
   }
 
   public String getCondition() {
@@ -109,19 +111,19 @@ public class WorkflowProgress implements Serializable {
     this.condition = condition;
   }
 
-  public boolean isFromAlternativeOrigin() {
-    return isFromAlternativeOrigin;
-  }
-
-  public void setFromAlternativeOrigin(boolean isFromAlternativeOrigin) {
-    this.isFromAlternativeOrigin = isFromAlternativeOrigin;
-  }
-
   public boolean isConditionTrue() {
     return isConditionTrue;
   }
 
   public void setConditionTrue(boolean isConditionTrue) {
     this.isConditionTrue = isConditionTrue;
+  }
+
+  public boolean isFromInProgessAlternativeOrigin() {
+    return isFromInProgessAlternativeOrigin;
+  }
+
+  public void setFromInProgessAlternativeOrigin(boolean isFromInProgessAlternativeOrigin) {
+    this.isFromInProgessAlternativeOrigin = isFromInProgessAlternativeOrigin;
   }
 }

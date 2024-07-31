@@ -43,12 +43,15 @@ public class WorkflowUtils {
     // Initiate default outgoing from process
     List<WorkflowProgress> outGoingWorkFlowProgress = initiateOutGoingWorkflowProgress(targetElement, currentCaseId,
         processRawPid);
+
     if (targetElement instanceof Alternative) {
 
       // Looking for workflow record which is non-failed
       List<WorkflowProgress> persit = repo
-          .findByTargetElementIdAndCaseId(getElementRawId(targetElement.getPid().toString()), currentCaseId);
+          .findByInprogressAlternativeIdAndCaseId(getElementRawId(targetElement.getPid().toString()), currentCaseId);
+
       if (CollectionUtils.isEmpty(persit)) {
+
         // Keep non-failed flow only
         handleNewAlternativeWorkFlow(conditionIsTrue, toElementPid, outGoingWorkFlowProgress);
       } else {
@@ -62,18 +65,20 @@ public class WorkflowUtils {
     }
   }
 
-  private static void handleNewAlternativeWorkFlow(Boolean conditionIsTrue, String toElementPid,
+  private static List<WorkflowProgress> handleNewAlternativeWorkFlow(Boolean conditionIsTrue, String toElementPid,
       List<WorkflowProgress> outGoingWorkFlowProgress) {
     if (conditionIsTrue) {
-      outGoingWorkFlowProgress = List.of(outGoingWorkFlowProgress.stream()
-          .filter(flow -> isWorkFlowProgressWithTargetElementPid(flow, toElementPid)).findAny().orElse(null));
+      outGoingWorkFlowProgress.removeIf(flow -> !isWorkFlowProgressWithTargetElementPid(flow, toElementPid));
+
     } else {
       outGoingWorkFlowProgress.removeIf(flow -> isWorkFlowProgressWithTargetElementPid(flow, toElementPid));
     }
+    return outGoingWorkFlowProgress;
   }
 
   private static void updateRecoredWorkflow(Boolean conditionIsTrue, String toElementPid,
       List<WorkflowProgress> persit) {
+
     if (conditionIsTrue) {
       persit.stream().filter(flow -> !isWorkFlowProgressWithTargetElementPid(flow, toElementPid)).forEach(repo::delete);
     } else {
@@ -133,6 +138,9 @@ public class WorkflowUtils {
   }
 
   private static void updateWorkflowProgress(WorkflowProgress flow) {
+    if (flow.isFromInProgessAlternativeOrigin()) {
+      flow.setFromInProgessAlternativeOrigin(false);
+    }
     flow.setEndTimeStamp(new Date());
     flow.setDuration((flow.getEndTimeStamp().getTime() - flow.getStartTimeStamp().getTime()) / MILISECOND_IN_SECOND);
     repo.save(flow);
@@ -148,9 +156,11 @@ public class WorkflowUtils {
       progress.setOriginElementId(getElementRawId(targetElement.getPid().toString()));
       progress.setTargetElementId(getElementRawId(flow.getTarget().getPid().toString()));
       progress.setCaseId(currentCaseId);
-      progress.setFromAlternativeOrigin(targetElement instanceof Alternative);
+      progress.setFromInProgessAlternativeOrigin(targetElement instanceof Alternative);
       progress.setCondition(flow.getCondition());
+      progress.setStartTimeStamp(new Date());
       results.add(progress);
+      Ivy.log().warn("initiateOutGoingWorkflowProgress: " + progress.isFromInProgessAlternativeOrigin());
     });
     return results;
   }
