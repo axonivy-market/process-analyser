@@ -1,9 +1,9 @@
 {
   "format" : "10.0.0",
-  "id" : "18F27D5B676791CC",
+  "id" : "1910BF996FDA40A7",
   "kind" : "HTML_DIALOG",
   "config" : {
-    "data" : "com.axonivy.utils.bpmnstatistic.demo.ProcessesMonitor.ProcessesMonitorData"
+    "data" : "com.axonivy.utils.bpmnstatistic.ProcessesMonitor.ProcessesMonitorData"
   },
   "elements" : [ {
       "id" : "f0",
