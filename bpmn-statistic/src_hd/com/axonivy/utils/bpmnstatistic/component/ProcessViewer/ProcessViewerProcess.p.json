@@ -3,7 +3,7 @@
   "id" : "18F769D1B2B699A8",
   "kind" : "HTML_DIALOG",
   "config" : {
-    "data" : "com.axonivy.utils.bpmnstatistic.ProcessViewer.ProcessViewerData"
+    "data" : "com.axonivy.utils.bpmnstatistic.component.ProcessViewer.ProcessViewerData"
   },
   "elements" : [ {
       "id" : "f0",
