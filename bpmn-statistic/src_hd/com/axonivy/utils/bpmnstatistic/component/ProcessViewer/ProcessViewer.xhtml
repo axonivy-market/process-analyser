@@ -16,7 +16,7 @@
       src="#{cc.attrs.srcUrl}" onload="loadIframe(false)" />
     <div class="command-btns p-mt-4">
       <p:commandButton id="show-statistic-btn" actionListener="#{cc.attrs.actionListener}" value="#{cc.attrs.btnLabel}"
-        icon="pi pi-check" />
+        icon="pi pi-check" disabled="#{empty cc.attrs.srcUrl}"/>
     </div>
   </h:panelGroup>
 </cc:implementation>
