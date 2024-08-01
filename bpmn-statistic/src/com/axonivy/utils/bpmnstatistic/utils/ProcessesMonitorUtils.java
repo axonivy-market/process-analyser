@@ -30,6 +30,9 @@ import ch.ivyteam.ivy.workflow.start.IWebStartable;
 
 @SuppressWarnings("restriction")
 public class ProcessesMonitorUtils {
+
+  public static final String BPMN_STATISTIC_PMV ="bpmn-statistic";
+
   private static final WorkflowProgressRepository repo = WorkflowProgressRepository.getInstance();
   private static int maxFrequency = 0;
 
@@ -38,6 +41,7 @@ public class ProcessesMonitorUtils {
 
   public static List<IWebStartable> getAllProcesses() {
     return Ivy.session().getStartables().stream().filter(process -> isNotPortalHomeAndMSTeamsProcess(process))
+        .filter(process -> !process.pmv().getName().equals(BPMN_STATISTIC_PMV))
         .collect(Collectors.toList());
   }
 

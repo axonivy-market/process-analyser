@@ -36,7 +36,16 @@ public class ProcessesMonitorBean {
     processesMap = ProcessesMonitorUtils.getProcessesWithPmv();
   }
 
-  public void onChangeSelectedProcessName() {
+  public void onChangeSelectedModule() {
+    if (StringUtils.isBlank(selectedModuleName)) {
+      selectedModuleName = null;
+      selectedProcessName = null;
+      arrows = null;
+      selectedProcessDiagramUrl = null;
+    }
+  }
+
+  public void onChangeSelectedProcess() {
     if (StringUtils.isNotBlank(selectedProcessName) && StringUtils.isNotBlank(selectedModuleName)) {
       Optional.ofNullable(getSelectedIProcessWebStartable()).ifPresent(process -> {
         selectedPid = process.pid().getParent().toString();
