@@ -6,7 +6,6 @@ import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
 
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.model.BaseElement;
-import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.security.exec.Sudo;
 import ch.ivyteam.ivy.workflow.ITask;
 
@@ -17,9 +16,10 @@ public class ProcessUtils {
     return targetElementId.split(ProcessMonitorConstants.HYPHEN_SIGN)[0];
   }
 
-  public static String getProcessRawPidFromElement(ProcessElement targetElement) {
+  public static String getProcessRawPidFromElement(BaseElement targetElement) {
     return getProcessRawPidFromElement(targetElement.getPid().toString());
   }
+
 
   public static String getElementRawPid(String elementid) {
     if (StringUtils.isBlank(elementid)) {

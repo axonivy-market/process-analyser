@@ -106,8 +106,6 @@ public class WorkflowUtils {
     updateWorkflowInfo(elementId, null, null);
   }
 
-
-
   private static List<ProcessElement> getProcessElementsFromPmvAndPid(IWorkflowProcessModelVersion pmv,
       String processRawPid) {
     IProjectProcessManager manager = IProcessManager.instance().getProjectDataModelFor(pmv);
@@ -115,45 +113,51 @@ public class WorkflowUtils {
     return process.getProcessElements();
   }
 
-  private static void updateIncomingWorkflowInfoForElement(Long caseId,
-      ProcessElement targetElement) {
+  private static void updateIncomingWorkflowInfoForElement(Long caseId, ProcessElement targetElement) {
     String elementId = ProcessUtils.getElementRawPid(targetElement);
     List<WorkflowProgress> persistedRecords = getprocessedProcessedFlow(elementId, caseId);
     if (CollectionUtils.isEmpty(persistedRecords)) {
-      List<SequenceFlow> incomingFlow = targetElement.getIncoming();
-      if (targetElement.getParent() instanceof EmbeddedProcessElement) {
-        incomingFlow.stream().forEach(flow -> persistedRecords.addAll(handleFlowFromEmbeddedElement(flow, caseId)));
-      } else {
-        SequenceFlow flowFromEmbedded = incomingFlow.stream()
-            .filter(flow -> flow.getSource() instanceof EmbeddedProcessElement).findAny().orElse(null);
-        if (!Objects.isNull(flowFromEmbedded)) {
-          NodeElement embeddedNode = flowFromEmbedded.getSource();
-          EmbeddedEnd targetEmbeddedEnds = (EmbeddedEnd) ((EmbeddedProcessElement) embeddedNode).getEmbeddedProcess()
-              .getProcessElements().stream().filter(k -> k instanceof EmbeddedEnd).map(u -> (EmbeddedEnd) u)
-              .filter(z -> z.getConnectedOuterProcessElement().getPid().toString()
-                  .equals(targetElement.getPid().toString()))
-              .findAny().orElse(null);
-          if (targetEmbeddedEnds != null) {
-            persistedRecords.addAll(
-                repo.findByInprogessArrowIdAndCaseId(ProcessUtils.getElementRawPid(targetEmbeddedEnds), caseId));
-            WorkflowProgress workflowFromUnupdateEmbeddedStart = new WorkflowProgress();
-            workflowFromUnupdateEmbeddedStart
-                .setProcessRawPid(targetElement.getPid().toString().split(ProcessMonitorConstants.HYPHEN_SIGN)[0]);
-            workflowFromUnupdateEmbeddedStart.setArrowId(ProcessUtils.getElementRawPid(flowFromEmbedded));
-            workflowFromUnupdateEmbeddedStart.setOriginElementId(ProcessUtils.getElementRawPid(embeddedNode));
-            workflowFromUnupdateEmbeddedStart.setTargetElementId(ProcessUtils.getElementRawPid(flowFromEmbedded));
-            workflowFromUnupdateEmbeddedStart.setCaseId(ProcessUtils.getCurrentCaseId());
-            workflowFromUnupdateEmbeddedStart.setCondition(flowFromEmbedded.getCondition());
-            workflowFromUnupdateEmbeddedStart.setStartTimeStamp(new Date());
-            persistedRecords.add(workflowFromUnupdateEmbeddedStart);
-          }
-        }
-      }
+      updateElementWithoutConnectedFlow(caseId, targetElement, persistedRecords);
     }
-
     persistedRecords.stream().forEach(WorkflowUtils::updateWorkflowProgress);
   }
 
+  private static void updateElementWithoutConnectedFlow(Long caseId, ProcessElement targetElement,
+      List<WorkflowProgress> persistedRecords) {
+    List<SequenceFlow> incomingFlow = targetElement.getIncoming();
+    if (targetElement.getParent() instanceof EmbeddedProcessElement) {
+      incomingFlow.stream().forEach(flow -> persistedRecords.addAll(handleFlowFromEmbeddedElement(flow, caseId)));
+    } else {
+      SequenceFlow flowFromEmbedded = incomingFlow.stream()
+          .filter(flow -> flow.getSource() instanceof EmbeddedProcessElement).findAny().orElse(null);
+      persistedRecords.addAll(handleFlowOutOfEmbeddedElement(caseId, targetElement, flowFromEmbedded));
+    }
+  }
+
+  private static List<WorkflowProgress> handleFlowOutOfEmbeddedElement(Long caseId, ProcessElement targetElement,
+      SequenceFlow flowFromEmbedded) {
+    List<WorkflowProgress> persistedRecords = new ArrayList<>();
+    if (Objects.isNull(flowFromEmbedded)) {
+      return persistedRecords;
+    }
+    EmbeddedEnd targetEmbeddedEnd = getTargetEmbeddedEnd(targetElement, flowFromEmbedded);
+    Optional.ofNullable(targetEmbeddedEnd).ifPresent(end -> {
+      persistedRecords.addAll(repo.findByInprogessArrowIdAndCaseId(ProcessUtils.getElementRawPid(end), caseId));
+      WorkflowProgress workflowFromUnupdateEmbeddedStart = convertSequenceFlowToWorkFlowProgress(caseId,
+          flowFromEmbedded);
+      persistedRecords.add(workflowFromUnupdateEmbeddedStart);
+    });
+    return persistedRecords;
+  }
+
+  private static EmbeddedEnd getTargetEmbeddedEnd(ProcessElement targetElement, SequenceFlow flowFromEmbedded) {
+    NodeElement embeddedNode = flowFromEmbedded.getSource();
+    EmbeddedEnd targetEmbeddedEnds = (EmbeddedEnd) ((EmbeddedProcessElement) embeddedNode).getEmbeddedProcess()
+        .getProcessElements().stream().filter(k -> k instanceof EmbeddedEnd).map(u -> (EmbeddedEnd) u)
+        .filter(z -> z.getConnectedOuterProcessElement().getPid().toString().equals(targetElement.getPid().toString()))
+        .findAny().orElse(null);
+    return targetEmbeddedEnds;
+  }
 
   private static List<WorkflowProgress> getprocessedProcessedFlow(String elementId, Long caseId) {
     int tries = 0;
@@ -185,25 +189,8 @@ public class WorkflowUtils {
       long currentCaseId, String processRawPid) {
     List<WorkflowProgress> results = new ArrayList<>();
     targetElement.getOutgoing().stream().forEach(flow -> {
-      WorkflowProgress progress = convertSequenceFlowToWorkFlowProgress(targetElement,
-          currentCaseId,
-          flow);
+      WorkflowProgress progress = convertSequenceFlowToWorkFlowProgress(currentCaseId, flow);
       results.add(progress);
-//      var y = flow.getEmbeddedTarget().orElse(null);
-//      Ivy.log().warn("initiateOutGoingWorkflowProgress: " + y.getConnectedOuterProcessElement());
-//      Ivy.log().warn("initiateOutGoingWorkflowProgress: " + y.getConnectedOuterSequenceFlow().getPid());
-//      Ivy.log().warn("initiateOutGoingWorkflowProgress: " + y.getConnectedOuterSequenceFlow().getTarget());
-//      EmbeddedProcessElement x = (EmbeddedProcessElement) y.getConnectedOuterSequenceFlow().getTarget();
-//      x.getEmbeddedProcess().getProcessElements().forEach(z -> {
-//        Ivy.log().error(z);
-//
-//        if (z instanceof EmbeddedStart) {
-//          Ivy.log().fatal("found roif" + z.getPid());
-//          EmbeddedStart k = (EmbeddedStart) z;
-//          Ivy.log().fatal(k.getConnectedOuterProcessElement());
-//          Ivy.log().fatal(k.getConnectedOuterSequenceFlow().getPid());
-//        }
-//      });
     });
     return results;
   }
@@ -217,29 +204,19 @@ public class WorkflowUtils {
       List<WorkflowProgress> persistArrow = repo
           .findByInprogessArrowIdAndCaseId(ProcessUtils.getElementRawPid(correspondingFlowIdFromOutside), caseId);
       if (CollectionUtils.isNotEmpty(persistArrow)) {
-        WorkflowProgress workflowFromUnupdateEmbeddedStart = new WorkflowProgress();
-        workflowFromUnupdateEmbeddedStart
-            .setProcessRawPid(correspondingFlowIdFromOutside.split(ProcessMonitorConstants.HYPHEN_SIGN)[0]);
-        workflowFromUnupdateEmbeddedStart.setArrowId(ProcessUtils.getElementRawPid(flow));
-        workflowFromUnupdateEmbeddedStart.setOriginElementId(ProcessUtils.getElementRawPid(embeddedStart));
-        workflowFromUnupdateEmbeddedStart.setTargetElementId(ProcessUtils.getElementRawPid(flow.getTarget()));
-        workflowFromUnupdateEmbeddedStart.setCaseId(ProcessUtils.getCurrentCaseId());
-        workflowFromUnupdateEmbeddedStart.setCondition(flow.getCondition());
-        workflowFromUnupdateEmbeddedStart.setStartTimeStamp(new Date());
+        WorkflowProgress workflowFromUnupdateEmbeddedStart = convertSequenceFlowToWorkFlowProgress(caseId, flow);
         persistArrow.add(workflowFromUnupdateEmbeddedStart);
-
         return persistArrow;
       }
     }
     return null;
   }
 
-  private static WorkflowProgress convertSequenceFlowToWorkFlowProgress(ProcessElement targetElement,
-      long currentCaseId, SequenceFlow flow) {
+  private static WorkflowProgress convertSequenceFlowToWorkFlowProgress(long currentCaseId, SequenceFlow flow) {
     WorkflowProgress progress = new WorkflowProgress();
-    progress.setProcessRawPid(ProcessUtils.getProcessRawPidFromElement(targetElement));
+    progress.setProcessRawPid(ProcessUtils.getProcessRawPidFromElement(flow));
     progress.setArrowId(ProcessUtils.getElementRawPid(flow));
-    progress.setOriginElementId(ProcessUtils.getElementRawPid(targetElement));
+    progress.setOriginElementId(ProcessUtils.getElementRawPid(flow.getSource()));
     progress.setTargetElementId(ProcessUtils.getElementRawPid(flow.getTarget()));
     progress.setCaseId(currentCaseId);
     progress.setDurationUpdated(false);
@@ -248,15 +225,11 @@ public class WorkflowUtils {
     return progress;
   }
 
-
-
-
   public static Boolean isWorkflowInfoUpdatedByPidAndAdditionalCondition(String fromElementPid, Boolean condition,
       String toElementPid) {
     updateWorkflowInfo(fromElementPid, condition, toElementPid);
     return condition;
   }
-
 
   private static boolean isWorkFlowProgressWithTargetElementPid(WorkflowProgress flow, String toElementPid) {
     String extractedTargetElementPid = StringUtils.isBlank(flow.getCondition()) ? StringUtils.EMPTY
