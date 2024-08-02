@@ -15,6 +15,7 @@ import com.axonivy.utils.bpmnstatistic.bo.Arrow;
 import com.axonivy.utils.bpmnstatistic.bo.WorkflowProgress;
 import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
 import com.axonivy.utils.bpmnstatistic.enums.IvyVariable;
+import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
 import com.axonivy.utils.bpmnstatistic.repo.WorkflowProgressRepository;
 import com.axonivy.utils.bpmnstatistic.service.IvyTaskOccurrenceService;
 
@@ -107,7 +108,7 @@ public class ProcessesMonitorUtils {
 
   private static Arrow convertSequenceFlowToArrow(SequenceFlow flow) {
     Arrow result = new Arrow();
-    result.setArrowId(flow.getPid().toString().split(ProcessMonitorConstants.HYPHEN_SIGN)[1]);
+    result.setArrowId(ProcessUtils.getElementRawPid(flow));
     result.setLabel(flow.getName());
     result.setFrequency(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     result.setFrequency(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
@@ -123,6 +124,10 @@ public class ProcessesMonitorUtils {
       String processRawPid = processStart.pid().toString().split(ProcessMonitorConstants.HYPHEN_SIGN)[0];
       List<ProcessElement> processElements = getProcessElementFromPmvAndPid(
           (IWorkflowProcessModelVersion) processStart.pmv(), processRawPid);
+      List<ProcessElement> additionalProcessElements = new ArrayList<ProcessElement>();
+      processElements.stream().filter(ProcessUtils::isEmbeddedElementInstance)
+          .forEach(element -> additionalProcessElements.addAll(ProcessUtils.getProcessElementFromSub(element)));
+      processElements.addAll(additionalProcessElements);
       processElements.forEach(element -> results.addAll(convertProcessElementInfoToArrows(element)));
       results.stream().forEach(arrow -> arrowMap.put(arrow.getArrowId(), arrow));
       List<WorkflowProgress> recordedProgresses = repo.findByProcessRawPid(processRawPid);

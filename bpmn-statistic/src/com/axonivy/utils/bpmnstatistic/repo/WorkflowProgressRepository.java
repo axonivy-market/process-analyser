@@ -79,12 +79,29 @@ public class WorkflowProgressRepository {
     return results;
   }
 
+  public List<WorkflowProgress> findByInprogessTargetIdAndCaseId(String targetId, Long caseId) {
+    List<WorkflowProgress> results = new ArrayList<WorkflowProgress>();
+    int count = 0;
+    int querySize;
+    do {
+      List<WorkflowProgress> currentResult = createSearchQuery().textField("targetElementId")
+          .isEqualToIgnoringCase(targetId)
+          .and().numberField("caseId").isEqualTo(caseId).and().booleanField("durationUpdated").isFalse()
+          .limit(count, DEFAULT_SEARCH_LIMIT).execute().getAll();
+      results.addAll(currentResult);
+      querySize = currentResult.size();
+      count += querySize;
+    } while (querySize == DEFAULT_SEARCH_LIMIT);
+    return results;
+  }
+
   public List<WorkflowProgress> findByInprogessArrowIdAndCaseId(String elementId, Long caseId) {
     List<WorkflowProgress> results = new ArrayList<WorkflowProgress>();
     int count = 0;
     int querySize;
     do {
-      List<WorkflowProgress> currentResult = createSearchQuery().textField("arrowId").isEqualToIgnoringCase(elementId)
+      List<WorkflowProgress> currentResult = createSearchQuery().textField("arrowId")
+          .isEqualToIgnoringCase(elementId)
           .and().numberField("caseId").isEqualTo(caseId).and().booleanField("durationUpdated").isFalse()
           .limit(count, DEFAULT_SEARCH_LIMIT).execute().getAll();
       results.addAll(currentResult);

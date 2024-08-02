@@ -1,6 +1,7 @@
 package com.axonivy.utils.bpmnstatistic.utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -14,20 +15,12 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.utils.bpmnstatistic.bo.WorkflowProgress;
 import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
+import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
 import com.axonivy.utils.bpmnstatistic.repo.WorkflowProgressRepository;
 
 import ch.ivyteam.ivy.environment.Ivy;
-import ch.ivyteam.ivy.process.IProcessManager;
-import ch.ivyteam.ivy.process.IProjectProcessManager;
-import ch.ivyteam.ivy.process.model.NodeElement;
-import ch.ivyteam.ivy.process.model.Process;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
-import ch.ivyteam.ivy.process.model.element.EmbeddedProcessElement;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
-import ch.ivyteam.ivy.process.model.element.event.end.EmbeddedEnd;
-import ch.ivyteam.ivy.process.model.element.event.start.EmbeddedStart;
-import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
-import ch.ivyteam.ivy.workflow.IWorkflowProcessModelVersion;
 
 @SuppressWarnings("restriction")
 public class WorkflowUtils {
@@ -37,16 +30,15 @@ public class WorkflowUtils {
   private static void updateWorkflowInfo(String fromElementPid, Boolean conditionIsTrue, String toElementPid) {
     Long currentCaseId = ProcessUtils.getCurrentCaseId();
     String processRawPid = fromElementPid.split(ProcessMonitorConstants.HYPHEN_SIGN)[0];
-    IWorkflowProcessModelVersion pmv = ProcessUtils.getCurrentTask().getProcessModelVersion();
-    List<ProcessElement> processElements = getProcessElementsFromPmvAndPid(pmv, processRawPid);
+    List<ProcessElement> processElements = ProcessUtils.getAllProcessElementFromCurrentTaskAndPid(processRawPid);
     ProcessElement targetElement = isProcessElemenetPidFromSub(fromElementPid)
-        ? findEmbeddedProcessEmlement(fromElementPid, processElements)
-        : findTargetProcessEmlementByRawPid(fromElementPid, processElements);
+        ? ProcessUtils.findEmbeddedProcessEmlement(fromElementPid, processElements)
+        : ProcessUtils.findTargetProcessEmlementByRawPid(fromElementPid, processElements);
     if (Objects.nonNull(targetElement)) {
       updateIncomingWorkflowInfoForElement(currentCaseId, targetElement);
       List<WorkflowProgress> outGoingWorkFlowProgress = initiateOutGoingWorkflowProgress(targetElement, currentCaseId,
           processRawPid);
-      if (targetElement instanceof Alternative) {
+      if (ProcessUtils.isAlternativeInstance(targetElement)) {
         Predicate<WorkflowProgress> predicateByCondition = createPredicateToFilterWorkFlowProgressFromAlternativeFromCondition(
             conditionIsTrue, toElementPid);
         sanitizeWorkFlowProgressForAlternativeElement(predicateByCondition, targetElement, outGoingWorkFlowProgress);
@@ -63,37 +55,16 @@ public class WorkflowUtils {
 
   private static void sanitizeWorkFlowProgressForAlternativeElement(Predicate<WorkflowProgress> predicateByCondition,
       ProcessElement targetElement, List<WorkflowProgress> outGoingWorkFlowProgress) {
-    if (targetElement instanceof Alternative) {
+    if (ProcessUtils.isAlternativeInstance(targetElement)) {
       List<WorkflowProgress> persistedRecords = repo.findByInprogressAlternativeIdAndCaseId(
           ProcessUtils.getElementRawPid(targetElement), ProcessUtils.getCurrentCaseId());
       if (CollectionUtils.isEmpty(persistedRecords)) {
-        // Keep non-failed flow only
         outGoingWorkFlowProgress.removeIf(predicateByCondition);
       } else {
-        // Not save default outgoing from process if db have non-failed condition flow
         outGoingWorkFlowProgress.clear();
         persistedRecords.stream().filter(predicateByCondition).forEach(repo::delete);
       }
     }
-  }
-
-  private static ProcessElement findTargetProcessEmlementByRawPid(String fromElementPid,
-      List<ProcessElement> processElements) {
-    return processElements.stream().filter(element -> element.getPid().toString().equalsIgnoreCase(fromElementPid))
-        .findAny().orElse(null);
-  }
-
-  private static ProcessElement findEmbeddedProcessEmlement(String fromElementPid,
-      List<ProcessElement> processElements) {
-    int lastHyphenIndex = fromElementPid.lastIndexOf(ProcessMonitorConstants.HYPHEN_SIGN);
-    if (lastHyphenIndex == -1) {
-      return null;
-    }
-    String subRawPid = fromElementPid.substring(0, lastHyphenIndex);
-    return Optional.ofNullable((EmbeddedProcessElement) findTargetProcessEmlementByRawPid(subRawPid, processElements))
-        .map(subElement -> findTargetProcessEmlementByRawPid(fromElementPid,
-            subElement.getEmbeddedProcess().getProcessElements()))
-        .orElse(null);
   }
 
   private static Predicate<WorkflowProgress> createPredicateToFilterWorkFlowProgressFromAlternativeFromCondition(
@@ -104,13 +75,6 @@ public class WorkflowUtils {
 
   public static void updateWorkflowInfo(String elementId) {
     updateWorkflowInfo(elementId, null, null);
-  }
-
-  private static List<ProcessElement> getProcessElementsFromPmvAndPid(IWorkflowProcessModelVersion pmv,
-      String processRawPid) {
-    IProjectProcessManager manager = IProcessManager.instance().getProjectDataModelFor(pmv);
-    Process process = manager.findProcess(processRawPid, true).getModel();
-    return process.getProcessElements();
   }
 
   private static void updateIncomingWorkflowInfoForElement(Long caseId, ProcessElement targetElement) {
@@ -125,11 +89,11 @@ public class WorkflowUtils {
   private static void updateElementWithoutConnectedFlow(Long caseId, ProcessElement targetElement,
       List<WorkflowProgress> persistedRecords) {
     List<SequenceFlow> incomingFlow = targetElement.getIncoming();
-    if (targetElement.getParent() instanceof EmbeddedProcessElement) {
+    if (ProcessUtils.isEmbeddedElementInstance(targetElement.getParent())) {
       incomingFlow.stream().forEach(flow -> persistedRecords.addAll(handleFlowFromEmbeddedElement(flow, caseId)));
     } else {
       SequenceFlow flowFromEmbedded = incomingFlow.stream()
-          .filter(flow -> flow.getSource() instanceof EmbeddedProcessElement).findAny().orElse(null);
+          .filter(flow -> ProcessUtils.isEmbeddedElementInstance(flow.getSource())).findAny().orElse(null);
       persistedRecords.addAll(handleFlowOutOfEmbeddedElement(caseId, targetElement, flowFromEmbedded));
     }
   }
@@ -140,23 +104,14 @@ public class WorkflowUtils {
     if (Objects.isNull(flowFromEmbedded)) {
       return persistedRecords;
     }
-    EmbeddedEnd targetEmbeddedEnd = getTargetEmbeddedEnd(targetElement, flowFromEmbedded);
+    var targetEmbeddedEnd = ProcessUtils.getEmbeddedEndFromTargetElementAndOuterFlow(targetElement, flowFromEmbedded);
     Optional.ofNullable(targetEmbeddedEnd).ifPresent(end -> {
-      persistedRecords.addAll(repo.findByInprogessArrowIdAndCaseId(ProcessUtils.getElementRawPid(end), caseId));
+      persistedRecords.addAll(repo.findByInprogessTargetIdAndCaseId(ProcessUtils.getElementRawPid(end), caseId));
       WorkflowProgress workflowFromUnupdateEmbeddedStart = convertSequenceFlowToWorkFlowProgress(caseId,
           flowFromEmbedded);
       persistedRecords.add(workflowFromUnupdateEmbeddedStart);
     });
     return persistedRecords;
-  }
-
-  private static EmbeddedEnd getTargetEmbeddedEnd(ProcessElement targetElement, SequenceFlow flowFromEmbedded) {
-    NodeElement embeddedNode = flowFromEmbedded.getSource();
-    EmbeddedEnd targetEmbeddedEnds = (EmbeddedEnd) ((EmbeddedProcessElement) embeddedNode).getEmbeddedProcess()
-        .getProcessElements().stream().filter(k -> k instanceof EmbeddedEnd).map(u -> (EmbeddedEnd) u)
-        .filter(z -> z.getConnectedOuterProcessElement().getPid().toString().equals(targetElement.getPid().toString()))
-        .findAny().orElse(null);
-    return targetEmbeddedEnds;
   }
 
   private static List<WorkflowProgress> getprocessedProcessedFlow(String elementId, Long caseId) {
@@ -178,7 +133,6 @@ public class WorkflowUtils {
   }
 
   private static void updateWorkflowProgress(WorkflowProgress flow) {
-
     flow.setEndTimeStamp(new Date());
     flow.setDuration((flow.getEndTimeStamp().getTime() - flow.getStartTimeStamp().getTime()) / MILISECOND_IN_SECOND);
     flow.setDurationUpdated(true);
@@ -196,20 +150,15 @@ public class WorkflowUtils {
   }
 
   private static List<WorkflowProgress> handleFlowFromEmbeddedElement(SequenceFlow flow, Long caseId) {
-    NodeElement sourceElement = flow.getSource();
-    if (sourceElement instanceof EmbeddedStart) {
-      EmbeddedStart embeddedStart = (EmbeddedStart) sourceElement;
-      String correspondingFlowIdFromOutside = embeddedStart.getConnectedOuterSequenceFlow().getPid().toString();
-      Ivy.log().fatal(correspondingFlowIdFromOutside);
-      List<WorkflowProgress> persistArrow = repo
-          .findByInprogessArrowIdAndCaseId(ProcessUtils.getElementRawPid(correspondingFlowIdFromOutside), caseId);
-      if (CollectionUtils.isNotEmpty(persistArrow)) {
-        WorkflowProgress workflowFromUnupdateEmbeddedStart = convertSequenceFlowToWorkFlowProgress(caseId, flow);
-        persistArrow.add(workflowFromUnupdateEmbeddedStart);
-        return persistArrow;
-      }
+    String correspondingFlowIdFromOutside = ProcessUtils.getIncomingEmbeddedFlowFromStartFlow(flow);
+    List<WorkflowProgress> persistArrow = repo
+        .findByInprogessArrowIdAndCaseId(ProcessUtils.getElementRawPid(correspondingFlowIdFromOutside), caseId);
+    if (CollectionUtils.isNotEmpty(persistArrow)) {
+      WorkflowProgress workflowFromUnupdateEmbeddedStart = convertSequenceFlowToWorkFlowProgress(caseId, flow);
+      persistArrow.add(workflowFromUnupdateEmbeddedStart);
+      return persistArrow;
     }
-    return null;
+    return Collections.emptyList();
   }
 
   private static WorkflowProgress convertSequenceFlowToWorkFlowProgress(long currentCaseId, SequenceFlow flow) {
@@ -238,12 +187,9 @@ public class WorkflowUtils {
   }
 
   public static String extractLastQuotedContents(String input) {
-    String regex = "\"([^\"]*)\"";
-    Pattern pattern = Pattern.compile(regex);
+    Pattern pattern = Pattern.compile(ProcessMonitorConstants.QUOTED_CONTENT_PATTERN);
     Matcher matcher = pattern.matcher(input);
-
     List<String> contents = new ArrayList<>();
-
     while (matcher.find()) {
       contents.add(matcher.group(1));
     }
