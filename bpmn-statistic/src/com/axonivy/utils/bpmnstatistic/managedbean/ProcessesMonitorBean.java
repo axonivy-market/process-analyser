@@ -15,6 +15,7 @@ import javax.faces.bean.ViewScoped;
 import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.utils.bpmnstatistic.bo.Arrow;
+import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
 import com.axonivy.utils.bpmnstatistic.utils.ProcessesMonitorUtils;
 
 import ch.ivyteam.ivy.process.viewer.api.ProcessViewer;
@@ -33,7 +34,7 @@ public class ProcessesMonitorBean {
 
   @PostConstruct
   private void init() {
-    processesMap = ProcessesMonitorUtils.getProcessesWithPmv();
+    processesMap = ProcessUtils.getProcessesWithPmv();
   }
 
   public void onChangeSelectedModule() {
