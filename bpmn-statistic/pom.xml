@@ -16,4 +16,19 @@
       </plugin>
     </plugins>
   </build>
+  <repositories><repository>
+	<id>maven.axonivy.com</id>
+	<url>https://maven.axonivy.com</url>
+	<snapshots>
+		<enabled>true</enabled>
+	</snapshots>
+</repository></repositories>
+  <dependencies>
+  	<dependency>
+  		<groupId>com.axonivy.connector.ldap</groupId>
+  		<artifactId>ldap-connector</artifactId>
+  		<version>10.0.1</version>
+  		<type>iar</type>
+  	</dependency>
+  </dependencies>
 </project>

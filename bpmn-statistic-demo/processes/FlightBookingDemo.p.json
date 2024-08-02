@@ -23,17 +23,20 @@
             "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-f0\");"
           ]
         },
+        "startName" : "Book flight tickets",
         "tags" : "demo"
       },
       "visual" : {
-        "at" : { "x" : 144, "y" : 392 }
+        "at" : { "x" : 96, "y" : 392 }
       },
-      "connect" : { "id" : "f2", "to" : "S10" }
+      "connect" : { "id" : "f21", "to" : "S10", "label" : {
+          "name" : "start process"
+        } }
     }, {
       "id" : "f1",
       "type" : "TaskEnd",
       "visual" : {
-        "at" : { "x" : 1456, "y" : 648 }
+        "at" : { "x" : 1592, "y" : 648 }
       }
     }, {
       "id" : "S10",
@@ -45,7 +48,6 @@
           "visual" : {
             "at" : { "x" : 168, "y" : 256 }
           },
-          "parentConnector" : "f2",
           "connect" : { "id" : "S10-f1", "to" : "S10-f3" }
         }, {
           "id" : "S10-g1",
@@ -98,12 +100,24 @@
             "labelOffset" : { "x" : 89, "y" : 9 }
           },
           "connect" : { "id" : "S10-f2", "to" : "S10-f3" }
+        }, {
+          "id" : "S10-g3",
+          "type" : "EmbeddedStart",
+          "visual" : {
+            "at" : { "x" : 64, "y" : 256 }
+          },
+          "parentConnector" : "f21"
         } ],
       "visual" : {
         "at" : { "x" : 272, "y" : 392 },
         "size" : { "width" : 128, "height" : 60 }
       },
-      "connect" : { "id" : "f3", "to" : "S20" }
+      "connect" : { "id" : "f3", "to" : "S20", "label" : {
+          "name" : [
+            "submit a",
+            "flight"
+          ]
+        } }
     }, {
       "id" : "S20",
       "type" : "EmbeddedProcess",
@@ -194,23 +208,28 @@
           "connect" : { "id" : "S20-f7", "to" : "S20-f3" }
         } ],
       "visual" : {
-        "at" : { "x" : 448, "y" : 392 },
+        "at" : { "x" : 504, "y" : 392 },
         "size" : { "width" : 144, "height" : 60 }
       },
-      "connect" : { "id" : "f5", "to" : "f4" }
+      "connect" : { "id" : "f5", "to" : "f4", "label" : {
+          "name" : [
+            "submit payment",
+            "info"
+          ]
+        } }
     }, {
       "id" : "f4",
       "type" : "Alternative",
       "name" : "Back to searching step?",
       "visual" : {
-        "at" : { "x" : 600, "y" : 392 },
+        "at" : { "x" : 736, "y" : 392 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
-        { "id" : "f20", "to" : "S10", "via" : [ { "x" : 600, "y" : 328 }, { "x" : 272, "y" : 328 } ], "label" : {
-            "name" : "Yes",
+        { "id" : "f20", "to" : "S10", "via" : [ { "x" : 736, "y" : 328 }, { "x" : 272, "y" : 328 } ], "label" : {
+            "name" : "selected 'Yes'",
             "segment" : 0.5,
-            "offset" : { "x" : -159, "y" : -34 }
+            "offset" : { "x" : -263, "y" : -34 }
           }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(\"18F3D6C205210455-f4\", in.isBackToSearchPage)" },
         { "id" : "f6", "to" : "S21", "label" : {
             "name" : "No"
@@ -221,16 +240,16 @@
       "type" : "Alternative",
       "name" : "Back to submit information step?",
       "visual" : {
-        "at" : { "x" : 920, "y" : 392 },
+        "at" : { "x" : 1056, "y" : 392 },
         "labelOffset" : { "x" : 24, "y" : -16 }
       },
       "connect" : [
-        { "id" : "f24", "to" : "S20", "via" : [ { "x" : 920, "y" : 456 }, { "x" : 448, "y" : 456 } ], "label" : {
+        { "id" : "f24", "to" : "S20", "via" : [ { "x" : 1056, "y" : 456 }, { "x" : 504, "y" : 456 } ], "label" : {
             "name" : "Yes",
             "segment" : 0.5,
-            "offset" : { "x" : -215, "y" : 30 }
+            "offset" : { "x" : -247, "y" : 30 }
           }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(\"18F3D6C205210455-f7\", in.isBackToSubmitInformationPage)" },
-        { "id" : "f10", "to" : "f12", "via" : [ { "x" : 1016, "y" : 392 } ], "label" : {
+        { "id" : "f10", "to" : "f12", "via" : [ { "x" : 1152, "y" : 392 } ], "label" : {
             "name" : "No",
             "offset" : { "x" : 46, "y" : 33 }
           } }
@@ -299,7 +318,7 @@
           "connect" : { "id" : "S21-f0", "to" : "S21-g1" }
         } ],
       "visual" : {
-        "at" : { "x" : 752, "y" : 392 },
+        "at" : { "x" : 888, "y" : 392 },
         "size" : { "width" : 144, "height" : 60 }
       },
       "connect" : { "id" : "f8", "to" : "f7" }
@@ -362,7 +381,7 @@
           "connect" : { "id" : "S22-f0", "to" : "S22-g1" }
         } ],
       "visual" : {
-        "at" : { "x" : 1016, "y" : 768 },
+        "at" : { "x" : 1152, "y" : 768 },
         "size" : { "width" : 144, "height" : 60 }
       },
       "connect" : { "id" : "f11", "to" : "S40" }
@@ -371,7 +390,7 @@
       "type" : "Alternative",
       "name" : "Charge later?",
       "visual" : {
-        "at" : { "x" : 1016, "y" : 544 },
+        "at" : { "x" : 1152, "y" : 544 },
         "labelOffset" : { "x" : -40, "y" : 8 }
       },
       "connect" : [
@@ -473,7 +492,7 @@
           "connect" : { "id" : "S23-f5", "to" : "S23-f3" }
         } ],
       "visual" : {
-        "at" : { "x" : 1016, "y" : 648 },
+        "at" : { "x" : 1152, "y" : 648 },
         "size" : { "width" : 144, "height" : 60 }
       },
       "connect" : { "id" : "f14", "to" : "S22" }
@@ -536,7 +555,7 @@
           "connect" : { "id" : "S25-f0", "to" : "S25-g1" }
         } ],
       "visual" : {
-        "at" : { "x" : 1168, "y" : 544 },
+        "at" : { "x" : 1304, "y" : 544 },
         "size" : { "width" : 144, "height" : 60 }
       },
       "connect" : { "id" : "f16", "to" : "S60" }
@@ -545,7 +564,7 @@
       "type" : "Alternative",
       "name" : "Paid?",
       "visual" : {
-        "at" : { "x" : 1296, "y" : 648 },
+        "at" : { "x" : 1432, "y" : 648 },
         "labelOffset" : { "x" : 16, "y" : 40 }
       },
       "connect" : [
@@ -621,10 +640,10 @@
           "connect" : { "id" : "S60-f0", "to" : "S60-g1" }
         } ],
       "visual" : {
-        "at" : { "x" : 1167, "y" : 392 },
+        "at" : { "x" : 1303, "y" : 392 },
         "size" : { "width" : 161, "height" : 62 }
       },
-      "connect" : { "id" : "f18", "to" : "f17", "via" : [ { "x" : 1296, "y" : 392 } ] }
+      "connect" : { "id" : "f18", "to" : "f17", "via" : [ { "x" : 1432, "y" : 392 } ] }
     }, {
       "id" : "S40",
       "type" : "EmbeddedProcess",
@@ -685,7 +704,7 @@
           "connect" : { "id" : "S40-f0", "to" : "S40-g1" }
         } ],
       "visual" : {
-        "at" : { "x" : 1456, "y" : 768 },
+        "at" : { "x" : 1592, "y" : 768 },
         "size" : { "width" : 144, "height" : 60 }
       },
       "connect" : { "id" : "f9", "to" : "f1" }
