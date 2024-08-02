@@ -33,6 +33,8 @@ import ch.ivyteam.ivy.workflow.start.IWebStartable;
 
 @SuppressWarnings("restriction")
 public class ProcessUtils {
+  private ProcessUtils() {
+  }
 
   public static String getProcessRawPidFromElement(String targetElementId) {
     return targetElementId.split(ProcessMonitorConstants.HYPHEN_SIGN)[0];
@@ -148,7 +150,7 @@ public class ProcessUtils {
 
   public static List<IWebStartable> getAllProcesses() {
     return Ivy.session().getStartables().stream().filter(process -> isNotPortalHomeAndMSTeamsProcess(process))
-        .filter(process -> !process.pmv().getName().equals(BPMN_STATISTIC_PMV))
+        .filter(process -> !process.pmv().getName().equals(ProcessMonitorConstants.BPMN_STATISTIC_PMV))
         .collect(Collectors.toList());
   }
 

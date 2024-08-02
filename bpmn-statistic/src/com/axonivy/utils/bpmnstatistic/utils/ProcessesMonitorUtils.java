@@ -25,14 +25,11 @@ import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 
 @SuppressWarnings("restriction")
 public class ProcessesMonitorUtils {
-
-  public static final String BPMN_STATISTIC_PMV = "bpmn-statistic";
-
   private static final WorkflowProgressRepository repo = WorkflowProgressRepository.getInstance();
   private static int maxFrequency = 0;
 
   private ProcessesMonitorUtils() {
-  };
+  }
 
   public static void showStatisticData(String pid) {
     Objects.requireNonNull(pid);
@@ -89,12 +86,7 @@ public class ProcessesMonitorUtils {
     Map<String, Arrow> arrowMap = new HashMap<String, Arrow>();
     if (Objects.nonNull(processStart)) {
       String processRawPid = ProcessUtils.getProcessRawPidFromElement(processStart.pid().toString());
-      List<ProcessElement> processElements = ProcessUtils.getAllProcessElementFromIProcessWebStartable(processStart);
-      List<ProcessElement> additionalProcessElements = new ArrayList<ProcessElement>();
-      processElements.stream().filter(ProcessUtils::isEmbeddedElementInstance)
-          .forEach(element -> additionalProcessElements.addAll(ProcessUtils.getProcessElementFromSub(element)));
-      processElements.addAll(additionalProcessElements);
-      processElements.forEach(element -> results.addAll(convertProcessElementInfoToArrows(element)));
+      extractedArrowFromProcessStart(processStart, results);
       results.stream().forEach(arrow -> arrowMap.put(arrow.getArrowId(), arrow));
       List<WorkflowProgress> recordedProgresses = repo.findByProcessRawPid(processRawPid);
       recordedProgresses.stream()
@@ -105,6 +97,15 @@ public class ProcessesMonitorUtils {
       });
     }
     return results;
+  }
+
+  private static void extractedArrowFromProcessStart(IProcessWebStartable processStart, List<Arrow> results) {
+    List<ProcessElement> processElements = ProcessUtils.getAllProcessElementFromIProcessWebStartable(processStart);
+    List<ProcessElement> additionalProcessElements = new ArrayList<ProcessElement>();
+    processElements.stream().filter(ProcessUtils::isEmbeddedElementInstance)
+        .forEach(element -> additionalProcessElements.addAll(ProcessUtils.getProcessElementFromSub(element)));
+    processElements.addAll(additionalProcessElements);
+    processElements.forEach(element -> results.addAll(convertProcessElementInfoToArrows(element)));
   }
 
   private static int updateArrowByWorkflowProgress(Arrow arrow, WorkflowProgress progress) {
