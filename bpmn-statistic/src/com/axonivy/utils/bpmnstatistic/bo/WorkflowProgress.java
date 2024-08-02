@@ -14,18 +14,8 @@ public class WorkflowProgress implements Serializable {
   private Long duration;
   private Long caseId;
   private String condition;
-  private boolean isFromInProgessAlternativeOrigin;
+  private boolean isDurationUpdated;
   private boolean isConditionTrue;
-
-  public WorkflowProgress(String processRawPid, String arrowId, String originElementId, String targetElementId,
-      Long caseId) {
-    this.processRawPid = processRawPid;
-    this.arrowId = arrowId;
-    this.originElementId = originElementId;
-    this.targetElementId = targetElementId;
-    this.caseId = caseId;
-    this.startTimeStamp = new Date();
-  };
 
   public WorkflowProgress() {
   }
@@ -99,7 +89,7 @@ public class WorkflowProgress implements Serializable {
     return "WorkflowProgress [processRawPid=" + processRawPid + ", arrowId=" + arrowId + ", originElementId="
         + originElementId + ", targetElementId=" + targetElementId + ", startTimeStamp=" + startTimeStamp
         + ", endTimeStamp=" + endTimeStamp + ", duration=" + duration + ", caseId=" + caseId + ", condition="
-        + condition + ", isFromInProgessAlternativeOrigin=" + isFromInProgessAlternativeOrigin + ", isConditionTrue="
+        + condition + ", isDurationUpdated=" + isDurationUpdated + ", isConditionTrue="
         + isConditionTrue + "]";
   }
 
@@ -119,11 +109,11 @@ public class WorkflowProgress implements Serializable {
     this.isConditionTrue = isConditionTrue;
   }
 
-  public boolean isFromInProgessAlternativeOrigin() {
-    return isFromInProgessAlternativeOrigin;
+  public boolean isDurationUpdated() {
+    return isDurationUpdated;
   }
 
-  public void setFromInProgessAlternativeOrigin(boolean isFromInProgessAlternativeOrigin) {
-    this.isFromInProgessAlternativeOrigin = isFromInProgessAlternativeOrigin;
+  public void setDurationUpdated(boolean isDurationUpdated) {
+    this.isDurationUpdated = isDurationUpdated;
   }
 }

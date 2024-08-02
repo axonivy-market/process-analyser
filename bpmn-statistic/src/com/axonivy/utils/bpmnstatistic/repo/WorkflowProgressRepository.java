@@ -71,8 +71,7 @@ public class WorkflowProgressRepository {
     do {
       List<WorkflowProgress> currentResult = createSearchQuery().textField("originElementId")
           .isEqualToIgnoringCase(elementId).and().numberField("caseId").isEqualTo(caseId).and()
-          .booleanField("fromInProgessAlternativeOrigin").isTrue().limit(count, DEFAULT_SEARCH_LIMIT).execute()
-          .getAll();
+          .booleanField("durationUpdated").isFalse().limit(count, DEFAULT_SEARCH_LIMIT).execute().getAll();
       results.addAll(currentResult);
       querySize = currentResult.size();
       count += querySize;
