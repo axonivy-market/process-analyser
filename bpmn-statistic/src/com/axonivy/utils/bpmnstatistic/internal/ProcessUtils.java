@@ -1,8 +1,13 @@
 package com.axonivy.utils.bpmnstatistic.internal;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -23,6 +28,8 @@ import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
 import ch.ivyteam.ivy.security.exec.Sudo;
 import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.IWorkflowProcessModelVersion;
+import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
+import ch.ivyteam.ivy.workflow.start.IWebStartable;
 
 @SuppressWarnings("restriction")
 public class ProcessUtils {
@@ -128,4 +135,36 @@ public class ProcessUtils {
     Process process = manager.findProcess(processRawPid, true).getModel();
     return process.getProcessElements();
   }
+
+  public static List<ProcessElement> getAllProcessElementFromIProcessWebStartable(IProcessWebStartable startElement) {
+    if (Objects.nonNull(startElement)) {
+      String processRawPid = ProcessUtils.getProcessRawPidFromElement(startElement.pid().toString());
+      IProjectProcessManager manager = IProcessManager.instance().getProjectDataModelFor(startElement.pmv());
+      Process process = manager.findProcess(processRawPid, true).getModel();
+      return process.getProcessElements();
+    }
+    return Collections.emptyList();
+  }
+
+  public static List<IWebStartable> getAllProcesses() {
+    return Ivy.session().getStartables().stream().filter(process -> isNotPortalHomeAndMSTeamsProcess(process))
+        .filter(process -> !process.pmv().getName().equals(BPMN_STATISTIC_PMV))
+        .collect(Collectors.toList());
+  }
+
+  public static Map<String, List<IProcessWebStartable>> getProcessesWithPmv() {
+    Map<String, List<IProcessWebStartable>> result = new HashMap<>();
+    for (IWebStartable process : getAllProcesses()) {
+      String pmvName = process.pmv().getName();
+      result.computeIfAbsent(pmvName, key -> new ArrayList<>()).add((IProcessWebStartable) process);
+    }
+    return result;
+  }
+
+  private static boolean isNotPortalHomeAndMSTeamsProcess(IWebStartable process) {
+    String relativeEncoded = process.getLink().getRelativeEncoded();
+    return !StringUtils.endsWithAny(relativeEncoded, ProcessMonitorConstants.PORTAL_START_REQUEST_PATH,
+        ProcessMonitorConstants.PORTAL_IN_TEAMS_REQUEST_PATH);
+  }
+
 }

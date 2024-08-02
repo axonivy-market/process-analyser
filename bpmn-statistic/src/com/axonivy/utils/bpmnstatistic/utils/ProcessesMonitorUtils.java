@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PF;
 
 import com.axonivy.utils.bpmnstatistic.bo.Arrow;
@@ -20,46 +19,20 @@ import com.axonivy.utils.bpmnstatistic.repo.WorkflowProgressRepository;
 import com.axonivy.utils.bpmnstatistic.service.IvyTaskOccurrenceService;
 
 import ch.ivyteam.ivy.environment.Ivy;
-import ch.ivyteam.ivy.process.IProcessManager;
-import ch.ivyteam.ivy.process.IProjectProcessManager;
-import ch.ivyteam.ivy.process.model.Process;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
-import ch.ivyteam.ivy.workflow.IWorkflowProcessModelVersion;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
-import ch.ivyteam.ivy.workflow.start.IWebStartable;
 
 @SuppressWarnings("restriction")
 public class ProcessesMonitorUtils {
 
-  public static final String BPMN_STATISTIC_PMV ="bpmn-statistic";
+  public static final String BPMN_STATISTIC_PMV = "bpmn-statistic";
 
   private static final WorkflowProgressRepository repo = WorkflowProgressRepository.getInstance();
   private static int maxFrequency = 0;
 
   private ProcessesMonitorUtils() {
   };
-
-  public static List<IWebStartable> getAllProcesses() {
-    return Ivy.session().getStartables().stream().filter(process -> isNotPortalHomeAndMSTeamsProcess(process))
-        .filter(process -> !process.pmv().getName().equals(BPMN_STATISTIC_PMV))
-        .collect(Collectors.toList());
-  }
-
-  public static Map<String, List<IProcessWebStartable>> getProcessesWithPmv() {
-    Map<String, List<IProcessWebStartable>> result = new HashMap<>();
-    for (IWebStartable process : getAllProcesses()) {
-      String pmvName = process.pmv().getName();
-      result.computeIfAbsent(pmvName, key -> new ArrayList<>()).add((IProcessWebStartable) process);
-    }
-    return result;
-  }
-
-  private static boolean isNotPortalHomeAndMSTeamsProcess(IWebStartable process) {
-    String relativeEncoded = process.getLink().getRelativeEncoded();
-    return !StringUtils.endsWithAny(relativeEncoded, ProcessMonitorConstants.PORTAL_START_REQUEST_PATH,
-        ProcessMonitorConstants.PORTAL_IN_TEAMS_REQUEST_PATH);
-  }
 
   public static void showStatisticData(String pid) {
     Objects.requireNonNull(pid);
@@ -96,12 +69,6 @@ public class ProcessesMonitorUtils {
         String.format(ProcessMonitorConstants.UPDATE_ADDITIONAL_INFORMATION_FUNCTION, additionalInformation));
   }
 
-  private static List<ProcessElement> getProcessElementFromPmvAndPid(IWorkflowProcessModelVersion pmv, String pid) {
-    IProjectProcessManager manager = IProcessManager.instance().getProjectDataModelFor(pmv);
-    Process process = manager.findProcess(pid, true).getModel();
-    return process.getProcessElements();
-  }
-
   public static List<Arrow> convertProcessElementInfoToArrows(ProcessElement element) {
     return element.getOutgoing().stream().map(flow -> convertSequenceFlowToArrow(flow)).collect(Collectors.toList());
   }
@@ -121,9 +88,8 @@ public class ProcessesMonitorUtils {
     maxFrequency = 0;
     Map<String, Arrow> arrowMap = new HashMap<String, Arrow>();
     if (Objects.nonNull(processStart)) {
-      String processRawPid = processStart.pid().toString().split(ProcessMonitorConstants.HYPHEN_SIGN)[0];
-      List<ProcessElement> processElements = getProcessElementFromPmvAndPid(
-          (IWorkflowProcessModelVersion) processStart.pmv(), processRawPid);
+      String processRawPid = ProcessUtils.getProcessRawPidFromElement(processStart.pid().toString());
+      List<ProcessElement> processElements = ProcessUtils.getAllProcessElementFromIProcessWebStartable(processStart);
       List<ProcessElement> additionalProcessElements = new ArrayList<ProcessElement>();
       processElements.stream().filter(ProcessUtils::isEmbeddedElementInstance)
           .forEach(element -> additionalProcessElements.addAll(ProcessUtils.getProcessElementFromSub(element)));
