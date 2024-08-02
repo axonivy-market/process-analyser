@@ -9,3 +9,7 @@ on:
 jobs:
   build:
     uses: axonivy-market/github-workflows/.github/workflows/dev.yml@v4
+    with:
+      ivyVersion: nightly-10.0
+      ivyPluginVersion: 10.0.16
+      testerVersion: 10.0.16
