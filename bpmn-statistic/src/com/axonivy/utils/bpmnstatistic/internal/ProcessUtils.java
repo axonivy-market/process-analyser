@@ -24,7 +24,9 @@ import ch.ivyteam.ivy.process.model.element.EmbeddedProcessElement;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.element.event.end.EmbeddedEnd;
 import ch.ivyteam.ivy.process.model.element.event.start.EmbeddedStart;
+import ch.ivyteam.ivy.process.model.element.event.start.RequestStart;
 import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
+import ch.ivyteam.ivy.process.model.value.PID;
 import ch.ivyteam.ivy.security.exec.Sudo;
 import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
@@ -36,7 +38,7 @@ public class ProcessUtils {
   }
 
   public static String getElementPid(BaseElement baseElement) {
-    return Optional.ofNullable(baseElement).map(element -> element.getPid().toString()).orElse(StringUtils.EMPTY);
+    return Optional.ofNullable(baseElement).map(BaseElement::getPid).map(PID::toString).orElse(StringUtils.EMPTY);
   }
 
   public static String getProcessPidFromElement(String elementId) {
@@ -68,13 +70,25 @@ public class ProcessUtils {
     return element instanceof Alternative;
   }
 
-  public static List<ProcessElement> getProcessElementFromSub(Object element) {
+  public static boolean isRequestStartInstance(Object element) {
+    return element instanceof RequestStart;
+  }
+
+  public static List<ProcessElement> getNestedProcessElementsFromSub(Object element) {
     if (isEmbeddedElementInstance(element)) {
       return ((EmbeddedProcessElement) element).getEmbeddedProcess().getProcessElements();
     }
     return Collections.emptyList();
   }
 
+  /**
+   * Get sequence flow from outside of sub (EmbeddedProcessElement) which is prior
+   * of the target flow
+   * 
+   * @param flow Sequence flow of which origin (tail) is embedded start
+   * @return Pid of sequence flow which is connected to target embedded start from
+   *         outside of sub
+   */
   public static String getIncomingEmbeddedFlowFromStartFlow(SequenceFlow flow) {
     NodeElement sourceElement = flow.getSource();
     if (sourceElement instanceof EmbeddedStart) {
@@ -84,6 +98,15 @@ public class ProcessUtils {
     return StringUtils.EMPTY;
   }
 
+  /**
+   * Get end embedded process element inside the sub (EmbeddedProcessElement)
+   * which connected to the current element and it incoming flow.
+   * 
+   * @param processElement   Element that sub connected to
+   * @param flowFromEmbedded flow outside of sub which connected to current
+   *                         processElement
+   * @return Embedded process end from inside of sub
+   */
   public static EmbeddedEnd getEmbeddedEndFromTargetElementAndOuterFlow(ProcessElement processElement,
       SequenceFlow flowFromEmbedded) {
     EmbeddedProcessElement embeddedNode = (EmbeddedProcessElement) flowFromEmbedded.getSource();
@@ -112,13 +135,13 @@ public class ProcessUtils {
     return process.getProcessElements();
   }
 
-  public static ProcessElement findTargetProcessEmlementByRawPid(String fromElementPid,
+  public static ProcessElement findProcessElementByRawPid(String fromElementPid,
       List<ProcessElement> processElements) {
     return processElements.stream().filter(element -> element.getPid().toString().equalsIgnoreCase(fromElementPid))
         .findAny().orElse(null);
   }
 
-  public static ProcessElement findEmbeddedProcessEmlement(String fromElementPid,
+  public static ProcessElement findEmbeddedProcessElement(String fromElementPid,
       List<ProcessElement> processElements) {
     int lastHyphenIndex = fromElementPid.lastIndexOf(ProcessMonitorConstants.HYPHEN_SIGN);
     if (lastHyphenIndex == -1) {
@@ -126,8 +149,8 @@ public class ProcessUtils {
     }
     String subRawPid = fromElementPid.substring(0, lastHyphenIndex);
     return Optional
-        .ofNullable((EmbeddedProcessElement) findTargetProcessEmlementByRawPid(subRawPid, processElements))
-        .map(subElement -> findTargetProcessEmlementByRawPid(fromElementPid,
+        .ofNullable((EmbeddedProcessElement) findProcessElementByRawPid(subRawPid, processElements))
+        .map(subElement -> findProcessElementByRawPid(fromElementPid,
             subElement.getEmbeddedProcess().getProcessElements()))
         .orElse(null);
   }
@@ -164,4 +187,8 @@ public class ProcessUtils {
         || StringUtils.contains(process.pmv().getName(), ProcessMonitorConstants.PORTAL_PMV));
   }
 
+  public static boolean isContainFlowFromSubElement(List<SequenceFlow> flows) {
+    return flows.stream()
+        .anyMatch(flow -> ProcessUtils.isEmbeddedElementInstance(flow.getSource()));
+  }
 }

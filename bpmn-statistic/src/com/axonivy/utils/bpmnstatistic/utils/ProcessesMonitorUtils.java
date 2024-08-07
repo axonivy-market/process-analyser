@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.primefaces.PF;
@@ -31,6 +32,14 @@ public class ProcessesMonitorUtils {
   private ProcessesMonitorUtils() {
   }
 
+
+  /**
+   * Get more additional insight from process viewer (task count, number of
+   * instances with interval time range,...) when user click "show statistic
+   * data".
+   * 
+   * @param pid rawPid of selected process
+   */
   public static void showStatisticData(String pid) {
     Objects.requireNonNull(pid);
     HashMap<String, Integer> taskCountMap = IvyTaskOccurrenceService.countTaskOccurrencesByProcessId(pid);
@@ -75,19 +84,28 @@ public class ProcessesMonitorUtils {
     result.setArrowId(ProcessUtils.getElementPid(flow));
     result.setLabel(flow.getName());
     result.setFrequency(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
-    result.setFrequency(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     result.setMedianDuration(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     return result;
   }
 
+  /**
+   * Update the table of arrow from this process base on the current version of
+   * process.
+   * 
+   * @param processStart selected process start
+   * @return list of arrow (sequence flow) with its basic statistic data
+   *         (duration, frequency)
+   */
   public static List<Arrow> getStatisticData(IProcessWebStartable processStart) {
     List<Arrow> results = new ArrayList<>();
     maxFrequency = 0;
-    Map<String, Arrow> arrowMap = new HashMap<String, Arrow>();
     if (Objects.nonNull(processStart)) {
       String processRawPid = ProcessUtils.getProcessPidFromElement(processStart.pid().toString());
-      extractedArrowFromProcessStart(processStart, results);
-      results.stream().forEach(arrow -> arrowMap.put(arrow.getArrowId(), arrow));
+      // Get all of element from process in 1st layer (which is not nested from sub)
+      List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
+      extractedArrowFromProcessElements(processElements, results);
+      Map<String, Arrow> arrowMap = results.stream().collect(
+          Collectors.toMap(Arrow::getArrowId, Function.identity()));
       List<WorkflowProgress> recordedProgresses = repo.findByProcessRawPid(processRawPid);
       recordedProgresses.stream()
           .forEach(record -> updateArrowByWorkflowProgress(arrowMap.get(record.getArrowId()), record));
@@ -99,22 +117,39 @@ public class ProcessesMonitorUtils {
     return results;
   }
 
-  private static void extractedArrowFromProcessStart(IProcessWebStartable processStart, List<Arrow> results) {
-    List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
-    List<ProcessElement> additionalProcessElements = new ArrayList<ProcessElement>();
-    processElements.stream().filter(ProcessUtils::isEmbeddedElementInstance)
-        .forEach(element -> additionalProcessElements.addAll(ProcessUtils.getProcessElementFromSub(element)));
-    processElements.addAll(additionalProcessElements);
-    processElements.forEach(element -> results.addAll(convertProcessElementInfoToArrows(element)));
+  /**
+   * Get outgoing arrows from each element. If the current element is sub
+   * (Embedded element), it will get all of nested element and execute the same
+   * thing until all of sub is extracted.
+   * 
+   * @param processElements list of process elements need to get its out going
+   *                        workflow
+   * @param results         list of existing arrow from previous step
+   */
+  private static void extractedArrowFromProcessElements(List<ProcessElement> processElements, List<Arrow> results) {
+    processElements.forEach(element -> {
+      results.addAll(convertProcessElementInfoToArrows(element));
+      if (ProcessUtils.isEmbeddedElementInstance(element)) {
+        extractedArrowFromProcessElements(ProcessUtils.getNestedProcessElementsFromSub(element), results);
+      }
+    });
   }
 
-  private static int updateArrowByWorkflowProgress(Arrow arrow, WorkflowProgress progress) {
+  /**
+   * Update info of current arrow by Workflow progress from database & update max
+   * frequency of the whole element from this process.
+   * 
+   * @param arrow    current arrow
+   * @param progress single progress instance of this arrow
+   */
+  private static void updateArrowByWorkflowProgress(Arrow arrow, WorkflowProgress progress) {
     int currentFrequency = arrow.getFrequency();
+    int newFrequency = currentFrequency + 1;
     if (Objects.nonNull(progress.getDuration())) {
       arrow.setMedianDuration(
-          ((arrow.getMedianDuration() * currentFrequency) + progress.getDuration()) / (currentFrequency + 1));
-      arrow.setFrequency(arrow.getFrequency() + 1);
+          ((arrow.getMedianDuration() * currentFrequency) + progress.getDuration()) / newFrequency);
+      arrow.setFrequency(newFrequency);
     }
-    return maxFrequency = maxFrequency < currentFrequency + 1 ? currentFrequency + 1 : maxFrequency;
+    maxFrequency = maxFrequency < newFrequency ? newFrequency : maxFrequency;
   }
 }
