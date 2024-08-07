@@ -89,7 +89,16 @@ public class ProcessUtils {
    * @return Pid of sequence flow which is connected to target embedded start from
    *         outside of sub
    */
-  public static String getIncomingEmbeddedFlowFromStartFlow(SequenceFlow flow) {
+  public static SequenceFlow getIncomingEmbeddedFlowFromStartFlow(SequenceFlow flow) {
+    NodeElement sourceElement = flow.getSource();
+    if (sourceElement instanceof EmbeddedStart) {
+      EmbeddedStart embeddedStart = (EmbeddedStart) sourceElement;
+      return embeddedStart.getConnectedOuterSequenceFlow();
+    }
+    return null;
+  }
+
+  public static String getIncomingEmbeddedFlowIdFromStartFlow(SequenceFlow flow) {
     NodeElement sourceElement = flow.getSource();
     if (sourceElement instanceof EmbeddedStart) {
       EmbeddedStart embeddedStart = (EmbeddedStart) sourceElement;
@@ -107,14 +116,12 @@ public class ProcessUtils {
    *                         processElement
    * @return Embedded process end from inside of sub
    */
-  public static EmbeddedEnd getEmbeddedEndFromTargetElementAndOuterFlow(ProcessElement processElement,
+  public static EmbeddedEnd getEmbeddedEndFromTargetElementAndOuterFlow(NodeElement processElement,
       SequenceFlow flowFromEmbedded) {
     EmbeddedProcessElement embeddedNode = (EmbeddedProcessElement) flowFromEmbedded.getSource();
-    EmbeddedEnd targetEmbeddedEnds = (EmbeddedEnd) embeddedNode.getEmbeddedProcess()
-        .getProcessElements().stream().filter(ProcessUtils::isEmbeddedEnd)
-        .map(EmbeddedEnd.class::cast)
-        .filter(embeddedEnd -> isConnectedToProcessElement(embeddedEnd, processElement))
-        .findAny().orElse(null);
+    EmbeddedEnd targetEmbeddedEnds = (EmbeddedEnd) embeddedNode.getEmbeddedProcess().getProcessElements().stream()
+        .filter(ProcessUtils::isEmbeddedEnd).map(EmbeddedEnd.class::cast)
+        .filter(embeddedEnd -> isConnectedToProcessElement(embeddedEnd, processElement)).findAny().orElse(null);
     return targetEmbeddedEnds;
   }
 
@@ -122,7 +129,7 @@ public class ProcessUtils {
     return element instanceof EmbeddedEnd;
   }
 
-  private static boolean isConnectedToProcessElement(EmbeddedEnd embeddedEnd, ProcessElement processElement) {
+  private static boolean isConnectedToProcessElement(EmbeddedEnd embeddedEnd, NodeElement processElement) {
     String connectedElementPid = getElementPid(embeddedEnd.getConnectedOuterProcessElement());
     String processElementPid = getElementPid(processElement);
     return StringUtils.equals(connectedElementPid, processElementPid);
@@ -135,23 +142,19 @@ public class ProcessUtils {
     return process.getProcessElements();
   }
 
-  public static ProcessElement findProcessElementByRawPid(String fromElementPid,
-      List<ProcessElement> processElements) {
+  public static ProcessElement findProcessElementByRawPid(String fromElementPid, List<ProcessElement> processElements) {
     return processElements.stream().filter(element -> element.getPid().toString().equalsIgnoreCase(fromElementPid))
         .findAny().orElse(null);
   }
 
-  public static ProcessElement findEmbeddedProcessElement(String fromElementPid,
-      List<ProcessElement> processElements) {
+  public static ProcessElement findEmbeddedProcessElement(String fromElementPid, List<ProcessElement> processElements) {
     int lastHyphenIndex = fromElementPid.lastIndexOf(ProcessMonitorConstants.HYPHEN_SIGN);
     if (lastHyphenIndex == -1) {
       return null;
     }
     String subRawPid = fromElementPid.substring(0, lastHyphenIndex);
-    return Optional
-        .ofNullable((EmbeddedProcessElement) findProcessElementByRawPid(subRawPid, processElements))
-        .map(subElement -> findProcessElementByRawPid(fromElementPid,
-            subElement.getEmbeddedProcess().getProcessElements()))
+    return Optional.ofNullable((EmbeddedProcessElement) findProcessElementByRawPid(subRawPid, processElements)).map(
+        subElement -> findProcessElementByRawPid(fromElementPid, subElement.getEmbeddedProcess().getProcessElements()))
         .orElse(null);
   }
 
@@ -169,8 +172,7 @@ public class ProcessUtils {
   }
 
   public static List<IWebStartable> getAllProcesses() {
-    return Ivy.session().getStartables().stream().filter(ProcessUtils::isIWebStartableNeedToRecordStatistic)
-        .toList();
+    return Ivy.session().getStartables().stream().filter(ProcessUtils::isIWebStartableNeedToRecordStatistic).toList();
   }
 
   public static Map<String, List<IProcessWebStartable>> getProcessesWithPmv() {
@@ -188,7 +190,6 @@ public class ProcessUtils {
   }
 
   public static boolean isContainFlowFromSubElement(List<SequenceFlow> flows) {
-    return flows.stream()
-        .anyMatch(flow -> ProcessUtils.isEmbeddedElementInstance(flow.getSource()));
+    return flows.stream().anyMatch(flow -> ProcessUtils.isEmbeddedElementInstance(flow.getSource()));
   }
 }

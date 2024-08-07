@@ -19,6 +19,7 @@ import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
 import com.axonivy.utils.bpmnstatistic.repo.WorkflowProgressRepository;
 
 import ch.ivyteam.ivy.environment.Ivy;
+import ch.ivyteam.ivy.process.model.NodeElement;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 
@@ -166,7 +167,7 @@ public class WorkflowUtils {
    * @return List of progress which include: not up-to-date flow before sub
    *         process end & new created flow from sub to current element
    */
-  private static List<WorkflowProgress> handleFlowOutOfEmbeddedElement(Long caseId, ProcessElement element,
+  private static List<WorkflowProgress> handleFlowOutOfEmbeddedElement(Long caseId, NodeElement element,
       SequenceFlow flowFromEmbedded) {
     List<WorkflowProgress> persistedRecords = new ArrayList<>();
     if (Objects.isNull(flowFromEmbedded)) {
@@ -221,11 +222,21 @@ public class WorkflowUtils {
   }
 
   private static List<WorkflowProgress> handleFlowFromEmbeddedElement(SequenceFlow flow, Long caseId) {
-    String correspondingFlowIdFromOutside = ProcessUtils.getIncomingEmbeddedFlowFromStartFlow(flow);
-    List<WorkflowProgress> persistArrow = repo.findByInprogessArrowIdAndCaseId(correspondingFlowIdFromOutside, caseId);
-    if (CollectionUtils.isNotEmpty(persistArrow)) {
-      WorkflowProgress workflowFromUnupdateEmbeddedStart = convertSequenceFlowToWorkFlowProgress(caseId, flow);
-      persistArrow.add(workflowFromUnupdateEmbeddedStart);
+    SequenceFlow correspondingFlowFromOutside = ProcessUtils.getIncomingEmbeddedFlowFromStartFlow(flow);
+    if (correspondingFlowFromOutside != null) {
+      String correspondingFlowIdFromOutside = ProcessUtils.getElementPid(flow);
+      Ivy.log().warn(correspondingFlowFromOutside.getPid());
+
+      List<WorkflowProgress> persistArrow = repo.findByInprogessArrowIdAndCaseId(correspondingFlowIdFromOutside,
+          caseId);
+      Ivy.log().warn(persistArrow.size());
+      if (CollectionUtils.isNotEmpty(persistArrow)) {
+        WorkflowProgress workflowFromUnupdateEmbeddedStart = convertSequenceFlowToWorkFlowProgress(caseId, flow);
+        persistArrow.add(workflowFromUnupdateEmbeddedStart);
+      } else if (ProcessUtils.isEmbeddedElementInstance(correspondingFlowFromOutside.getSource())) {
+        persistArrow.addAll(handleFlowOutOfEmbeddedElement(caseId, correspondingFlowFromOutside.getTarget(),
+            correspondingFlowFromOutside));
+      }
       return persistArrow;
     }
     return Collections.emptyList();
