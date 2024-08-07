@@ -47,19 +47,6 @@ public class ProcessUtils {
     String elementId = getElementPid(baseElement);
     return getProcessPidFromElement(elementId);
   }
-//
-//  public static String getElementRawPid(String elementId) {
-//    if (StringUtils.isBlank(elementId)) {
-//      return StringUtils.EMPTY;
-//    }
-//    int firstHyphen = elementId.indexOf(ProcessMonitorConstants.HYPHEN_SIGN);
-//    return elementId.substring(firstHyphen + 1);
-//  }
-//
-//  public static String getElementRawPid(BaseElement baseElement) {
-//    String elementId = getElementPid(baseElement);
-//    return getElementRawPid(elementId);
-//  }
 
   public static long getCurrentCaseId() {
     return Sudo.get(() -> {
@@ -145,7 +132,6 @@ public class ProcessUtils {
         .orElse(null);
   }
 
-  /** This method is used for runtime case **/
   public static List<ProcessElement> getProcessElementsFromCurrentTaskAndProcessPid(String processRawPid) {
     IProcessModelVersion pmv = getCurrentTask().getProcessModelVersion();
     return getProcessElementsFromPmvAndProcessPid(pmv, processRawPid);
@@ -175,7 +161,7 @@ public class ProcessUtils {
 
   private static boolean isIWebStartableNeedToRecordStatistic(IWebStartable process) {
     return !(StringUtils.equals(process.pmv().getName(), ProcessMonitorConstants.BPMN_STATISTIC_PMV)
-        || StringUtils.contains(process.pmv().getName(), "portal"));
+        || StringUtils.contains(process.pmv().getName(), ProcessMonitorConstants.PORTAL_PMV));
   }
 
 }
