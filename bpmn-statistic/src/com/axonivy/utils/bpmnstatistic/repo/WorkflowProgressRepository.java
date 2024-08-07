@@ -11,6 +11,12 @@ import ch.ivyteam.ivy.environment.Ivy;
 public class WorkflowProgressRepository {
   private static int DEFAULT_SEARCH_LIMIT = 5000;
   private static final WorkflowProgressRepository instance = new WorkflowProgressRepository();
+  private static final String PROCESS_RAW_PID_ATTR_NAME = "processRawPid";
+  private static final String ARROW_ID_ATTR_NAME = "arrowId";
+  private static final String CASE_ID_ATTR_NAME = "caseId";
+  private static final String TARGET_ELEMENT_ID_ATTR_NAME = "targetElementId";
+  private static final String ORIGIN_ELEMENT_ID_ATTR_NAME = "originElementId";
+  private static final String DURATION_UPDATED_ATTR_NAME = "durationUpdated";
 
   private WorkflowProgressRepository() {
   }
@@ -32,7 +38,7 @@ public class WorkflowProgressRepository {
   }
 
   public void save(List<WorkflowProgress> progresses) {
-    progresses.stream().forEach(progress -> save(progress));
+    progresses.forEach(progress -> save(progress));
   }
 
   public List<WorkflowProgress> findByProcessRawPid(String id) {
@@ -40,7 +46,8 @@ public class WorkflowProgressRepository {
     int count = 0;
     int querySize;
     do {
-      List<WorkflowProgress> currentResult = createSearchQuery().textField("processRawPid").containsAllWords(id)
+      List<WorkflowProgress> currentResult = createSearchQuery().textField(PROCESS_RAW_PID_ATTR_NAME)
+          .containsAllWords(id)
           .limit(count, DEFAULT_SEARCH_LIMIT).execute().getAll();
       results.addAll(currentResult);
       querySize = currentResult.size();
@@ -54,8 +61,8 @@ public class WorkflowProgressRepository {
     int count = 0;
     int querySize;
     do {
-      List<WorkflowProgress> currentResult = createSearchQuery().textField("targetElementId")
-          .isEqualToIgnoringCase(elementId).and().numberField("caseId").isEqualTo(caseId)
+      List<WorkflowProgress> currentResult = createSearchQuery().textField(TARGET_ELEMENT_ID_ATTR_NAME)
+          .isEqualToIgnoringCase(elementId).and().numberField(CASE_ID_ATTR_NAME).isEqualTo(caseId)
           .limit(count, DEFAULT_SEARCH_LIMIT).execute().getAll();
       results.addAll(currentResult);
       querySize = currentResult.size();
@@ -69,9 +76,9 @@ public class WorkflowProgressRepository {
     int count = 0;
     int querySize;
     do {
-      List<WorkflowProgress> currentResult = createSearchQuery().textField("originElementId")
-          .isEqualToIgnoringCase(elementId).and().numberField("caseId").isEqualTo(caseId).and()
-          .booleanField("durationUpdated").isFalse().limit(count, DEFAULT_SEARCH_LIMIT).execute().getAll();
+      List<WorkflowProgress> currentResult = createSearchQuery().textField(ORIGIN_ELEMENT_ID_ATTR_NAME)
+          .isEqualToIgnoringCase(elementId).and().numberField(CASE_ID_ATTR_NAME).isEqualTo(caseId).and()
+          .booleanField(DURATION_UPDATED_ATTR_NAME).isFalse().limit(count, DEFAULT_SEARCH_LIMIT).execute().getAll();
       results.addAll(currentResult);
       querySize = currentResult.size();
       count += querySize;
@@ -84,10 +91,10 @@ public class WorkflowProgressRepository {
     int count = 0;
     int querySize;
     do {
-      List<WorkflowProgress> currentResult = createSearchQuery().textField("targetElementId")
+      List<WorkflowProgress> currentResult = createSearchQuery().textField(TARGET_ELEMENT_ID_ATTR_NAME)
           .isEqualToIgnoringCase(targetId)
-          .and().numberField("caseId").isEqualTo(caseId).and().booleanField("durationUpdated").isFalse()
-          .limit(count, DEFAULT_SEARCH_LIMIT).execute().getAll();
+          .and().numberField(CASE_ID_ATTR_NAME).isEqualTo(caseId).and().booleanField(DURATION_UPDATED_ATTR_NAME)
+          .isFalse().limit(count, DEFAULT_SEARCH_LIMIT).execute().getAll();
       results.addAll(currentResult);
       querySize = currentResult.size();
       count += querySize;
@@ -100,10 +107,10 @@ public class WorkflowProgressRepository {
     int count = 0;
     int querySize;
     do {
-      List<WorkflowProgress> currentResult = createSearchQuery().textField("arrowId")
+      List<WorkflowProgress> currentResult = createSearchQuery().textField(ARROW_ID_ATTR_NAME)
           .isEqualToIgnoringCase(elementId)
-          .and().numberField("caseId").isEqualTo(caseId).and().booleanField("durationUpdated").isFalse()
-          .limit(count, DEFAULT_SEARCH_LIMIT).execute().getAll();
+          .and().numberField(CASE_ID_ATTR_NAME).isEqualTo(caseId).and().booleanField(DURATION_UPDATED_ATTR_NAME)
+          .isFalse().limit(count, DEFAULT_SEARCH_LIMIT).execute().getAll();
       results.addAll(currentResult);
       querySize = currentResult.size();
       count += querySize;

@@ -29,8 +29,8 @@ public class WorkflowUtils {
 
   private static void updateWorkflowInfo(String fromElementPid, Boolean conditionIsTrue, String toElementPid) {
     Long currentCaseId = ProcessUtils.getCurrentCaseId();
-    String processRawPid = fromElementPid.split(ProcessMonitorConstants.HYPHEN_SIGN)[0];
-    List<ProcessElement> processElements = ProcessUtils.getAllProcessElementFromCurrentTaskAndPid(processRawPid);
+    String processRawPid = ProcessUtils.getProcessPidFromElement(fromElementPid);
+    List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromCurrentTaskAndProcessPid(processRawPid);
     ProcessElement targetElement = isProcessElemenetPidFromSub(fromElementPid)
         ? ProcessUtils.findEmbeddedProcessEmlement(fromElementPid, processElements)
         : ProcessUtils.findTargetProcessEmlementByRawPid(fromElementPid, processElements);
@@ -57,7 +57,7 @@ public class WorkflowUtils {
       ProcessElement targetElement, List<WorkflowProgress> outGoingWorkFlowProgress) {
     if (ProcessUtils.isAlternativeInstance(targetElement)) {
       List<WorkflowProgress> persistedRecords = repo.findByInprogressAlternativeIdAndCaseId(
-          ProcessUtils.getElementRawPid(targetElement), ProcessUtils.getCurrentCaseId());
+          ProcessUtils.getElementPid(targetElement), ProcessUtils.getCurrentCaseId());
       if (CollectionUtils.isEmpty(persistedRecords)) {
         outGoingWorkFlowProgress.removeIf(predicateByCondition);
       } else {
@@ -78,7 +78,7 @@ public class WorkflowUtils {
   }
 
   private static void updateIncomingWorkflowInfoForElement(Long caseId, ProcessElement targetElement) {
-    String elementId = ProcessUtils.getElementRawPid(targetElement);
+    String elementId = ProcessUtils.getElementPid(targetElement);
     List<WorkflowProgress> persistedRecords = getprocessedProcessedFlow(elementId, caseId);
     if (CollectionUtils.isEmpty(persistedRecords)) {
       updateElementWithoutConnectedFlow(caseId, targetElement, persistedRecords);
@@ -106,7 +106,7 @@ public class WorkflowUtils {
     }
     var targetEmbeddedEnd = ProcessUtils.getEmbeddedEndFromTargetElementAndOuterFlow(targetElement, flowFromEmbedded);
     Optional.ofNullable(targetEmbeddedEnd).ifPresent(end -> {
-      persistedRecords.addAll(repo.findByInprogessTargetIdAndCaseId(ProcessUtils.getElementRawPid(end), caseId));
+      persistedRecords.addAll(repo.findByInprogessTargetIdAndCaseId(ProcessUtils.getElementPid(end), caseId));
       WorkflowProgress workflowFromUnupdateEmbeddedStart = convertSequenceFlowToWorkFlowProgress(caseId,
           flowFromEmbedded);
       persistedRecords.add(workflowFromUnupdateEmbeddedStart);
@@ -152,7 +152,7 @@ public class WorkflowUtils {
   private static List<WorkflowProgress> handleFlowFromEmbeddedElement(SequenceFlow flow, Long caseId) {
     String correspondingFlowIdFromOutside = ProcessUtils.getIncomingEmbeddedFlowFromStartFlow(flow);
     List<WorkflowProgress> persistArrow = repo
-        .findByInprogessArrowIdAndCaseId(ProcessUtils.getElementRawPid(correspondingFlowIdFromOutside), caseId);
+        .findByInprogessArrowIdAndCaseId(correspondingFlowIdFromOutside, caseId);
     if (CollectionUtils.isNotEmpty(persistArrow)) {
       WorkflowProgress workflowFromUnupdateEmbeddedStart = convertSequenceFlowToWorkFlowProgress(caseId, flow);
       persistArrow.add(workflowFromUnupdateEmbeddedStart);
@@ -164,9 +164,9 @@ public class WorkflowUtils {
   private static WorkflowProgress convertSequenceFlowToWorkFlowProgress(long currentCaseId, SequenceFlow flow) {
     WorkflowProgress progress = new WorkflowProgress();
     progress.setProcessRawPid(ProcessUtils.getProcessRawPidFromElement(flow));
-    progress.setArrowId(ProcessUtils.getElementRawPid(flow));
-    progress.setOriginElementId(ProcessUtils.getElementRawPid(flow.getSource()));
-    progress.setTargetElementId(ProcessUtils.getElementRawPid(flow.getTarget()));
+    progress.setArrowId(ProcessUtils.getElementPid(flow));
+    progress.setOriginElementId(ProcessUtils.getElementPid(flow.getSource()));
+    progress.setTargetElementId(ProcessUtils.getElementPid(flow.getTarget()));
     progress.setCaseId(currentCaseId);
     progress.setDurationUpdated(false);
     progress.setCondition(flow.getCondition());

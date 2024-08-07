@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
 
+import ch.ivyteam.ivy.application.IProcessModelVersion;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.IProcessManager;
 import ch.ivyteam.ivy.process.IProjectProcessManager;
@@ -27,7 +27,6 @@ import ch.ivyteam.ivy.process.model.element.event.start.EmbeddedStart;
 import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
 import ch.ivyteam.ivy.security.exec.Sudo;
 import ch.ivyteam.ivy.workflow.ITask;
-import ch.ivyteam.ivy.workflow.IWorkflowProcessModelVersion;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
 
@@ -36,36 +35,41 @@ public class ProcessUtils {
   private ProcessUtils() {
   }
 
-  public static String getProcessRawPidFromElement(String targetElementId) {
-    return targetElementId.split(ProcessMonitorConstants.HYPHEN_SIGN)[0];
+  public static String getElementPid(BaseElement baseElement) {
+    return Optional.ofNullable(baseElement).map(element -> element.getPid().toString()).orElse(StringUtils.EMPTY);
   }
 
-  public static String getProcessRawPidFromElement(BaseElement targetElement) {
-    return getProcessRawPidFromElement(targetElement.getPid().toString());
+  public static String getProcessPidFromElement(String elementId) {
+    return StringUtils.defaultString(elementId).split(ProcessMonitorConstants.HYPHEN_SIGN)[0];
   }
 
-  public static String getElementRawPid(String elementid) {
-    if (StringUtils.isBlank(elementid)) {
-      return StringUtils.EMPTY;
-    }
-    int firstHyphen = elementid.indexOf(ProcessMonitorConstants.HYPHEN_SIGN);
-    return elementid.substring(firstHyphen + 1);
+  public static String getProcessRawPidFromElement(BaseElement baseElement) {
+    String elementId = getElementPid(baseElement);
+    return getProcessPidFromElement(elementId);
   }
-
-  public static String getElementRawPid(BaseElement targetElement) {
-    String elementId = targetElement.getPid().toString();
-    return getElementRawPid(elementId);
-  }
+//
+//  public static String getElementRawPid(String elementId) {
+//    if (StringUtils.isBlank(elementId)) {
+//      return StringUtils.EMPTY;
+//    }
+//    int firstHyphen = elementId.indexOf(ProcessMonitorConstants.HYPHEN_SIGN);
+//    return elementId.substring(firstHyphen + 1);
+//  }
+//
+//  public static String getElementRawPid(BaseElement baseElement) {
+//    String elementId = getElementPid(baseElement);
+//    return getElementRawPid(elementId);
+//  }
 
   public static long getCurrentCaseId() {
     return Sudo.get(() -> {
-      return Ivy.wf().getCurrentCase().getId();
+      return Ivy.wfCase().getId();
     });
   }
 
   public static ITask getCurrentTask() {
     return Sudo.get(() -> {
-      return Ivy.wf().getCurrentTask();
+      return Ivy.wfTask();
     });
   }
 
@@ -89,22 +93,32 @@ public class ProcessUtils {
     if (sourceElement instanceof EmbeddedStart) {
       EmbeddedStart embeddedStart = (EmbeddedStart) sourceElement;
       return embeddedStart.getConnectedOuterSequenceFlow().getPid().toString();
-
     }
     return StringUtils.EMPTY;
   }
 
-  public static EmbeddedEnd getEmbeddedEndFromTargetElementAndOuterFlow(ProcessElement targetElement,
+  public static EmbeddedEnd getEmbeddedEndFromTargetElementAndOuterFlow(ProcessElement processElement,
       SequenceFlow flowFromEmbedded) {
-    NodeElement embeddedNode = flowFromEmbedded.getSource();
-    EmbeddedEnd targetEmbeddedEnds = (EmbeddedEnd) ((EmbeddedProcessElement) embeddedNode).getEmbeddedProcess()
-        .getProcessElements().stream().filter(k -> k instanceof EmbeddedEnd).map(u -> (EmbeddedEnd) u)
-        .filter(z -> z.getConnectedOuterProcessElement().getPid().toString().equals(targetElement.getPid().toString()))
+    EmbeddedProcessElement embeddedNode = (EmbeddedProcessElement) flowFromEmbedded.getSource();
+    EmbeddedEnd targetEmbeddedEnds = (EmbeddedEnd) embeddedNode.getEmbeddedProcess()
+        .getProcessElements().stream().filter(ProcessUtils::isEmbeddedEnd)
+        .map(EmbeddedEnd.class::cast)
+        .filter(embeddedEnd -> isConnectedToProcessElement(embeddedEnd, processElement))
         .findAny().orElse(null);
     return targetEmbeddedEnds;
   }
 
-  public static List<ProcessElement> getProcessElementsFromPmvAndPid(IWorkflowProcessModelVersion pmv,
+  private static boolean isEmbeddedEnd(ProcessElement element) {
+    return element instanceof EmbeddedEnd;
+  }
+
+  private static boolean isConnectedToProcessElement(EmbeddedEnd embeddedEnd, ProcessElement processElement) {
+    String connectedElementPid = getElementPid(embeddedEnd.getConnectedOuterProcessElement());
+    String processElementPid = getElementPid(processElement);
+    return StringUtils.equals(connectedElementPid, processElementPid);
+  }
+
+  public static List<ProcessElement> getProcessElementsFromPmvAndProcessPid(IProcessModelVersion pmv,
       String processRawPid) {
     IProjectProcessManager manager = IProcessManager.instance().getProjectDataModelFor(pmv);
     Process process = manager.findProcess(processRawPid, true).getModel();
@@ -125,33 +139,29 @@ public class ProcessUtils {
     }
     String subRawPid = fromElementPid.substring(0, lastHyphenIndex);
     return Optional
-        .ofNullable((EmbeddedProcessElement) ProcessUtils.findTargetProcessEmlementByRawPid(subRawPid, processElements))
-        .map(subElement -> ProcessUtils.findTargetProcessEmlementByRawPid(fromElementPid,
+        .ofNullable((EmbeddedProcessElement) findTargetProcessEmlementByRawPid(subRawPid, processElements))
+        .map(subElement -> findTargetProcessEmlementByRawPid(fromElementPid,
             subElement.getEmbeddedProcess().getProcessElements()))
         .orElse(null);
   }
 
-  public static List<ProcessElement> getAllProcessElementFromCurrentTaskAndPid(String processRawPid) {
-    IWorkflowProcessModelVersion pmv = ProcessUtils.getCurrentTask().getProcessModelVersion();
-    IProjectProcessManager manager = IProcessManager.instance().getProjectDataModelFor(pmv);
-    Process process = manager.findProcess(processRawPid, true).getModel();
-    return process.getProcessElements();
+  /** This method is used for runtime case **/
+  public static List<ProcessElement> getProcessElementsFromCurrentTaskAndProcessPid(String processRawPid) {
+    IProcessModelVersion pmv = getCurrentTask().getProcessModelVersion();
+    return getProcessElementsFromPmvAndProcessPid(pmv, processRawPid);
   }
 
-  public static List<ProcessElement> getAllProcessElementFromIProcessWebStartable(IProcessWebStartable startElement) {
+  public static List<ProcessElement> getProcessElementsFromIProcessWebStartable(IProcessWebStartable startElement) {
     if (Objects.nonNull(startElement)) {
-      String processRawPid = ProcessUtils.getProcessRawPidFromElement(startElement.pid().toString());
-      IProjectProcessManager manager = IProcessManager.instance().getProjectDataModelFor(startElement.pmv());
-      Process process = manager.findProcess(processRawPid, true).getModel();
-      return process.getProcessElements();
+      String processRawPid = getProcessPidFromElement(startElement.pid().toString());
+      return getProcessElementsFromPmvAndProcessPid(startElement.pmv(), processRawPid);
     }
     return Collections.emptyList();
   }
 
   public static List<IWebStartable> getAllProcesses() {
-    return Ivy.session().getStartables().stream().filter(process -> isNotPortalHomeAndMSTeamsProcess(process))
-        .filter(process -> !process.pmv().getName().equals(ProcessMonitorConstants.BPMN_STATISTIC_PMV))
-        .collect(Collectors.toList());
+    return Ivy.session().getStartables().stream().filter(ProcessUtils::isIWebStartableNeedToRecordStatistic)
+        .toList();
   }
 
   public static Map<String, List<IProcessWebStartable>> getProcessesWithPmv() {
@@ -163,10 +173,9 @@ public class ProcessUtils {
     return result;
   }
 
-  private static boolean isNotPortalHomeAndMSTeamsProcess(IWebStartable process) {
-    String relativeEncoded = process.getLink().getRelativeEncoded();
-    return !StringUtils.endsWithAny(relativeEncoded, ProcessMonitorConstants.PORTAL_START_REQUEST_PATH,
-        ProcessMonitorConstants.PORTAL_IN_TEAMS_REQUEST_PATH);
+  private static boolean isIWebStartableNeedToRecordStatistic(IWebStartable process) {
+    return !(StringUtils.equals(process.pmv().getName(), ProcessMonitorConstants.BPMN_STATISTIC_PMV)
+        || StringUtils.contains(process.pmv().getName(), "portal"));
   }
 
 }

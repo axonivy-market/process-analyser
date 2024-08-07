@@ -72,7 +72,7 @@ public class ProcessesMonitorUtils {
 
   private static Arrow convertSequenceFlowToArrow(SequenceFlow flow) {
     Arrow result = new Arrow();
-    result.setArrowId(ProcessUtils.getElementRawPid(flow));
+    result.setArrowId(ProcessUtils.getElementPid(flow));
     result.setLabel(flow.getName());
     result.setFrequency(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     result.setFrequency(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
@@ -85,7 +85,7 @@ public class ProcessesMonitorUtils {
     maxFrequency = 0;
     Map<String, Arrow> arrowMap = new HashMap<String, Arrow>();
     if (Objects.nonNull(processStart)) {
-      String processRawPid = ProcessUtils.getProcessRawPidFromElement(processStart.pid().toString());
+      String processRawPid = ProcessUtils.getProcessPidFromElement(processStart.pid().toString());
       extractedArrowFromProcessStart(processStart, results);
       results.stream().forEach(arrow -> arrowMap.put(arrow.getArrowId(), arrow));
       List<WorkflowProgress> recordedProgresses = repo.findByProcessRawPid(processRawPid);
@@ -100,7 +100,7 @@ public class ProcessesMonitorUtils {
   }
 
   private static void extractedArrowFromProcessStart(IProcessWebStartable processStart, List<Arrow> results) {
-    List<ProcessElement> processElements = ProcessUtils.getAllProcessElementFromIProcessWebStartable(processStart);
+    List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
     List<ProcessElement> additionalProcessElements = new ArrayList<ProcessElement>();
     processElements.stream().filter(ProcessUtils::isEmbeddedElementInstance)
         .forEach(element -> additionalProcessElements.addAll(ProcessUtils.getProcessElementFromSub(element)));
