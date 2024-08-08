@@ -18,6 +18,7 @@ import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
 import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
 import com.axonivy.utils.bpmnstatistic.repo.WorkflowProgressRepository;
 
+import ch.ivyteam.ivy.application.IProcessModelVersion;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.model.NodeElement;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
@@ -30,9 +31,12 @@ public class WorkflowUtils {
   private static final String SUB_ELEMENT_PID_SUFFIX = "S";
 
   private static void updateWorkflowInfo(String fromElementPid, Boolean conditionIsTrue, String toElementPid) {
+    fromElementPid = StringUtils.defaultString(fromElementPid, ProcessUtils.getCurrentElementPid());
     Long currentCaseId = ProcessUtils.getCurrentCaseId();
     String processRawPid = ProcessUtils.getProcessPidFromElement(fromElementPid);
-    List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromCurrentTaskAndProcessPid(processRawPid);
+
+    List<ProcessElement> processElements = ProcessUtils
+        .getProcessElementsFromPmvAndProcessPid(IProcessModelVersion.current(), processRawPid);
     ProcessElement targetElement = isProcessElementNestedInSub(fromElementPid)
         ? ProcessUtils.findEmbeddedProcessElement(fromElementPid, processElements)
         : ProcessUtils.findProcessElementByRawPid(fromElementPid, processElements);
@@ -71,15 +75,13 @@ public class WorkflowUtils {
    */
   private static void sanitizeWorkFlowProgressForAlternativeElement(Predicate<WorkflowProgress> predicateByCondition,
       ProcessElement element, List<WorkflowProgress> outGoingWorkFlowProgress) {
-    if (ProcessUtils.isAlternativeInstance(element)) {
-      List<WorkflowProgress> persistedRecords = repo
-          .findByInprogressAlternativeIdAndCaseId(ProcessUtils.getElementPid(element), ProcessUtils.getCurrentCaseId());
-      if (CollectionUtils.isEmpty(persistedRecords)) {
-        outGoingWorkFlowProgress.removeIf(predicateByCondition);
-      } else {
-        outGoingWorkFlowProgress.clear();
-        persistedRecords.stream().filter(predicateByCondition).forEach(repo::delete);
-      }
+    List<WorkflowProgress> persistedRecords = repo
+        .findByInprogressAlternativeIdAndCaseId(ProcessUtils.getElementPid(element), ProcessUtils.getCurrentCaseId());
+    if (CollectionUtils.isEmpty(persistedRecords)) {
+      outGoingWorkFlowProgress.removeIf(predicateByCondition);
+    } else {
+      outGoingWorkFlowProgress.clear();
+      persistedRecords.stream().filter(predicateByCondition).forEach(repo::delete);
     }
   }
 
@@ -98,8 +100,12 @@ public class WorkflowUtils {
         : flow -> isWorkFlowProgressWithTargetElementPid(flow, toElementPid);
   }
 
-  public static void updateWorkflowInfo(String elementId) {
-    updateWorkflowInfo(elementId, null, null);
+  public static void record() {
+    updateWorkflowInfo(null, null, null);
+  }
+
+  public static void record(String currentElementId) {
+    updateWorkflowInfo(currentElementId, null, null);
   }
 
   /**
@@ -306,9 +312,9 @@ public class WorkflowUtils {
    *                       (get by PMV) is running
    * @return the original condition of option
    */
-  public static Boolean isWorkflowInfoUpdatedByPidAndAdditionalCondition(String fromElementPid, Boolean condition,
+  public static Boolean isWorkflowInfoUpdatedByPidAndAdditionalCondition(Boolean condition,
       String toElementPid) {
-    updateWorkflowInfo(fromElementPid, condition, toElementPid);
+    updateWorkflowInfo(null, condition, toElementPid);
     return condition;
   }
 

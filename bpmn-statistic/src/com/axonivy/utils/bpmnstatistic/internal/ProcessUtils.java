@@ -28,7 +28,6 @@ import ch.ivyteam.ivy.process.model.element.event.start.RequestStart;
 import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
 import ch.ivyteam.ivy.process.model.value.PID;
 import ch.ivyteam.ivy.security.exec.Sudo;
-import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
 
@@ -39,6 +38,10 @@ public class ProcessUtils {
 
   public static String getElementPid(BaseElement baseElement) {
     return Optional.ofNullable(baseElement).map(BaseElement::getPid).map(PID::toString).orElse(StringUtils.EMPTY);
+  }
+
+  public static String getElementPid(PID pid) {
+    return Optional.ofNullable(pid).map(PID::toString).orElse(StringUtils.EMPTY);
   }
 
   public static String getProcessPidFromElement(String elementId) {
@@ -56,11 +59,6 @@ public class ProcessUtils {
     });
   }
 
-  public static ITask getCurrentTask() {
-    return Sudo.get(() -> {
-      return Ivy.wfTask();
-    });
-  }
 
   public static boolean isEmbeddedElementInstance(Object element) {
     return element instanceof EmbeddedProcessElement;
@@ -158,11 +156,6 @@ public class ProcessUtils {
         .orElse(null);
   }
 
-  public static List<ProcessElement> getProcessElementsFromCurrentTaskAndProcessPid(String processRawPid) {
-    IProcessModelVersion pmv = getCurrentTask().getProcessModelVersion();
-    return getProcessElementsFromPmvAndProcessPid(pmv, processRawPid);
-  }
-
   public static List<ProcessElement> getProcessElementsFromIProcessWebStartable(IProcessWebStartable startElement) {
     if (Objects.nonNull(startElement)) {
       String processRawPid = getProcessPidFromElement(startElement.pid().toString());
@@ -191,5 +184,10 @@ public class ProcessUtils {
 
   public static boolean isContainFlowFromSubElement(List<SequenceFlow> flows) {
     return flows.stream().anyMatch(flow -> ProcessUtils.isEmbeddedElementInstance(flow.getSource()));
+  }
+
+  public static String getCurrentElementPid() {
+    PID currentElementPid = ch.ivyteam.ivy.bpm.engine.internal.model.ProcessElement.current().getId();
+    return getElementPid(currentElementPid);
   }
 }

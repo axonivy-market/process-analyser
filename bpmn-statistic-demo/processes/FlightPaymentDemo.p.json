@@ -12,10 +12,7 @@
         "callSignature" : "flightPayment",
         "outLink" : "flightPayment.ivp",
         "input" : {
-          "code" : [
-            "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-            "WorkflowUtils.updateWorkflowInfo(\"190A58A4E3D99BAD-f0\");"
-          ]
+          "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
         },
         "case" : { }
       },
@@ -41,10 +38,7 @@
       "config" : {
         "task" : {
           "name" : "Check payment method",
-          "code" : [
-            "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-            "WorkflowUtils.updateWorkflowInfo(\"190A58A4E3D99BAD-f3\");"
-          ]
+          "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
         }
       },
       "visual" : {
@@ -61,8 +55,7 @@
       "config" : {
         "output" : {
           "code" : [
-            "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-            "WorkflowUtils.updateWorkflowInfo(\"190A58A4E3D99BAD-f5\");",
+            "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();",
             "Thread.sleep(Math.random()*10000);"
           ]
         }
@@ -80,10 +73,7 @@
       "config" : {
         "task" : {
           "name" : "Confirm payment information",
-          "code" : [
-            "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-            "WorkflowUtils.updateWorkflowInfo(\"190A58A4E3D99BAD-f7\");"
-          ]
+          "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
         }
       },
       "visual" : {
@@ -104,9 +94,9 @@
         "output" : {
           "code" : [
             "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-            "WorkflowUtils.updateWorkflowInfo(\"190A58A4E3D99BAD-f9\");",
+            "WorkflowUtils.record();",
             "Thread.sleep(Math.random()*10000);",
-            "WorkflowUtils.updateWorkflowInfo(\"190A58A4E3D99BAD-f1\");"
+            "WorkflowUtils.record(\"190A58A4E3D99BAD-f1\");"
           ]
         }
       },
@@ -132,7 +122,7 @@
         { "id" : "f8", "to" : "f7", "label" : {
             "name" : "no",
             "offset" : { "x" : 1, "y" : -10 }
-          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(\"190A58A4E3D99BAD-f11\", Math.random()>0.5,\"190A58A4E3D99BAD-f7\")" },
+          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(Math.random()>0.5,\"190A58A4E3D99BAD-f7\")" },
         { "id" : "f13", "to" : "f9", "via" : [ { "x" : 624, "y" : 272 }, { "x" : 872, "y" : 272 } ], "label" : {
             "name" : "yes",
             "segment" : 1.52,

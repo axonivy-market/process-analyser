@@ -375,7 +375,7 @@
           "name" : "Marketing recommend destination"
         },
         "input" : {
-          "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.updateWorkflowInfo(\"18F3D6D7AEE204DA-f1\");"
+          "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
         },
         "tags" : "demo"
       },
@@ -411,12 +411,10 @@
             "dialogId" : "com.axonivy.utils.bpmnstatistic.demo.RecommendDestination",
             "startMethod" : "start()",
             "call" : {
-              "code" : [
-                "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.updateWorkflowInfo(\"18F3D6D7AEE204DA-S60-f1\");"
-              ]
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
             },
             "output" : {
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.updateWorkflowInfo(\"18F3D6D7AEE204DA-f25\");"
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6D7AEE204DA-f25\");"
             }
           },
           "visual" : {
