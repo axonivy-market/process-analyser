@@ -19,6 +19,7 @@ import com.axonivy.utils.bpmnstatistic.bo.Node;
 import com.axonivy.utils.bpmnstatistic.bo.ProcessMiningData;
 import com.axonivy.utils.bpmnstatistic.bo.TimeFrame;
 import com.axonivy.utils.bpmnstatistic.enums.AnalysisType;
+import com.axonivy.utils.bpmnstatistic.utils.DateUtils;
 import com.axonivy.utils.bpmnstatistic.utils.JacksonUtils;
 import com.axonivy.utils.bpmnstatistic.utils.ProcessesMonitorUtils;
 
@@ -70,8 +71,10 @@ public class ProcessesMonitorBean {
         selectedProcessDiagramUrl = ProcessViewer.of(process).url().toWebLink().getAbsolute();
         processMiningData.setProcessId(selectedPid);
         processMiningData.setProcessName(selectedProcessName);
-        processMiningData.setNumberOfInstances(15);
         processMiningData.setAnalysisType(selectedAnalysisType);
+        // Mock data for instances count from a time range. Remove it when implement
+        // feature of time filter
+        processMiningData.setNumberOfInstances(15);
         TimeFrame timeFrame = new TimeFrame(new Date(), new Date());
         processMiningData.setTimeFrame(timeFrame);
         nodes = ProcessesMonitorUtils.getStatisticData(getSelectedIProcessWebStartable(), selectedAnalysisType);
@@ -86,9 +89,9 @@ public class ProcessesMonitorBean {
   public void showStatisticData() {
     if (StringUtils.isNoneBlank(selectedPid)) {
       ProcessesMonitorUtils.showStatisticData(selectedPid);
-      // Mock data for instances count from a time range. Remove it when implement
-      // feature of time filter
-      ProcessesMonitorUtils.showAdditionalInformation("15", "11.02", "12.08");
+      ProcessesMonitorUtils.showAdditionalInformation(String.valueOf(processMiningData.getNumberOfInstances()),
+          DateUtils.formatDate(processMiningData.getTimeFrame().getStart()),
+          DateUtils.formatDate(processMiningData.getTimeFrame().getEnd()));
     }
   }
 

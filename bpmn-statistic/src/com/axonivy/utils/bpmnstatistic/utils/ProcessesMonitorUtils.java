@@ -164,7 +164,6 @@ public class ProcessesMonitorUtils {
     }
   }
 
-
   private static void updateNodeByAnalysisType(Node node, AnalysisType analysisType) {
     if (AnalysisType.FREQUENCY == analysisType) {
       node.setLabelValue(String.valueOf(node.getRelativeValue()));

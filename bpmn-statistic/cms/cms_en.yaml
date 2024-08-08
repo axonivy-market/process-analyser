@@ -27,6 +27,8 @@ Dialogs:
             ShowStatistic: Show Statistic
             Title: Process Mining Demo
             Type: Type
+Patterns:
+  DatePattern: dd.MM.yyyy
 Processes:
   BpmnStatistic:
     description: To show statistic for your processes
