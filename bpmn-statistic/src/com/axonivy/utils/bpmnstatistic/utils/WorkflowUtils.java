@@ -23,14 +23,6 @@ import ch.ivyteam.ivy.process.model.NodeElement;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 
-/**
- * @author ntqdinh
- *
- */
-/**
- * @author ntqdinh
- *
- */
 @SuppressWarnings("restriction")
 public class WorkflowUtils {
   private static final WorkflowProgressRepository repo = WorkflowProgressRepository.getInstance();
@@ -147,11 +139,11 @@ public class WorkflowUtils {
    */
   private static void updateElementWithoutConnectedFlowFromDB(Long caseId, ProcessElement element,
       List<WorkflowProgress> persistedRecords) {
-    List<SequenceFlow> incomingFlow = element.getIncoming();
+    List<SequenceFlow> incomingFlows = element.getIncoming();
     if (ProcessUtils.isEmbeddedElementInstance(element.getParent())) {
-      incomingFlow.stream().forEach(flow -> persistedRecords.addAll(handleFlowFromEmbeddedElement(flow, caseId)));
+      incomingFlows.stream().forEach(flow -> persistedRecords.addAll(handleFlowFromEmbeddedElement(flow, caseId)));
     } else {
-      SequenceFlow flowFromEmbedded = incomingFlow.stream()
+      SequenceFlow flowFromEmbedded = incomingFlows.stream()
           .filter(flow -> ProcessUtils.isEmbeddedElementInstance(flow.getSource())).findAny().orElse(null);
       persistedRecords.addAll(handleFlowOutOfEmbeddedElement(caseId, element, flowFromEmbedded));
     }
@@ -175,7 +167,7 @@ public class WorkflowUtils {
     }
     var targetEmbeddedEnd = ProcessUtils.getEmbeddedEndFromTargetElementAndOuterFlow(element, flowFromEmbedded);
     Optional.ofNullable(targetEmbeddedEnd).ifPresent(end -> {
-      persistedRecords.addAll(repo.findByInprogessTargetIdAndCaseId(ProcessUtils.getElementPid(end), caseId));
+      persistedRecords.addAll(getSavedInprogressWorkflowByTargetIdAndCaseId(ProcessUtils.getElementPid(end), caseId));
       WorkflowProgress workflowFromUnupdateEmbeddedStart = convertSequenceFlowToWorkFlowProgress(caseId,
           flowFromEmbedded);
       persistedRecords.add(workflowFromUnupdateEmbeddedStart);
@@ -201,6 +193,45 @@ public class WorkflowUtils {
     return results;
   }
 
+  private static List<WorkflowProgress> getSavedInprogressWorkflowByTargetIdAndCaseId(String targetElementId,
+      Long caseId) {
+    int tries = 0;
+
+    List<WorkflowProgress> results = new ArrayList<>();
+    do {
+      try {
+        Thread.sleep(500);
+      } catch (InterruptedException e) {
+        Ivy.log().error(e.getMessage());
+      }
+      results = repo.findByInprogessTargetIdAndCaseId(targetElementId, caseId);
+      if (results.size() != 0) {
+        break;
+      }
+      tries += 1;
+    } while (tries < 5);
+    return results;
+  }
+
+  private static List<WorkflowProgress> getSavedInprogressWorkflowByArrowIdAndCaseId(String arrowId, Long caseId) {
+    int tries = 0;
+
+    List<WorkflowProgress> results = new ArrayList<>();
+    do {
+      try {
+        Thread.sleep(500);
+      } catch (InterruptedException e) {
+        Ivy.log().error(e.getMessage());
+      }
+      results = repo.findByInprogessArrowIdAndCaseId(arrowId, caseId);
+      if (results.size() != 0) {
+        break;
+      }
+      tries += 1;
+    } while (tries < 5);
+    return results;
+  }
+
   private static void updateWorkflowProgress(WorkflowProgress flow) {
     flow.setEndTimeStamp(new Date());
     flow.setDuration((flow.getEndTimeStamp().getTime() - flow.getStartTimeStamp().getTime()) / MILISECOND_IN_SECOND);
@@ -221,19 +252,29 @@ public class WorkflowUtils {
     return results;
   }
 
+  /**
+   * 
+   * The current flow will be check if its source is request start of sub element
+   * or not. If flow source is start element, the flow outside of sub (which is
+   * connect to that start) will be added to updating list. A new flow from the
+   * embedded start to current element will be created and add to the return list
+   * also. In case the previous element is sub, it also create new arrow between 2
+   * of them and update the end flow of the prior sub.
+   * 
+   * @param flow   Flow going to current element
+   * @param caseId Current case id
+   * @return List of new WorkFlow need to be saved
+   */
   private static List<WorkflowProgress> handleFlowFromEmbeddedElement(SequenceFlow flow, Long caseId) {
     SequenceFlow correspondingFlowFromOutside = ProcessUtils.getIncomingEmbeddedFlowFromStartFlow(flow);
     if (correspondingFlowFromOutside != null) {
-      String correspondingFlowIdFromOutside = ProcessUtils.getElementPid(flow);
-      Ivy.log().warn(correspondingFlowFromOutside.getPid());
-
-      List<WorkflowProgress> persistArrow = repo.findByInprogessArrowIdAndCaseId(correspondingFlowIdFromOutside,
-          caseId);
-      Ivy.log().warn(persistArrow.size());
+      String outsideFlowId = ProcessUtils.getElementPid(correspondingFlowFromOutside);
+      List<WorkflowProgress> persistArrow = getSavedInprogressWorkflowByArrowIdAndCaseId(outsideFlowId, caseId);
       if (CollectionUtils.isNotEmpty(persistArrow)) {
         WorkflowProgress workflowFromUnupdateEmbeddedStart = convertSequenceFlowToWorkFlowProgress(caseId, flow);
         persistArrow.add(workflowFromUnupdateEmbeddedStart);
-      } else if (ProcessUtils.isEmbeddedElementInstance(correspondingFlowFromOutside.getSource())) {
+      }
+      if (ProcessUtils.isEmbeddedElementInstance(correspondingFlowFromOutside.getSource())) {
         persistArrow.addAll(handleFlowOutOfEmbeddedElement(caseId, correspondingFlowFromOutside.getTarget(),
             correspondingFlowFromOutside));
       }
