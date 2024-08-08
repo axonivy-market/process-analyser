@@ -3,25 +3,37 @@ package com.axonivy.utils.bpmnstatistic.bo;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.axonivy.utils.bpmnstatistic.enums.NodeType;
+
 public class WorkflowProgress implements Serializable {
-  private static final long serialVersionUID = 932880898772989547L;
+  private static final long serialVersionUID = -628946458018725877L;
   private String processRawPid;
-  private String arrowId;
+  private String elementId;
   private String originElementId;
   private String targetElementId;
   private Date startTimeStamp;
   private Date endTimeStamp;
   private Long duration;
   private Long caseId;
+  private NodeType type;
 
-  public WorkflowProgress(String processRawPid, String arrowId, String originElementId, String targetElementId,
-      Long caseId) {
+  public WorkflowProgress(String processRawPid, String rowId, String originElementId, String targetElementId,
+      Long caseId, NodeType type) {
     this.processRawPid = processRawPid;
-    this.arrowId = arrowId;
+    this.elementId = rowId;
     this.originElementId = originElementId;
     this.targetElementId = targetElementId;
     this.caseId = caseId;
     this.startTimeStamp = new Date();
+    this.type = type;
+  };
+
+  public WorkflowProgress(String processRawPid, String elementId, Long caseId, NodeType type) {
+    this.processRawPid = processRawPid;
+    this.elementId = elementId;
+    this.caseId = caseId;
+    this.startTimeStamp = new Date();
+    this.type = type;
   };
 
   public WorkflowProgress() {
@@ -67,12 +79,20 @@ public class WorkflowProgress implements Serializable {
     this.processRawPid = processRawPid;
   }
 
-  public String getArrowId() {
-    return arrowId;
+  public String getElementId() {
+    return elementId;
   }
 
-  public void setArrowId(String arrowId) {
-    this.arrowId = arrowId;
+  public void setElementId(String elementId) {
+    this.elementId = elementId;
+  }
+
+  public NodeType getType() {
+    return type;
+  }
+
+  public void setType(NodeType type) {
+    this.type = type;
   }
 
   public String getOriginElementId() {
@@ -93,7 +113,7 @@ public class WorkflowProgress implements Serializable {
 
   @Override
   public String toString() {
-    return "WorkflowProgress [processRawPid=" + processRawPid + ", arrowId=" + arrowId + ", originElementId="
+    return "WorkflowProgress [processRawPid=" + processRawPid + ", type=" + type + ", elementId=" + elementId + ", originElementId="
         + originElementId + ", targetElementId=" + targetElementId + ", startTimeStamp=" + startTimeStamp
         + ", endTimeStamp=" + endTimeStamp + ", duration=" + duration + ", caseId=" + caseId + "]";
   }

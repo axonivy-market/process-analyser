@@ -7,22 +7,26 @@ Dialogs:
       utils:
         bpmnstatistic:
           ProcessesMonitor:
-            ArrowId: Arrow Id
+            AnalysisType: Analysis Type
             Frequency: Frequency
+            Id: Id
             Label: Label
+            LabelValue: Label Value
             MedianDuration: Median Duration
             Module: Module
             NoRecordsFound: No records found.
             PageHeader: Process Monitor Page
+            PleaseSelectAnalysisType: Please select an analysis type
             PleaseSelectModule: Please select a module
             PleaseSelectProcess: Please select a process
             Process: Process
             ProcessInformation: Process Information
             ProcessViewer: Process Viewer
-            Ratio: Ratio
+            RelativeValue: Relative Value
             RequireMessage: Please select a process
             ShowStatistic: Show Statistic
             Title: Process Mining Demo
+            Type: Type
 Processes:
   BpmnStatistic:
     description: To show statistic for your processes

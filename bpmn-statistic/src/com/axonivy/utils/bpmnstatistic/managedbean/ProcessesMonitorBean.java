@@ -1,6 +1,7 @@
 package com.axonivy.utils.bpmnstatistic.managedbean;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,9 +15,14 @@ import javax.faces.bean.ViewScoped;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.axonivy.utils.bpmnstatistic.bo.Arrow;
+import com.axonivy.utils.bpmnstatistic.bo.Node;
+import com.axonivy.utils.bpmnstatistic.bo.ProcessMiningData;
+import com.axonivy.utils.bpmnstatistic.bo.TimeFrame;
+import com.axonivy.utils.bpmnstatistic.enums.AnalysisType;
+import com.axonivy.utils.bpmnstatistic.utils.JacksonUtils;
 import com.axonivy.utils.bpmnstatistic.utils.ProcessesMonitorUtils;
 
+import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.viewer.api.ProcessViewer;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
@@ -29,33 +35,51 @@ public class ProcessesMonitorBean {
   private String selectedModuleName;
   private String selectedProcessDiagramUrl;
   private String selectedPid;
-  private List<Arrow> arrows;
+  private List<Node> nodes;
+  private ProcessMiningData processMiningData;
+  private AnalysisType selectedAnalysisType;
 
   @PostConstruct
   private void init() {
     processesMap = ProcessesMonitorUtils.getProcessesWithPmv();
+    selectedAnalysisType = AnalysisType.FREQUENCY;
   }
 
   public void onChangeSelectedModule() {
     if (StringUtils.isBlank(selectedModuleName)) {
       selectedModuleName = null;
       selectedProcessName = null;
-      arrows = null;
+      nodes = null;
       selectedProcessDiagramUrl = null;
     }
   }
 
   public void onChangeSelectedProcess() {
-    if (StringUtils.isNotBlank(selectedProcessName) && StringUtils.isNotBlank(selectedModuleName)) {
+    loadNodes();
+  }
+
+  public void onChangeSelectedAnalysisType() {
+    loadNodes();
+  }
+
+  private void loadNodes() {
+    if (StringUtils.isNotBlank(selectedProcessName) && StringUtils.isNotBlank(selectedModuleName) && selectedAnalysisType != null) {
       Optional.ofNullable(getSelectedIProcessWebStartable()).ifPresent(process -> {
+        processMiningData = new ProcessMiningData();
         selectedPid = process.pid().getParent().toString();
         selectedProcessDiagramUrl = ProcessViewer.of(process).url().toWebLink().getAbsolute();
-        arrows = ProcessesMonitorUtils.getStatisticData(getSelectedIProcessWebStartable());
-        for (Arrow arrow : arrows) {
-          arrow.setMedianDuration(Math.floor(arrow.getMedianDuration() * 100) / 100);
-          arrow.setRatio((float) (Math.floor(arrow.getRatio() * 100) / 100));
-        }
+        processMiningData.setProcessId(selectedPid);
+        processMiningData.setProcessName(selectedProcessName);
+        processMiningData.setNumberOfInstances(15);
+        processMiningData.setAnalysisType(selectedAnalysisType);
+        TimeFrame timeFrame = new TimeFrame(new Date(), new Date());
+        processMiningData.setTimeFrame(timeFrame);
+        nodes = ProcessesMonitorUtils.getStatisticData(getSelectedIProcessWebStartable(), selectedAnalysisType);
+        processMiningData.setNodes(nodes);
+        Ivy.log().info(JacksonUtils.convertObjectToJSONString(processMiningData));
       });
+    } else {
+      nodes = new ArrayList<>();
     }
   }
 
@@ -85,6 +109,10 @@ public class ProcessesMonitorBean {
     return processesMap.keySet();
   }
 
+  public AnalysisType[] getAnalysisTypes() {
+    return AnalysisType.values();
+  }
+ 
   public void setSelectedProcessDiagramUrl(String selectedProcessDiagramUrl) {
     this.selectedProcessDiagramUrl = selectedProcessDiagramUrl;
   }
@@ -109,11 +137,19 @@ public class ProcessesMonitorBean {
     return selectedProcessDiagramUrl;
   }
 
-  public List<Arrow> getArrows() {
-    return arrows;
+  public List<Node> getNodes() {
+    return nodes;
   }
 
-  public void setArrows(List<Arrow> arrows) {
-    this.arrows = arrows;
+  public void setNodes(List<Node> nodes) {
+    this.nodes = nodes;
+  }
+
+  public AnalysisType getSelectedAnalysisType() {
+    return selectedAnalysisType;
+  }
+
+  public void setSelectedAnalysisType(AnalysisType selectedAnalysisType) {
+    this.selectedAnalysisType = selectedAnalysisType;
   }
 }

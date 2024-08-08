@@ -56,6 +56,11 @@ public class WorkflowProgressRepository {
     return results;
   }
 
+  public WorkflowProgress findByElementIdAndCaseId(String elementId, Long caseId) {
+    return createSearchQuery().textField("elementId").isEqualToIgnoringCase(elementId).and().numberField("caseId")
+        .isEqualTo(caseId).execute().getFirst();
+  }
+
   private Query<WorkflowProgress> createSearchQuery() {
     return Ivy.repo().search(getType());
   }

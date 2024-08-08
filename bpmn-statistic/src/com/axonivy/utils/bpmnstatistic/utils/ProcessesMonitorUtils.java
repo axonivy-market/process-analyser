@@ -11,10 +11,12 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PF;
 
-import com.axonivy.utils.bpmnstatistic.bo.Arrow;
+import com.axonivy.utils.bpmnstatistic.bo.Node;
 import com.axonivy.utils.bpmnstatistic.bo.WorkflowProgress;
 import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
+import com.axonivy.utils.bpmnstatistic.enums.AnalysisType;
 import com.axonivy.utils.bpmnstatistic.enums.IvyVariable;
+import com.axonivy.utils.bpmnstatistic.enums.NodeType;
 import com.axonivy.utils.bpmnstatistic.repo.WorkflowProgressRepository;
 import com.axonivy.utils.bpmnstatistic.service.IvyTaskOccurrenceService;
 
@@ -31,18 +33,17 @@ import ch.ivyteam.ivy.workflow.start.IWebStartable;
 @SuppressWarnings("restriction")
 public class ProcessesMonitorUtils {
 
-  public static final String BPMN_STATISTIC_PMV ="bpmn-statistic";
+  public static final String BPMN_STATISTIC_PMV = "bpmn-statistic";
 
   private static final WorkflowProgressRepository repo = WorkflowProgressRepository.getInstance();
-  private static int maxFrequency = 0;
+  private static int maxArrowFrequency = 0;
+  private static int maxElementFrequency = 0;
 
-  private ProcessesMonitorUtils() {
-  };
+  private ProcessesMonitorUtils() {};
 
   public static List<IWebStartable> getAllProcesses() {
     return Ivy.session().getStartables().stream().filter(process -> isNotPortalHomeAndMSTeamsProcess(process))
-        .filter(process -> !process.pmv().getName().equals(BPMN_STATISTIC_PMV))
-        .collect(Collectors.toList());
+        .filter(process -> !process.pmv().getName().equals(BPMN_STATISTIC_PMV)).collect(Collectors.toList());
   }
 
   public static Map<String, List<IProcessWebStartable>> getProcessesWithPmv() {
@@ -73,7 +74,7 @@ public class ProcessesMonitorUtils {
     }
   }
 
-  private static int findMaxFrequency(HashMap<String, Integer> taskCountMap) {
+  public static int findMaxFrequency(HashMap<String, Integer> taskCountMap) {
     int max = 0;
     for (Entry<String, Integer> entry : taskCountMap.entrySet()) {
       max = max < entry.getValue() ? entry.getValue() : max;
@@ -89,8 +90,8 @@ public class ProcessesMonitorUtils {
   }
 
   public static void showAdditionalInformation(String instancesCount, String fromDate, String toDate) {
-    String additionalInformation = String.format(ProcessMonitorConstants.ADDITIONAL_INFORMATION_FORMAT, instancesCount,
-        fromDate, toDate);
+    String additionalInformation =
+        String.format(ProcessMonitorConstants.ADDITIONAL_INFORMATION_FORMAT, instancesCount, fromDate, toDate);
     PF.current().executeScript(
         String.format(ProcessMonitorConstants.UPDATE_ADDITIONAL_INFORMATION_FUNCTION, additionalInformation));
   }
@@ -101,48 +102,74 @@ public class ProcessesMonitorUtils {
     return process.getProcessElements();
   }
 
-  public static List<Arrow> convertProcessElementInfoToArrows(ProcessElement element) {
+  public static List<Node> convertProcessElementInfoToArrows(ProcessElement element) {
     return element.getOutgoing().stream().map(flow -> convertSequenceFlowToArrow(flow)).collect(Collectors.toList());
   }
 
-  private static Arrow convertSequenceFlowToArrow(SequenceFlow flow) {
-    Arrow result = new Arrow();
-    result.setArrowId(flow.getPid().toString().split(ProcessMonitorConstants.HYPHEN_SIGN)[1]);
-    result.setLabel(flow.getName());
-    result.setFrequency(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
-    result.setFrequency(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
-    result.setMedianDuration(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
-    return result;
+  private static Node convertSequenceFlowToArrow(SequenceFlow flow) {
+    Node arrowNode = new Node();
+    arrowNode.setId(flow.getPid().toString().split(ProcessMonitorConstants.HYPHEN_SIGN)[1]);
+    arrowNode.setLabel(flow.getName());
+    arrowNode.setRelativeValue(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
+    arrowNode.setMedianDuration(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
+    arrowNode.setType(NodeType.ARROW);
+    return arrowNode;
   }
 
-  public static List<Arrow> getStatisticData(IProcessWebStartable processStart) {
-    List<Arrow> results = new ArrayList<>();
-    maxFrequency = 0;
-    Map<String, Arrow> arrowMap = new HashMap<String, Arrow>();
+  public static List<Node> getStatisticData(IProcessWebStartable processStart, AnalysisType analysisType) {
+    List<Node> nodes = new ArrayList<>();
+    maxArrowFrequency = 0;
+    maxElementFrequency = 0;
+    Map<String, Node> nodeMap = new HashMap<String, Node>();
     if (Objects.nonNull(processStart)) {
       String processRawPid = processStart.pid().toString().split(ProcessMonitorConstants.HYPHEN_SIGN)[0];
-      List<ProcessElement> processElements = getProcessElementFromPmvAndPid(
-          (IWorkflowProcessModelVersion) processStart.pmv(), processRawPid);
-      processElements.forEach(element -> results.addAll(convertProcessElementInfoToArrows(element)));
-      results.stream().forEach(arrow -> arrowMap.put(arrow.getArrowId(), arrow));
+      List<ProcessElement> processElements =
+          getProcessElementFromPmvAndPid((IWorkflowProcessModelVersion) processStart.pmv(), processRawPid);
+      processElements.forEach(element -> {
+        Node node = new Node();
+        node.setId(element.getPid().toString().split(ProcessMonitorConstants.HYPHEN_SIGN)[1]);
+        node.setType(NodeType.ELEMENT);
+        node.setLabel(element.getName());
+        nodes.add(node);
+        nodes.addAll(convertProcessElementInfoToArrows(element));
+      });
+      nodes.stream().forEach(node -> nodeMap.put(node.getId(), node));
       List<WorkflowProgress> recordedProgresses = repo.findByProcessRawPid(processRawPid);
       recordedProgresses.stream()
-          .forEach(record -> updateArrowByWorkflowProgress(arrowMap.get(record.getArrowId()), record));
-      arrowMap.keySet().stream().forEach(key -> {
-        Arrow currentArrow = arrowMap.get(key);
-        currentArrow.setRatio((float) currentArrow.getFrequency() / maxFrequency);
+          .forEach(record -> updateNodeByWorkflowProgress(nodeMap.get(record.getElementId()), record));
+      nodeMap.keySet().stream().forEach(key -> {
+        Node currentNode = nodeMap.get(key);
+        currentNode.setRelativeValue((float) currentNode.getFrequency()
+            / (NodeType.ARROW == currentNode.getType() ? maxArrowFrequency : maxElementFrequency));
+        updateNodeByAnalysisType(currentNode, analysisType);
       });
     }
-    return results;
+    return nodes;
   }
 
-  private static int updateArrowByWorkflowProgress(Arrow arrow, WorkflowProgress progress) {
-    int currentFrequency = arrow.getFrequency();
+  private static void updateNodeByWorkflowProgress(Node node, WorkflowProgress progress) {
+    int currentFrequency = node.getFrequency();
+    node.setFrequency(node.getFrequency() + 1);
     if (Objects.nonNull(progress.getDuration())) {
-      arrow.setMedianDuration(
-          ((arrow.getMedianDuration() * currentFrequency) + progress.getDuration()) / (currentFrequency + 1));
-      arrow.setFrequency(arrow.getFrequency() + 1);
+      node.setMedianDuration(
+          ((node.getMedianDuration() * currentFrequency) + progress.getDuration()) / (currentFrequency + 1));
+    } else if(NodeType.ARROW == node.getType()) {
+      node.setFrequency(node.getFrequency() - 1);
     }
-    return maxFrequency = maxFrequency < currentFrequency + 1 ? currentFrequency + 1 : maxFrequency;
+
+    if (NodeType.ARROW == node.getType()) {
+      maxArrowFrequency = maxArrowFrequency < currentFrequency + 1 ? currentFrequency + 1 : maxArrowFrequency;
+    } else {
+      maxElementFrequency = maxElementFrequency < currentFrequency + 1 ? currentFrequency + 1 : maxElementFrequency;
+    }
+  }
+
+
+  private static void updateNodeByAnalysisType(Node node, AnalysisType analysisType) {
+    if (AnalysisType.FREQUENCY == analysisType) {
+      node.setLabelValue(String.valueOf(node.getRelativeValue()));
+    } else {
+      node.setLabelValue(String.valueOf(node.getMedianDuration()));
+    }
   }
 }

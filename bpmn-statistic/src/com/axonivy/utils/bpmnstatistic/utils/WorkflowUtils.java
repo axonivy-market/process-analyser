@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.axonivy.utils.bpmnstatistic.bo.WorkflowProgress;
 import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
+import com.axonivy.utils.bpmnstatistic.enums.NodeType;
 import com.axonivy.utils.bpmnstatistic.repo.WorkflowProgressRepository;
 
 import ch.ivyteam.ivy.environment.Ivy;
@@ -64,8 +65,7 @@ public class WorkflowUtils {
     if (CollectionUtils.isEmpty(oldArrows)) {
       return;
     }
-    oldArrows.stream().forEach(WorkflowUtils::updateWorkflowProgress);
-
+    oldArrows.stream().forEach(arrow -> WorkflowUtils.updateWorkflowProgress(arrow, new Date(), true));
   }
 
   private static List<WorkflowProgress> getprocessedProcessedFlow(String elementId, Long caseId) {
@@ -86,20 +86,27 @@ public class WorkflowUtils {
     return results;
   }
 
-  private static void updateWorkflowProgress(WorkflowProgress flow) {
-    flow.setEndTimeStamp(new Date());
+  private static void updateWorkflowProgress(WorkflowProgress flow, Date endTimeStamp, boolean isArrowElement) {
+    flow.setEndTimeStamp(endTimeStamp);
     flow.setDuration((flow.getEndTimeStamp().getTime() - flow.getStartTimeStamp().getTime()) / MILISECOND_IN_SECOND);
     repo.save(flow);
+    if (isArrowElement) {
+      WorkflowProgress originElement = repo.findByElementIdAndCaseId(flow.getOriginElementId(), flow.getCaseId());
+      updateWorkflowProgress(originElement, flow.getStartTimeStamp(), false);
+    }
   }
 
   private static void initiateWorkflowProgressFromCurrentElement(ProcessElement targetElement, long currentCaseId,
       String processRawPid) {
     targetElement.getOutgoing().stream().forEach(flow -> {
-      WorkflowProgress progress = new WorkflowProgress(processRawPid, getElementRawId(flow.getPid().toString()),
+      WorkflowProgress arrowWfProgress = new WorkflowProgress(processRawPid, getElementRawId(flow.getPid().toString()),
           getElementRawId(targetElement.getPid().toString()), getElementRawId(flow.getTarget().getPid().toString()),
-          currentCaseId);
-      repo.save(progress);
+          currentCaseId, NodeType.ARROW);
+      repo.save(arrowWfProgress);
     });
+    WorkflowProgress elementWfProgress = new WorkflowProgress(processRawPid,
+        getElementRawId(targetElement.getPid().toString()), currentCaseId, NodeType.ELEMENT);
+    repo.save(elementWfProgress);
   }
 
   private static String getElementRawId(String elementid) {
