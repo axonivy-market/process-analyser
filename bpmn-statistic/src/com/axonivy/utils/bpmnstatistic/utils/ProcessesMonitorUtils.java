@@ -32,7 +32,6 @@ public class ProcessesMonitorUtils {
   private ProcessesMonitorUtils() {
   }
 
-
   /**
    * Get more additional insight from process viewer (task count, number of
    * instances with interval time range,...) when user click "show statistic
@@ -104,11 +103,9 @@ public class ProcessesMonitorUtils {
       // Get all of element from process in 1st layer (which is not nested from sub)
       List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
       extractedArrowFromProcessElements(processElements, results);
-      Map<String, Arrow> arrowMap = results.stream().collect(
-          Collectors.toMap(Arrow::getArrowId, Function.identity()));
+      Map<String, Arrow> arrowMap = results.stream().collect(Collectors.toMap(Arrow::getArrowId, Function.identity()));
       List<WorkflowProgress> recordedProgresses = repo.findByProcessRawPid(processRawPid);
-      recordedProgresses.stream()
-          .forEach(record -> updateArrowByWorkflowProgress(arrowMap.get(record.getArrowId()), record));
+      recordedProgresses.stream().forEach(record -> updateArrowByWorkflowProgress(arrowMap, record));
       arrowMap.keySet().stream().forEach(key -> {
         Arrow currentArrow = arrowMap.get(key);
         currentArrow.setRatio((float) currentArrow.getFrequency() / maxFrequency);
@@ -142,12 +139,15 @@ public class ProcessesMonitorUtils {
    * @param arrow    current arrow
    * @param progress single progress instance of this arrow
    */
-  private static void updateArrowByWorkflowProgress(Arrow arrow, WorkflowProgress progress) {
+  private static void updateArrowByWorkflowProgress(Map<String, Arrow> arrowMap, WorkflowProgress record) {
+    Arrow arrow = arrowMap.get(record.getArrowId());
+    if (Objects.isNull(arrow)) {
+      return;
+    }
     int currentFrequency = arrow.getFrequency();
     int newFrequency = currentFrequency + 1;
-    if (Objects.nonNull(progress.getDuration())) {
-      arrow.setMedianDuration(
-          ((arrow.getMedianDuration() * currentFrequency) + progress.getDuration()) / newFrequency);
+    if (Objects.nonNull(record.getDuration())) {
+      arrow.setMedianDuration(((arrow.getMedianDuration() * currentFrequency) + record.getDuration()) / newFrequency);
       arrow.setFrequency(newFrequency);
     }
     maxFrequency = maxFrequency < newFrequency ? newFrequency : maxFrequency;
