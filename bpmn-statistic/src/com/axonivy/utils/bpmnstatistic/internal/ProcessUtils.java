@@ -172,15 +172,15 @@ public class ProcessUtils {
   public static Map<String, List<IProcessWebStartable>> getProcessesWithPmv() {
     Map<String, List<IProcessWebStartable>> result = new HashMap<>();
     for (IWebStartable process : getAllProcesses()) {
-      String pmvName = process.pmv().getProjectName();
+      String pmvName = process.pmv().getName();
       result.computeIfAbsent(pmvName, key -> new ArrayList<>()).add((IProcessWebStartable) process);
     }
     return result;
   }
 
   private static boolean isIWebStartableNeedToRecordStatistic(IWebStartable process) {
-    return !(StringUtils.equals(process.pmv().getProjectName(), ProcessMonitorConstants.BPMN_STATISTIC_PROJECT_NAME)
-        || StringUtils.contains(process.pmv().getProjectName(), ProcessMonitorConstants.PORTAL_PROJECT_SUFFIX));
+    return !(StringUtils.equals(process.pmv().getName(), ProcessMonitorConstants.BPMN_STATISTIC_PMV_NAME)
+        || StringUtils.contains(process.pmv().getName(), ProcessMonitorConstants.PORTAL_PMV_SUFFIX));
   }
 
   public static boolean isContainFlowFromSubElement(List<SequenceFlow> flows) {
