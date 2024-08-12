@@ -11,6 +11,6 @@ public class ProcessMonitorConstants {
   public static final int DEFAULT_INITIAL_STATISTIC_NUMBER = 0;
   public static final String HYPHEN_SIGN = "-";
   public static final String QUOTED_CONTENT_PATTERN = "\"([^\"]*)\"";
-  public static final String BPMN_STATISTIC_PMV = "bpmn-statistic";
-  public static final String PORTAL_PMV = "portal";
+  public static final String BPMN_STATISTIC_PROJECT_NAME = "bpmn-statistic";
+  public static final String PORTAL_PROJECT_SUFFIX = "portal";
 }

@@ -38,7 +38,7 @@
       "config" : {
         "task" : {
           "name" : "Check payment method",
-          "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
+          "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"190A58A4E3D99BAD-f3\");"
         }
       },
       "visual" : {
@@ -73,7 +73,7 @@
       "config" : {
         "task" : {
           "name" : "Confirm payment information",
-          "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
+          "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"190A58A4E3D99BAD-f7\");"
         }
       },
       "visual" : {

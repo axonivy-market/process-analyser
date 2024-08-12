@@ -93,7 +93,7 @@
           "config" : {
             "task" : {
               "name" : "Re-search a flight",
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S10-f8\");"
             }
           },
           "visual" : {
@@ -142,7 +142,7 @@
           "config" : {
             "task" : {
               "name" : "Submit Personal and Payment Info",
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S20-f1\");"
             }
           },
           "visual" : {
@@ -196,7 +196,7 @@
           "config" : {
             "task" : {
               "name" : "Rework for submit Personal and Payment Info",
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S20-f5\");"
             }
           },
           "visual" : {
@@ -283,7 +283,7 @@
           "config" : {
             "task" : {
               "name" : "Display booking information",
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S21-f1\");"
             }
           },
           "visual" : {
@@ -361,7 +361,7 @@
                 "role" : "SYSTEM"
               },
               "skipTasklist" : true,
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S22-f1\");"
             }
           },
           "visual" : {
@@ -463,7 +463,7 @@
                 "role" : "SYSTEM"
               },
               "skipTasklist" : true,
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S23-f1\");"
             }
           },
           "visual" : {
@@ -501,7 +501,7 @@
                 "role" : "SYSTEM"
               },
               "skipTasklist" : true,
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S23-f6\");"
             }
           },
           "visual" : {
@@ -554,7 +554,7 @@
                 "role" : "SYSTEM"
               },
               "skipTasklist" : true,
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S25-f1\");"
             }
           },
           "visual" : {
@@ -638,7 +638,7 @@
           "config" : {
             "task" : {
               "name" : "Charge for ticket",
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S60-f1\");"
             }
           },
           "visual" : {
@@ -716,7 +716,7 @@
                 "role" : "SYSTEM"
               },
               "skipTasklist" : true,
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S40-f1\");"
             }
           },
           "visual" : {

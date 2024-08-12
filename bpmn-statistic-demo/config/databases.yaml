@@ -1,5 +1,1 @@
 Databases:
-  d:
-    Url: jdbc:hsqldb:mem:axonivysystemdatabase
-    Driver: org.hsqldb.jdbc.JDBCDriver
-    Password: ${decrypt:}
