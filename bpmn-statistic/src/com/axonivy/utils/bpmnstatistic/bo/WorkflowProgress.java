@@ -13,16 +13,9 @@ public class WorkflowProgress implements Serializable {
   private Date endTimeStamp;
   private Long duration;
   private Long caseId;
-
-  public WorkflowProgress(String processRawPid, String arrowId, String originElementId, String targetElementId,
-      Long caseId) {
-    this.processRawPid = processRawPid;
-    this.arrowId = arrowId;
-    this.originElementId = originElementId;
-    this.targetElementId = targetElementId;
-    this.caseId = caseId;
-    this.startTimeStamp = new Date();
-  };
+  private String condition;
+  private boolean isDurationUpdated;
+  private boolean isConditionTrue;
 
   public WorkflowProgress() {
   }
@@ -95,6 +88,32 @@ public class WorkflowProgress implements Serializable {
   public String toString() {
     return "WorkflowProgress [processRawPid=" + processRawPid + ", arrowId=" + arrowId + ", originElementId="
         + originElementId + ", targetElementId=" + targetElementId + ", startTimeStamp=" + startTimeStamp
-        + ", endTimeStamp=" + endTimeStamp + ", duration=" + duration + ", caseId=" + caseId + "]";
+        + ", endTimeStamp=" + endTimeStamp + ", duration=" + duration + ", caseId=" + caseId + ", condition="
+        + condition + ", isDurationUpdated=" + isDurationUpdated + ", isConditionTrue="
+        + isConditionTrue + "]";
+  }
+
+  public String getCondition() {
+    return condition;
+  }
+
+  public void setCondition(String condition) {
+    this.condition = condition;
+  }
+
+  public boolean isConditionTrue() {
+    return isConditionTrue;
+  }
+
+  public void setConditionTrue(boolean isConditionTrue) {
+    this.isConditionTrue = isConditionTrue;
+  }
+
+  public boolean isDurationUpdated() {
+    return isDurationUpdated;
+  }
+
+  public void setDurationUpdated(boolean isDurationUpdated) {
+    this.isDurationUpdated = isDurationUpdated;
   }
 }
