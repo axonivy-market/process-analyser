@@ -9,6 +9,7 @@ public class WorkflowProgress implements Serializable {
   private String arrowId;
   private String originElementId;
   private String targetElementId;
+  private Date createdAt;
   private Date startTimeStamp;
   private Date endTimeStamp;
   private Long duration;
@@ -33,6 +34,14 @@ public class WorkflowProgress implements Serializable {
 
   public void setCaseId(Long caseId) {
     this.caseId = caseId;
+  }
+
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
   }
 
   public Date getStartTimeStamp() {
@@ -94,7 +103,7 @@ public class WorkflowProgress implements Serializable {
   @Override
   public String toString() {
     return "WorkflowProgress [processRawPid=" + processRawPid + ", arrowId=" + arrowId + ", originElementId="
-        + originElementId + ", targetElementId=" + targetElementId + ", startTimeStamp=" + startTimeStamp
+        + originElementId + ", targetElementId=" + targetElementId + ", createdAt=" + createdAt + ", startTimeStamp=" + startTimeStamp
         + ", endTimeStamp=" + endTimeStamp + ", duration=" + duration + ", caseId=" + caseId + "]";
   }
 }

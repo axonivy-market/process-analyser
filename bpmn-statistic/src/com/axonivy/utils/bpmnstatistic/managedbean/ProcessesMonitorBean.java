@@ -1,5 +1,7 @@
 package com.axonivy.utils.bpmnstatistic.managedbean;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,10 +13,15 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.utils.bpmnstatistic.bo.Arrow;
+import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
+import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
+import com.axonivy.utils.bpmnstatistic.utils.DateUtils;
 import com.axonivy.utils.bpmnstatistic.utils.ProcessesMonitorUtils;
 
 import ch.ivyteam.ivy.process.viewer.api.ProcessViewer;
@@ -68,8 +75,27 @@ public class ProcessesMonitorBean {
     }
   }
 
+  public void updateDataOnChangingFilter() throws ParseException {
+    if (StringUtils.isBlank(selectedModuleName) || StringUtils.isBlank(selectedProcessName)) {
+      return;
+    }
+    // Filter data by selected time
+    var parameterMap = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+    String from = parameterMap.get(ProcessMonitorConstants.FROM);
+    String to = parameterMap.get(ProcessMonitorConstants.TO);
+    TimeIntervalFilter timeIntervalFilter = new TimeIntervalFilter();
+    var formatter = new SimpleDateFormat(DateUtils.DATE_TIME_PATTERN);
+    timeIntervalFilter.setFrom(formatter.parse(from));
+    timeIntervalFilter.setTo(formatter.parse(to));
+    arrows = ProcessesMonitorUtils.filterStatisticByInterval(getSelectedIProcessWebStartable(), timeIntervalFilter);
+    for (Arrow arrow : arrows) {
+      arrow.setMedianDuration(Math.floor(arrow.getMedianDuration() * 100) / 100);
+      arrow.setRatio((float) (Math.floor(arrow.getRatio() * 100) / 100));
+    }
+  }
+
   private IProcessWebStartable getSelectedIProcessWebStartable() {
-    return processesMap.get(selectedModuleName).stream()
+    return CollectionUtils.emptyIfNull(processesMap.get(selectedModuleName)).stream()
         .filter(process -> process.getDisplayName().equalsIgnoreCase(selectedProcessName)).findAny().orElse(null);
   }
 

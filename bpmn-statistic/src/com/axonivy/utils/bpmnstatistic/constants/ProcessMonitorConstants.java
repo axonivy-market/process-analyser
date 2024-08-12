@@ -12,4 +12,6 @@ public class ProcessMonitorConstants {
   public static final String UPDATE_ADDITIONAL_INFORMATION_FUNCTION = "renderAdditionalInformation('%s')";
   public static final int DEFAULT_INITIAL_STATISTIC_NUMBER = 0;
   public static final String HYPHEN_SIGN = "-";
+  public static final String FROM = "from";
+  public static final String TO = "to";
 }

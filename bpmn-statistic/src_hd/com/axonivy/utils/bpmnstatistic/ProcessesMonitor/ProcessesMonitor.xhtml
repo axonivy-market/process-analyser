@@ -10,10 +10,10 @@
       <h:form id="monitor-form">
         <p:fieldset
           legend="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/ProcessInformation')}">
-          <div class="ui-fluid ">
+          <div class=" ">
             <div class="p-grid p-formgrid">
               <!-- Module row -->
-              <h:panelGroup styleClass="p-field p-col-12 p-grid p-formgrid p-align-center" layout="block">
+              <h:panelGroup styleClass="p-field p-col-12 p-grid p-formgrid p-align-center ui-fluid" layout="block">
                 <div class="p-col-12 p-md-3 p-text-right">
                   <p:outputLabel for="module-chooser"
                     value="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/Module')}" />
@@ -31,7 +31,7 @@
               </h:panelGroup>
 
               <!-- Process row -->
-              <h:panelGroup styleClass="p-field p-col-12 p-grid p-formgrid p-align-center" layout="block">
+              <h:panelGroup styleClass="p-field p-col-12 p-grid p-formgrid p-align-center ui-fluid" layout="block">
                 <div class="p-col-12 p-md-3 p-text-right">
                   <p:outputLabel for="process-chooser"
                     value="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/Process')}" />
@@ -49,18 +49,15 @@
               </h:panelGroup>
 
               <!-- Time interval row -->
-              <h:panelGroup styleClass="p-field p-col-12 p-grid p-formgrid p-align-center" layout="block">
-                <div class="p-col-12 p-md-3 p-text-right">
-                  <p:outputLabel for="process-time-interval"
-                    value="Time interval" />
-                </div>
-                <h:panelGroup id="process-time-interval" styleClass="p-col-12 p-md-9">
-                  <!-- From -->
-                  <div></div>
-                  <!-- To -->
-                  <div></div>
-                </h:panelGroup>
-              </h:panelGroup>
+              <ui:include src="TimeIntervalFilter.xhtml">
+              </ui:include>
+              <p:remoteCommand id="filter-data-by-interval-rc" name="filterDataByIntervalRC"
+                actionListener="#{processesMonitorBean.updateDataOnChangingFilter()}" process="@this"
+                partialSubmit="true" update="arrow-statistics"/>
+
+<!--               <h:panelGroup styleClass="p-field p-col-12 p-grid p-formgrid p-align-center p-jc-end" layout="block"> -->
+<!--                 <p:commandButton styleClass="p-mr-3" value="Apply" icon=""></p:commandButton> -->
+<!--               </h:panelGroup> -->
             </div>
           </div>
         </p:fieldset>
@@ -89,6 +86,9 @@
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/MedianDuration')}">
               <h:outputText value="#{arrow.medianDuration}" />
             </p:column>
+            <f:facet name="footer">
+              <h:outputText value="In total there are #{processesMonitorBean.arrows.size()} record(s)." styleClass="p-col-12" />
+            </f:facet>
           </p:dataTable>
         </h:panelGroup>
         <br />

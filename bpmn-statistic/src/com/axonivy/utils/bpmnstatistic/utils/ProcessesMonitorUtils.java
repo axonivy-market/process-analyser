@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PF;
 
 import com.axonivy.utils.bpmnstatistic.bo.Arrow;
+import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
 import com.axonivy.utils.bpmnstatistic.bo.WorkflowProgress;
 import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
 import com.axonivy.utils.bpmnstatistic.enums.IvyVariable;
@@ -137,6 +138,9 @@ public class ProcessesMonitorUtils {
   }
 
   private static int updateArrowByWorkflowProgress(Arrow arrow, WorkflowProgress progress) {
+    if (arrow == null) {
+      return maxFrequency;
+    }
     int currentFrequency = arrow.getFrequency();
     if (Objects.nonNull(progress.getDuration())) {
       arrow.setMedianDuration(
@@ -144,5 +148,28 @@ public class ProcessesMonitorUtils {
       arrow.setFrequency(arrow.getFrequency() + 1);
     }
     return maxFrequency = maxFrequency < currentFrequency + 1 ? currentFrequency + 1 : maxFrequency;
+  }
+  
+  public static List<Arrow> filterStatisticByInterval(IProcessWebStartable processStart, TimeIntervalFilter timeIntervalFilter) {
+    // TODO Filter data here
+    List<Arrow> results = new ArrayList<>();
+    maxFrequency = 0;
+    Map<String, Arrow> arrowMap = new HashMap<String, Arrow>();
+    if (Objects.nonNull(processStart)) {
+      String processRawPid = processStart.pid().toString().split(ProcessMonitorConstants.HYPHEN_SIGN)[0];
+      List<ProcessElement> processElements = getProcessElementFromPmvAndPid(
+          (IWorkflowProcessModelVersion) processStart.pmv(), processRawPid);
+      processElements.forEach(element -> results.addAll(convertProcessElementInfoToArrows(element)));
+      results.stream().forEach(arrow -> arrowMap.put(arrow.getArrowId(), arrow));
+      // TODO new code
+      List<WorkflowProgress> recordedProgresses = repo.findByProcessRawPidInTime(processRawPid, timeIntervalFilter);
+      recordedProgresses.stream()
+          .forEach(record -> updateArrowByWorkflowProgress(arrowMap.get(record.getArrowId()), record));
+      arrowMap.keySet().stream().forEach(key -> {
+        Arrow currentArrow = arrowMap.get(key);
+        currentArrow.setRatio((float) currentArrow.getFrequency() / maxFrequency);
+      });
+    }
+    return results;
   }
 }

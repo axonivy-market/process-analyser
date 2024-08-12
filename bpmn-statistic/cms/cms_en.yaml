@@ -23,6 +23,8 @@ Dialogs:
             RequireMessage: Please select a process
             ShowStatistic: Show Statistic
             Title: Process Mining Demo
+Labels:
+  This: This
 Processes:
   BpmnStatistic:
     description: To show statistic for your processes

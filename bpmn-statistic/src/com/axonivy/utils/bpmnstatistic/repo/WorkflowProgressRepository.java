@@ -1,10 +1,13 @@
 package com.axonivy.utils.bpmnstatistic.repo;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
 import com.axonivy.utils.bpmnstatistic.bo.WorkflowProgress;
 
+import ch.ivyteam.ivy.business.data.store.search.Filter;
 import ch.ivyteam.ivy.business.data.store.search.Query;
 import ch.ivyteam.ivy.environment.Ivy;
 
@@ -24,31 +27,42 @@ public class WorkflowProgressRepository {
   }
 
   public void save(WorkflowProgress progress) {
+    if (progress != null && progress.getCreatedAt() == null) {
+      progress.setCreatedAt(new Date());
+    }
     Ivy.repo().save(progress);
   }
 
   public List<WorkflowProgress> findByProcessRawPid(String id) {
-    List<WorkflowProgress> results = new ArrayList<WorkflowProgress>();
-    int count = 0;
-    int querySize;
-    do {
-      List<WorkflowProgress> currentResult = createSearchQuery().textField("processRawPid").containsAllWords(id)
-          .limit(count, DEFAULT_SEARCH_LIMIT).execute().getAll();
-      results.addAll(currentResult);
-      querySize = currentResult.size();
-      count += querySize;
-    } while (querySize == DEFAULT_SEARCH_LIMIT);
-    return results;
+    return executeAll(filterByProcessRawPid(id));
+  }
+
+  public List<WorkflowProgress> findByProcessRawPidInTime(String id, TimeIntervalFilter timeIntervalFilter) {
+    Filter<WorkflowProgress> filter = filterByProcessRawPid(id).and().dateTimeField("createdAt").isInDateRange(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo());
+    return executeAll(filter);
+  }
+
+  private Filter<WorkflowProgress> filterByProcessRawPid(String id) {
+    Filter<WorkflowProgress> filter = createSearchQuery().textField("processRawPid").containsAllWords(id);
+    return filter;
   }
 
   public List<WorkflowProgress> findByTargetElementIdAndCaseId(String elementId, Long caseId) {
-    List<WorkflowProgress> results = new ArrayList<WorkflowProgress>();
+    Filter<WorkflowProgress> filter = createSearchQuery().textField("targetElementId").isEqualToIgnoringCase(elementId)
+        .and().numberField("caseId").isEqualTo(caseId);
+    return executeAll(filter);
+  }
+
+  private List<WorkflowProgress> executeAll(Filter<WorkflowProgress> filter) {
+    if (filter == null) {
+      return List.of();
+    }
+
+    List<WorkflowProgress> results = new ArrayList<>();
     int count = 0;
     int querySize;
     do {
-      List<WorkflowProgress> currentResult = createSearchQuery().textField("targetElementId")
-          .isEqualToIgnoringCase(elementId).and().numberField("caseId").isEqualTo(caseId)
-          .limit(count, DEFAULT_SEARCH_LIMIT).execute().getAll();
+      var currentResult = filter.limit(count, DEFAULT_SEARCH_LIMIT).execute().getAll();
       results.addAll(currentResult);
       querySize = currentResult.size();
       count += querySize;
