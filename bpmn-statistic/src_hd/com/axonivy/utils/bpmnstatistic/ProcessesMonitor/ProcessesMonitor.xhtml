@@ -63,23 +63,23 @@
           <p:dataTable var="arrow" styleClass="p-grid" value="#{processesMonitorBean.arrows}" scrollable="true"
             scrollHeight="300"
             emptyMessage="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/NoRecordsFound')}">
-            <p:column styleClass="p-col-2"
+            <p:column styleClass="p-col-2" sortBy="#{arrow.arrowId}"  filterBy="#{arrow.arrowId}"
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/ArrowId')}">
               <h:outputText value="#{arrow.arrowId}" />
             </p:column>
-            <p:column styleClass="p-col-4"
+            <p:column styleClass="p-col-4" sortBy="#{arrow.label}" filterBy="#{arrow.arrowId}"
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/Label')}">
               <h:outputText value="#{arrow.label}" />
             </p:column>
-            <p:column styleClass="p-col-2"
+            <p:column styleClass="p-col-2" sortBy="#{arrow.frequency}" filterBy="#{arrow.arrowId}"
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/Frequency')}">
               <h:outputText value="#{arrow.frequency}" />
             </p:column>
-            <p:column styleClass="p-col-2"
+            <p:column styleClass="p-col-2" sortBy="#{arrow.ratio}" filterBy="#{arrow.arrowId}"
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/Ratio')}">
               <h:outputText value="#{arrow.ratio}" />
             </p:column>
-            <p:column styleClass="p-col-2"
+            <p:column styleClass="p-col-2" sortBy="#{arrow.medianDuration}" filterBy="#{arrow.arrowId}"
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/MedianDuration')}">
               <h:outputText value="#{arrow.medianDuration}" />
             </p:column>

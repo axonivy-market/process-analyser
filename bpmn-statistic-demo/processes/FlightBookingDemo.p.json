@@ -18,25 +18,22 @@
           "name" : "Search a Flight"
         },
         "input" : {
-          "code" : [
-            "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-            "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-f0\");"
-          ]
+          "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
         },
-        "startName" : "Book flight tickets",
         "tags" : "demo"
       },
       "visual" : {
-        "at" : { "x" : 96, "y" : 392 }
+        "at" : { "x" : 144, "y" : 392 }
       },
-      "connect" : { "id" : "f21", "to" : "S10", "label" : {
-          "name" : "start process"
+      "connect" : { "id" : "f2", "to" : "S10", "label" : {
+          "name" : "f2",
+          "offset" : { "x" : -6, "y" : -10 }
         } }
     }, {
       "id" : "f1",
       "type" : "TaskEnd",
       "visual" : {
-        "at" : { "x" : 1592, "y" : 648 }
+        "at" : { "x" : 1456, "y" : 648 }
       }
     }, {
       "id" : "S10",
@@ -48,7 +45,11 @@
           "visual" : {
             "at" : { "x" : 168, "y" : 256 }
           },
-          "connect" : { "id" : "S10-f1", "to" : "S10-f3" }
+          "parentConnector" : "f2",
+          "connect" : { "id" : "S10-f1", "to" : "S10-f3", "label" : {
+              "name" : "S10-f1",
+              "offset" : { "x" : -9, "y" : 14 }
+            } }
         }, {
           "id" : "S10-g1",
           "type" : "EmbeddedEnd",
@@ -64,16 +65,16 @@
             "dialogId" : "com.axonivy.utils.bpmnstatistic.demo.SearchingFlight",
             "startMethod" : "start()",
             "call" : {
-              "code" : [
-                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S10-f3\");"
-              ]
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
             }
           },
           "visual" : {
             "at" : { "x" : 392, "y" : 256 }
           },
-          "connect" : { "id" : "S10-f0", "to" : "S10-g1" }
+          "connect" : { "id" : "S10-f0", "to" : "S10-g1", "label" : {
+              "name" : "S10-f0",
+              "offset" : { "x" : 0, "y" : 14 }
+            } }
         }, {
           "id" : "S10-g2",
           "type" : "EmbeddedStart",
@@ -81,7 +82,10 @@
             "at" : { "x" : 392, "y" : 96 }
           },
           "parentConnector" : "f20",
-          "connect" : { "id" : "S10-f9", "to" : "S10-f8" }
+          "connect" : { "id" : "S10-f9", "to" : "S10-f8", "label" : {
+              "name" : "S10-f9",
+              "offset" : { "x" : -39, "y" : 3 }
+            } }
         }, {
           "id" : "S10-f8",
           "type" : "TaskSwitchEvent",
@@ -89,34 +93,25 @@
           "config" : {
             "task" : {
               "name" : "Re-search a flight",
-              "code" : [
-                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S10-f8\");"
-              ]
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S10-f8\");"
             }
           },
           "visual" : {
             "at" : { "x" : 392, "y" : 168 },
             "labelOffset" : { "x" : 89, "y" : 9 }
           },
-          "connect" : { "id" : "S10-f2", "to" : "S10-f3" }
-        }, {
-          "id" : "S10-g3",
-          "type" : "EmbeddedStart",
-          "visual" : {
-            "at" : { "x" : 64, "y" : 256 }
-          },
-          "parentConnector" : "f21"
+          "connect" : { "id" : "S10-f2", "to" : "S10-f3", "label" : {
+              "name" : "S10-f2",
+              "offset" : { "x" : -31, "y" : 2 }
+            } }
         } ],
       "visual" : {
         "at" : { "x" : 272, "y" : 392 },
         "size" : { "width" : 128, "height" : 60 }
       },
       "connect" : { "id" : "f3", "to" : "S20", "label" : {
-          "name" : [
-            "submit a",
-            "flight"
-          ]
+          "name" : "f3",
+          "offset" : { "x" : -3, "y" : -10 }
         } }
     }, {
       "id" : "S20",
@@ -129,7 +124,10 @@
             "at" : { "x" : 64, "y" : 256 }
           },
           "parentConnector" : "f3",
-          "connect" : { "id" : "S20-f2", "to" : "S20-f1" }
+          "connect" : { "id" : "S20-f2", "to" : "S20-f1", "label" : {
+              "name" : "S20-f2",
+              "offset" : { "x" : -2, "y" : -10 }
+            } }
         }, {
           "id" : "S20-g1",
           "type" : "EmbeddedEnd",
@@ -144,17 +142,17 @@
           "config" : {
             "task" : {
               "name" : "Submit Personal and Payment Info",
-              "code" : [
-                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S20-f1\");"
-              ]
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S20-f1\");"
             }
           },
           "visual" : {
             "at" : { "x" : 168, "y" : 256 },
             "labelOffset" : { "x" : 14, "y" : 34 }
           },
-          "connect" : { "id" : "S20-f4", "to" : "S20-f3" }
+          "connect" : { "id" : "S20-f4", "to" : "S20-f3", "label" : {
+              "name" : "S20-f4",
+              "offset" : { "x" : -2, "y" : -10 }
+            } }
         }, {
           "id" : "S20-f3",
           "type" : "DialogCall",
@@ -163,10 +161,7 @@
             "dialogId" : "com.axonivy.utils.bpmnstatistic.demo.SubmitPersonalInformation",
             "startMethod" : "start()",
             "call" : {
-              "code" : [
-                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S20-f3\");"
-              ]
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
             },
             "output" : {
               "map" : {
@@ -179,7 +174,10 @@
           "visual" : {
             "at" : { "x" : 328, "y" : 256 }
           },
-          "connect" : { "id" : "S20-f0", "to" : "S20-g1" }
+          "connect" : { "id" : "S20-f0", "to" : "S20-g1", "label" : {
+              "name" : "S20-f4",
+              "offset" : { "x" : -8, "y" : -10 }
+            } }
         }, {
           "id" : "S20-g2",
           "type" : "EmbeddedStart",
@@ -187,7 +185,10 @@
             "at" : { "x" : 328, "y" : 408 }
           },
           "parentConnector" : "f24",
-          "connect" : { "id" : "S20-f6", "to" : "S20-f5" }
+          "connect" : { "id" : "S20-f6", "to" : "S20-f5", "label" : {
+              "name" : "S20-f6",
+              "offset" : { "x" : -31, "y" : 5 }
+            } }
         }, {
           "id" : "S20-f5",
           "type" : "TaskSwitchEvent",
@@ -195,44 +196,43 @@
           "config" : {
             "task" : {
               "name" : "Rework for submit Personal and Payment Info",
-              "code" : [
-                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S20-f5\");"
-              ]
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S20-f5\");"
             }
           },
           "visual" : {
             "at" : { "x" : 328, "y" : 344 },
             "labelOffset" : { "x" : 153, "y" : 9 }
           },
-          "connect" : { "id" : "S20-f7", "to" : "S20-f3" }
+          "connect" : { "id" : "S20-f7", "to" : "S20-f3", "label" : {
+              "name" : "S20-f7",
+              "offset" : { "x" : -23, "y" : 2 }
+            } }
         } ],
       "visual" : {
-        "at" : { "x" : 504, "y" : 392 },
+        "at" : { "x" : 448, "y" : 392 },
         "size" : { "width" : 144, "height" : 60 }
       },
       "connect" : { "id" : "f5", "to" : "f4", "label" : {
-          "name" : [
-            "submit payment",
-            "info"
-          ]
+          "name" : "f5",
+          "offset" : { "x" : 1, "y" : -10 }
         } }
     }, {
       "id" : "f4",
       "type" : "Alternative",
       "name" : "Back to searching step?",
       "visual" : {
-        "at" : { "x" : 736, "y" : 392 },
+        "at" : { "x" : 600, "y" : 392 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
-        { "id" : "f20", "to" : "S10", "via" : [ { "x" : 736, "y" : 328 }, { "x" : 272, "y" : 328 } ], "label" : {
-            "name" : "selected 'Yes'",
+        { "id" : "f20", "to" : "S10", "via" : [ { "x" : 600, "y" : 328 }, { "x" : 272, "y" : 328 } ], "label" : {
+            "name" : "Yes",
             "segment" : 0.5,
-            "offset" : { "x" : -263, "y" : -34 }
-          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(\"18F3D6C205210455-f4\", in.isBackToSearchPage)" },
+            "offset" : { "x" : -159, "y" : -18 }
+          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(in.isBackToSearchPage,\"18F3D6C205210455-S21\")" },
         { "id" : "f6", "to" : "S21", "label" : {
-            "name" : "No"
+            "name" : "No",
+            "offset" : { "x" : 1, "y" : -10 }
           } }
       ]
     }, {
@@ -240,18 +240,18 @@
       "type" : "Alternative",
       "name" : "Back to submit information step?",
       "visual" : {
-        "at" : { "x" : 1056, "y" : 392 },
-        "labelOffset" : { "x" : 24, "y" : -16 }
+        "at" : { "x" : 920, "y" : 392 },
+        "labelOffset" : { "x" : 40, "y" : -24 }
       },
       "connect" : [
-        { "id" : "f24", "to" : "S20", "via" : [ { "x" : 1056, "y" : 456 }, { "x" : 504, "y" : 456 } ], "label" : {
+        { "id" : "f24", "to" : "S20", "via" : [ { "x" : 920, "y" : 456 }, { "x" : 448, "y" : 456 } ], "label" : {
             "name" : "Yes",
             "segment" : 0.5,
-            "offset" : { "x" : -247, "y" : 30 }
-          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(\"18F3D6C205210455-f7\", in.isBackToSubmitInformationPage)" },
-        { "id" : "f10", "to" : "f12", "via" : [ { "x" : 1152, "y" : 392 } ], "label" : {
+            "offset" : { "x" : -7, "y" : 14 }
+          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(in.isBackToSubmitInformationPage,\"18F3D6C205210455-f12\")" },
+        { "id" : "f10", "to" : "f12", "via" : [ { "x" : 1016, "y" : 392 } ], "label" : {
             "name" : "No",
-            "offset" : { "x" : 46, "y" : 33 }
+            "offset" : { "x" : 14, "y" : 9 }
           } }
       ]
     }, {
@@ -272,7 +272,10 @@
             "at" : { "x" : 104, "y" : 256 }
           },
           "parentConnector" : "f6",
-          "connect" : { "id" : "S21-f2", "to" : "S21-f1" }
+          "connect" : { "id" : "S21-f2", "to" : "S21-f1", "label" : {
+              "name" : "S21-f2",
+              "offset" : { "x" : 2, "y" : -18 }
+            } }
         }, {
           "id" : "S21-f1",
           "type" : "TaskSwitchEvent",
@@ -280,17 +283,17 @@
           "config" : {
             "task" : {
               "name" : "Display booking information",
-              "code" : [
-                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S21-f1\");"
-              ]
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S21-f1\");"
             }
           },
           "visual" : {
             "at" : { "x" : 216, "y" : 256 },
             "labelOffset" : { "x" : 14, "y" : 34 }
           },
-          "connect" : { "id" : "S21-f4", "to" : "S21-f3" }
+          "connect" : { "id" : "S21-f4", "to" : "S21-f3", "label" : {
+              "name" : "S21-f4",
+              "offset" : { "x" : -2, "y" : -18 }
+            } }
         }, {
           "id" : "S21-f3",
           "type" : "DialogCall",
@@ -299,10 +302,7 @@
             "dialogId" : "com.axonivy.utils.bpmnstatistic.demo.DisplayBookingInformation",
             "startMethod" : "start()",
             "call" : {
-              "code" : [
-                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S21-f3\");"
-              ]
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
             },
             "output" : {
               "map" : {
@@ -315,13 +315,19 @@
             "at" : { "x" : 399, "y" : 256 },
             "size" : { "width" : 159, "height" : 64 }
           },
-          "connect" : { "id" : "S21-f0", "to" : "S21-g1" }
+          "connect" : { "id" : "S21-f0", "to" : "S21-g1", "label" : {
+              "name" : "S21-f0",
+              "offset" : { "x" : 0, "y" : -18 }
+            } }
         } ],
       "visual" : {
-        "at" : { "x" : 888, "y" : 392 },
+        "at" : { "x" : 752, "y" : 392 },
         "size" : { "width" : 144, "height" : 60 }
       },
-      "connect" : { "id" : "f8", "to" : "f7" }
+      "connect" : { "id" : "f8", "to" : "f7", "label" : {
+          "name" : "f8",
+          "offset" : { "x" : 1, "y" : 14 }
+        } }
     }, {
       "id" : "S22",
       "type" : "EmbeddedProcess",
@@ -333,7 +339,10 @@
             "at" : { "x" : 64, "y" : 256 }
           },
           "parentConnector" : "f14",
-          "connect" : { "id" : "S22-f2", "to" : "S22-f1" }
+          "connect" : { "id" : "S22-f2", "to" : "S22-f1", "label" : {
+              "name" : "S22-f2",
+              "offset" : { "x" : -2, "y" : -10 }
+            } }
         }, {
           "id" : "S22-g1",
           "type" : "EmbeddedEnd",
@@ -352,17 +361,17 @@
                 "role" : "SYSTEM"
               },
               "skipTasklist" : true,
-              "code" : [
-                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S22-f1\");"
-              ]
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S22-f1\");"
             }
           },
           "visual" : {
             "at" : { "x" : 184, "y" : 256 },
             "labelOffset" : { "x" : 14, "y" : 34 }
           },
-          "connect" : { "id" : "S22-f4", "to" : "S22-f3" }
+          "connect" : { "id" : "S22-f4", "to" : "S22-f3", "label" : {
+              "name" : "S22-f4",
+              "offset" : { "x" : 2, "y" : -10 }
+            } }
         }, {
           "id" : "S22-f3",
           "type" : "EMail",
@@ -378,29 +387,36 @@
           "visual" : {
             "at" : { "x" : 368, "y" : 256 }
           },
-          "connect" : { "id" : "S22-f0", "to" : "S22-g1" }
+          "connect" : { "id" : "S22-f0", "to" : "S22-g1", "label" : {
+              "name" : "S22-f0",
+              "offset" : { "x" : 4, "y" : -10 }
+            } }
         } ],
       "visual" : {
-        "at" : { "x" : 1152, "y" : 768 },
+        "at" : { "x" : 1016, "y" : 768 },
         "size" : { "width" : 144, "height" : 60 }
       },
-      "connect" : { "id" : "f11", "to" : "S40" }
+      "connect" : { "id" : "f11", "to" : "S40", "label" : {
+          "name" : "f11",
+          "offset" : { "x" : 5, "y" : 14 }
+        } }
     }, {
       "id" : "f12",
       "type" : "Alternative",
       "name" : "Charge later?",
       "visual" : {
-        "at" : { "x" : 1152, "y" : 544 },
+        "at" : { "x" : 1016, "y" : 544 },
         "labelOffset" : { "x" : -40, "y" : 8 }
       },
       "connect" : [
         { "id" : "f23", "to" : "S25", "label" : {
             "name" : "Yes",
             "segment" : 0.52,
-            "offset" : { "x" : -8, "y" : -1 }
-          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(\"18F3D6C205210455-f12\", in.isChargeLater)" },
+            "offset" : { "x" : -8, "y" : -10 }
+          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(in.isChargeLater,\"18F3D6C205210455-S25\")" },
         { "id" : "f15", "to" : "S23", "label" : {
-            "name" : "No"
+            "name" : "No",
+            "offset" : { "x" : 17, "y" : 1 }
           } }
       ]
     }, {
@@ -414,7 +430,10 @@
             "at" : { "x" : 176, "y" : 136 }
           },
           "parentConnector" : "f15",
-          "connect" : { "id" : "S23-f2", "to" : "S23-f1" }
+          "connect" : { "id" : "S23-f2", "to" : "S23-f1", "label" : {
+              "name" : "S23-f2",
+              "offset" : { "x" : 33, "y" : -5 }
+            } }
         }, {
           "id" : "S23-g1",
           "type" : "EmbeddedEnd",
@@ -429,7 +448,10 @@
             "at" : { "x" : 480, "y" : 304 }
           },
           "parentConnector" : "f13",
-          "connect" : { "id" : "S23-f7", "to" : "S23-f6" }
+          "connect" : { "id" : "S23-f7", "to" : "S23-f6", "label" : {
+              "name" : "S23-f7",
+              "offset" : { "x" : 0, "y" : -10 }
+            } }
         }, {
           "id" : "S23-f1",
           "type" : "TaskSwitchEvent",
@@ -441,33 +463,33 @@
                 "role" : "SYSTEM"
               },
               "skipTasklist" : true,
-              "code" : [
-                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S23-f1\");"
-              ]
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S23-f1\");"
             }
           },
           "visual" : {
             "at" : { "x" : 176, "y" : 208 },
             "labelOffset" : { "x" : -111, "y" : 1 }
           },
-          "connect" : { "id" : "S23-f4", "to" : "S23-f3" }
+          "connect" : { "id" : "S23-f4", "to" : "S23-f3", "label" : {
+              "name" : "S23-f4",
+              "offset" : { "x" : 33, "y" : -2 }
+            } }
         }, {
           "id" : "S23-f3",
           "type" : "Script",
           "name" : "Create booking",
           "config" : {
             "output" : {
-              "code" : [
-                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S23-f3\");"
-              ]
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
             }
           },
           "visual" : {
             "at" : { "x" : 176, "y" : 304 }
           },
-          "connect" : { "id" : "S23-f0", "to" : "S23-g1" }
+          "connect" : { "id" : "S23-f0", "to" : "S23-g1", "label" : {
+              "name" : "S23-f0",
+              "offset" : { "x" : 25, "y" : 2 }
+            } }
         }, {
           "id" : "S23-f6",
           "type" : "TaskSwitchEvent",
@@ -479,23 +501,26 @@
                 "role" : "SYSTEM"
               },
               "skipTasklist" : true,
-              "code" : [
-                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S23-f6\");"
-              ]
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S23-f6\");"
             }
           },
           "visual" : {
             "at" : { "x" : 336, "y" : 304 },
             "labelOffset" : { "x" : 33, "y" : 33 }
           },
-          "connect" : { "id" : "S23-f5", "to" : "S23-f3" }
+          "connect" : { "id" : "S23-f5", "to" : "S23-f3", "label" : {
+              "name" : "S23-f5",
+              "offset" : { "x" : -4, "y" : -18 }
+            } }
         } ],
       "visual" : {
-        "at" : { "x" : 1152, "y" : 648 },
+        "at" : { "x" : 1016, "y" : 648 },
         "size" : { "width" : 144, "height" : 60 }
       },
-      "connect" : { "id" : "f14", "to" : "S22" }
+      "connect" : { "id" : "f14", "to" : "S22", "label" : {
+          "name" : "f14",
+          "offset" : { "x" : 17, "y" : 2 }
+        } }
     }, {
       "id" : "S25",
       "type" : "EmbeddedProcess",
@@ -507,7 +532,10 @@
             "at" : { "x" : 64, "y" : 256 }
           },
           "parentConnector" : "f23",
-          "connect" : { "id" : "S25-f2", "to" : "S25-f1" }
+          "connect" : { "id" : "S25-f2", "to" : "S25-f1", "label" : {
+              "name" : "S60-f0",
+              "offset" : { "x" : 2, "y" : -18 }
+            } }
         }, {
           "id" : "S25-g1",
           "type" : "EmbeddedEnd",
@@ -526,55 +554,59 @@
                 "role" : "SYSTEM"
               },
               "skipTasklist" : true,
-              "code" : [
-                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S25-f1\");"
-              ]
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S25-f1\");"
             }
           },
           "visual" : {
             "at" : { "x" : 176, "y" : 256 },
             "labelOffset" : { "x" : 14, "y" : 34 }
           },
-          "connect" : { "id" : "S25-f4", "to" : "S25-f3" }
+          "connect" : { "id" : "S25-f4", "to" : "S25-f3", "label" : {
+              "name" : "S25-f4",
+              "offset" : { "x" : -6, "y" : -18 }
+            } }
         }, {
           "id" : "S25-f3",
           "type" : "Script",
           "name" : "Hold seats script",
           "config" : {
             "output" : {
-              "code" : [
-                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S25-f3\");"
-              ]
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
             }
           },
           "visual" : {
             "at" : { "x" : 328, "y" : 256 }
           },
-          "connect" : { "id" : "S25-f0", "to" : "S25-g1" }
+          "connect" : { "id" : "S25-f0", "to" : "S25-g1", "label" : {
+              "name" : "S25-f0",
+              "offset" : { "x" : -4, "y" : -18 }
+            } }
         } ],
       "visual" : {
-        "at" : { "x" : 1304, "y" : 544 },
+        "at" : { "x" : 1168, "y" : 544 },
         "size" : { "width" : 144, "height" : 60 }
       },
-      "connect" : { "id" : "f16", "to" : "S60" }
+      "connect" : { "id" : "f16", "to" : "S60", "label" : {
+          "name" : "f16",
+          "offset" : { "x" : 17, "y" : 1 }
+        } }
     }, {
       "id" : "f17",
       "type" : "Alternative",
       "name" : "Paid?",
       "visual" : {
-        "at" : { "x" : 1432, "y" : 648 },
+        "at" : { "x" : 1296, "y" : 648 },
         "labelOffset" : { "x" : 16, "y" : 40 }
       },
       "connect" : [
         { "id" : "f13", "to" : "S23", "label" : {
-            "name" : "Yes"
-          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(\"18F3D6C205210455-f17\", in.isPaid)" },
+            "name" : "Yes",
+            "offset" : { "x" : 73, "y" : -10 }
+          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(in.isPaid,\"18F3D6C205210455-S23\")" },
         { "id" : "f19", "to" : "f1", "label" : {
             "name" : "No",
             "segment" : 0.27,
-            "offset" : { "x" : 16, "y" : -2 }
+            "offset" : { "x" : -17, "y" : -10 }
           } }
       ]
     }, {
@@ -588,7 +620,10 @@
             "at" : { "x" : 64, "y" : 256 }
           },
           "parentConnector" : "f16",
-          "connect" : { "id" : "S60-f2", "to" : "S60-f1" }
+          "connect" : { "id" : "S60-f2", "to" : "S60-f1", "label" : {
+              "name" : "S60-f2",
+              "offset" : { "x" : 2, "y" : -10 }
+            } }
         }, {
           "id" : "S60-g1",
           "type" : "EmbeddedEnd",
@@ -603,17 +638,17 @@
           "config" : {
             "task" : {
               "name" : "Charge for ticket",
-              "code" : [
-                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S60-f1\");"
-              ]
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S60-f1\");"
             }
           },
           "visual" : {
             "at" : { "x" : 176, "y" : 256 },
             "labelOffset" : { "x" : 14, "y" : 34 }
           },
-          "connect" : { "id" : "S60-f4", "to" : "S60-f3" }
+          "connect" : { "id" : "S60-f4", "to" : "S60-f3", "label" : {
+              "name" : "S60-f4",
+              "offset" : { "x" : 2, "y" : -10 }
+            } }
         }, {
           "id" : "S60-f3",
           "type" : "DialogCall",
@@ -622,10 +657,7 @@
             "dialogId" : "com.axonivy.utils.bpmnstatistic.demo.ChargeForTickets",
             "startMethod" : "start()",
             "call" : {
-              "code" : [
-                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S60-f3\");"
-              ]
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
             },
             "output" : {
               "map" : {
@@ -637,13 +669,20 @@
           "visual" : {
             "at" : { "x" : 328, "y" : 256 }
           },
-          "connect" : { "id" : "S60-f0", "to" : "S60-g1" }
+          "connect" : { "id" : "S60-f0", "to" : "S60-g1", "label" : {
+              "name" : "S60-f0",
+              "offset" : { "x" : 0, "y" : -10 }
+            } }
         } ],
       "visual" : {
-        "at" : { "x" : 1303, "y" : 392 },
+        "at" : { "x" : 1167, "y" : 392 },
         "size" : { "width" : 161, "height" : 62 }
       },
-      "connect" : { "id" : "f18", "to" : "f17", "via" : [ { "x" : 1432, "y" : 392 } ] }
+      "connect" : { "id" : "f18", "to" : "f17", "via" : [ { "x" : 1296, "y" : 392 } ], "label" : {
+          "name" : "f18",
+          "segment" : 1.23,
+          "offset" : { "x" : 18, "y" : 78 }
+        } }
     }, {
       "id" : "S40",
       "type" : "EmbeddedProcess",
@@ -655,7 +694,10 @@
             "at" : { "x" : 40, "y" : 256 }
           },
           "parentConnector" : "f11",
-          "connect" : { "id" : "S40-f2", "to" : "S40-f1" }
+          "connect" : { "id" : "S40-f2", "to" : "S40-f1", "label" : {
+              "name" : "S40-f2",
+              "offset" : { "x" : 2, "y" : -10 }
+            } }
         }, {
           "id" : "S40-g1",
           "type" : "EmbeddedEnd",
@@ -674,17 +716,17 @@
                 "role" : "SYSTEM"
               },
               "skipTasklist" : true,
-              "code" : [
-                "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-                "WorkflowUtils.updateWorkflowInfo(\"18F3D6C205210455-S40-f1\");"
-              ]
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S40-f1\");"
             }
           },
           "visual" : {
             "at" : { "x" : 184, "y" : 256 },
             "labelOffset" : { "x" : 17, "y" : 33 }
           },
-          "connect" : { "id" : "S40-f4", "to" : "S40-f3" }
+          "connect" : { "id" : "S40-f4", "to" : "S40-f3", "label" : {
+              "name" : "S40-f4",
+              "offset" : { "x" : 0, "y" : -10 }
+            } }
         }, {
           "id" : "S40-f3",
           "type" : "EMail",
@@ -701,13 +743,19 @@
             "at" : { "x" : 408, "y" : 255 },
             "size" : { "width" : 152, "height" : 63 }
           },
-          "connect" : { "id" : "S40-f0", "to" : "S40-g1" }
+          "connect" : { "id" : "S40-f0", "to" : "S40-g1", "label" : {
+              "name" : "S40-f0",
+              "offset" : { "x" : 10, "y" : -25 }
+            } }
         } ],
       "visual" : {
-        "at" : { "x" : 1592, "y" : 768 },
+        "at" : { "x" : 1456, "y" : 768 },
         "size" : { "width" : 144, "height" : 60 }
       },
-      "connect" : { "id" : "f9", "to" : "f1" }
+      "connect" : { "id" : "f9", "to" : "f1", "label" : {
+          "name" : "f9",
+          "offset" : { "x" : 17, "y" : 1 }
+        } }
     } ],
   "layout" : {
     "lanes" : [ {

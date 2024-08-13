@@ -21,6 +21,7 @@ import com.axonivy.utils.bpmnstatistic.bo.Arrow;
 import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
 import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
 import com.axonivy.utils.bpmnstatistic.utils.DateUtils;
+import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
 import com.axonivy.utils.bpmnstatistic.utils.ProcessesMonitorUtils;
 
 import ch.ivyteam.ivy.process.viewer.api.ProcessViewer;
@@ -40,7 +41,7 @@ public class ProcessesMonitorBean {
 
   @PostConstruct
   private void init() {
-    processesMap = ProcessesMonitorUtils.getProcessesWithPmv();
+    processesMap = ProcessUtils.getProcessesWithPmv();
   }
 
   public void onChangeSelectedModule() {
