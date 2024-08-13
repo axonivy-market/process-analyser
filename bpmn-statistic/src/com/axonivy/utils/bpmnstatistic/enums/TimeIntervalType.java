@@ -2,9 +2,7 @@ package com.axonivy.utils.bpmnstatistic.enums;
 
 import java.util.List;
 
-import ch.ivyteam.ivy.environment.Ivy;
-
-public enum TimeIntervalType {
+public enum TimeIntervalType implements HasCmsName {
 
   YESTERDAY, TODAY, CURRENT, WITHIN_THE_LAST, WITHIN_THE_NEXT, BETWEEN;
 
@@ -12,8 +10,4 @@ public enum TimeIntervalType {
   public static final List<TimeIntervalType> RANGE_SELECTIONS = List.of(BETWEEN);
   public static final List<TimeIntervalType> WITH_IN_SELECTIONS = List.of(WITHIN_THE_LAST, WITHIN_THE_NEXT);
 
-  @Override
-  public String toString() {
-    return Ivy.cms().co("/Enums/" + getClass().getSimpleName() + "/" + name());
-  }
 }

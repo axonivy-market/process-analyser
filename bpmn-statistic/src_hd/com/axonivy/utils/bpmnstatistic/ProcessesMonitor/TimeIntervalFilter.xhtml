@@ -13,7 +13,7 @@
     <div class="p-col-4">
       <p:selectOneMenu value="#{timeIntervalFilterBean.selectedType}">
         <f:selectItems value="#{timeIntervalFilterBean.intervalTypes}" var="type" itemValue="#{type}"
-          itemLabel="#{type.toString()}" />
+          itemLabel="#{type.getCmsName()}" />
         <p:ajax listener="#{timeIntervalFilterBean.onSelectType()}" process="@this" partialSubmit="true"
           update="process-time-interval interval-selection-group" />
       </p:selectOneMenu>
@@ -65,7 +65,7 @@
         <div class="p-col-6 p-pr-0">
           <p:selectOneMenu value="#{timeIntervalFilterBean.selectedUnit}">
             <f:selectItems value="#{timeIntervalFilterBean.intervalUnits}" var="unit" itemValue="#{unit}"
-              itemLabel="#{unit.toString()}" />
+              itemLabel="#{unit.getCmsName()}" />
             <p:ajax update="interval-time-with-in" listener="#{timeIntervalFilterBean.onSelectUnit()}" />
           </p:selectOneMenu>
         </div>

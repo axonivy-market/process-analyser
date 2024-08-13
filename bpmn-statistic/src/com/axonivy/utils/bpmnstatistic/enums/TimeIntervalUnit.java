@@ -1,12 +1,6 @@
 package com.axonivy.utils.bpmnstatistic.enums;
 
-import ch.ivyteam.ivy.environment.Ivy;
-
-public enum TimeIntervalUnit {
+public enum TimeIntervalUnit implements HasCmsName {
   WEEK, MONTH, YEAR;
 
-  @Override
-  public String toString() {
-    return Ivy.cms().co("/Enums/" + getClass().getSimpleName() + "/" + name());
-  }
 }
