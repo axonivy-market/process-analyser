@@ -118,7 +118,7 @@ public class ProcessUtils {
   public static EmbeddedEnd getEmbeddedEndFromTargetElementAndOuterFlow(NodeElement processElement,
       SequenceFlow flowFromEmbedded) {
     EmbeddedProcessElement embeddedNode = (EmbeddedProcessElement) flowFromEmbedded.getSource();
-    EmbeddedEnd targetEmbeddedEnds = (EmbeddedEnd) embeddedNode.getEmbeddedProcess().getProcessElements().stream()
+    EmbeddedEnd targetEmbeddedEnds = embeddedNode.getEmbeddedProcess().getProcessElements().stream()
         .filter(ProcessUtils::isEmbeddedEnd).map(EmbeddedEnd.class::cast)
         .filter(embeddedEnd -> isConnectedToProcessElement(embeddedEnd, processElement)).findAny().orElse(null);
     return targetEmbeddedEnds;
@@ -172,15 +172,16 @@ public class ProcessUtils {
   public static Map<String, List<IProcessWebStartable>> getProcessesWithPmv() {
     Map<String, List<IProcessWebStartable>> result = new HashMap<>();
     for (IWebStartable process : getAllProcesses()) {
-      String pmvName = process.pmv().getName();
+      String pmvName = process.pmv().getProcessModel().getName();
       result.computeIfAbsent(pmvName, key -> new ArrayList<>()).add((IProcessWebStartable) process);
     }
     return result;
   }
 
   private static boolean isIWebStartableNeedToRecordStatistic(IWebStartable process) {
-    return !(StringUtils.equals(process.pmv().getName(), ProcessMonitorConstants.BPMN_STATISTIC_PMV_NAME)
-        || StringUtils.contains(process.pmv().getName(), ProcessMonitorConstants.PORTAL_PMV_SUFFIX));
+    var pmName = process.pmv().getProcessModel().getName();
+    return !(StringUtils.equals(pmName, ProcessMonitorConstants.BPMN_STATISTIC_PMV_NAME)
+        || StringUtils.contains(pmName, ProcessMonitorConstants.PORTAL_PMV_SUFFIX));
   }
 
   public static boolean isContainFlowFromSubElement(List<SequenceFlow> flows) {

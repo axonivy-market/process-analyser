@@ -20,8 +20,8 @@ import org.apache.commons.lang3.StringUtils;
 import com.axonivy.utils.bpmnstatistic.bo.Arrow;
 import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
 import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
-import com.axonivy.utils.bpmnstatistic.utils.DateUtils;
 import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
+import com.axonivy.utils.bpmnstatistic.utils.DateUtils;
 import com.axonivy.utils.bpmnstatistic.utils.ProcessesMonitorUtils;
 
 import ch.ivyteam.ivy.process.viewer.api.ProcessViewer;
@@ -38,6 +38,7 @@ public class ProcessesMonitorBean {
   private String selectedProcessDiagramUrl;
   private String selectedPid;
   private List<Arrow> arrows;
+  private Integer totalFrequency = 0;
 
   @PostConstruct
   private void init() {
@@ -50,10 +51,12 @@ public class ProcessesMonitorBean {
       selectedProcessName = null;
       arrows = null;
       selectedProcessDiagramUrl = null;
+      totalFrequency = 0;
     }
   }
 
   public void onChangeSelectedProcess() {
+    totalFrequency = 0;
     if (StringUtils.isNotBlank(selectedProcessName) && StringUtils.isNotBlank(selectedModuleName)) {
       if (timeIntervalFilter == null) {
         timeIntervalFilter = TimeIntervalFilter.getDefaultFilterSet();
@@ -65,6 +68,7 @@ public class ProcessesMonitorBean {
         for (Arrow arrow : arrows) {
           arrow.setMedianDuration(Math.floor(arrow.getMedianDuration() * 100) / 100);
           arrow.setRatio((float) (Math.floor(arrow.getRatio() * 100) / 100));
+          totalFrequency += arrow.getFrequency();
         }
       });
     }
@@ -73,9 +77,9 @@ public class ProcessesMonitorBean {
   public void showStatisticData() {
     if (StringUtils.isNoneBlank(selectedPid)) {
       ProcessesMonitorUtils.showStatisticData(selectedPid);
-      // Mock data for instances count from a time range. Remove it when implement
-      // feature of time filter
-      ProcessesMonitorUtils.showAdditionalInformation("15", "11.02", "12.08");
+      ProcessesMonitorUtils.showAdditionalInformation(String.valueOf(totalFrequency),
+          DateUtils.getDateAsString(timeIntervalFilter.getFrom()),
+          DateUtils.getDateAsString(timeIntervalFilter.getTo()));
     }
   }
 
