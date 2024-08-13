@@ -1,16 +1,12 @@
 package com.axonivy.utils.bpmnstatistic.enums;
 
+import ch.ivyteam.ivy.environment.Ivy;
+
 public enum TimeIntervalUnit {
-  WEEK("Week"), MONTH("Month"), YEAR("Year");
+  WEEK, MONTH, YEAR;
 
-  private String label;
-
-  private TimeIntervalUnit(String label) {
-    this.label = label;
+  @Override
+  public String toString() {
+    return Ivy.cms().co("/Enums/" + getClass().getSimpleName() + "/" + name());
   }
-
-  public String getLabel() {
-    return label;
-  }
-
 }

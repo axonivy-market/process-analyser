@@ -1,10 +1,22 @@
 package com.axonivy.utils.bpmnstatistic.bo;
 
+import static com.axonivy.utils.bpmnstatistic.utils.DateUtils.getDateFromLocalDate;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 
 public class TimeIntervalFilter {
   private Date from;
   private Date to;
+
+  public TimeIntervalFilter() {
+  }
+
+  public TimeIntervalFilter(Date from, Date to) {
+    this.from = from;
+    this.to = to;
+  }
 
   public Date getFrom() {
     return from;
@@ -25,5 +37,11 @@ public class TimeIntervalFilter {
   @Override
   public String toString() {
     return "TimeIntervalFilter [from=" + from + ", to=" + to + "]";
+  }
+
+  public static TimeIntervalFilter getDefaultFilterSet() {
+    var today = LocalDate.now();
+    return new TimeIntervalFilter(getDateFromLocalDate(today, LocalTime.MIN),
+        getDateFromLocalDate(today, LocalTime.MAX));
   }
 }

@@ -1,7 +1,6 @@
 package com.axonivy.utils.bpmnstatistic.managedbean;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +31,7 @@ import ch.ivyteam.ivy.workflow.start.IWebStartable;
 @ViewScoped
 public class ProcessesMonitorBean {
   private Map<String, List<IProcessWebStartable>> processesMap = new HashMap<>();
+  private TimeIntervalFilter timeIntervalFilter;
   private String selectedProcessName;
   private String selectedModuleName;
   private String selectedProcessDiagramUrl;
@@ -54,10 +54,13 @@ public class ProcessesMonitorBean {
 
   public void onChangeSelectedProcess() {
     if (StringUtils.isNotBlank(selectedProcessName) && StringUtils.isNotBlank(selectedModuleName)) {
+      if (timeIntervalFilter == null) {
+        timeIntervalFilter = TimeIntervalFilter.getDefaultFilterSet();
+      }
       Optional.ofNullable(getSelectedIProcessWebStartable()).ifPresent(process -> {
         selectedPid = process.pid().getParent().toString();
         selectedProcessDiagramUrl = ProcessViewer.of(process).url().toWebLink().getAbsolute();
-        arrows = ProcessesMonitorUtils.getStatisticData(getSelectedIProcessWebStartable());
+        arrows = ProcessesMonitorUtils.filterStatisticByInterval(getSelectedIProcessWebStartable(), timeIntervalFilter);
         for (Arrow arrow : arrows) {
           arrow.setMedianDuration(Math.floor(arrow.getMedianDuration() * 100) / 100);
           arrow.setRatio((float) (Math.floor(arrow.getRatio() * 100) / 100));
@@ -79,19 +82,12 @@ public class ProcessesMonitorBean {
     if (StringUtils.isBlank(selectedModuleName) || StringUtils.isBlank(selectedProcessName)) {
       return;
     }
-    // Filter data by selected time
     var parameterMap = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
     String from = parameterMap.get(ProcessMonitorConstants.FROM);
     String to = parameterMap.get(ProcessMonitorConstants.TO);
-    TimeIntervalFilter timeIntervalFilter = new TimeIntervalFilter();
-    var formatter = new SimpleDateFormat(DateUtils.DATE_TIME_PATTERN);
-    timeIntervalFilter.setFrom(formatter.parse(from));
-    timeIntervalFilter.setTo(formatter.parse(to));
-    arrows = ProcessesMonitorUtils.filterStatisticByInterval(getSelectedIProcessWebStartable(), timeIntervalFilter);
-    for (Arrow arrow : arrows) {
-      arrow.setMedianDuration(Math.floor(arrow.getMedianDuration() * 100) / 100);
-      arrow.setRatio((float) (Math.floor(arrow.getRatio() * 100) / 100));
-    }
+    timeIntervalFilter.setFrom(DateUtils.parseDateFromString(from));
+    timeIntervalFilter.setTo(DateUtils.parseDateFromString(to));
+    onChangeSelectedProcess();
   }
 
   private IProcessWebStartable getSelectedIProcessWebStartable() {

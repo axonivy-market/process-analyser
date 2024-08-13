@@ -43,21 +43,18 @@
                     placeholder="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/PleaseSelectProcess')}">
                     <f:selectItem itemValue="#{null}" itemLabel="" noSelectionOption="true" />
                     <f:selectItems value="#{processesMonitorBean.processNames}" />
-                    <p:ajax update="monitor-form" listener="#{processesMonitorBean.onChangeSelectedProcess()}" />
+                    <p:ajax update="monitor-form time-interval-group" listener="#{processesMonitorBean.onChangeSelectedProcess()}" />
                   </p:selectOneMenu>
                 </div>
               </h:panelGroup>
 
               <!-- Time interval row -->
-              <ui:include src="TimeIntervalFilter.xhtml">
-              </ui:include>
-              <p:remoteCommand id="filter-data-by-interval-rc" name="filterDataByIntervalRC"
-                actionListener="#{processesMonitorBean.updateDataOnChangingFilter()}" process="@this"
-                partialSubmit="true" update="arrow-statistics"/>
-
-<!--               <h:panelGroup styleClass="p-field p-col-12 p-grid p-formgrid p-align-center p-jc-end" layout="block"> -->
-<!--                 <p:commandButton styleClass="p-mr-3" value="Apply" icon=""></p:commandButton> -->
-<!--               </h:panelGroup> -->
+              <h:panelGroup id="time-interval-group" styleClass="p-field p-col-12 p-grid p-formgrid p-align-start" layout="block">
+                <ui:include src="TimeIntervalFilter.xhtml"/>
+                <p:remoteCommand id="filter-data-by-interval-rc" name="filterDataByIntervalRC"
+                  actionListener="#{processesMonitorBean.updateDataOnChangingFilter()}" process="@this"
+                  partialSubmit="true" update="arrow-statistics"/>
+              </h:panelGroup>
             </div>
           </div>
         </p:fieldset>
@@ -87,7 +84,9 @@
               <h:outputText value="#{arrow.medianDuration}" />
             </p:column>
             <f:facet name="footer">
-              <h:outputText value="In total there are #{processesMonitorBean.arrows.size()} record(s)." styleClass="p-col-12" />
+              <h:outputText
+                value="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/TotalRecords', [processesMonitorBean.arrows.size()])}"
+                styleClass="p-col-12" />
             </f:facet>
           </p:dataTable>
         </h:panelGroup>

@@ -14,4 +14,8 @@ public class ProcessMonitorConstants {
   public static final String HYPHEN_SIGN = "-";
   public static final String FROM = "from";
   public static final String TO = "to";
+  public static final String COMMA_CONNECT_PATTERN = ", ";
+  public static final String HYPHEN_CONNECT_PATTERN = " - ";
+  public static final String CURRENT_TIME_PATTERN = "%s - %s %s";
+  public static final String WHOLE_DAY_PATTERN = "%s - %s, %s %s, %s";
 }
