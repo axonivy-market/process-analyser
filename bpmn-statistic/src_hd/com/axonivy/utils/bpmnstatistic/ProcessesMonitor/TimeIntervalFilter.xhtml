@@ -52,7 +52,7 @@
 
       <h:panelGroup styleClass="p-col-12 p-px-0 p-grid p-formgrid"
         rendered="#{timeIntervalFilterBean.withInSelection or timeIntervalFilterBean.currentSelection}">
-        <!-- From -->
+        <!-- Time -->
         <h:panelGroup id="interval-time-with-in" layout="block" styleClass="p-col-6 p-pr-0">
           <p:inputText value="#{timeIntervalFilterBean.currentTime}"
             readonly="#{timeIntervalFilterBean.currentSelection}" required="true">
@@ -61,7 +61,7 @@
               partialSubmit="true" />
           </p:inputText>
         </h:panelGroup>
-        <!-- To -->
+        <!-- Unit options -->
         <div class="p-col-6 p-pr-0">
           <p:selectOneMenu value="#{timeIntervalFilterBean.selectedUnit}">
             <f:selectItems value="#{timeIntervalFilterBean.intervalUnits}" var="unit" itemValue="#{unit}"
