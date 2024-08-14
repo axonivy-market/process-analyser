@@ -47,6 +47,8 @@ Enums:
       name: Week
     YEAR:
       name: Year
+Labels:
+  EnterANumber: Enter a number
 Processes:
   BpmnStatistic:
     description: To show statistic for your processes

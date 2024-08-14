@@ -105,12 +105,11 @@ public class TimeIntervalFilterBean implements Serializable {
       filter.setFrom(getDateFromLocalDate(fromDateTime, null));
       filter.setTo(getDateFromLocalDate(toDateTime, LocalTime.MAX));
     }
-    if (isCurrentSelection() || isWithInSelection()) {
-      if (isWithInSelection()) {
-        calculateTimeByWithInSelection();
-      } else {
-        calculateTimeByCurrentSelection();
-      }
+    if (isCurrentSelection()) {
+      calculateTimeByCurrentSelection();
+    }
+    if (isWithInSelection()) {
+      calculateTimeByWithInSelection();
     }
 
     updateDataOnChangingFilter();

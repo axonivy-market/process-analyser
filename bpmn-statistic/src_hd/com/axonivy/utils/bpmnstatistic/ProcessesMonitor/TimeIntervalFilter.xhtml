@@ -55,7 +55,8 @@
         <!-- Time -->
         <h:panelGroup id="interval-time-with-in" layout="block" styleClass="p-col-6 p-pr-0">
           <p:inputText value="#{timeIntervalFilterBean.currentTime}"
-            readonly="#{timeIntervalFilterBean.currentSelection}" required="true">
+            readonly="#{timeIntervalFilterBean.currentSelection}" required="true"
+            placeholder="#{ivy.cms.co('/Labels/EnterANumber')}">
             <p:keyFilter mask="num" />
             <p:ajax listener="#{timeIntervalFilterBean.unifyFilterAndRefreshData()}" process="@this" update="@this"
               partialSubmit="true" />
