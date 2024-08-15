@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -129,7 +130,6 @@ public class TimeIntervalFilterBean implements Serializable {
   private void calculateTimeByWithInSelection() {
     var today = LocalDate.now();
     var fromDateTime = LocalDate.now();
-    var toDateTime = LocalDate.now();
     if (!NumberUtils.isDigits(currentTime)) {
       currentTime = null;
     }
@@ -139,25 +139,22 @@ public class TimeIntervalFilterBean implements Serializable {
       today = WITHIN_THE_NEXT == selectedType ? today.plusWeeks(enteredCurrentTime)
           : today.minusWeeks(enteredCurrentTime);
       fromDateTime = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-      toDateTime = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY));
       break;
     case MONTH:
       today = WITHIN_THE_NEXT == selectedType ? today.plusMonths(enteredCurrentTime)
           : today.minusMonths(enteredCurrentTime);
       fromDateTime = today.with(TemporalAdjusters.firstDayOfMonth());
-      toDateTime = today.with(TemporalAdjusters.lastDayOfMonth());
       break;
     case YEAR:
       today = WITHIN_THE_NEXT == selectedType ? today.plusYears(enteredCurrentTime)
           : today.minusYears(enteredCurrentTime);
       fromDateTime = today.with(TemporalAdjusters.firstDayOfYear());
-      toDateTime = today.with(TemporalAdjusters.lastDayOfYear());
       break;
     default:
       break;
     }
     filter.setFrom(getDateFromLocalDate(fromDateTime, null));
-    filter.setTo(getDateFromLocalDate(toDateTime, LocalTime.MAX));
+    filter.setTo(new Date());
   }
 
   private void calculateTimeByCurrentSelection() {

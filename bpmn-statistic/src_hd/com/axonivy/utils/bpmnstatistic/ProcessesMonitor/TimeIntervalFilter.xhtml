@@ -36,7 +36,7 @@
         <div class="p-col-6 p-pr-0">
           <p:calendar showOn="button" value="#{timeIntervalFilterBean.filter.from}"
             pattern="#{timeIntervalFilterBean.timePattern}">
-            <p:ajax event="dateSelect" listener="#{timeIntervalFilterBean.onSelectDateTime()}"
+            <p:ajax listener="#{timeIntervalFilterBean.onSelectDateTime()}"
               update="process-time-interval" process="@this" partialSubmit="true" />
           </p:calendar>
         </div>
@@ -44,7 +44,7 @@
         <div class="p-col-6 p-pr-0">
           <p:calendar showOn="button" value="#{timeIntervalFilterBean.filter.to}"
             pattern="#{timeIntervalFilterBean.timePattern}">
-            <p:ajax event="dateSelect" listener="#{timeIntervalFilterBean.onSelectDateTime()}"
+            <p:ajax listener="#{timeIntervalFilterBean.onSelectDateTime()}"
               update="process-time-interval" process="@this" partialSubmit="true" />
           </p:calendar>
         </div>

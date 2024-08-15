@@ -23,7 +23,7 @@
                     requiredMessage="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/RequireMessage')}"
                     value="#{processesMonitorBean.selectedModuleName}"
                     placeholder="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/PleaseSelectModule')}">
-                    <f:selectItem itemValue="#{null}" itemLabel="" noSelectionOption="true" />
+                    <f:selectItem itemValue="#{null}" noSelectionOption="true" />
                     <f:selectItems value="#{processesMonitorBean.pmvNames}" />
                     <p:ajax event="itemSelect" update="monitor-form" listener="#{processesMonitorBean.onChangeSelectedModule()}" />
                   </p:selectOneMenu>
@@ -42,7 +42,7 @@
                     requiredMessage="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/RequireMessage')}"
                     value="#{processesMonitorBean.selectedProcessName}"
                     placeholder="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/PleaseSelectProcess')}">
-                    <f:selectItem itemValue="#{null}" itemLabel="" noSelectionOption="true" />
+                    <f:selectItem itemValue="#{null}" noSelectionOption="true" />
                     <f:selectItems value="#{processesMonitorBean.processNames}" />
                     <p:ajax update="monitor-form time-interval-group" listener="#{processesMonitorBean.onChangeSelectedProcess()}" />
                   </p:selectOneMenu>

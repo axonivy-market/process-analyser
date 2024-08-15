@@ -42,11 +42,11 @@ Enums:
       name: Yesterday
   TimeIntervalUnit:
     MONTH:
-      name: Month
+      name: Month(s)
     WEEK:
-      name: Week
+      name: Week(s)
     YEAR:
-      name: Year
+      name: Year(s)
 Labels:
   EnterANumber: Enter a number
 Processes:

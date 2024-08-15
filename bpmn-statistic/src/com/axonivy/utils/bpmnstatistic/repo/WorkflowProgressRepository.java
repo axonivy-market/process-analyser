@@ -54,7 +54,7 @@ public class WorkflowProgressRepository {
 
   public List<WorkflowProgress> findByProcessRawPidInTime(String id, TimeIntervalFilter timeIntervalFilter) {
     Filter<WorkflowProgress> filter = filterByProcessRawPid(id).and().dateTimeField(CREATED_AT_ATTR_NAME)
-        .isInDateRange(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo());
+        .isBetween(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo());
     return executeAll(filter);
   }
 
