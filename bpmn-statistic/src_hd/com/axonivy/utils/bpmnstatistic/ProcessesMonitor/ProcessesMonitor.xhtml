@@ -10,40 +10,52 @@
       <h:form id="monitor-form">
         <p:fieldset
           legend="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/ProcessInformation')}">
-          <div class="ui-fluid ">
+          <div class=" ">
             <div class="p-grid p-formgrid">
-              <h:panelGroup styleClass="p-field p-col-12 p-grid p-formgrid p-align-center" layout="block">
-                <div class="p-col-12 p-md-3 p-text-right">
+              <!-- Module row -->
+              <h:panelGroup styleClass="p-field p-col-12 p-grid p-formgrid p-align-start ui-fluid" layout="block">
+                <div class="p-col-12 p-md-3 p-text-right p-mt-2">
                   <p:outputLabel for="module-chooser"
                     value="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/Module')}" />
                 </div>
                 <div class="p-col-12 p-md-9">
-                  <p:selectOneMenu id="module-chooser"
+                  <p:selectOneMenu id="module-chooser" required="true"
                     requiredMessage="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/RequireMessage')}"
                     value="#{processesMonitorBean.selectedModuleName}"
                     placeholder="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/PleaseSelectModule')}">
-                    <f:selectItem itemValue="#{null}" itemLabel="" noSelectionOption="true" />
+                    <f:selectItem itemValue="#{null}" noSelectionOption="true" />
                     <f:selectItems value="#{processesMonitorBean.pmvNames}" />
                     <p:ajax event="itemSelect" update="monitor-form" listener="#{processesMonitorBean.onChangeSelectedModule()}" />
                   </p:selectOneMenu>
+                  <p:message for="module-chooser"/>
                 </div>
               </h:panelGroup>
 
-              <h:panelGroup styleClass="p-field p-col-12 p-grid p-formgrid p-align-center" layout="block">
-                <div class="p-col-12 p-md-3 p-text-right">
+              <!-- Process row -->
+              <h:panelGroup styleClass="p-field p-col-12 p-grid p-formgrid p-align-start ui-fluid" layout="block">
+                <div class="p-col-12 p-md-3 p-text-right p-mt-2">
                   <p:outputLabel for="process-chooser"
                     value="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/Process')}" />
                 </div>
                 <div class="p-col-12 p-md-9">
-                  <p:selectOneMenu id="process-chooser"
+                  <p:selectOneMenu id="process-chooser" required="true"
                     requiredMessage="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/RequireMessage')}"
                     value="#{processesMonitorBean.selectedProcessName}"
                     placeholder="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/PleaseSelectProcess')}">
-                    <f:selectItem itemValue="#{null}" itemLabel="" noSelectionOption="true" />
+                    <f:selectItem itemValue="#{null}" noSelectionOption="true" />
                     <f:selectItems value="#{processesMonitorBean.processNames}" />
-                    <p:ajax update="monitor-form" listener="#{processesMonitorBean.onChangeSelectedProcess()}" />
+                    <p:ajax update="monitor-form time-interval-group" listener="#{processesMonitorBean.onChangeSelectedProcess()}" />
                   </p:selectOneMenu>
+                  <p:message for="process-chooser"/>
                 </div>
+              </h:panelGroup>
+
+              <!-- Time interval row -->
+              <h:panelGroup id="time-interval-group" styleClass="p-field p-col-12 p-grid p-formgrid p-align-start" layout="block">
+                <ui:include src="TimeIntervalFilter.xhtml"/>
+                <p:remoteCommand id="filter-data-by-interval-rc" name="filterDataByIntervalRC"
+                  actionListener="#{processesMonitorBean.updateDataOnChangingFilter()}" process="@this"
+                  partialSubmit="true" update="arrow-statistics"/>
               </h:panelGroup>
             </div>
           </div>
@@ -61,18 +73,23 @@
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/Label')}">
               <h:outputText value="#{arrow.label}" />
             </p:column>
-            <p:column styleClass="p-col-2" sortBy="#{arrow.frequency}" filterBy="#{arrow.arrowId}"
+            <p:column styleClass="p-col-2" sortBy="#{arrow.frequency}" filterBy="#{arrow.arrowId}" width="100px"
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/Frequency')}">
               <h:outputText value="#{arrow.frequency}" />
             </p:column>
-            <p:column styleClass="p-col-2" sortBy="#{arrow.ratio}" filterBy="#{arrow.arrowId}"
+            <p:column styleClass="p-col-2" sortBy="#{arrow.ratio}" filterBy="#{arrow.arrowId}" width="80px"
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/Ratio')}">
               <h:outputText value="#{arrow.ratio}" />
             </p:column>
-            <p:column styleClass="p-col-2" sortBy="#{arrow.medianDuration}" filterBy="#{arrow.arrowId}"
+            <p:column styleClass="p-col-2" sortBy="#{arrow.medianDuration}" filterBy="#{arrow.arrowId}" width="140px"
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/MedianDuration')}">
               <h:outputText value="#{arrow.medianDuration}" />
             </p:column>
+            <f:facet name="footer">
+              <h:outputText
+                value="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/TotalRecords', [processesMonitorBean.arrows.size()])}"
+                styleClass="p-col-12" />
+            </f:facet>
           </p:dataTable>
         </h:panelGroup>
         <br />

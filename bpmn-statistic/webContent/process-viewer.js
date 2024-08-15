@@ -50,7 +50,7 @@ function loadIframe(recheckIndicator) {
 
 function renderAdditionalInformation(innerText) {
   const sprotty = getProcessDiagramIframe().find("#sprotty");
-  if (isAdditionalInformationNotRendered(sprotty)) {
+  if (sprotty) {
     sprotty.append(createBarWithText(innerText));
   }
 }

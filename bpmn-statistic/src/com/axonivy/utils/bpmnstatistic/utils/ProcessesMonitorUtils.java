@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import org.primefaces.PF;
 
 import com.axonivy.utils.bpmnstatistic.bo.Arrow;
+import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
 import com.axonivy.utils.bpmnstatistic.bo.WorkflowProgress;
 import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
 import com.axonivy.utils.bpmnstatistic.enums.IvyVariable;
@@ -91,11 +92,13 @@ public class ProcessesMonitorUtils {
    * Update the table of arrow from this process base on the current version of
    * process.
    * 
-   * @param processStart selected process start
+   * @param processStart       selected process start
+   * @param timeIntervalFilter selected time interval
    * @return list of arrow (sequence flow) with its basic statistic data
    *         (duration, frequency)
    */
-  public static List<Arrow> getStatisticData(IProcessWebStartable processStart) {
+  public static List<Arrow> filterStatisticByInterval(IProcessWebStartable processStart,
+      TimeIntervalFilter timeIntervalFilter) {
     List<Arrow> results = new ArrayList<>();
     maxFrequency = 0;
     if (Objects.nonNull(processStart)) {
@@ -104,7 +107,7 @@ public class ProcessesMonitorUtils {
       List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
       extractedArrowFromProcessElements(processElements, results);
       Map<String, Arrow> arrowMap = results.stream().collect(Collectors.toMap(Arrow::getArrowId, Function.identity()));
-      List<WorkflowProgress> recordedProgresses = repo.findByProcessRawPid(processRawPid);
+      List<WorkflowProgress> recordedProgresses = repo.findByProcessRawPidInTime(processRawPid, timeIntervalFilter);
       recordedProgresses.stream().forEach(record -> updateArrowByWorkflowProgress(arrowMap, record));
       arrowMap.keySet().stream().forEach(key -> {
         Arrow currentArrow = arrowMap.get(key);
@@ -152,4 +155,5 @@ public class ProcessesMonitorUtils {
     }
     maxFrequency = maxFrequency < newFrequency ? newFrequency : maxFrequency;
   }
+
 }

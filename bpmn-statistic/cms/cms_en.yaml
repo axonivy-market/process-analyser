@@ -9,6 +9,7 @@ Dialogs:
           ProcessesMonitor:
             ArrowId: Arrow Id
             Frequency: Frequency
+            FromToDateValidationMessage: The FromDate must be before the ToDate
             Label: Label
             MedianDuration: Median Duration
             Module: Module
@@ -22,7 +23,32 @@ Dialogs:
             Ratio: Ratio
             RequireMessage: Please select a process
             ShowStatistic: Show Statistic
+            TimeInterval: Time interval
             Title: Process Mining Demo
+            TotalRecords: In total there are {0} record(s).
+Enums:
+  TimeIntervalType:
+    BETWEEN:
+      name: Between
+    CURRENT:
+      name: Current
+    TODAY:
+      name: Today
+    WITHIN_THE_LAST:
+      name: Within the last
+    WITHIN_THE_NEXT:
+      name: Within the next
+    YESTERDAY:
+      name: Yesterday
+  TimeIntervalUnit:
+    MONTH:
+      name: Month(s)
+    WEEK:
+      name: Week(s)
+    YEAR:
+      name: Year(s)
+Labels:
+  EnterANumber: Enter a number
 Processes:
   BpmnStatistic:
     description: To show statistic for your processes
