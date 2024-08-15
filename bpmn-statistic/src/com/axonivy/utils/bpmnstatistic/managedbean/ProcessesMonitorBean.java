@@ -42,6 +42,7 @@ public class ProcessesMonitorBean {
 
   @PostConstruct
   private void init() {
+    arrows = new ArrayList<>();
     processesMap = ProcessUtils.getProcessesWithPmv();
   }
 
@@ -49,7 +50,7 @@ public class ProcessesMonitorBean {
     if (StringUtils.isBlank(selectedModuleName)) {
       selectedModuleName = null;
       selectedProcessName = null;
-      arrows = null;
+      arrows = new ArrayList<>();
       selectedProcessDiagramUrl = null;
       totalFrequency = 0;
     }
