@@ -374,6 +374,9 @@
         "task" : {
           "name" : "Marketing recommend destination"
         },
+        "input" : {
+          "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
+        },
         "tags" : "demo"
       },
       "visual" : {
@@ -406,7 +409,13 @@
           "name" : "RecommendDestination",
           "config" : {
             "dialogId" : "com.axonivy.utils.bpmnstatistic.demo.RecommendDestination",
-            "startMethod" : "start()"
+            "startMethod" : "start()",
+            "call" : {
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
+            },
+            "output" : {
+              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6D7AEE204DA-f25\");"
+            }
           },
           "visual" : {
             "at" : { "x" : 336, "y" : 256 },

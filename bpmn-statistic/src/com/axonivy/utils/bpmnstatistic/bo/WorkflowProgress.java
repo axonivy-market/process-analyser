@@ -3,38 +3,20 @@ package com.axonivy.utils.bpmnstatistic.bo;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.axonivy.utils.bpmnstatistic.enums.NodeType;
-
 public class WorkflowProgress implements Serializable {
-  private static final long serialVersionUID = -628946458018725877L;
+  private static final long serialVersionUID = 932880898772989547L;
   private String processRawPid;
-  private String elementId;
+  private String arrowId;
   private String originElementId;
   private String targetElementId;
+  private Date createdAt;
   private Date startTimeStamp;
   private Date endTimeStamp;
   private Long duration;
   private Long caseId;
-  private NodeType type;
-
-  public WorkflowProgress(String processRawPid, String rowId, String originElementId, String targetElementId,
-      Long caseId, NodeType type) {
-    this.processRawPid = processRawPid;
-    this.elementId = rowId;
-    this.originElementId = originElementId;
-    this.targetElementId = targetElementId;
-    this.caseId = caseId;
-    this.startTimeStamp = new Date();
-    this.type = type;
-  };
-
-  public WorkflowProgress(String processRawPid, String elementId, Long caseId, NodeType type) {
-    this.processRawPid = processRawPid;
-    this.elementId = elementId;
-    this.caseId = caseId;
-    this.startTimeStamp = new Date();
-    this.type = type;
-  };
+  private String condition;
+  private boolean isDurationUpdated;
+  private boolean isConditionTrue;
 
   public WorkflowProgress() {
   }
@@ -45,6 +27,14 @@ public class WorkflowProgress implements Serializable {
 
   public void setCaseId(Long caseId) {
     this.caseId = caseId;
+  }
+
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
   }
 
   public Date getStartTimeStamp() {
@@ -79,20 +69,12 @@ public class WorkflowProgress implements Serializable {
     this.processRawPid = processRawPid;
   }
 
-  public String getElementId() {
-    return elementId;
+  public String getArrowId() {
+    return arrowId;
   }
 
-  public void setElementId(String elementId) {
-    this.elementId = elementId;
-  }
-
-  public NodeType getType() {
-    return type;
-  }
-
-  public void setType(NodeType type) {
-    this.type = type;
+  public void setArrowId(String arrowId) {
+    this.arrowId = arrowId;
   }
 
   public String getOriginElementId() {
@@ -113,8 +95,34 @@ public class WorkflowProgress implements Serializable {
 
   @Override
   public String toString() {
-    return "WorkflowProgress [processRawPid=" + processRawPid + ", type=" + type + ", elementId=" + elementId + ", originElementId="
-        + originElementId + ", targetElementId=" + targetElementId + ", startTimeStamp=" + startTimeStamp
-        + ", endTimeStamp=" + endTimeStamp + ", duration=" + duration + ", caseId=" + caseId + "]";
+    return "WorkflowProgress [processRawPid=" + processRawPid + ", arrowId=" + arrowId + ", originElementId="
+        + originElementId + ", targetElementId=" + targetElementId + ", createdAt=" + createdAt + ", startTimeStamp=" + startTimeStamp
+        + ", endTimeStamp=" + endTimeStamp + ", duration=" + duration + ", caseId=" + caseId + ", condition="
+        + condition + ", isDurationUpdated=" + isDurationUpdated + ", isConditionTrue="
+        + isConditionTrue + "]";
+  }
+
+  public String getCondition() {
+    return condition;
+  }
+
+  public void setCondition(String condition) {
+    this.condition = condition;
+  }
+
+  public boolean isConditionTrue() {
+    return isConditionTrue;
+  }
+
+  public void setConditionTrue(boolean isConditionTrue) {
+    this.isConditionTrue = isConditionTrue;
+  }
+
+  public boolean isDurationUpdated() {
+    return isDurationUpdated;
+  }
+
+  public void setDurationUpdated(boolean isDurationUpdated) {
+    this.isDurationUpdated = isDurationUpdated;
   }
 }

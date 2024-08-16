@@ -9,7 +9,8 @@ Dialogs:
           ProcessesMonitor:
             AnalysisType: Analysis Type
             Frequency: Frequency
-            Id: Id
+            FromToDateValidationMessage: The FromDate must be before the ToDate
+            ElementId: Element Id
             Label: Label
             LabelValue: Label Value
             MedianDuration: Median Duration
@@ -25,10 +26,8 @@ Dialogs:
             RelativeValue: Relative Value
             RequireMessage: Please select a process
             ShowStatistic: Show Statistic
+            TimeInterval: Time interval
             Title: Process Mining Demo
-            Type: Type
-Patterns:
-  DatePattern: dd.MM.yyyy
 Processes:
   BpmnStatistic:
     description: To show statistic for your processes
