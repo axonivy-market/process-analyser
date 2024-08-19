@@ -17,10 +17,14 @@ jobs:
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v4
-      - name: Extract file
+
+      - name: Copy file
         run: |
           version=$(xml sel -t -m "//_:project" -v _:version pom.xml)
-          artifactDir=/home/axonivy/bpmn-statistic/actions-runner/_work/bpmn-statistic/bpmn-statistic/artifact/bpmn-statistic
+          artifactDir=artifact/bpmn-statistic
           engineDir=/var/tools/ivy/10/applications/BPMN-STATISTIC
           cp ${artifactDir}/target/bpmn-statistic-${version}.iar $engineDir/bpmn-statistic/1.iar
           cp ${artifactDir}-demo/target/bpmn-statistic-demo-${version}.iar $engineDir/bpmn-statistic-demo/1.iar
+
+      - name: Remove artifact
+        run: rm -rf artifact
