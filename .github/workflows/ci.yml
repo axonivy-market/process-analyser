@@ -18,4 +18,4 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: artifact.zip
+          name: artifact
