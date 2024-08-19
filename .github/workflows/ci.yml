@@ -10,3 +10,11 @@ on:
 jobs:
   build:
     uses: axonivy-market/github-workflows/.github/workflows/ci.yml@v4
+
+  deploy:
+    runs-on: 'bpmn-statistic'
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: artifact.zip
