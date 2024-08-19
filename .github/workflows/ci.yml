@@ -19,6 +19,7 @@ jobs:
         uses: actions/download-artifact@v4
       - name: Extract file
         run: |
-          ls -l
-          mkdir deploy
-          unzip artifact.zip -d deploy
+          version=$(xml sel -t -m "//_:project" -v _:version pom.xml)
+          engineDir=/var/tools/ivy/10/applications/BPMN-STATISTIC
+          cp artifact/bpmn-statistic/target/bpmn-statistic-${version}.iar $engineDir/bpmn-statistic/1.iar
+          cp artifact/bpmn-statistic/target/bpmn-statistic-demo-${version}.iar $engineDir/bpmn-statistic-demo/1.iar
