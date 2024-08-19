@@ -20,3 +20,8 @@ jobs:
         with:
           name: artifact
           path: /home/axonivy/bpmn-statistic/actions-runner/_work/bpmn-statistic/bpmn-statistic
+      - name: Extract file
+        run: |
+          ls -l
+          mkdir deploy
+          unzip artifact.zip -d deploy
