@@ -93,7 +93,7 @@
             </p:column>
             <p:column styleClass="p-col-2" sortable="true" sortBy="#{node.type.getCmsName()}" filterBy="#{node.type.getCmsName()}"
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/Type')}">
-              <h:outputText value="#{node.type.name}" />
+              <h:outputText value="#{node.type.getCmsName()}" />
             </p:column>
             <p:column styleClass="p-col-4" sortBy="#{node.label}" filterBy="#{node.label}"
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/Label')}">

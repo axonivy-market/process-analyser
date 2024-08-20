@@ -9,7 +9,7 @@ Dialogs:
           ProcessesMonitor:
             AnalysisType: Analysis Type
             ElementId: Element Id
-            Frequency1: Frequency
+            Frequency: Frequency
             FromToDateValidationMessage: The FromDate must be before the ToDate
             Label: Label
             LabelValue: Label Value
