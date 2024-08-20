@@ -73,7 +73,7 @@
                      <f:selectItem itemValue="#{null}" itemLabel=""
                       noSelectionOption="true" />
                     <f:selectItems var="analysisType"
-                      value="#{processesMonitorBean.analysisTypes}" itemLabel="#{analysisType.name}"/>
+                      value="#{processesMonitorBean.analysisTypes}" itemLabel="#{analysisType.getCmsName()}"/>
                     <p:ajax update="monitor-form"
                       listener="#{processesMonitorBean.onChangeSelectedAnalysisType()}" />
                   </p:selectOneMenu>
@@ -91,7 +91,7 @@
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/ElementId')}">
               <h:outputText value="#{node.id}" />
             </p:column>
-            <p:column styleClass="p-col-2" sortable="true" sortBy="#{node.type.name}" filterBy="#{node.type.name}"
+            <p:column styleClass="p-col-2" sortable="true" sortBy="#{node.type.getCmsName()}" filterBy="#{node.type.getCmsName()}"
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/Type')}">
               <h:outputText value="#{node.type.name}" />
             </p:column>
