@@ -29,7 +29,7 @@ Dialogs:
             ShowStatistic: Show Statistic
             TimeInterval: Time interval
             Title: Process Mining Demo
-            TotalRecords: In total there are {0} record(s).
+            TotalElements: In total there are {0} element(s).
             Type: Type
 Enums:
   AnalysisType:

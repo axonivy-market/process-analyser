@@ -51,13 +51,13 @@ public class ProcessesMonitorBean {
   private void init() {
     processesMap = ProcessUtils.getProcessesWithPmv();
     selectedAnalysisType = AnalysisType.FREQUENCY;
+    nodes = new ArrayList<>();
   }
 
   public void onChangeSelectedModule() {
     if (StringUtils.isBlank(selectedModuleName)) {
       selectedModuleName = null;
       selectedProcessName = null;
-      nodes = new ArrayList<>();
       selectedProcessDiagramUrl = null;
       totalFrequency = 0;
     }
@@ -111,10 +111,12 @@ public class ProcessesMonitorBean {
         TimeFrame timeFrame = new TimeFrame(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo());
         processMiningData.setTimeFrame(timeFrame);
         nodes = ProcessesMonitorUtils.filterStatisticByInterval(getSelectedIProcessWebStartable(), timeIntervalFilter, selectedAnalysisType);
+        for (Node node : nodes) {
+          totalFrequency += node.getFrequency();
+          node.setLabelValue(String.valueOf(Math.floor(Double.parseDouble(node.getLabelValue()) * 100) / 100));
+        }
         processMiningData.setNodes(nodes);
-        // Mock data for instances count from a time range. Remove it when implement
-        // feature of time filter
-        processMiningData.setNumberOfInstances(15);
+        processMiningData.setNumberOfInstances(totalFrequency);
         Ivy.log().info(JacksonUtils.convertObjectToJSONString(processMiningData));
       });
     } else {

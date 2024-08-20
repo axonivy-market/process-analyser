@@ -67,7 +67,7 @@
       },
       "connect" : { "id" : "f12", "to" : "f11", "label" : {
           "name" : "f12",
-          "offset" : { "x" : 9, "y" : -18 }
+          "offset" : { "x" : 1, "y" : -10 }
         } }
     }, {
       "id" : "f7",
@@ -80,14 +80,14 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 712, "y" : 384 }
+        "at" : { "x" : 672, "y" : 384 }
       },
       "connect" : { "id" : "f10", "to" : "f9", "label" : {
           "name" : [
             "save record from",
             "e-wallet"
           ],
-          "offset" : { "x" : -6, "y" : -18 }
+          "offset" : { "x" : 18, "y" : -18 }
         } }
     }, {
       "id" : "f9",
@@ -104,11 +104,11 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 888, "y" : 384 }
+        "at" : { "x" : 896, "y" : 384 }
       },
       "connect" : { "id" : "f2", "to" : "f1", "label" : {
           "name" : "f2",
-          "offset" : { "x" : -7, "y" : 14 }
+          "offset" : { "x" : -3, "y" : -10 }
         } }
     }, {
       "id" : "f11",
@@ -118,7 +118,7 @@
         "payment?"
       ],
       "visual" : {
-        "at" : { "x" : 584, "y" : 384 },
+        "at" : { "x" : 528, "y" : 384 },
         "labelOffset" : { "x" : 24, "y" : 32 }
       },
       "connect" : [
@@ -126,10 +126,10 @@
             "name" : "no",
             "offset" : { "x" : 1, "y" : -10 }
           }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(Math.random()>0.5,\"190A58A4E3D99BAD-f7\")" },
-        { "id" : "f13", "to" : "f9", "via" : [ { "x" : 584, "y" : 272 }, { "x" : 872, "y" : 272 } ], "label" : {
+        { "id" : "f13", "to" : "f9", "via" : [ { "x" : 528, "y" : 272 }, { "x" : 896, "y" : 272 } ], "label" : {
             "name" : "yes",
-            "segment" : 1.52,
-            "offset" : { "x" : -9, "y" : 14 }
+            "segment" : 1.6,
+            "offset" : { "x" : -141, "y" : -10 }
           } }
       ]
     } ],
