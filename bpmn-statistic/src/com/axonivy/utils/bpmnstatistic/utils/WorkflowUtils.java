@@ -16,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 import com.axonivy.utils.bpmnstatistic.bo.WorkflowProgress;
 import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
 import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
-import com.axonivy.utils.bpmnstatistic.enums.NodeType;
 import com.axonivy.utils.bpmnstatistic.repo.WorkflowProgressRepository;
 
 import ch.ivyteam.ivy.application.IProcessModelVersion;
@@ -35,13 +34,14 @@ public class WorkflowUtils {
     fromElementPid = StringUtils.defaultString(fromElementPid, ProcessUtils.getCurrentElementPid());
     Long currentCaseId = ProcessUtils.getCurrentCaseId();
     String processRawPid = ProcessUtils.getProcessPidFromElement(fromElementPid);
-
+    
     List<ProcessElement> processElements = ProcessUtils
         .getProcessElementsFromPmvAndProcessPid(IProcessModelVersion.current(), processRawPid);
     ProcessElement targetElement = isProcessElementNestedInSub(fromElementPid)
         ? ProcessUtils.findEmbeddedProcessElement(fromElementPid, processElements)
         : ProcessUtils.findProcessElementByRawPid(fromElementPid, processElements);
     if (Objects.nonNull(targetElement)) {
+      saveTargetElement(currentCaseId, targetElement);
       updateIncomingWorkflowInfoForElement(currentCaseId, targetElement);
       List<WorkflowProgress> outGoingWorkFlowProgress = initiateOutGoingWorkflowProgress(targetElement, currentCaseId,
           processRawPid);
@@ -52,6 +52,11 @@ public class WorkflowUtils {
       }
       saveNewOutGoingWorkFlowProgress(outGoingWorkFlowProgress);
     }
+  }
+
+  private static void saveTargetElement(Long caseId, ProcessElement element) {
+    WorkflowProgress workflowProgress = new WorkflowProgress(caseId, element.getPid().toString());
+    repo.save(workflowProgress);
   }
 
   private static void saveNewOutGoingWorkFlowProgress(List<WorkflowProgress> outGoingWorkFlowProgress) {
@@ -128,7 +133,6 @@ public class WorkflowUtils {
       updateElementWithoutConnectedFlowFromDB(caseId, element, incomingFlowsToUpdate);
     }
     incomingFlowsToUpdate.stream().forEach(WorkflowUtils::updateWorkflowProgress);
-    //oldArrows.stream().forEach(arrow -> WorkflowUtils.updateWorkflowProgress(arrow, new Date(), true));
   }
 
   /**
@@ -245,10 +249,6 @@ public class WorkflowUtils {
     flow.setDuration((flow.getEndTimeStamp().getTime() - flow.getStartTimeStamp().getTime()) / MILISECOND_IN_SECOND);
     flow.setDurationUpdated(true);
     repo.save(flow);
-//    if (isArrowElement) {
-//      WorkflowProgress originElement = repo.findByElementIdAndCaseId(flow.getOriginElementId(), flow.getCaseId());
-//      updateWorkflowProgress(originElement, flow.getStartTimeStamp(), false);
-//    }
   }
 
   /**
@@ -262,15 +262,6 @@ public class WorkflowUtils {
       results.add(progress);
     });
     return results;
-    // targetElement.getOutgoing().stream().forEach(flow -> {
-    //   WorkflowProgress arrowWfProgress = new WorkflowProgress(processRawPid, getElementRawId(flow.getPid().toString()),
-    //       getElementRawId(targetElement.getPid().toString()), getElementRawId(flow.getTarget().getPid().toString()),
-    //       currentCaseId, NodeType.ARROW);
-    //   repo.save(arrowWfProgress);
-    // });
-    // WorkflowProgress elementWfProgress = new WorkflowProgress(processRawPid,
-    //     getElementRawId(targetElement.getPid().toString()), currentCaseId, NodeType.ELEMENT);
-    // repo.save(elementWfProgress);
   }
 
   /**
@@ -305,24 +296,16 @@ public class WorkflowUtils {
   }
 
   private static WorkflowProgress convertSequenceFlowToWorkFlowProgress(long currentCaseId, SequenceFlow flow) {
-	    WorkflowProgress progress = new WorkflowProgress();
-	    progress.setProcessRawPid(ProcessUtils.getProcessRawPidFromElement(flow));
-//	    progress.setArrowId(ProcessUtils.getElementPid(flow));
-	    progress.setOriginElementId(ProcessUtils.getElementPid(flow.getSource()));
-	    progress.setTargetElementId(ProcessUtils.getElementPid(flow.getTarget()));
-	    progress.setCaseId(currentCaseId);
-	    progress.setDurationUpdated(false);
-	    progress.setCondition(flow.getCondition());
-	    progress.setStartTimeStamp(new Date());
-	    return progress;
-	  }
-
-  private static String getElementRawId(String elementid) {
-    if (StringUtils.isBlank(elementid)) {
-      return StringUtils.EMPTY;
-    }
-    int firstHyphen = elementid.indexOf(ProcessMonitorConstants.HYPHEN_SIGN);
-    return elementid.substring(firstHyphen + 1);
+    WorkflowProgress progress = new WorkflowProgress();
+    progress.setProcessRawPid(ProcessUtils.getProcessRawPidFromElement(flow));
+    progress.setArrowId(ProcessUtils.getElementPid(flow));
+    progress.setOriginElementId(ProcessUtils.getElementPid(flow.getSource()));
+    progress.setTargetElementId(ProcessUtils.getElementPid(flow.getTarget()));
+    progress.setCaseId(currentCaseId);
+    progress.setDurationUpdated(false);
+    progress.setCondition(flow.getCondition());
+    progress.setStartTimeStamp(new Date());
+    return progress;
   }
 
   /**

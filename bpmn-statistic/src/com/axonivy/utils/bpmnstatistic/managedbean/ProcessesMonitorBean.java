@@ -2,7 +2,6 @@ package com.axonivy.utils.bpmnstatistic.managedbean;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,17 +17,15 @@ import javax.faces.context.FacesContext;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.axonivy.utils.bpmnstatistic.bo.Arrow;
 import com.axonivy.utils.bpmnstatistic.bo.Node;
 import com.axonivy.utils.bpmnstatistic.bo.ProcessMiningData;
 import com.axonivy.utils.bpmnstatistic.bo.TimeFrame;
-import com.axonivy.utils.bpmnstatistic.enums.AnalysisType;
-import com.axonivy.utils.bpmnstatistic.utils.DateUtils;
-import com.axonivy.utils.bpmnstatistic.utils.JacksonUtils;
 import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
 import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
+import com.axonivy.utils.bpmnstatistic.enums.AnalysisType;
 import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
 import com.axonivy.utils.bpmnstatistic.utils.DateUtils;
+import com.axonivy.utils.bpmnstatistic.utils.JacksonUtils;
 import com.axonivy.utils.bpmnstatistic.utils.ProcessesMonitorUtils;
 
 import ch.ivyteam.ivy.environment.Ivy;
@@ -45,7 +42,6 @@ public class ProcessesMonitorBean {
   private String selectedModuleName;
   private String selectedProcessDiagramUrl;
   private String selectedPid;
-  private List<Arrow> arrows;
   private Integer totalFrequency = 0;
   private List<Node> nodes;
   private ProcessMiningData processMiningData;
@@ -53,7 +49,6 @@ public class ProcessesMonitorBean {
 
   @PostConstruct
   private void init() {
-    arrows = new ArrayList<>();
     processesMap = ProcessUtils.getProcessesWithPmv();
     selectedAnalysisType = AnalysisType.FREQUENCY;
   }
@@ -76,33 +71,6 @@ public class ProcessesMonitorBean {
     loadNodes();
   }
 
-  private void loadNodes() {
-    totalFrequency = 0;
-    if (StringUtils.isNotBlank(selectedProcessName) && StringUtils.isNotBlank(selectedModuleName) && selectedAnalysisType != null) {
-      if (timeIntervalFilter == null) {
-        timeIntervalFilter = TimeIntervalFilter.getDefaultFilterSet();
-      }
-      Optional.ofNullable(getSelectedIProcessWebStartable()).ifPresent(process -> {
-        processMiningData = new ProcessMiningData();
-        selectedPid = process.pid().getParent().toString();
-        selectedProcessDiagramUrl = ProcessViewer.of(process).url().toWebLink().getAbsolute();
-        processMiningData.setProcessId(selectedPid);
-        processMiningData.setProcessName(selectedProcessName);
-        processMiningData.setAnalysisType(selectedAnalysisType);
-        // Mock data for instances count from a time range. Remove it when implement
-        // feature of time filter
-        processMiningData.setNumberOfInstances(15);
-        TimeFrame timeFrame = new TimeFrame(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo());
-        processMiningData.setTimeFrame(timeFrame);
-        nodes = ProcessesMonitorUtils.filterStatisticByInterval(getSelectedIProcessWebStartable(), timeIntervalFilter);
-        processMiningData.setNodes(nodes);
-        Ivy.log().info(JacksonUtils.convertObjectToJSONString(processMiningData));
-      });
-    } else {
-      nodes = new ArrayList<>();
-    }
-  }
-
   public void showStatisticData() {
     if (StringUtils.isNoneBlank(selectedPid)) {
       ProcessesMonitorUtils.showStatisticData(selectedPid);
@@ -121,13 +89,39 @@ public class ProcessesMonitorBean {
     String to = parameterMap.get(ProcessMonitorConstants.TO);
     timeIntervalFilter.setFrom(DateUtils.parseDateFromString(from));
     timeIntervalFilter.setTo(DateUtils.parseDateFromString(to));
-    onChangeSelectedProcess();
     ProcessesMonitorUtils.showAdditionalInformation(String.valueOf(totalFrequency),
             DateUtils.getDateAsString(timeIntervalFilter.getFrom()),
             DateUtils.getDateAsString(timeIntervalFilter.getTo()));
-    loadNodes();
+    onChangeSelectedProcess();
   }
 
+  private void loadNodes() {
+    totalFrequency = 0;
+    if (StringUtils.isNotBlank(selectedProcessName) && StringUtils.isNotBlank(selectedModuleName) && selectedAnalysisType != null) {
+      if (timeIntervalFilter == null) {
+        timeIntervalFilter = TimeIntervalFilter.getDefaultFilterSet();
+      }
+      Optional.ofNullable(getSelectedIProcessWebStartable()).ifPresent(process -> {
+        processMiningData = new ProcessMiningData();
+        selectedPid = process.pid().getParent().toString();
+        selectedProcessDiagramUrl = ProcessViewer.of(process).url().toWebLink().getAbsolute();
+        processMiningData.setProcessId(selectedPid);
+        processMiningData.setProcessName(selectedProcessName);
+        processMiningData.setAnalysisType(selectedAnalysisType);
+        TimeFrame timeFrame = new TimeFrame(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo());
+        processMiningData.setTimeFrame(timeFrame);
+        nodes = ProcessesMonitorUtils.filterStatisticByInterval(getSelectedIProcessWebStartable(), timeIntervalFilter, selectedAnalysisType);
+        processMiningData.setNodes(nodes);
+        // Mock data for instances count from a time range. Remove it when implement
+        // feature of time filter
+        processMiningData.setNumberOfInstances(15);
+        Ivy.log().info(JacksonUtils.convertObjectToJSONString(processMiningData));
+      });
+    } else {
+      nodes = new ArrayList<>();
+    }
+  }
+ 
   private IProcessWebStartable getSelectedIProcessWebStartable() {
     return CollectionUtils.emptyIfNull(processesMap.get(selectedModuleName)).stream()
         .filter(process -> process.getDisplayName().equalsIgnoreCase(selectedProcessName)).findAny().orElse(null);

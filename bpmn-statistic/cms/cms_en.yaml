@@ -8,9 +8,9 @@ Dialogs:
         bpmnstatistic:
           ProcessesMonitor:
             AnalysisType: Analysis Type
+            ElementId: Element Id
             Frequency: Frequency
             FromToDateValidationMessage: The FromDate must be before the ToDate
-            ElementId: Element Id
             Label: Label
             LabelValue: Label Value
             MedianDuration: Median Duration
@@ -28,6 +28,7 @@ Dialogs:
             ShowStatistic: Show Statistic
             TimeInterval: Time interval
             Title: Process Mining Demo
+            Type: Type
 Processes:
   BpmnStatistic:
     description: To show statistic for your processes

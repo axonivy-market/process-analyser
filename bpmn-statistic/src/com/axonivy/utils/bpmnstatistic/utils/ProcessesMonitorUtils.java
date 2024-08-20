@@ -9,17 +9,17 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PF;
 
-import com.axonivy.utils.bpmnstatistic.bo.Arrow;
 import com.axonivy.utils.bpmnstatistic.bo.Node;
 import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
 import com.axonivy.utils.bpmnstatistic.bo.WorkflowProgress;
 import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
 import com.axonivy.utils.bpmnstatistic.enums.AnalysisType;
 import com.axonivy.utils.bpmnstatistic.enums.IvyVariable;
-import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
 import com.axonivy.utils.bpmnstatistic.enums.NodeType;
+import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
 import com.axonivy.utils.bpmnstatistic.repo.WorkflowProgressRepository;
 import com.axonivy.utils.bpmnstatistic.service.IvyTaskOccurrenceService;
 
@@ -103,7 +103,7 @@ public class ProcessesMonitorUtils {
    *         (duration, frequency)
    */
   public static List<Node> filterStatisticByInterval(IProcessWebStartable processStart,
-      TimeIntervalFilter timeIntervalFilter) {
+      TimeIntervalFilter timeIntervalFilter, AnalysisType analysisType) {
     List<Node> results = new ArrayList<>();
     maxArrowFrequency = 0;
     if (Objects.nonNull(processStart)) {
@@ -111,16 +111,18 @@ public class ProcessesMonitorUtils {
       // Get all of element from process in 1st layer (which is not nested from sub)
       List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
       extractedArrowFromProcessElements(processElements, results);
-      Map<String, Node> arrowMap = results.stream().collect(Collectors.toMap(Node::getId, Function.identity()));
+      Map<String, Node> nodeMap = results.stream().collect(Collectors.toMap(Node::getId, Function.identity()));
       List<WorkflowProgress> recordedProgresses = repo.findByProcessRawPidInTime(processRawPid, timeIntervalFilter);
-      recordedProgresses.stream().forEach(record -> updateArrowByWorkflowProgress(arrowMap, record));
-      arrowMap.keySet().stream().forEach(key -> {
-        Node currentArrowNode = arrowMap.get(key);
-        currentArrowNode.setRelativeValue((float) currentArrowNode.getFrequency() / maxArrowFrequency);
+      recordedProgresses.stream().forEach(record -> updateElementOrArrowByWorkflowProgress(nodeMap, record));
+      nodeMap.keySet().stream().forEach(key -> {
+        Node node = nodeMap.get(key);
+        node.setRelativeValue((float) node.getFrequency() / maxArrowFrequency);
+        updateNodeByAnalysisType(node, analysisType);
       });
     }
     return results;
   }
+
   /**
    * Get outgoing arrows from each element. If the current element is sub
    * (Embedded element), it will get all of nested element and execute the same
@@ -132,11 +134,22 @@ public class ProcessesMonitorUtils {
    */
   private static void extractedArrowFromProcessElements(List<ProcessElement> processElements, List<Node> results) {
     processElements.forEach(element -> {
+      results.add(convertProcessElementToNode(element));
       results.addAll(convertProcessElementInfoToArrows(element));
       if (ProcessUtils.isEmbeddedElementInstance(element)) {
         extractedArrowFromProcessElements(ProcessUtils.getNestedProcessElementsFromSub(element), results);
       }
     });
+  }
+
+  private static Node convertProcessElementToNode(ProcessElement element) {
+    Node elementNode = new Node();
+    elementNode.setId(element.getPid().toString());
+    elementNode.setLabel(element.getName());
+    elementNode.setRelativeValue(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
+    elementNode.setMedianDuration(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
+    elementNode.setType(NodeType.ELEMENT);
+    return elementNode;
   }
 
   /**
@@ -146,8 +159,26 @@ public class ProcessesMonitorUtils {
    * @param arrow    current arrow
    * @param progress single progress instance of this arrow
    */
-  private static void updateArrowByWorkflowProgress(Map<String, Node> arrowMap, WorkflowProgress record) {
-    Node arrow = arrowMap.get(record.getArrowId());
+  private static void updateElementOrArrowByWorkflowProgress(Map<String, Node> nodeMap, WorkflowProgress record) {
+    if (StringUtils.isBlank(record.getArrowId())) {
+      updateElementByWorkflowProgress(nodeMap, record);
+    } else {
+      updateArrowByWorkflowProgress(nodeMap, record);
+    }
+  }
+
+  private static void updateElementByWorkflowProgress(Map<String, Node> nodeMap, WorkflowProgress record) {
+    Node element = nodeMap.get(record.getProcessRawPid());
+    if (Objects.isNull(element)) {
+      return;
+    }
+    int newFrequency = element.getFrequency() + 1;
+    element.setFrequency(newFrequency);
+    maxElementFrequency = maxElementFrequency < newFrequency ? newFrequency : maxElementFrequency;
+  }
+
+  private static void updateArrowByWorkflowProgress(Map<String, Node> nodeMap, WorkflowProgress record) {
+    Node arrow = nodeMap.get(record.getArrowId());
     if (Objects.isNull(arrow)) {
       return;
     }
@@ -159,28 +190,12 @@ public class ProcessesMonitorUtils {
     }
     maxArrowFrequency = maxArrowFrequency < newFrequency ? newFrequency : maxArrowFrequency;
   }
-  // private static void updateNodeByWorkflowProgress(Node node, WorkflowProgress progress) {
-  //   int currentFrequency = node.getFrequency();
-  //   node.setFrequency(node.getFrequency() + 1);
-  //   if (Objects.nonNull(progress.getDuration())) {
-  //     node.setMedianDuration(
-  //         ((node.getMedianDuration() * currentFrequency) + progress.getDuration()) / (currentFrequency + 1));
-  //   } else if(NodeType.ARROW == node.getType()) {
-  //     node.setFrequency(node.getFrequency() - 1);
-  //   }
 
-  //   if (NodeType.ARROW == node.getType()) {
-  //     maxArrowFrequency = maxArrowFrequency < currentFrequency + 1 ? currentFrequency + 1 : maxArrowFrequency;
-  //   } else {
-  //     maxElementFrequency = maxElementFrequency < currentFrequency + 1 ? currentFrequency + 1 : maxElementFrequency;
-  //   }
-  // }
-
-  // private static void updateNodeByAnalysisType(Node node, AnalysisType analysisType) {
-  //   if (AnalysisType.FREQUENCY == analysisType) {
-  //     node.setLabelValue(String.valueOf(node.getRelativeValue()));
-  //   } else {
-  //     node.setLabelValue(String.valueOf(node.getMedianDuration()));
-  //   }
-  // }
+  private static void updateNodeByAnalysisType(Node node, AnalysisType analysisType) {
+    if (AnalysisType.FREQUENCY == analysisType) {
+      node.setLabelValue(String.valueOf(node.getRelativeValue()));
+    } else {
+      node.setLabelValue(String.valueOf(node.getMedianDuration()));
+    }
+  }
 }
