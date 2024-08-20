@@ -18,30 +18,34 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
 
-      # - name: Copy file
-      #   run: |
-      #     version=$(xml sel -t -m "//_:project" -v _:version pom.xml)
-      #     artifactDir=artifact/bpmn-statistic
-      #     engineDir=/var/tools/ivy/10/applications/BPMN-STATISTIC
-      #     cp ${artifactDir}/target/bpmn-statistic-${version}.iar $engineDir/bpmn-statistic/1.iar
-      #     cp ${artifactDir}-demo/target/bpmn-statistic-demo-${version}.iar $engineDir/bpmn-statistic-demo/1.iar
-
-      - name: Deploy
+      - name: Copy file
         run: |
-          application=BPMN-STATISTIC
           version=$(xml sel -t -m "//_:project" -v _:version pom.xml)
           artifactDir=artifact/bpmn-statistic
           engineDir=/var/tools/ivy/10/applications/BPMN-STATISTIC
-          mvn com.axonivy.ivy.ci:project-build-plugin:10.0.14:deploy-to-engine \
-            -Divy.deploy.file=${artifactDir}/target/bpmn-statistic-${version}.iar \ 
-            -Divy.deploy.engine.app=${application} \
-            -Divy.deploy.engine.dir=${engineDir} -Divy.test.engine=MODIFY_EXISTING \
-            -Divy.deploy.target.version=RELEASED -Divy.deploy.timeout.seconds=120
-          mvn com.axonivy.ivy.ci:project-build-plugin:10.0.14:deploy-to-engine \
-            -Divy.deploy.file=${artifactDir}/target/bpmn-statistic-demo-${version}.iar \
-            -Divy.deploy.engine.app=${application} \
-            -Divy.deploy.engine.dir=${engineDir} -Divy.test.engine=MODIFY_EXISTING \
-            -Divy.deploy.target.version=RELEASED -Divy.deploy.timeout.seconds=120
+          cp ${artifactDir}/target/bpmn-statistic-${version}.iar $engineDir/bpmn-statistic/1.iar
+          cp ${artifactDir}-demo/target/bpmn-statistic-demo-${version}.iar $engineDir/bpmn-statistic-demo/1.iar
+
+      # - name: Deploy
+      #   run: |
+      #     application=BPMN-STATISTIC
+      #     version=$(xml sel -t -m "//_:project" -v _:version pom.xml)
+      #     artifactDir=artifact/bpmn-statistic
+      #     engineDir=/var/tools/ivy/10/applications/BPMN-STATISTIC
+      #     mvn com.axonivy.ivy.ci:project-build-plugin:10.0.14:deploy-to-engine \
+      #       -Divy.deploy.file=${artifactDir}/target/bpmn-statistic-${version}.iar \ 
+      #       -Divy.deploy.engine.app=${application} \
+      #       -Divy.deploy.engine.dir=${engineDir} -Divy.test.engine=MODIFY_EXISTING \
+      #       -Divy.deploy.target.version=RELEASED -Divy.deploy.timeout.seconds=120
+      #     mvn com.axonivy.ivy.ci:project-build-plugin:10.0.14:deploy-to-engine \
+      #       -Divy.deploy.file=${artifactDir}/target/bpmn-statistic-demo-${version}.iar \
+      #       -Divy.deploy.engine.app=${application} \
+      #       -Divy.deploy.engine.dir=${engineDir} -Divy.test.engine=MODIFY_EXISTING \
+      #       -Divy.deploy.target.version=RELEASED -Divy.deploy.timeout.seconds=120
+
+      - name: Restart Docker
+        run: |
+          docker compose -f /etc/docker-compose/engine/10/docker-compose.yml restart
 
       - name: Remove artifact
         run: rm -rf artifact
