@@ -67,8 +67,8 @@
                 </div>
                 <div class="p-col-12 p-md-9">
                   <p:selectOneMenu id="analysis-type-chooser"
-                    requiredMessage="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/RequireMessage')}"
-                    value="#{processesMonitorBean.selectedAnalysisType}"
+                    requiredMessage="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/AnalysisTypeRequiredMessage')}"
+                    value="#{processesMonitorBean.selectedAnalysisType}" required="true"
                     placeholder="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/PleaseSelectAnalysisType')}">
                      <f:selectItem itemValue="#{null}" itemLabel=""
                       noSelectionOption="true" />
@@ -77,6 +77,7 @@
                     <p:ajax update="monitor-form"
                       listener="#{processesMonitorBean.onChangeSelectedAnalysisType()}" />
                   </p:selectOneMenu>
+                  <p:message for="analysis-type-chooser"/>
                 </div>
               </h:panelGroup>
             </div>

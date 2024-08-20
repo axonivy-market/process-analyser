@@ -8,6 +8,7 @@ Dialogs:
         bpmnstatistic:
           ProcessesMonitor:
             AnalysisType: Analysis Type
+            AnalysisTypeRequiredMessage: Please select an analysis type
             ElementId: Element Id
             Frequency: Frequency
             FromToDateValidationMessage: The FromDate must be before the ToDate
