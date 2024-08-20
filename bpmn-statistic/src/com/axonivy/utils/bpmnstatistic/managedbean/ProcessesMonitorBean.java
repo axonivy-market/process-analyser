@@ -1,5 +1,9 @@
 package com.axonivy.utils.bpmnstatistic.managedbean;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,11 +15,14 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 
 import com.axonivy.utils.bpmnstatistic.bo.Node;
 import com.axonivy.utils.bpmnstatistic.bo.ProcessMiningData;
@@ -34,8 +41,10 @@ import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
 
 @ManagedBean
-@ViewScoped
-public class ProcessesMonitorBean {
+@SessionScoped
+public class ProcessesMonitorBean implements Serializable {
+  private static final long serialVersionUID = 4601743634163868709L;
+  private String JSON_FILE_FORMAT = "%s.json";
   private Map<String, List<IProcessWebStartable>> processesMap = new HashMap<>();
   private TimeIntervalFilter timeIntervalFilter;
   private String selectedProcessName;
@@ -117,7 +126,6 @@ public class ProcessesMonitorBean {
         }
         processMiningData.setNodes(nodes);
         processMiningData.setNumberOfInstances(totalFrequency);
-        Ivy.log().info(JacksonUtils.convertObjectToJSONString(processMiningData));
       });
     } else {
       nodes = new ArrayList<>();
@@ -127,6 +135,21 @@ public class ProcessesMonitorBean {
   private IProcessWebStartable getSelectedIProcessWebStartable() {
     return CollectionUtils.emptyIfNull(processesMap.get(selectedModuleName)).stream()
         .filter(process -> process.getDisplayName().equalsIgnoreCase(selectedProcessName)).findAny().orElse(null);
+  }
+
+  public StreamedContent downloadFile() {
+    try {
+      String jsonString = JacksonUtils.convertObjectToJSONString(processMiningData);
+      byte[] jsonBytes = jsonString.getBytes(StandardCharsets.UTF_8);
+      InputStream inputStream = new ByteArrayInputStream(jsonBytes);
+      StreamedContent file =
+          DefaultStreamedContent.builder().name(String.format(JSON_FILE_FORMAT, processMiningData.getProcessId()))
+              .contentType(MediaType.APPLICATION_JSON).stream(() -> inputStream).build();
+      return file;
+    } catch (Exception e) {
+      Ivy.log().error(e);
+      return null;
+    }
   }
 
   public List<String> getProcessNames() {

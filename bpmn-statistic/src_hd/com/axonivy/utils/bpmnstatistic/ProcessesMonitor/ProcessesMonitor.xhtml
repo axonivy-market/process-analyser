@@ -130,6 +130,13 @@
                 styleClass="p-col-12" />
             </f:facet>
           </p:dataTable>
+          <br />
+          <p:commandButton
+            value="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/DownloadJSONFile')}"
+            icon="pi pi-arrow-down" styleClass="ui-button-outlined">
+            <p:fileDownload
+              value="#{processesMonitorBean.downloadFile()}" />
+          </p:commandButton>
         </h:panelGroup>
         <br />
         <ic:com.axonivy.utils.bpmnstatistic.component.ProcessViewer processViewerId="process-diagram-iframe"
@@ -137,7 +144,6 @@
           actionListener="#{processesMonitorBean.showStatisticData()}"
           btnLabel="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/ShowStatistic')}" />
       </h:form>
-      
     </ui:define>
   </ui:composition>
 </h:body>

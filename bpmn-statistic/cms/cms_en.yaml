@@ -9,6 +9,7 @@ Dialogs:
           ProcessesMonitor:
             AnalysisType: Analysis Type
             AnalysisTypeRequiredMessage: Please select an analysis type
+            DownloadJSONFile: Download JSON file
             ElementId: Element Id
             Frequency: Frequency
             FromToDateValidationMessage: The FromDate must be before the ToDate
