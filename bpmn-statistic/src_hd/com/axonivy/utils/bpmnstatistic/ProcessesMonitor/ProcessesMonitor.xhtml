@@ -84,24 +84,28 @@
         </p:fieldset>
         <br />
         <h:panelGroup id="arrow-statistics" layout="block" class="card">
-          <p:dataTable var="node" styleClass="p-grid" value="#{processesMonitorBean.nodes}" scrollable="true"
+          <p:dataTable var="node" styleClass="p-grid"
+            value="#{processesMonitorBean.nodes}" scrollable="true"
             scrollHeight="300"
             emptyMessage="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/NoRecordsFound')}">
-            <p:column styleClass="p-col-2" sortBy="#{node.id}" filterBy="#{node.id}"
+            <p:column styleClass="p-col-2" sortBy="#{node.id}"
+              filterBy="#{node.id}"
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/ElementId')}">
               <h:outputText value="#{node.id}" />
             </p:column>
-            <p:column styleClass="p-col-2" sortable="true" sortBy="#{node.type.getCmsName()}" filterBy="#{node.type.getCmsName()}"
+            <p:column styleClass="p-col-2" sortable="true"
+              sortBy="#{node.type.getCmsName()}"
+              filterBy="#{node.type.getCmsName()}"
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/Type')}">
               <h:outputText value="#{node.type.getCmsName()}" />
             </p:column>
-            <p:column styleClass="p-col-4" sortBy="#{node.label}" filterBy="#{node.label}"
+            <p:column styleClass="p-col-4" sortBy="#{node.label}"
+              filterBy="#{node.label}"
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/Label')}">
               <h:outputText value="#{node.label}" />
             </p:column>
-            <p:column
-              styleClass="#{'FREQUENCY' == processesMonitorBean.selectedAnalysisType ? 'p-col-2' : 'p-col-4'}"
-              sortBy="#{node.labelValue}" filterBy="#{node.labelValue}"
+            <p:column styleClass="p-col-2" sortBy="#{node.labelValue}"
+              filterBy="#{node.labelValue}"
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/LabelValue')}">
               <h:outputText value="#{node.labelValue}" />
             </p:column>
@@ -111,6 +115,13 @@
               filterBy="#{node.frequency}"
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/Frequency')}">
               <h:outputText value="#{node.frequency}" />
+            </p:column>
+            <p:column
+              rendered="#{'DURATION' == processesMonitorBean.selectedAnalysisType}"
+              styleClass="p-col-2" sortBy="#{node.medianDuration}"
+              filterBy="#{node.medianDuration}"
+              headerText="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/MedianDuration')}">
+              <h:outputText value="#{node.medianDuration}" />
             </p:column>
             <f:facet name="footer">
               <h:outputText
