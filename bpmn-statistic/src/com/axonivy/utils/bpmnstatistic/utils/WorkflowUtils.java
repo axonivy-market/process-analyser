@@ -41,6 +41,7 @@ public class WorkflowUtils {
         ? ProcessUtils.findEmbeddedProcessElement(fromElementPid, processElements)
         : ProcessUtils.findProcessElementByRawPid(fromElementPid, processElements);
     if (Objects.nonNull(targetElement)) {
+      saveTargetElement(currentCaseId, targetElement);
       updateIncomingWorkflowInfoForElement(currentCaseId, targetElement);
       List<WorkflowProgress> outGoingWorkFlowProgress = initiateOutGoingWorkflowProgress(targetElement, currentCaseId,
           processRawPid);
@@ -51,6 +52,11 @@ public class WorkflowUtils {
       }
       saveNewOutGoingWorkFlowProgress(outGoingWorkFlowProgress);
     }
+  }
+
+  private static void saveTargetElement(Long caseId, ProcessElement element) {
+    WorkflowProgress workflowProgress = new WorkflowProgress(caseId, element.getPid().toString());
+    repo.save(workflowProgress);
   }
 
   private static void saveNewOutGoingWorkFlowProgress(List<WorkflowProgress> outGoingWorkFlowProgress) {

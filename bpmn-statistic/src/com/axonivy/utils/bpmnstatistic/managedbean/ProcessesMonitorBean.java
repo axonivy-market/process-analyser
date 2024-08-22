@@ -1,5 +1,9 @@
 package com.axonivy.utils.bpmnstatistic.managedbean;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,68 +15,69 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 
-import com.axonivy.utils.bpmnstatistic.bo.Arrow;
+import com.axonivy.utils.bpmnstatistic.bo.Node;
+import com.axonivy.utils.bpmnstatistic.bo.ProcessMiningData;
+import com.axonivy.utils.bpmnstatistic.bo.TimeFrame;
 import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
 import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
+import com.axonivy.utils.bpmnstatistic.enums.AnalysisType;
 import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
 import com.axonivy.utils.bpmnstatistic.utils.DateUtils;
+import com.axonivy.utils.bpmnstatistic.utils.JacksonUtils;
 import com.axonivy.utils.bpmnstatistic.utils.ProcessesMonitorUtils;
 
+import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.viewer.api.ProcessViewer;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
 
 @ManagedBean
-@ViewScoped
-public class ProcessesMonitorBean {
+@SessionScoped
+public class ProcessesMonitorBean implements Serializable {
+  private static final long serialVersionUID = 4601743634163868709L;
+  private String JSON_FILE_FORMAT = "%s.json";
   private Map<String, List<IProcessWebStartable>> processesMap = new HashMap<>();
   private TimeIntervalFilter timeIntervalFilter;
   private String selectedProcessName;
   private String selectedModuleName;
   private String selectedProcessDiagramUrl;
   private String selectedPid;
-  private List<Arrow> arrows;
   private Integer totalFrequency = 0;
+  private List<Node> nodes;
+  private ProcessMiningData processMiningData;
+  private AnalysisType selectedAnalysisType;
 
   @PostConstruct
   private void init() {
-    arrows = new ArrayList<>();
     processesMap = ProcessUtils.getProcessesWithPmv();
+    selectedAnalysisType = AnalysisType.FREQUENCY;
+    nodes = new ArrayList<>();
   }
 
   public void onChangeSelectedModule() {
     if (StringUtils.isBlank(selectedModuleName)) {
       selectedModuleName = null;
       selectedProcessName = null;
-      arrows = new ArrayList<>();
       selectedProcessDiagramUrl = null;
       totalFrequency = 0;
     }
   }
 
   public void onChangeSelectedProcess() {
-    totalFrequency = 0;
-    if (StringUtils.isNotBlank(selectedProcessName) && StringUtils.isNotBlank(selectedModuleName)) {
-      if (timeIntervalFilter == null) {
-        timeIntervalFilter = TimeIntervalFilter.getDefaultFilterSet();
-      }
-      Optional.ofNullable(getSelectedIProcessWebStartable()).ifPresent(process -> {
-        selectedPid = process.pid().getParent().toString();
-        selectedProcessDiagramUrl = ProcessViewer.of(process).url().toWebLink().getAbsolute();
-        arrows = ProcessesMonitorUtils.filterStatisticByInterval(getSelectedIProcessWebStartable(), timeIntervalFilter);
-        for (Arrow arrow : arrows) {
-          arrow.setMedianDuration(Math.floor(arrow.getMedianDuration() * 100) / 100);
-          arrow.setRatio((float) (Math.floor(arrow.getRatio() * 100) / 100));
-          totalFrequency += arrow.getFrequency();
-        }
-      });
-    }
+    loadNodes();
+  }
+
+  public void onChangeSelectedAnalysisType() {
+    loadNodes();
   }
 
   public void showStatisticData() {
@@ -93,12 +98,58 @@ public class ProcessesMonitorBean {
     String to = parameterMap.get(ProcessMonitorConstants.TO);
     timeIntervalFilter.setFrom(DateUtils.parseDateFromString(from));
     timeIntervalFilter.setTo(DateUtils.parseDateFromString(to));
+    ProcessesMonitorUtils.showAdditionalInformation(String.valueOf(totalFrequency),
+            DateUtils.getDateAsString(timeIntervalFilter.getFrom()),
+            DateUtils.getDateAsString(timeIntervalFilter.getTo()));
     onChangeSelectedProcess();
   }
 
+  private void loadNodes() {
+    totalFrequency = 0;
+    if (StringUtils.isNotBlank(selectedProcessName) && StringUtils.isNotBlank(selectedModuleName) && selectedAnalysisType != null) {
+      if (timeIntervalFilter == null) {
+        timeIntervalFilter = TimeIntervalFilter.getDefaultFilterSet();
+      }
+      Optional.ofNullable(getSelectedIProcessWebStartable()).ifPresent(process -> {
+        processMiningData = new ProcessMiningData();
+        selectedPid = process.pid().getParent().toString();
+        selectedProcessDiagramUrl = ProcessViewer.of(process).url().toWebLink().getAbsolute();
+        processMiningData.setProcessId(selectedPid);
+        processMiningData.setProcessName(selectedProcessName);
+        processMiningData.setAnalysisType(selectedAnalysisType);
+        TimeFrame timeFrame = new TimeFrame(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo());
+        processMiningData.setTimeFrame(timeFrame);
+        nodes = ProcessesMonitorUtils.filterStatisticByInterval(getSelectedIProcessWebStartable(), timeIntervalFilter, selectedAnalysisType);
+        for (Node node : nodes) {
+          totalFrequency += node.getFrequency();
+          node.setLabelValue(String.valueOf(Math.floor(Double.parseDouble(node.getLabelValue()) * 100) / 100));
+        }
+        processMiningData.setNodes(nodes);
+        processMiningData.setNumberOfInstances(totalFrequency);
+      });
+    } else {
+      nodes = new ArrayList<>();
+    }
+  }
+ 
   private IProcessWebStartable getSelectedIProcessWebStartable() {
     return CollectionUtils.emptyIfNull(processesMap.get(selectedModuleName)).stream()
         .filter(process -> process.getDisplayName().equalsIgnoreCase(selectedProcessName)).findAny().orElse(null);
+  }
+
+  public StreamedContent downloadFile() {
+    try {
+      String jsonString = JacksonUtils.convertObjectToJSONString(processMiningData);
+      byte[] jsonBytes = jsonString.getBytes(StandardCharsets.UTF_8);
+      InputStream inputStream = new ByteArrayInputStream(jsonBytes);
+      StreamedContent file =
+          DefaultStreamedContent.builder().name(String.format(JSON_FILE_FORMAT, processMiningData.getProcessId()))
+              .contentType(MediaType.APPLICATION_JSON).stream(() -> inputStream).build();
+      return file;
+    } catch (Exception e) {
+      Ivy.log().error(e);
+      return null;
+    }
   }
 
   public List<String> getProcessNames() {
@@ -113,6 +164,10 @@ public class ProcessesMonitorBean {
     return processesMap.keySet();
   }
 
+  public AnalysisType[] getAnalysisTypes() {
+    return AnalysisType.values();
+  }
+ 
   public void setSelectedProcessDiagramUrl(String selectedProcessDiagramUrl) {
     this.selectedProcessDiagramUrl = selectedProcessDiagramUrl;
   }
@@ -137,11 +192,19 @@ public class ProcessesMonitorBean {
     return selectedProcessDiagramUrl;
   }
 
-  public List<Arrow> getArrows() {
-    return arrows;
+  public List<Node> getNodes() {
+    return nodes;
   }
 
-  public void setArrows(List<Arrow> arrows) {
-    this.arrows = arrows;
+  public void setNodes(List<Node> nodes) {
+    this.nodes = nodes;
+  }
+
+  public AnalysisType getSelectedAnalysisType() {
+    return selectedAnalysisType;
+  }
+
+  public void setSelectedAnalysisType(AnalysisType selectedAnalysisType) {
+    this.selectedAnalysisType = selectedAnalysisType;
   }
 }

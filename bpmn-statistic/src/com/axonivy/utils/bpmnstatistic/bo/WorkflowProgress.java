@@ -21,6 +21,11 @@ public class WorkflowProgress implements Serializable {
   public WorkflowProgress() {
   }
 
+  public WorkflowProgress(Long caseId, String processRawPid) {
+    this.caseId = caseId;
+    this.processRawPid = processRawPid;
+  }
+
   public Long getCaseId() {
     return caseId;
   }
