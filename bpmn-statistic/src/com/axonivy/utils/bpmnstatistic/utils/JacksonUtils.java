@@ -8,13 +8,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ch.ivyteam.ivy.environment.Ivy;
 
 public class JacksonUtils {
+  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
   public static String convertObjectToJSONString(Object object) {
     String result = StringUtils.EMPTY;
     try {
-      ObjectMapper objectMapper = new ObjectMapper();
-      result = objectMapper.writeValueAsString(object);
-      Ivy.log().info(result);
+      result = OBJECT_MAPPER.writeValueAsString(object);
     } catch (JsonProcessingException e) {
       Ivy.log().error(e);
     }
