@@ -34,7 +34,7 @@ public class WorkflowUtils {
     fromElementPid = StringUtils.defaultString(fromElementPid, ProcessUtils.getCurrentElementPid());
     Long currentCaseId = ProcessUtils.getCurrentCaseId();
     String processRawPid = ProcessUtils.getProcessPidFromElement(fromElementPid);
-    
+
     List<ProcessElement> processElements = ProcessUtils
         .getProcessElementsFromPmvAndProcessPid(IProcessModelVersion.current(), processRawPid);
     ProcessElement targetElement = isProcessElementNestedInSub(fromElementPid)
