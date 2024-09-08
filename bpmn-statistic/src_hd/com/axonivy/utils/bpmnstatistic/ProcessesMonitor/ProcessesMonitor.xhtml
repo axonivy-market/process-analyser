@@ -49,6 +49,24 @@
                   <p:message for="process-chooser"/>
                 </div>
               </h:panelGroup>
+              
+              <!-- Version row -->
+              <h:panelGroup styleClass="p-field p-col-12 p-grid p-formgrid p-align-start ui-fluid" layout="block">
+                <div class="p-col-12 p-md-3 p-text-right p-mt-2">
+                  <p:outputLabel for="version-chooser"
+                    value="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/Version')}" />
+                </div>
+                <div class="p-col-12 p-md-9">
+                  <p:selectOneMenu id="version-chooser" required="true"
+                    requiredMessage="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/RequireMessage')}"
+                    value="#{processesMonitorBean.selectedMonitorVersion}">
+                    <f:selectItem itemValue="#{null}" noSelectionOption="true" />
+                    <f:selectItems value="#{processesMonitorBean.versions}" />
+                    <p:ajax update="monitor-form" listener="#{processesMonitorBean.onChangeSelectedProcess()}" />
+                  </p:selectOneMenu>
+                  <p:message for="version-chooser"/>
+                </div>
+              </h:panelGroup>
 
               <!-- Time interval row -->
               <h:panelGroup id="time-interval-group" styleClass="p-field p-col-12 p-grid p-formgrid p-align-start" layout="block">

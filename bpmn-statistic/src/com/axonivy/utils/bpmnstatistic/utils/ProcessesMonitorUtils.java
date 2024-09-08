@@ -73,8 +73,8 @@ public class ProcessesMonitorUtils {
   }
 
   public static void showAdditionalInformation(String instancesCount, String fromDate, String toDate) {
-    String additionalInformation =
-        String.format(ProcessMonitorConstants.ADDITIONAL_INFORMATION_FORMAT, instancesCount, fromDate, toDate);
+    String additionalInformation = String.format(ProcessMonitorConstants.ADDITIONAL_INFORMATION_FORMAT, instancesCount,
+        fromDate, toDate);
     PF.current().executeScript(
         String.format(ProcessMonitorConstants.UPDATE_ADDITIONAL_INFORMATION_FUNCTION, additionalInformation));
   }
@@ -102,7 +102,7 @@ public class ProcessesMonitorUtils {
    * @return list of arrow (sequence flow) with its basic statistic data
    *         (duration, frequency)
    */
-  public static List<Node> filterStatisticByInterval(IProcessWebStartable processStart,
+  public static List<Node> filterInitialStatisticByInterval(IProcessWebStartable processStart,
       TimeIntervalFilter timeIntervalFilter, AnalysisType analysisType) {
     List<Node> results = new ArrayList<>();
     maxArrowFrequency = 0;
@@ -197,5 +197,26 @@ public class ProcessesMonitorUtils {
     } else {
       node.setLabelValue(String.valueOf(node.getMedianDuration()));
     }
+  }
+
+  public static List<Node> filterStatisticByInterval(IProcessWebStartable processStart,
+      TimeIntervalFilter timeIntervalFilter, AnalysisType analysisType) {
+    List<Node> results = new ArrayList<>();
+    maxArrowFrequency = 0;
+    if (Objects.nonNull(processStart)) {
+      String processRawPid = ProcessUtils.getProcessPidFromElement(processStart.pid().toString());
+      // Get all of element from process in 1st layer (which is not nested from sub)
+      List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
+      extractedArrowFromProcessElements(processElements, results);
+      Map<String, Node> nodeMap = results.stream().collect(Collectors.toMap(Node::getId, Function.identity()));
+      List<WorkflowProgress> recordedProgresses = repo.findByProcessRawPidInTime(processRawPid, timeIntervalFilter);
+      recordedProgresses.stream().forEach(record -> updateElementOrArrowByWorkflowProgress(nodeMap, record));
+      nodeMap.keySet().stream().forEach(key -> {
+        Node node = nodeMap.get(key);
+        node.setRelativeValue((float) node.getFrequency() / maxArrowFrequency);
+        updateNodeByAnalysisType(node, analysisType);
+      });
+    }
+    return results;
   }
 }
