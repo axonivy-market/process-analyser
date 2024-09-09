@@ -13,6 +13,7 @@ import com.axonivy.utils.bpmnstatistic.enums.IvyVariable;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.security.exec.Sudo;
 import ch.ivyteam.ivy.workflow.ITask;
+import ch.ivyteam.ivy.workflow.query.CaseQuery;
 import ch.ivyteam.ivy.workflow.query.TaskQuery;
 
 public class IvyTaskOccurrenceService {
@@ -94,5 +95,11 @@ public class IvyTaskOccurrenceService {
     }
 
     return result;
+  }
+  
+  private static Long countFinishedCaseByRequestPath(String requestPath) {
+	  int taskStartId = 
+	  CaseQuery query = CaseQuery.create().where().taskStartId().isEqual(0);
+	  return 1L;
   }
 }
