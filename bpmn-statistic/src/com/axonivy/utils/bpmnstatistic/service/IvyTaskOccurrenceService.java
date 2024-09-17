@@ -97,9 +97,4 @@ public class IvyTaskOccurrenceService {
     return result;
   }
   
-  private static Long countFinishedCaseByRequestPath(String requestPath) {
-	  int taskStartId = 
-	  CaseQuery query = CaseQuery.create().where().taskStartId().isEqual(0);
-	  return 1L;
-  }
 }
