@@ -201,4 +201,36 @@ public class ProcessUtils {
 				.filter(ProcessUtils::isAlternativeInstance).map(element -> (Alternative) element)
 				.filter(alternative -> alternative.getOutgoing().size() > 1).toList();
 	}
+
+	// TODO: New Approach - please handle from here
+
+	public static List<Node> newApproach(IProcessWebStartable processStart, TimeIntervalFilter timeIntervalFilter,
+		AnalysisType analysisType) {
+		if (Objects.isNull(processStart)) {
+		return Collections.emptyList();
+		}
+		maxArrowFrequency = 0;
+		List<Node> results = new ArrayList<>();
+		Long taskStartId = WorkflowUtils.getTaskStartIdFromPID(processStart.pid().toString());
+		List<ICase> doneCases = getAllCasesFromTaskStartId(taskStartId);
+		List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
+		List<Alternative> alterNativeElement = ProcessUtils.extractAlterNativeElementsWithMultiOutGoing(processElements);
+		extractedArrowFromProcessElements(processElements, results);
+		if (alterNativeElement.size() == 0) {
+		}
+		results.stream().forEach(node -> updateDefinedDataForNode(doneCases.size(), node));
+		Ivy.log().warn(results.size());
+		return results;
+
+	}
+
+	private static List<ICase> getAllCasesFromTaskStartId(Long taskStartId) {
+		return CaseQuery.create().where().state().isEqual(CaseState.DONE).and().taskStartId().isEqual(taskStartId)
+			.executor().results();
+	}
+
+	private static void updateDefinedDataForNode(int totalCase, Node node) {
+		node.setFrequency(totalCase);
+		node.setRelativeValue(1L);
+	}
 }

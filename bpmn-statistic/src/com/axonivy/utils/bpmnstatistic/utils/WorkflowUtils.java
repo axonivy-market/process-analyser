@@ -23,6 +23,7 @@ import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.model.NodeElement;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
+import ch.ivyteam.ivy.workflow.IProcessStart;
 
 @SuppressWarnings("restriction")
 public class WorkflowUtils {
@@ -318,8 +319,7 @@ public class WorkflowUtils {
    *                       (get by PMV) is running
    * @return the original condition of option
    */
-  public static Boolean isWorkflowInfoUpdatedByPidAndAdditionalCondition(Boolean condition,
-      String toElementPid) {
+  public static Boolean isWorkflowInfoUpdatedByPidAndAdditionalCondition(Boolean condition, String toElementPid) {
     updateWorkflowInfo(null, condition, toElementPid);
     return condition;
   }
@@ -352,5 +352,11 @@ public class WorkflowUtils {
     String[] rawPidParts = rawPid.split(ProcessMonitorConstants.HYPHEN_SIGN);
     return rawPidParts.length == 3
         || (rawPidParts.length > 1 && rawPidParts[rawPidParts.length - 1].contains(SUB_ELEMENT_PID_SUFFIX));
+  }
+
+  public static Long getTaskStartIdFromPID(String rawPid) {
+    return Ivy.session().getStartableProcessStarts().stream()
+        .filter(start -> StringUtils.equals(rawPid, start.getProcessElementId())).findFirst().map(IProcessStart::getId)
+        .orElse(0L);
   }
 }
