@@ -289,12 +289,21 @@ public class ProcessesMonitorUtils {
 
 	private static void updateFrequencyForCaseWithSimpleAlternative(List<AlternativePath> paths, List<Node> results,
 			List<ICase> cases) {
+		List<String> nonRunningNode =  new ArrayList<>();
 		cases.stream().forEach(currentCase -> {
 			List<String> taskIdDoneInCase = currentCase.tasks().all().stream()
 					.map(iTask -> WorkflowUtils.getTaskElementIdFromRequestPath(iTask.getRequestPath())).toList();
 			Ivy.log().warn("ftaskIdDoneInCase " + taskIdDoneInCase);
+			AlternativePath runningPath = paths.stream()
+					.filter(path -> taskIdDoneInCase.contains(path.getTaskSwitchEventIdOnPath())).findAny()
+					.orElse(paths.stream().filter(path -> StringUtils.isBlank(path.getTaskSwitchEventIdOnPath())).findAny().orElse(null));
+			Ivy.log().warn(runningPath);
+			paths.remove(runningPath);
+			paths.stream().forEach(path -> nonRunningNode.addAll(path.getNodeIdsInPath()));
 			// TODO: update frequency for right object
-//      AlternativePath runningPath = paths.stream().filter(path-> taskStartsInCase)
+			results.stream().filter(node -> !nonRunningNode.contains(node.getId())).forEach(node -> {
+				node.setFrequency(node.getFrequency() +1);
+			});
 		});
 	}
 
