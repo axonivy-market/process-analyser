@@ -10,10 +10,7 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.axonivy.utils.bpmnstatistic.bo.Node;
-import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
 import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
-import com.axonivy.utils.bpmnstatistic.enums.AnalysisType;
 
 import ch.ivyteam.ivy.application.IProcessModelVersion;
 import ch.ivyteam.ivy.bpm.engine.restricted.model.IProcessElement;

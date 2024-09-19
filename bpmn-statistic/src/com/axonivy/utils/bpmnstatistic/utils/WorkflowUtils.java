@@ -30,6 +30,8 @@ public class WorkflowUtils {
   private static final WorkflowProgressRepository repo = WorkflowProgressRepository.getInstance();
   private static final int MILISECOND_IN_SECOND = 1000;
   private static final String SUB_ELEMENT_PID_SUFFIX = "S";
+  private static final String SLASH = "/";
+
 
   private static void updateWorkflowInfo(String fromElementPid, Boolean conditionIsTrue, String toElementPid) {
     fromElementPid = StringUtils.defaultString(fromElementPid, ProcessUtils.getCurrentElementPid());
@@ -359,4 +361,12 @@ public class WorkflowUtils {
         .filter(start -> StringUtils.equals(rawPid, start.getProcessElementId())).findFirst().map(IProcessStart::getId)
         .orElse(0L);
   }
+  
+  public static String getTaskElementIdFromRequestPath(String requestPath) {
+	    String[] arr = requestPath.split(SLASH);
+	    // Request Path contains: {PROCESS ID}/.../{NAME OF TASK}
+	    // So we have get the node before /{NAME OF TASK}
+	    // Ignore case {PROCESS ID}/{NAME OF TASK}
+	    return arr.length > 2 ? arr[arr.length - 2] : StringUtils.EMPTY;
+	  }
 }

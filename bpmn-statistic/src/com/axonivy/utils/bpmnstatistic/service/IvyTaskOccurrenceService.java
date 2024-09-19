@@ -9,16 +9,15 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.utils.bpmnstatistic.bo.TaskOccurrence;
 import com.axonivy.utils.bpmnstatistic.enums.IvyVariable;
+import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;
 
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.security.exec.Sudo;
 import ch.ivyteam.ivy.workflow.ITask;
-import ch.ivyteam.ivy.workflow.query.CaseQuery;
 import ch.ivyteam.ivy.workflow.query.TaskQuery;
 
 public class IvyTaskOccurrenceService {
   private static final String LIKE_TEXT_SEARCH = "%%%s%%";
-  private static final String SLASH = "/";
 
   private IvyTaskOccurrenceService() {
   }
@@ -51,18 +50,16 @@ public class IvyTaskOccurrenceService {
 
   private static void countTaskOccurrences(HashMap<String, TaskOccurrence> taskOccurrenceMap, List<ITask> tasks) {
     for (ITask iTask : tasks) {
-      String taskElementId = getTaskElementIdFromRequestPath(iTask.getRequestPath());
+      String taskElementId = WorkflowUtils.getTaskElementIdFromRequestPath(iTask.getRequestPath());
+      Ivy.log().warn("Task.getRequestPath()  "+ iTask.getRequestPath());
+
+      Ivy.log().warn("taskElementId "+ taskElementId);
+      Ivy.log().warn("iTask.getStartSwitchEvent().getId(): "+ iTask.getStartSwitchEvent().getId());
       updateTaskOccurrencesMap(taskOccurrenceMap, taskElementId, iTask.getStartSwitchEvent().getId());
     }
   }
 
-  private static String getTaskElementIdFromRequestPath(String requestPath) {
-    String[] arr = requestPath.split(SLASH);
-    // Request Path contains: {PROCESS ID}/.../{NAME OF TASK}
-    // So we have get the node before /{NAME OF TASK}
-    // Ignore case {PROCESS ID}/{NAME OF TASK}
-    return arr.length > 2 ? arr[arr.length - 2] : StringUtils.EMPTY;
-  }
+
 
   private static void updateTaskOccurrencesMap(HashMap<String, TaskOccurrence> taskOccurrenceMap, String taskElementId,
       Long startTaskSwitchEventId) {

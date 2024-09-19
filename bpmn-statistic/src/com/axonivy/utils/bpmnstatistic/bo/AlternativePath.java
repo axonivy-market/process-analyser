@@ -9,13 +9,13 @@ public class AlternativePath {
   private SequenceFlow originFlow;
   private List<String> nodeIdsInPath;
   private String endProcessElementId;
-  private Long taskSwitchEventIdOnPath;
+  private String taskSwitchEventIdOnPath;
   
-  public Long getTaskSwitchEventIdOnPath() {
+  public String getTaskSwitchEventIdOnPath() {
     return taskSwitchEventIdOnPath;
   }
 
-  public void setTaskSwitchEventIdOnPath(Long taskSwitchEventIdOnPath) {
+  public void setTaskSwitchEventIdOnPath(String taskSwitchEventIdOnPath) {
     this.taskSwitchEventIdOnPath = taskSwitchEventIdOnPath;
   }
 
