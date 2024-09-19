@@ -64,10 +64,6 @@ public class ProcessesMonitorBean implements Serializable {
     processesMap = ProcessUtils.getProcessesWithPmv();
     selectedAnalysisType = AnalysisType.FREQUENCY;
     nodes = new ArrayList<>();
-    Ivy.session().getStartableProcessStarts().stream().forEach(start -> Ivy.log().warn(start.getProcessModelVersion()));
-    Ivy.session().getStartableProcessStarts().stream().forEach(start ->start.getProcessModelVersion().getAllStartables().forEach(s-> Ivy.log().warn(s)));
-
-
   }
 
   public void onChangeSelectedModule() {
@@ -136,7 +132,6 @@ public class ProcessesMonitorBean implements Serializable {
         } else {
           nodes = ProcessesMonitorUtils.newApproach(getSelectedIProcessWebStartable(), timeIntervalFilter, selectedAnalysisType);
         }
-
         for (Node node : nodes) {
           totalFrequency += node.getFrequency();
           node.setLabelValue(String.valueOf(Math.floor(Double.parseDouble(node.getLabelValue()) * 100) / 100));

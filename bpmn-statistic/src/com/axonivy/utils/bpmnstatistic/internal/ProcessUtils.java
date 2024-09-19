@@ -10,7 +10,10 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.axonivy.utils.bpmnstatistic.bo.Node;
+import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
 import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
+import com.axonivy.utils.bpmnstatistic.enums.AnalysisType;
 
 import ch.ivyteam.ivy.application.IProcessModelVersion;
 import ch.ivyteam.ivy.bpm.engine.restricted.model.IProcessElement;
@@ -24,6 +27,7 @@ import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.EmbeddedProcessElement;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.element.event.end.EmbeddedEnd;
+import ch.ivyteam.ivy.process.model.element.event.intermediate.TaskSwitchEvent;
 import ch.ivyteam.ivy.process.model.element.event.start.EmbeddedStart;
 import ch.ivyteam.ivy.process.model.element.event.start.RequestStart;
 import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
@@ -70,6 +74,10 @@ public class ProcessUtils {
 
 	public static boolean isRequestStartInstance(Object element) {
 		return element instanceof RequestStart;
+	}
+	
+	public static boolean isTaskSwitchEvent(Object element) {
+	  return element instanceof TaskSwitchEvent;
 	}
 
 	public static List<ProcessElement> getNestedProcessElementsFromSub(Object element) {
@@ -200,37 +208,5 @@ public class ProcessUtils {
 		return Optional.ofNullable(processElements).orElse(Collections.emptyList()).stream()
 				.filter(ProcessUtils::isAlternativeInstance).map(element -> (Alternative) element)
 				.filter(alternative -> alternative.getOutgoing().size() > 1).toList();
-	}
-
-	// TODO: New Approach - please handle from here
-
-	public static List<Node> newApproach(IProcessWebStartable processStart, TimeIntervalFilter timeIntervalFilter,
-		AnalysisType analysisType) {
-		if (Objects.isNull(processStart)) {
-		return Collections.emptyList();
-		}
-		maxArrowFrequency = 0;
-		List<Node> results = new ArrayList<>();
-		Long taskStartId = WorkflowUtils.getTaskStartIdFromPID(processStart.pid().toString());
-		List<ICase> doneCases = getAllCasesFromTaskStartId(taskStartId);
-		List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
-		List<Alternative> alterNativeElement = ProcessUtils.extractAlterNativeElementsWithMultiOutGoing(processElements);
-		extractedArrowFromProcessElements(processElements, results);
-		if (alterNativeElement.size() == 0) {
-		}
-		results.stream().forEach(node -> updateDefinedDataForNode(doneCases.size(), node));
-		Ivy.log().warn(results.size());
-		return results;
-
-	}
-
-	private static List<ICase> getAllCasesFromTaskStartId(Long taskStartId) {
-		return CaseQuery.create().where().state().isEqual(CaseState.DONE).and().taskStartId().isEqual(taskStartId)
-			.executor().results();
-	}
-
-	private static void updateDefinedDataForNode(int totalCase, Node node) {
-		node.setFrequency(totalCase);
-		node.setRelativeValue(1L);
 	}
 }
