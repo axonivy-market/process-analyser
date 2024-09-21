@@ -247,17 +247,17 @@ public class ProcessesMonitorUtils {
     Long taskStartId = WorkflowUtils.getTaskStartIdFromPID(processStart.pid().toString());
     List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
     extractedArrowFromProcessElements(processElements, results);
-    List<Alternative> alterNativeElement = ProcessUtils.extractAlterNativeElementsWithMultiOutGoing(processElements);
-    List<ICase> cases = getAllCasesFromTaskStartId(taskStartId);
-    return updateFrequencyForNodes(results, alterNativeElement, cases);
+    return updateFrequencyForNodes(results, processElements, taskStartId);
   }
 
   /**
    * For this version, we cover 2 simple cases: + Process without alternative. +
    * Process with 1 alternative.
    **/
-  private static List<Node> updateFrequencyForNodes(List<Node> results, List<Alternative> alternatives,
-      List<ICase> cases) {
+  private static List<Node> updateFrequencyForNodes(List<Node> results, List<ProcessElement> processElements,
+      Long taskStartId) {
+    List<ICase> cases = getAllCasesFromTaskStartId(taskStartId);
+    List<Alternative> alternatives = ProcessUtils.extractAlterNativeElementsWithMultiOutGoing(processElements);
     if (CollectionUtils.isEmpty(alternatives)) {
       results.stream().forEach(node -> updateNodeWiwthDefinedFrequency(cases.size(), node));
     } else {
