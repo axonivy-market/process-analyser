@@ -32,7 +32,6 @@ public class WorkflowUtils {
   private static final String SUB_ELEMENT_PID_SUFFIX = "S";
   private static final String SLASH = "/";
 
-
   private static void updateWorkflowInfo(String fromElementPid, Boolean conditionIsTrue, String toElementPid) {
     fromElementPid = StringUtils.defaultString(fromElementPid, ProcessUtils.getCurrentElementPid());
     Long currentCaseId = ProcessUtils.getCurrentCaseId();
@@ -356,17 +355,18 @@ public class WorkflowUtils {
         || (rawPidParts.length > 1 && rawPidParts[rawPidParts.length - 1].contains(SUB_ELEMENT_PID_SUFFIX));
   }
 
+  @SuppressWarnings("removal")
   public static Long getTaskStartIdFromPID(String rawPid) {
     return Ivy.session().getStartableProcessStarts().stream()
         .filter(start -> StringUtils.equals(rawPid, start.getProcessElementId())).findFirst().map(IProcessStart::getId)
         .orElse(0L);
   }
-  
+
   public static String getTaskElementIdFromRequestPath(String requestPath) {
-	    String[] arr = requestPath.split(SLASH);
-	    // Request Path contains: {PROCESS ID}/.../{NAME OF TASK}
-	    // So we have get the node before /{NAME OF TASK}
-	    // Ignore case {PROCESS ID}/{NAME OF TASK}
-	    return arr.length > 2 ? arr[arr.length - 2] : StringUtils.EMPTY;
-	  }
+    String[] arr = requestPath.split(SLASH);
+    // Request Path contains: {PROCESS ID}/.../{NAME OF TASK}
+    // So we have get the node before /{NAME OF TASK}
+    // Ignore case {PROCESS ID}/{NAME OF TASK}
+    return arr.length > 2 ? arr[arr.length - 2] : StringUtils.EMPTY;
+  }
 }

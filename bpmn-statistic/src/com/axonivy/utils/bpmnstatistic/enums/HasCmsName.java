@@ -40,7 +40,6 @@ public interface HasCmsName {
     final String cmsPath = getEntryPath(entry);
     String result = Ivy.cms().co(cmsPath);
     if (isEmpty(result)) {
-      Ivy.log().warn("Missing CMS entry for '" + cmsPath + "'");
       result = name().replace(UNDERSCORE, SPACE);
     }
     return result;
@@ -50,7 +49,6 @@ public interface HasCmsName {
     final String cmsPath = getEntryPath(entry);
     String result = Ivy.cms().cr(cmsPath);
     if (isEmpty(result)) {
-      Ivy.log().warn("Missing CMS entry for '" + cmsPath + "'");
       result = name();
     }
     return result;

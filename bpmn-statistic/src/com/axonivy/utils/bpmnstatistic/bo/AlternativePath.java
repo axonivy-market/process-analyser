@@ -10,7 +10,7 @@ public class AlternativePath {
   private List<String> nodeIdsInPath;
   private String endProcessElementId;
   private String taskSwitchEventIdOnPath;
-  
+
   public String getTaskSwitchEventIdOnPath() {
     return taskSwitchEventIdOnPath;
   }

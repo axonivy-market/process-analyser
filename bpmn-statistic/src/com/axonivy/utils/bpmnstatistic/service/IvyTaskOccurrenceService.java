@@ -51,10 +51,6 @@ public class IvyTaskOccurrenceService {
   private static void countTaskOccurrences(HashMap<String, TaskOccurrence> taskOccurrenceMap, List<ITask> tasks) {
     for (ITask iTask : tasks) {
       String taskElementId = WorkflowUtils.getTaskElementIdFromRequestPath(iTask.getRequestPath());
-      Ivy.log().warn("Task.getRequestPath()  "+ iTask.getRequestPath());
-
-      Ivy.log().warn("taskElementId "+ taskElementId);
-      Ivy.log().warn("iTask.getStartSwitchEvent().getId(): "+ iTask.getStartSwitchEvent().getId());
       updateTaskOccurrencesMap(taskOccurrenceMap, taskElementId, iTask.getStartSwitchEvent().getId());
     }
   }

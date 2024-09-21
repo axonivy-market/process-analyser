@@ -126,11 +126,12 @@ public class ProcessesMonitorBean implements Serializable {
         processMiningData.setAnalysisType(selectedAnalysisType);
         TimeFrame timeFrame = new TimeFrame(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo());
         processMiningData.setTimeFrame(timeFrame);
-        if (MonitorVersion.INITIAL.getCmsName() == selectedMonitorVersion) {
+        if (StringUtils.equals(MonitorVersion.INITIAL.getCmsName(), selectedMonitorVersion)) {
           nodes = ProcessesMonitorUtils.filterInitialStatisticByInterval(getSelectedIProcessWebStartable(),
               timeIntervalFilter, selectedAnalysisType);
         } else {
-          nodes = ProcessesMonitorUtils.newApproach(getSelectedIProcessWebStartable(), timeIntervalFilter, selectedAnalysisType);
+
+          nodes = ProcessesMonitorUtils.filterInitialStatisticByIntervalWithoutModifyingProcess(getSelectedIProcessWebStartable(), timeIntervalFilter, selectedAnalysisType);
         }
         for (Node node : nodes) {
           totalFrequency += node.getFrequency();
