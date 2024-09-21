@@ -55,8 +55,6 @@ public class IvyTaskOccurrenceService {
     }
   }
 
-
-
   private static void updateTaskOccurrencesMap(HashMap<String, TaskOccurrence> taskOccurrenceMap, String taskElementId,
       Long startTaskSwitchEventId) {
     if (StringUtils.isNotBlank(taskElementId)) {

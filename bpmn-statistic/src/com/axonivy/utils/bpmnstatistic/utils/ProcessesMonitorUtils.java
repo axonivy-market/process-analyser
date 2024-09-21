@@ -253,9 +253,8 @@ public class ProcessesMonitorUtils {
   }
 
   /**
-   * For this version, we cover 2 simple cases: 
-   * + Process without alternative.
-   * + Process with 1 alternative.
+   * For this version, we cover 2 simple cases: + Process without alternative. +
+   * Process with 1 alternative.
    **/
   private static List<Node> updateFrequencyForNodes(List<Node> results, List<Alternative> alternatives,
       List<ICase> cases) {
@@ -286,14 +285,16 @@ public class ProcessesMonitorUtils {
     cases.stream().forEach(currentCase -> {
       List<String> taskIdDoneInCase = currentCase.tasks().all().stream()
           .map(iTask -> WorkflowUtils.getTaskElementIdFromRequestPath(iTask.getRequestPath())).toList();
-      AlternativePath runningPath = paths.stream()
-          .filter(path -> taskIdDoneInCase.contains(path.getTaskSwitchEventIdOnPath())).findAny().orElse(paths.stream()
-              .filter(path -> StringUtils.isBlank(path.getTaskSwitchEventIdOnPath())).findAny().orElse(null));
-      List<String> nonRunningElements = paths.stream().filter(path -> !path.equals(runningPath))
+
+      Optional<AlternativePath> runningPathOpt = paths.stream()
+          .filter(path -> taskIdDoneInCase.contains(path.getTaskSwitchEventIdOnPath())).findFirst()
+          .or(() -> paths.stream().filter(path -> StringUtils.isBlank(path.getTaskSwitchEventIdOnPath())).findFirst());
+
+      List<String> nonRunningElements = paths.stream().filter(path -> !runningPathOpt.equals(Optional.of(path)))
           .flatMap(path -> path.getNodeIdsInPath().stream()).collect(Collectors.toList());
-      results.stream().filter(node -> !nonRunningElements.contains(node.getId())).forEach(node -> {
-        node.setFrequency(node.getFrequency() + 1);
-      });
+
+      results.stream().filter(node -> !nonRunningElements.contains(node.getId()))
+          .forEach(node -> node.setFrequency(node.getFrequency() + 1));
     });
   }
 
@@ -317,7 +318,7 @@ public class ProcessesMonitorUtils {
 
   private static void updateNodeWiwthDefinedFrequency(int value, Node node) {
     node.setRelativeValue(1L);
-    node.setLabelValue(Optional.of(value).orElse(null).toString());
+    node.setLabelValue(Objects.requireNonNullElse(value, 0).toString());
     node.setFrequency(value);
   }
 
