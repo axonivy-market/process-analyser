@@ -3,17 +3,10 @@ package com.axonivy.utils.bpmnstatistic.bo;
 import com.axonivy.utils.bpmnstatistic.enums.NodeType;
 
 public class Node {
-  @Override
-	public String toString() {
-		return "Node [type=" + type + ", id=" + id + ", label=" + label + ", labelValue=" + labelValue
-				+ ", relativeValue=" + relativeValue + ", medianDuration=" + medianDuration + ", frequency=" + frequency
-				+ "]";
-	}
-
   private NodeType type;
   private String id;
   private String label;
-  private String labelValue= "0";
+  private String labelValue;
   private double relativeValue;
   private double medianDuration;
   private int frequency;
