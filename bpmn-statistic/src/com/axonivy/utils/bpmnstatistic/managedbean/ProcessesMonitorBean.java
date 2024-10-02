@@ -130,8 +130,8 @@ public class ProcessesMonitorBean implements Serializable {
           nodes = ProcessesMonitorUtils.filterInitialStatisticByInterval(getSelectedIProcessWebStartable(),
               timeIntervalFilter, selectedAnalysisType);
         } else {
-
-          nodes = ProcessesMonitorUtils.filterInitialStatisticByIntervalWithoutModifyingProcess(getSelectedIProcessWebStartable(), timeIntervalFilter, selectedAnalysisType);
+          nodes = ProcessesMonitorUtils.filterInitialStatisticByIntervalWithoutModifyingProcess(
+              getSelectedIProcessWebStartable(), timeIntervalFilter, selectedAnalysisType);
         }
         for (Node node : nodes) {
           totalFrequency += node.getFrequency();

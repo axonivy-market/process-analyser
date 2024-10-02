@@ -95,6 +95,7 @@ public class ProcessesMonitorUtils {
     Node arrowNode = new Node();
     arrowNode.setId(ProcessUtils.getElementPid(flow));
     arrowNode.setLabel(flow.getName());
+    arrowNode.setFrequency(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     arrowNode.setRelativeValue(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     arrowNode.setMedianDuration(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     arrowNode.setType(NodeType.ARROW);
@@ -157,6 +158,7 @@ public class ProcessesMonitorUtils {
     elementNode.setId(element.getPid().toString());
     elementNode.setLabel(element.getName());
     elementNode.setRelativeValue(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
+    elementNode.setFrequency(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     elementNode.setMedianDuration(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     elementNode.setType(NodeType.ELEMENT);
     return elementNode;
@@ -247,7 +249,9 @@ public class ProcessesMonitorUtils {
     Long taskStartId = WorkflowUtils.getTaskStartIdFromPID(processStart.pid().toString());
     List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
     extractedArrowFromProcessElements(processElements, results);
-    return updateFrequencyForNodes(results, processElements, taskStartId);
+    updateFrequencyForNodes(results, processElements, taskStartId);
+    results.stream().forEach(node -> updateNodeByAnalysisType(node, analysisType));
+    return results;
   }
 
   /**
@@ -290,8 +294,11 @@ public class ProcessesMonitorUtils {
           .filter(path -> taskIdDoneInCase.contains(path.getTaskSwitchEventIdOnPath())).findFirst()
           .or(() -> paths.stream().filter(path -> StringUtils.isBlank(path.getTaskSwitchEventIdOnPath())).findFirst());
 
-      List<String> nonRunningElements = paths.stream().filter(path -> !runningPathOpt.equals(Optional.of(path)))
-          .flatMap(path -> path.getNodeIdsInPath().stream()).collect(Collectors.toList());
+      List<String> nonRunningElements = new ArrayList<>();
+      paths.stream().filter(path -> !runningPathOpt.equals(Optional.of(path))).forEach(path -> {
+        nonRunningElements.addAll(path.getNodeIdsInPath());
+        nonRunningElements.add(ProcessUtils.getElementPid(path.getOriginFlow()));
+      });
 
       results.stream().filter(node -> !nonRunningElements.contains(node.getId()))
           .forEach(node -> node.setFrequency(node.getFrequency() + 1));
