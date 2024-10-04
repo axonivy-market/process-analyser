@@ -24,6 +24,7 @@ import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.EmbeddedProcessElement;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.element.event.end.EmbeddedEnd;
+import ch.ivyteam.ivy.process.model.element.event.intermediate.TaskSwitchEvent;
 import ch.ivyteam.ivy.process.model.element.event.start.EmbeddedStart;
 import ch.ivyteam.ivy.process.model.element.event.start.RequestStart;
 import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
@@ -60,7 +61,6 @@ public class ProcessUtils {
     });
   }
 
-
   public static boolean isEmbeddedElementInstance(Object element) {
     return element instanceof EmbeddedProcessElement;
   }
@@ -71,6 +71,10 @@ public class ProcessUtils {
 
   public static boolean isRequestStartInstance(Object element) {
     return element instanceof RequestStart;
+  }
+
+  public static boolean isTaskSwitchEvent(Object element) {
+    return element instanceof TaskSwitchEvent;
   }
 
   public static List<ProcessElement> getNestedProcessElementsFromSub(Object element) {
@@ -191,5 +195,11 @@ public class ProcessUtils {
   public static String getCurrentElementPid() {
     PID currentElementPid = Optional.ofNullable(IProcessElement.current()).map(IProcessElement::getId).orElse(null);
     return getElementPid(currentElementPid);
+  }
+
+  public static List<Alternative> extractAlterNativeElementsWithMultiOutGoing(List<ProcessElement> processElements) {
+    return Optional.ofNullable(processElements).orElse(Collections.emptyList()).stream()
+        .filter(ProcessUtils::isAlternativeInstance).map(element -> (Alternative) element)
+        .filter(alternative -> alternative.getOutgoing().size() > 1).toList();
   }
 }
