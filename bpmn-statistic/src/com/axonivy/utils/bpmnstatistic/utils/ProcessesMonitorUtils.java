@@ -282,6 +282,7 @@ public class ProcessesMonitorUtils {
       paths.add(currentPath);
     });
     updateFrequencyForCaseWithSimpleAlternative(paths, results, cases);
+    results.stream().forEach(node -> node.setRelativeValue((float) node.getFrequency()/cases.size()));
   }
 
   private static void updateFrequencyForCaseWithSimpleAlternative(List<AlternativePath> paths, List<Node> results,
@@ -307,6 +308,7 @@ public class ProcessesMonitorUtils {
 
   private static void followPath(AlternativePath path, SequenceFlow currentFlow) {
     ProcessElement destinationElement = (ProcessElement) currentFlow.getTarget();
+    path.getNodeIdsInPath().add(ProcessUtils.getElementPid(currentFlow));
     if (ProcessUtils.isTaskSwitchEvent(destinationElement)) {
       path.setTaskSwitchEventIdOnPath(ProcessUtils.getElementPid(destinationElement));
     }
@@ -314,7 +316,6 @@ public class ProcessesMonitorUtils {
       return;
     }
     path.getNodeIdsInPath().add(ProcessUtils.getElementPid(destinationElement));
-    path.getNodeIdsInPath().add(ProcessUtils.getElementPid(currentFlow));
     destinationElement.getOutgoing().forEach(outGoingPath -> followPath(path, outGoingPath));
   }
 
