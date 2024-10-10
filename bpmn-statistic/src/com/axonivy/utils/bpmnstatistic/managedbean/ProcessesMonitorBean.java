@@ -135,7 +135,6 @@ public class ProcessesMonitorBean implements Serializable {
         }
         for (Node node : nodes) {
           totalFrequency += node.getFrequency();
-          node.setLabelValue(String.valueOf(Math.floor(Double.parseDouble(node.getLabelValue()) * 100) / 100));
         }
         processMiningData.setNodes(nodes);
         processMiningData.setNumberOfInstances(totalFrequency);

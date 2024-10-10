@@ -205,7 +205,7 @@ public class ProcessesMonitorUtils {
 
   private static void updateNodeByAnalysisType(Node node, AnalysisType analysisType) {
     if (AnalysisType.FREQUENCY == analysisType) {
-      node.setLabelValue(String.valueOf(node.getRelativeValue()));
+      node.setLabelValue(String.valueOf(node.getFrequency()));
     } else {
       node.setLabelValue(String.valueOf(node.getMedianDuration()));
     }
