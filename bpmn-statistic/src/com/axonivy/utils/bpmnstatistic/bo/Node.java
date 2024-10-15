@@ -6,7 +6,7 @@ public class Node {
   private NodeType type;
   private String id;
   private String label;
-  private String labelValue;
+  private int labelValue;
   private double relativeValue;
   private double medianDuration;
   private int frequency;
@@ -37,11 +37,11 @@ public class Node {
     this.label = label;
   }
 
-  public String getLabelValue() {
+  public int getLabelValue() {
     return labelValue;
   }
 
-  public void setLabelValue(String labelValue) {
+  public void setLabelValue(int labelValue) {
     this.labelValue = labelValue;
   }
 

@@ -205,9 +205,9 @@ public class ProcessesMonitorUtils {
 
   private static void updateNodeByAnalysisType(Node node, AnalysisType analysisType) {
     if (AnalysisType.FREQUENCY == analysisType) {
-      node.setLabelValue(String.valueOf(node.getFrequency()));
+      node.setLabelValue(node.getFrequency());
     } else {
-      node.setLabelValue(String.valueOf(node.getMedianDuration()));
+      node.setLabelValue((int)Math.round(node.getMedianDuration()));
     }
   }
 
@@ -329,7 +329,7 @@ public class ProcessesMonitorUtils {
 
   private static void updateNodeWiwthDefinedFrequency(int value, Node node) {
     node.setRelativeValue(1L);
-    node.setLabelValue(Objects.requireNonNullElse(value, 0).toString());
+    node.setLabelValue(Objects.requireNonNullElse(value, 0));
     node.setFrequency(value);
   }
 
