@@ -205,9 +205,9 @@ public class ProcessesMonitorUtils {
 
   private static void updateNodeByAnalysisType(Node node, AnalysisType analysisType) {
     if (AnalysisType.FREQUENCY == analysisType) {
-      node.setLabelValue(String.valueOf(node.getRelativeValue()));
+      node.setLabelValue(node.getFrequency());
     } else {
-      node.setLabelValue(String.valueOf(node.getMedianDuration()));
+      node.setLabelValue((int)Math.round(node.getMedianDuration()));
     }
   }
 
@@ -244,12 +244,14 @@ public class ProcessesMonitorUtils {
     if (Objects.isNull(processStart)) {
       return Collections.emptyList();
     }
+    
     maxArrowFrequency = 0;
     List<Node> results = new ArrayList<>();
     Long taskStartId = WorkflowUtils.getTaskStartIdFromPID(processStart.pid().toString());
+    List<ICase> cases = getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter);
     List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
     extractedArrowFromProcessElements(processElements, results);
-    updateFrequencyForNodes(results, processElements, taskStartId);
+    updateFrequencyForNodes(results, processElements, cases);
     results.stream().forEach(node -> updateNodeByAnalysisType(node, analysisType));
     return results;
   }
@@ -259,8 +261,7 @@ public class ProcessesMonitorUtils {
    * Process with 1 alternative.
    **/
   private static List<Node> updateFrequencyForNodes(List<Node> results, List<ProcessElement> processElements,
-      Long taskStartId) {
-    List<ICase> cases = getAllCasesFromTaskStartId(taskStartId);
+      List<ICase> cases) {
     List<Alternative> alternatives = ProcessUtils.extractAlterNativeElementsWithMultiOutGoing(processElements);
     if (CollectionUtils.isEmpty(alternatives)) {
       results.stream().forEach(node -> updateNodeWiwthDefinedFrequency(cases.size(), node));
@@ -319,14 +320,16 @@ public class ProcessesMonitorUtils {
     destinationElement.getOutgoing().forEach(outGoingPath -> followPath(path, outGoingPath));
   }
 
-  private static List<ICase> getAllCasesFromTaskStartId(Long taskStartId) {
-    return CaseQuery.create().where().state().isEqual(CaseState.DONE).and().taskStartId().isEqual(taskStartId)
-        .executor().results();
+  private static List<ICase> getAllCasesFromTaskStartIdWithTimeInterval(Long taskStartId,
+      TimeIntervalFilter timeIntervalFilter) {
+    return CaseQuery.create().where().state().isEqual(CaseState.DONE).and().taskStartId().isEqual(taskStartId).and()
+        .startTimestamp().isGreaterOrEqualThan(timeIntervalFilter.getFrom()).and().startTimestamp()
+        .isLowerOrEqualThan(timeIntervalFilter.getTo()).executor().results();
   }
 
   private static void updateNodeWiwthDefinedFrequency(int value, Node node) {
     node.setRelativeValue(1L);
-    node.setLabelValue(Objects.requireNonNullElse(value, 0).toString());
+    node.setLabelValue(Objects.requireNonNullElse(value, 0));
     node.setFrequency(value);
   }
 
