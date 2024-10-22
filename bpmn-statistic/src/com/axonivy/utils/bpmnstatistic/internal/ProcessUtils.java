@@ -15,8 +15,6 @@ import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
 import ch.ivyteam.ivy.application.IProcessModelVersion;
 import ch.ivyteam.ivy.bpm.engine.restricted.model.IProcessElement;
 import ch.ivyteam.ivy.environment.Ivy;
-import ch.ivyteam.ivy.process.IProcessManager;
-import ch.ivyteam.ivy.process.IProjectProcessManager;
 import ch.ivyteam.ivy.process.model.BaseElement;
 import ch.ivyteam.ivy.process.model.NodeElement;
 import ch.ivyteam.ivy.process.model.Process;
@@ -29,6 +27,7 @@ import ch.ivyteam.ivy.process.model.element.event.start.EmbeddedStart;
 import ch.ivyteam.ivy.process.model.element.event.start.RequestStart;
 import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
 import ch.ivyteam.ivy.process.model.value.PID;
+import ch.ivyteam.ivy.process.rdm.IProcessManager;
 import ch.ivyteam.ivy.security.exec.Sudo;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
@@ -140,7 +139,7 @@ public class ProcessUtils {
 
   public static List<ProcessElement> getProcessElementsFromPmvAndProcessPid(IProcessModelVersion pmv,
       String processRawPid) {
-    IProjectProcessManager manager = IProcessManager.instance().getProjectDataModelFor(pmv);
+    var manager = IProcessManager.instance().getProjectDataModelFor(pmv);
     Process process = manager.findProcess(processRawPid, true).getModel();
     return process.getProcessElements();
   }
