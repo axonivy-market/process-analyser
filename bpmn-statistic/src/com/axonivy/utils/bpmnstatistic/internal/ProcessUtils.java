@@ -10,7 +10,7 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
+import com.axonivy.utils.bpmnstatistic.constants.ProcessAnalyticsConstants;
 
 import ch.ivyteam.ivy.application.IProcessModelVersion;
 import ch.ivyteam.ivy.bpm.engine.restricted.model.IProcessElement;
@@ -29,6 +29,7 @@ import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
 import ch.ivyteam.ivy.process.model.value.PID;
 import ch.ivyteam.ivy.process.rdm.IProcessManager;
 import ch.ivyteam.ivy.security.exec.Sudo;
+import ch.ivyteam.ivy.workflow.restricted.start.CaseMapWebStartable;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
 
@@ -46,7 +47,7 @@ public class ProcessUtils {
   }
 
   public static String getProcessPidFromElement(String elementId) {
-    return StringUtils.defaultString(elementId).split(ProcessMonitorConstants.HYPHEN_SIGN)[0];
+    return StringUtils.defaultString(elementId).split(ProcessAnalyticsConstants.HYPHEN_SIGN)[0];
   }
 
   public static String getProcessRawPidFromElement(BaseElement baseElement) {
@@ -150,7 +151,7 @@ public class ProcessUtils {
   }
 
   public static ProcessElement findEmbeddedProcessElement(String fromElementPid, List<ProcessElement> processElements) {
-    int lastHyphenIndex = fromElementPid.lastIndexOf(ProcessMonitorConstants.HYPHEN_SIGN);
+    int lastHyphenIndex = fromElementPid.lastIndexOf(ProcessAnalyticsConstants.HYPHEN_SIGN);
     if (lastHyphenIndex == -1) {
       return null;
     }
@@ -175,6 +176,9 @@ public class ProcessUtils {
   public static Map<String, List<IProcessWebStartable>> getProcessesWithPmv() {
     Map<String, List<IProcessWebStartable>> result = new HashMap<>();
     for (IWebStartable process : getAllProcesses()) {
+      if (process instanceof CaseMapWebStartable) {
+        continue;
+      }
       String pmvName = process.pmv().getProcessModel().getName();
       result.computeIfAbsent(pmvName, key -> new ArrayList<>()).add((IProcessWebStartable) process);
     }
@@ -183,8 +187,8 @@ public class ProcessUtils {
 
   private static boolean isIWebStartableNeedToRecordStatistic(IWebStartable process) {
     var pmName = process.pmv().getProcessModel().getName();
-    return !(StringUtils.equals(pmName, ProcessMonitorConstants.BPMN_STATISTIC_PMV_NAME)
-        || StringUtils.contains(pmName, ProcessMonitorConstants.PORTAL_PMV_SUFFIX));
+    return !(StringUtils.equals(pmName, ProcessAnalyticsConstants.BPMN_STATISTIC_PMV_NAME)
+        || StringUtils.contains(pmName, ProcessAnalyticsConstants.PORTAL_PMV_SUFFIX));
   }
 
   public static boolean isContainFlowFromSubElement(List<SequenceFlow> flows) {
