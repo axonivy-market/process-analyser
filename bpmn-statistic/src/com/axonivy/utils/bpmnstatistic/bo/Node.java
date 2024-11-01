@@ -8,7 +8,7 @@ public class Node {
   private String id;
   @JsonIgnore
   private String label;
-  private String labelValue;
+  private int labelValue;
   private double relativeValue;
   @JsonIgnore
   private double medianDuration;
@@ -41,11 +41,11 @@ public class Node {
     this.label = label;
   }
 
-  public String getLabelValue() {
+  public int getLabelValue() {
     return labelValue;
   }
 
-  public void setLabelValue(String labelValue) {
+  public void setLabelValue(int labelValue) {
     this.labelValue = labelValue;
   }
 

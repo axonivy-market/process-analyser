@@ -205,9 +205,9 @@ public class ProcessesMonitorUtils {
 
   private static void updateNodeByAnalysisType(Node node, KpiType analysisType) {
     if (KpiType.FREQUENCY == analysisType) {
-      node.setLabelValue(String.valueOf(node.getFrequency()));
+      node.setLabelValue(node.getFrequency());
     } else {
-      node.setLabelValue(String.valueOf((int)Math.round(node.getMedianDuration())));
+      node.setLabelValue((int)Math.round(node.getMedianDuration()));
     }
     if (Double.isNaN(node.getRelativeValue())) {
       node.setRelativeValue(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
@@ -331,8 +331,9 @@ public class ProcessesMonitorUtils {
   }
 
   private static void updateNodeWiwthDefinedFrequency(int value, Node node) {
-    node.setRelativeValue(1L);
-    node.setLabelValue(Objects.requireNonNullElse(value, 0).toString());
+    Long releativeValue = (long) (value == 0 ? 0: 1);
+    node.setRelativeValue(releativeValue);
+    node.setLabelValue(Objects.requireNonNullElse(value, 0));
     node.setFrequency(value);
   }
 

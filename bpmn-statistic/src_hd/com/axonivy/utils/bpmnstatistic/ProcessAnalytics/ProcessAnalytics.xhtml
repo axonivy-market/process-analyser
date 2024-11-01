@@ -9,6 +9,7 @@
   <ui:composition template="/layouts/frame-10-full-width.xhtml">
     <ui:define name="title">ProcessAnalytics</ui:define>
     <ui:define name="content">
+      <h:outputScript name="resources/process-viewer.js" target="head"/>
       <h:form id="process-analytics-form">
         <p:graphicImage id="hidden-image" library="ivy-cms"
           name="#{processesAnalyticsBean.miningUrl}" />
@@ -121,17 +122,6 @@
           <br />
         </h:panelGroup>
       </h:form>
-      <script>
-      function updateUrlForIframe() {
-        const dataUrl = $(
-          "[id$='process-analytics-form:hidden-image']")
-          .attr("src");
-        const encodedDataUrl = encodeURIComponent(dataUrl);
-        const currentViewerUrl = $("[id$='process-analytic-viewer']").attr("src");
-        const url = currentViewerUrl + '&amp;miningUrl=' + encodedDataUrl;
-        $("[id$='process-analytic-viewer']").attr("src", url);
-      }
-      </script>
     </ui:define>
   </ui:composition>
 </h:body>

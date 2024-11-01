@@ -24,4 +24,6 @@ public class ProcessAnalyticsConstants {
   public static final String DATA_CMS_PATH = "data";
   public static final String JSON_EXTENSION = "json";
   public static final String EN_CMS_LOCALE = "en";
+  public static final String SLASH = "/";
+  public static final String MODULE_PATH = "%s/%s/";
 }

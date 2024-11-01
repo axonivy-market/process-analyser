@@ -29,7 +29,6 @@ import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
 import ch.ivyteam.ivy.process.model.value.PID;
 import ch.ivyteam.ivy.process.rdm.IProcessManager;
 import ch.ivyteam.ivy.security.exec.Sudo;
-import ch.ivyteam.ivy.workflow.restricted.start.CaseMapWebStartable;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
 
@@ -176,9 +175,6 @@ public class ProcessUtils {
   public static Map<String, List<IProcessWebStartable>> getProcessesWithPmv() {
     Map<String, List<IProcessWebStartable>> result = new HashMap<>();
     for (IWebStartable process : getAllProcesses()) {
-      if (process instanceof CaseMapWebStartable) {
-        continue;
-      }
       String pmvName = process.pmv().getProcessModel().getName();
       result.computeIfAbsent(pmvName, key -> new ArrayList<>()).add((IProcessWebStartable) process);
     }
@@ -186,7 +182,7 @@ public class ProcessUtils {
   }
 
   private static boolean isIWebStartableNeedToRecordStatistic(IWebStartable process) {
-    var pmName = process.pmv().getProcessModel().getName();
+    String  pmName = process.pmv().getProcessModel().getName();
     return !(StringUtils.equals(pmName, ProcessAnalyticsConstants.BPMN_STATISTIC_PMV_NAME)
         || StringUtils.contains(pmName, ProcessAnalyticsConstants.PORTAL_PMV_SUFFIX));
   }

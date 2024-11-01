@@ -1,8 +1,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html">
+
 <style>
   @font-face {
     font-family: ivy-icons;
-    src: url("#{resource['resources/ivy-icons-BQhQWv-I.ttf']}") format("truetype");
+    src: url("#{resource['resources/ivy-icons.ttf']}") format("truetype");
   }
 </style>
 
@@ -18,8 +19,8 @@
     const theme = new URLSearchParams(window.location.search).get('theme');
     document.documentElement.dataset.theme = theme;
   </script>
-  <h:outputScript name="resources/index-BJF0k8f1.js" />
-  <h:outputStylesheet name="resources/index-C332O8_T.css" library="ivy-webcontent" />
+  <h:outputScript name="resources/process-analytics.js" />
+  <h:outputStylesheet name="resources/process-analytics.css" library="ivy-webcontent" />
 </h:head>
 
 <body>
@@ -95,7 +96,7 @@
           }
           @font-face {
             font-family: ivy-icons;
-            src: url("#{resource['resources/ivy-icons-BQhQWv-I.ttf']}") format('truetype');
+            src: url("#{resource['resources/ivy-icons.ttf']}") format('truetype');
           }
         </style>
       </div>

@@ -29,6 +29,7 @@ import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.cm.ContentObject;
 import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.environment.Ivy;
+import ch.ivyteam.ivy.process.rdm.IProcess;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
 
@@ -39,7 +40,6 @@ public class ProcessesAnalyticsBean {
   private String selectedProcess;
   private String selectedModule;
   private KpiType selectedKpiType;
-  private Integer totalFrequency = 0;
   private String applicationName;
   private String targetHost;
   private String targetApplicationName;
@@ -62,6 +62,7 @@ public class ProcessesAnalyticsBean {
         .folder(ProcessAnalyticsConstants.PROCESS_MINING_CMS_PATH).child()
         .file(ProcessAnalyticsConstants.DATA_CMS_PATH, ProcessAnalyticsConstants.JSON_EXTENSION);
     miningUrl = processMiningDataJsonFile.uri();
+    timeIntervalFilter = TimeIntervalFilter.getDefaultFilterSet();
   }
 
   public KpiType[] getKpiTypes() {
@@ -82,7 +83,6 @@ public class ProcessesAnalyticsBean {
   public void onModuleSelect() {
     if (StringUtils.isBlank(selectedModule)) {
       selectedProcess = null;
-      setTotalFrequency(0);
     }
     resetStatisticValue();
   }
@@ -98,7 +98,7 @@ public class ProcessesAnalyticsBean {
   private void resetStatisticValue() {
     processMiningData = null;
     nodes = new ArrayList<>();
-    bpmnIframeSourceUrl = "";
+    bpmnIframeSourceUrl = StringUtils.EMPTY;
   }
 
   public void onShowStatisticBtnClick() {
@@ -113,24 +113,21 @@ public class ProcessesAnalyticsBean {
   }
 
   private void updateBpmnIframeSourceUrl() {
-    String processFilePath = getSelectedIProcessWebStartable().getId()
-        .replace(targetApplicationName + '/' + selectedModule + '/', "");
-    int lastSlashIndex = processFilePath.lastIndexOf('/');
+    String processFilePath = getSelectedIProcessWebStartable().getId().replace(
+        String.format(ProcessAnalyticsConstants.MODULE_PATH, targetApplicationName, selectedModule), StringUtils.EMPTY);
+    int lastSlashIndex = processFilePath.lastIndexOf(ProcessAnalyticsConstants.SLASH);
 
-    if (lastSlashIndex != -1) {
-      processFilePath = processFilePath.substring(0, lastSlashIndex) + ".p.json";
+    if (lastSlashIndex != StringUtils.INDEX_NOT_FOUND) {
+      processFilePath = processFilePath.substring(0, lastSlashIndex) + IProcess.PROCESSFILE_EXTENSION;
     }
     bpmnIframeSourceUrl = String.format(ProcessAnalyticsConstants.BPMN_STATISTIC_SOURCE_URL_PATTERN, applicationName,
         targetHost, targetApplicationName, selectedModule, processFilePath);
   }
 
   private void loadNodes() {
-    totalFrequency = 0;
     if (StringUtils.isNotBlank(selectedProcess) && StringUtils.isNotBlank(selectedModule) && selectedKpiType != null) {
-      if (timeIntervalFilter == null) {
-        timeIntervalFilter = TimeIntervalFilter.getDefaultFilterSet();
-      }
       Optional.ofNullable(getSelectedIProcessWebStartable()).ifPresent(process -> {
+        int totalFrequency = 0;
         processMiningData = new ProcessMiningData();
         selectedPid = process.pid().getParent().toString();
         processMiningData.setProcessId(selectedPid);
@@ -186,14 +183,6 @@ public class ProcessesAnalyticsBean {
 
   public void setNodes(List<Node> nodes) {
     this.nodes = nodes;
-  }
-
-  public Integer getTotalFrequency() {
-    return totalFrequency;
-  }
-
-  public void setTotalFrequency(Integer totalFrequency) {
-    this.totalFrequency = totalFrequency;
   }
 
   public String getMiningUrl() {
