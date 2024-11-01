@@ -1,5 +1,5 @@
 {
-  "format" : "10.0.0",
+  "$schema" : "https://json-schema.axonivy.com/process/11.3.0/process.json",
   "id" : "190A58A4E3D99BAD",
   "config" : {
     "data" : "com.axonivy.utils.bpmnstatistic.demo.Data"
@@ -9,22 +9,24 @@
       "type" : "RequestStart",
       "name" : "flightPayment.ivp",
       "config" : {
-        "callSignature" : "flightPayment",
-        "outLink" : "flightPayment.ivp",
+        "signature" : "flightPayment",
         "input" : {
+          "map" : { },
           "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
         }
       },
       "visual" : {
         "at" : { "x" : 96, "y" : 384 }
       },
-      "connect" : { "id" : "f4", "to" : "f3", "label" : {
-          "name" : [
-            "create new task",
-            "to validate payment"
-          ],
-          "offset" : { "x" : 5, "y" : -26 }
-        } }
+      "connect" : [
+        { "id" : "f4", "to" : "f3", "label" : {
+            "name" : [
+              "create new task",
+              "to validate payment"
+            ],
+            "offset" : { "x" : 5, "y" : -26 }
+          } }
+      ]
     }, {
       "id" : "f1",
       "type" : "TaskEnd",
@@ -46,10 +48,12 @@
         "at" : { "x" : 248, "y" : 384 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
-      "connect" : { "id" : "f6", "to" : "f5", "label" : {
-          "name" : "f6",
-          "offset" : { "x" : 6, "y" : -10 }
-        } }
+      "connect" : [
+        { "id" : "f6", "to" : "f5", "label" : {
+            "name" : "f6",
+            "offset" : { "x" : 6, "y" : -10 }
+          } }
+      ]
     }, {
       "id" : "f5",
       "type" : "Script",
@@ -65,10 +69,12 @@
       "visual" : {
         "at" : { "x" : 392, "y" : 384 }
       },
-      "connect" : { "id" : "f12", "to" : "f11", "label" : {
-          "name" : "f12",
-          "offset" : { "x" : 1, "y" : -10 }
-        } }
+      "connect" : [
+        { "id" : "f12", "to" : "f11", "label" : {
+            "name" : "f12",
+            "offset" : { "x" : 1, "y" : -10 }
+          } }
+      ]
     }, {
       "id" : "f7",
       "type" : "TaskSwitchEvent",
@@ -82,13 +88,15 @@
       "visual" : {
         "at" : { "x" : 672, "y" : 384 }
       },
-      "connect" : { "id" : "f10", "to" : "f9", "label" : {
-          "name" : [
-            "save record from",
-            "e-wallet"
-          ],
-          "offset" : { "x" : 18, "y" : -18 }
-        } }
+      "connect" : [
+        { "id" : "f10", "to" : "f9", "label" : {
+            "name" : [
+              "save record from",
+              "e-wallet"
+            ],
+            "offset" : { "x" : 18, "y" : -18 }
+          } }
+      ]
     }, {
       "id" : "f9",
       "type" : "Script",
@@ -106,10 +114,12 @@
       "visual" : {
         "at" : { "x" : 896, "y" : 384 }
       },
-      "connect" : { "id" : "f2", "to" : "f1", "label" : {
-          "name" : "f2",
-          "offset" : { "x" : -3, "y" : -10 }
-        } }
+      "connect" : [
+        { "id" : "f2", "to" : "f1", "label" : {
+            "name" : "f2",
+            "offset" : { "x" : -3, "y" : -10 }
+          } }
+      ]
     }, {
       "id" : "f11",
       "type" : "Alternative",
@@ -117,6 +127,11 @@
         "is e-waller",
         "payment?"
       ],
+      "config" : {
+        "conditions" : {
+          "f8" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(Math.random()>0.5,\"190A58A4E3D99BAD-f7\")"
+        }
+      },
       "visual" : {
         "at" : { "x" : 528, "y" : 384 },
         "labelOffset" : { "x" : 24, "y" : 32 }
@@ -125,7 +140,7 @@
         { "id" : "f8", "to" : "f7", "label" : {
             "name" : "no",
             "offset" : { "x" : 1, "y" : -10 }
-          }, "condition" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(Math.random()>0.5,\"190A58A4E3D99BAD-f7\")" },
+          } },
         { "id" : "f13", "to" : "f9", "via" : [ { "x" : 528, "y" : 272 }, { "x" : 896, "y" : 272 } ], "label" : {
             "name" : "yes",
             "segment" : 1.6,

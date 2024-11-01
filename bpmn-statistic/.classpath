@@ -5,11 +5,6 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry excluding="**/*.ivyClass|**/*.p.json|**/*.rddescriptor|**/*.xhtml" kind="src" path="src_hd">
-		<attributes>
-			<attribute name="optional" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="src" path="src_wsproc">
 		<attributes>
 			<attribute name="optional" value="true"/>
@@ -30,4 +25,5 @@
 	<classpathentry kind="con" path="WEBAPP_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="output" path="target/classes"/>
+	<classpathentry exported="true" kind="lib" path="lib/ch.ivyteam.ivy.process.rdm_11.3.1.202406210642.jar" />
 </classpath>

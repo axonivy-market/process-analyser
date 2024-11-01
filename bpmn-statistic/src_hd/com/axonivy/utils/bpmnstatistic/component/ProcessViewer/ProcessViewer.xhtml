@@ -14,7 +14,7 @@
   <h:panelGroup layout="block">
     <iframe id="#{cc.attrs.processViewerId}" name="#{cc.attrs.processViewerId}" height="560" width="940"
       src="#{cc.attrs.srcUrl}" onload="loadIframe(false)" />
-    <div class="command-btns p-mt-4">
+    <div class="command-btns mt-4">
       <p:commandButton id="show-statistic-btn" actionListener="#{cc.attrs.actionListener}" value="#{cc.attrs.btnLabel}"
         icon="pi pi-check" disabled="#{empty cc.attrs.srcUrl}"/>
     </div>
