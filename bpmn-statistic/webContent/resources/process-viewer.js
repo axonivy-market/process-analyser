@@ -83,3 +83,13 @@ function createDivWithClass(cssClass) {
   div.setAttribute("class", cssClass);
   return div;
 }
+
+function updateUrlForIframe() {
+  const dataUrl = $(
+    "[id$='process-analytics-form:hidden-image']")
+    .attr("src");
+  const encodedDataUrl = encodeURIComponent(dataUrl);
+  const currentViewerUrl = $("[id$='process-analytic-viewer']").attr("src");
+  const url = currentViewerUrl + '&miningUrl=' + encodedDataUrl;
+  $("[id$='process-analytic-viewer']").attr("src", url);
+}

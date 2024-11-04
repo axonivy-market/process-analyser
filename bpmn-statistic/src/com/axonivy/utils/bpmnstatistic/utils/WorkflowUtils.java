@@ -14,7 +14,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.utils.bpmnstatistic.bo.WorkflowProgress;
-import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
+import com.axonivy.utils.bpmnstatistic.constants.ProcessAnalyticsConstants;
 import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
 import com.axonivy.utils.bpmnstatistic.repo.WorkflowProgressRepository;
 
@@ -337,7 +337,7 @@ public class WorkflowUtils {
    * @return the flag in type String
    */
   public static String extractLastQuotedContents(String input) {
-    Pattern pattern = Pattern.compile(ProcessMonitorConstants.QUOTED_CONTENT_PATTERN);
+    Pattern pattern = Pattern.compile(ProcessAnalyticsConstants.QUOTED_CONTENT_PATTERN);
     Matcher matcher = pattern.matcher(input);
     List<String> contents = new ArrayList<>();
     while (matcher.find()) {
@@ -350,7 +350,7 @@ public class WorkflowUtils {
     if (StringUtils.isBlank(rawPid)) {
       return false;
     }
-    String[] rawPidParts = rawPid.split(ProcessMonitorConstants.HYPHEN_SIGN);
+    String[] rawPidParts = rawPid.split(ProcessAnalyticsConstants.HYPHEN_SIGN);
     return rawPidParts.length == 3
         || (rawPidParts.length > 1 && rawPidParts[rawPidParts.length - 1].contains(SUB_ELEMENT_PID_SUFFIX));
   }

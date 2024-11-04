@@ -1,5 +1,5 @@
 package com.axonivy.utils.bpmnstatistic.enums;
 
-public enum AnalysisType implements HasCmsName {
+public enum KpiType implements HasCmsName {
   FREQUENCY, DURATION;
 }

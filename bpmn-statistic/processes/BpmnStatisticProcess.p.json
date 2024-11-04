@@ -5,11 +5,11 @@
     "data" : "com.axonivy.utils.bpmnstatistic.BpmnStatisticProcessData"
   },
   "elements" : [ {
-      "id" : "f3",
+      "id" : "f0",
       "type" : "RequestStart",
-      "name" : "startStatistic.ivp",
+      "name" : "startAnalytic.ivp",
       "config" : {
-        "signature" : "startStatistic",
+        "signature" : "startAnalytic",
         "request" : {
           "name" : "<%=ivy.cms.co(\"/Processes/BpmnStatistic/name\")%>",
           "description" : "<%=ivy.cms.co(\"/Processes/BpmnStatistic/description\")%>",
@@ -17,29 +17,29 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 96, "y" : 80 }
+        "at" : { "x" : 96, "y" : 208 }
       },
       "connect" : [
-        { "id" : "f6", "to" : "f5" }
+        { "id" : "f8", "to" : "f1" }
       ]
     }, {
-      "id" : "f4",
+      "id" : "f1",
+      "type" : "DialogCall",
+      "name" : "Processes Analytics",
+      "config" : {
+        "dialog" : "com.axonivy.utils.bpmnstatistic.ProcessAnalytics:start()"
+      },
+      "visual" : {
+        "at" : { "x" : 224, "y" : 208 }
+      },
+      "connect" : [
+        { "id" : "f9", "to" : "f2" }
+      ]
+    }, {
+      "id" : "f2",
       "type" : "TaskEnd",
       "visual" : {
-        "at" : { "x" : 352, "y" : 80 }
+        "at" : { "x" : 352, "y" : 208 }
       }
-    }, {
-      "id" : "f5",
-      "type" : "DialogCall",
-      "name" : "Processes Monitor",
-      "config" : {
-        "dialog" : "com.axonivy.utils.bpmnstatistic.ProcessesMonitor:start()"
-      },
-      "visual" : {
-        "at" : { "x" : 224, "y" : 80 }
-      },
-      "connect" : [
-        { "id" : "f7", "to" : "f4" }
-      ]
     } ]
 }

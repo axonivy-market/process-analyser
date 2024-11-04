@@ -1,8 +1,8 @@
 package com.axonivy.utils.bpmnstatistic.managedbean;
 
-import static com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants.COMMA_CONNECT_PATTERN;
-import static com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants.CURRENT_TIME_PATTERN;
-import static com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants.WHOLE_DAY_PATTERN;
+import static com.axonivy.utils.bpmnstatistic.constants.ProcessAnalyticsConstants.COMMA_CONNECT_PATTERN;
+import static com.axonivy.utils.bpmnstatistic.constants.ProcessAnalyticsConstants.CURRENT_TIME_PATTERN;
+import static com.axonivy.utils.bpmnstatistic.constants.ProcessAnalyticsConstants.WHOLE_DAY_PATTERN;
 import static com.axonivy.utils.bpmnstatistic.enums.TimeIntervalType.CURRENT;
 import static com.axonivy.utils.bpmnstatistic.enums.TimeIntervalType.POINT_SELECTIONS;
 import static com.axonivy.utils.bpmnstatistic.enums.TimeIntervalType.RANGE_SELECTIONS;

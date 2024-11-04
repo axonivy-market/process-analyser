@@ -2,12 +2,14 @@ package com.axonivy.utils.bpmnstatistic.bo;
 
 import java.util.List;
 
-import com.axonivy.utils.bpmnstatistic.enums.AnalysisType;
+import com.axonivy.utils.bpmnstatistic.enums.KpiType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class ProcessMiningData {
+  @JsonIgnore
   private String processId;
   private String processName;
-  private AnalysisType analysisType;
+  private KpiType kpiType;
   private List<Node> nodes;
   private TimeFrame timeFrame;
   private int numberOfInstances;
@@ -28,12 +30,12 @@ public class ProcessMiningData {
     this.processName = processName;
   }
 
-  public AnalysisType getAnalysisType() {
-    return analysisType;
+  public KpiType getKpiType() {
+    return kpiType;
   }
 
-  public void setAnalysisType(AnalysisType analysisType) {
-    this.analysisType = analysisType;
+  public void setKpiType(KpiType kpiType) {
+    this.kpiType = kpiType;
   }
 
   public List<Node> getNodes() {
