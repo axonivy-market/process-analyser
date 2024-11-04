@@ -32,12 +32,18 @@ Dialogs:
             Title: Process Mining Demo
             TotalElements: In total there are {0} element(s).
             Type: Type
+            Version: Version
 Enums:
   AnalysisType:
     DURATION:
       name: Duration
     FREQUENCY:
       name: Frequency
+  MonitorVersion:
+    ENHANCEMENT:
+      name: Enhancement
+    INITIAL:
+      name: Initial
   NodeType:
     ARROW:
       name: Arrow
