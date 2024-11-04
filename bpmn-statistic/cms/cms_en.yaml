@@ -34,7 +34,7 @@ Dialogs:
             Type: Type
             Version: Version
 Enums:
-  AnalysisType:
+  KpiType:
     DURATION:
       name: Duration
     FREQUENCY:

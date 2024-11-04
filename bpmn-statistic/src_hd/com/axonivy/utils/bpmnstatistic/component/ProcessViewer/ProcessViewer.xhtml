@@ -10,7 +10,6 @@
   <cc:attribute name="btnLabel" required="true" />
 </cc:interface>
 <cc:implementation>
-  <h:outputScript name="process-viewer.js" target="head" />
   <h:panelGroup layout="block">
     <iframe id="#{cc.attrs.processViewerId}" name="#{cc.attrs.processViewerId}" height="560" width="940"
       src="#{cc.attrs.srcUrl}" onload="loadIframe(false)" />

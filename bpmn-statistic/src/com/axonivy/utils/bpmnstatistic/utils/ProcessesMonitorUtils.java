@@ -19,8 +19,8 @@ import com.axonivy.utils.bpmnstatistic.bo.AlternativePath;
 import com.axonivy.utils.bpmnstatistic.bo.Node;
 import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
 import com.axonivy.utils.bpmnstatistic.bo.WorkflowProgress;
-import com.axonivy.utils.bpmnstatistic.constants.ProcessMonitorConstants;
-import com.axonivy.utils.bpmnstatistic.enums.AnalysisType;
+import com.axonivy.utils.bpmnstatistic.constants.ProcessAnalyticsConstants;
+import com.axonivy.utils.bpmnstatistic.enums.KpiType;
 import com.axonivy.utils.bpmnstatistic.enums.IvyVariable;
 import com.axonivy.utils.bpmnstatistic.enums.NodeType;
 import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
@@ -57,10 +57,10 @@ public class ProcessesMonitorUtils {
     HashMap<String, Integer> taskCountMap = IvyTaskOccurrenceService.countTaskOccurrencesByProcessId(pid);
     int maxFrequency = findMaxFrequency(taskCountMap);
     String textColorRGBCode = String.valueOf(Ivy.var().get(IvyVariable.FREQUENCY_NUMBER_COLOR.getVariableName()));
-    PF.current().executeScript(ProcessMonitorConstants.REMOVE_DEFAULT_HIGHLIGHT_JS_FUNCTION);
+    PF.current().executeScript(ProcessAnalyticsConstants.REMOVE_DEFAULT_HIGHLIGHT_JS_FUNCTION);
     for (Entry<String, Integer> entry : taskCountMap.entrySet()) {
       String backgroundColorRGBCode = getRGBCodefromFrequency(maxFrequency, entry.getValue());
-      PF.current().executeScript(String.format(ProcessMonitorConstants.UPDATE_FREQUENCY_COUNT_FOR_TASK_FUNCTION,
+      PF.current().executeScript(String.format(ProcessAnalyticsConstants.UPDATE_FREQUENCY_COUNT_FOR_TASK_FUNCTION,
           entry.getKey(), entry.getValue(), backgroundColorRGBCode, textColorRGBCode));
     }
   }
@@ -74,17 +74,17 @@ public class ProcessesMonitorUtils {
   }
 
   private static String getRGBCodefromFrequency(int max, int current) {
-    int level = (int) (max == 0 ? ProcessMonitorConstants.DEFAULT_BACKGROUND_COLOR_LEVEL
-        : Math.ceil(current * ProcessMonitorConstants.HIGHEST_LEVEL_OF_BACKGROUND_COLOR / max));
+    int level = (int) (max == 0 ? ProcessAnalyticsConstants.DEFAULT_BACKGROUND_COLOR_LEVEL
+        : Math.ceil(current * ProcessAnalyticsConstants.HIGHEST_LEVEL_OF_BACKGROUND_COLOR / max));
     return String.valueOf(
-        Ivy.var().get(String.format(ProcessMonitorConstants.FREQUENCY_BACKGROUND_COLOR_LEVEL_VARIABLE_PATTERN, level)));
+        Ivy.var().get(String.format(ProcessAnalyticsConstants.FREQUENCY_BACKGROUND_COLOR_LEVEL_VARIABLE_PATTERN, level)));
   }
 
   public static void showAdditionalInformation(String instancesCount, String fromDate, String toDate) {
-    String additionalInformation = String.format(ProcessMonitorConstants.ADDITIONAL_INFORMATION_FORMAT, instancesCount,
+    String additionalInformation = String.format(ProcessAnalyticsConstants.ADDITIONAL_INFORMATION_FORMAT, instancesCount,
         fromDate, toDate);
     PF.current().executeScript(
-        String.format(ProcessMonitorConstants.UPDATE_ADDITIONAL_INFORMATION_FUNCTION, additionalInformation));
+        String.format(ProcessAnalyticsConstants.UPDATE_ADDITIONAL_INFORMATION_FUNCTION, additionalInformation));
   }
 
   public static List<Node> convertProcessElementInfoToArrows(ProcessElement element) {
@@ -95,9 +95,9 @@ public class ProcessesMonitorUtils {
     Node arrowNode = new Node();
     arrowNode.setId(ProcessUtils.getElementPid(flow));
     arrowNode.setLabel(flow.getName());
-    arrowNode.setFrequency(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
-    arrowNode.setRelativeValue(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
-    arrowNode.setMedianDuration(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
+    arrowNode.setFrequency(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
+    arrowNode.setRelativeValue(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
+    arrowNode.setMedianDuration(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     arrowNode.setType(NodeType.ARROW);
     return arrowNode;
   }
@@ -112,7 +112,7 @@ public class ProcessesMonitorUtils {
    *         (duration, frequency)
    */
   public static List<Node> filterInitialStatisticByInterval(IProcessWebStartable processStart,
-      TimeIntervalFilter timeIntervalFilter, AnalysisType analysisType) {
+      TimeIntervalFilter timeIntervalFilter, KpiType analysisType) {
     List<Node> results = new ArrayList<>();
     maxArrowFrequency = 0;
     if (Objects.nonNull(processStart)) {
@@ -157,9 +157,9 @@ public class ProcessesMonitorUtils {
     Node elementNode = new Node();
     elementNode.setId(element.getPid().toString());
     elementNode.setLabel(element.getName());
-    elementNode.setRelativeValue(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
-    elementNode.setFrequency(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
-    elementNode.setMedianDuration(ProcessMonitorConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
+    elementNode.setRelativeValue(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
+    elementNode.setFrequency(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
+    elementNode.setMedianDuration(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     elementNode.setType(NodeType.ELEMENT);
     return elementNode;
   }
@@ -203,16 +203,19 @@ public class ProcessesMonitorUtils {
     maxArrowFrequency = maxArrowFrequency < newFrequency ? newFrequency : maxArrowFrequency;
   }
 
-  private static void updateNodeByAnalysisType(Node node, AnalysisType analysisType) {
-    if (AnalysisType.FREQUENCY == analysisType) {
+  private static void updateNodeByAnalysisType(Node node, KpiType analysisType) {
+    if (KpiType.FREQUENCY == analysisType) {
       node.setLabelValue(node.getFrequency());
     } else {
       node.setLabelValue((int)Math.round(node.getMedianDuration()));
     }
+    if (Double.isNaN(node.getRelativeValue())) {
+      node.setRelativeValue(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
+    }
   }
 
   public static List<Node> filterStatisticByInterval(IProcessWebStartable processStart,
-      TimeIntervalFilter timeIntervalFilter, AnalysisType analysisType) {
+      TimeIntervalFilter timeIntervalFilter, KpiType analysisType) {
     List<Node> results = new ArrayList<>();
     maxArrowFrequency = 0;
     if (Objects.nonNull(processStart)) {
@@ -240,7 +243,7 @@ public class ProcessesMonitorUtils {
    * AxonIvy system db.
    **/
   public static List<Node> filterInitialStatisticByIntervalWithoutModifyingProcess(IProcessWebStartable processStart,
-      TimeIntervalFilter timeIntervalFilter, AnalysisType analysisType) {
+      TimeIntervalFilter timeIntervalFilter, KpiType analysisType) {
     if (Objects.isNull(processStart)) {
       return Collections.emptyList();
     }
@@ -328,7 +331,8 @@ public class ProcessesMonitorUtils {
   }
 
   private static void updateNodeWiwthDefinedFrequency(int value, Node node) {
-    node.setRelativeValue(1L);
+    Long releativeValue = (long) (value == 0 ? 0: 1);
+    node.setRelativeValue(releativeValue);
     node.setLabelValue(Objects.requireNonNullElse(value, 0));
     node.setFrequency(value);
   }

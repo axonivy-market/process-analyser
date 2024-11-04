@@ -1,14 +1,18 @@
 package com.axonivy.utils.bpmnstatistic.bo;
 
 import com.axonivy.utils.bpmnstatistic.enums.NodeType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Node {
   private NodeType type;
   private String id;
+  @JsonIgnore
   private String label;
   private int labelValue;
   private double relativeValue;
+  @JsonIgnore
   private double medianDuration;
+  @JsonIgnore
   private int frequency;
 
   public Node() {}
