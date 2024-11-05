@@ -26,4 +26,5 @@ public class ProcessAnalyticsConstants {
   public static final String EN_CMS_LOCALE = "en";
   public static final String SLASH = "/";
   public static final String MODULE_PATH = "%s/%s/";
+  public static final String ANALYSIS_EXCEL_FILE_PATTERN = "Analysis_Of_%s";
 }

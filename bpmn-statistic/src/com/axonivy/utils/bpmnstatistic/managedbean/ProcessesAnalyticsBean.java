@@ -153,6 +153,12 @@ public class ProcessesAnalyticsBean {
     processMiningDataJsonFile.value().get(ProcessAnalyticsConstants.EN_CMS_LOCALE).write().string(jsonString);
   }
 
+  public String generateNameOfExcelFile() {
+    return StringUtils.isNotBlank(selectedProcess)
+        ? String.format(ProcessAnalyticsConstants.ANALYSIS_EXCEL_FILE_PATTERN, selectedProcess)
+        : StringUtils.EMPTY;
+  }
+
   public String getSelectedProcess() {
     return selectedProcess;
   }
