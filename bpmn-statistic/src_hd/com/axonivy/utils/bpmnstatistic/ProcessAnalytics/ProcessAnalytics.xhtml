@@ -10,6 +10,9 @@
     <ui:define name="title">ProcessAnalytics</ui:define>
     <ui:define name="content">
       <h:outputScript name="resources/process-viewer.js" target="head"/>
+      <h:outputScript name="resources/html2canvas.min.js" target="head"/>
+      
+      
       <h:form id="process-analytics-form">
         <p:graphicImage id="hidden-image" library="ivy-cms"
           name="#{processesAnalyticsBean.miningUrl}" />
@@ -27,7 +30,11 @@
             oncomplete="updateUrlForIframe()"
             disabled="#{processesAnalyticsBean.showStatisticBtnDisabled}" />
         </p:panelGrid>
-
+        <p:outputPanel>
+            <br />
+            <h:commandButton value="Capture as PNG" onclick="captureIframe(); return false;" />
+            <img id="output-image" alt="Captured Image" />
+        </p:outputPanel>
         <p:panelGrid id="search-fields" columns="3" layout="grid"
           styleClass="ui-fluid"
           columnClasses="ui-g-4 p-0 pr-2, ui-g-4 p-0 pl-1 pr-1, ui-g-4 p-0 pl-2"

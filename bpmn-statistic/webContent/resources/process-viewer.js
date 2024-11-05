@@ -1,95 +1,39 @@
-function removeExecutedClass() {
-  getProcessDiagramIframe().find(".executed").removeClass("executed");
-}
-
-function removeDefaultFrequency() {
-  getProcessDiagramIframe()
-    .find(".execution-badge")
-    .each(function () {
-      $(this).parent().remove();
-    });
-}
-
-function santizeDiagram() {
-  removeDefaultFrequency();
-  removeExecutedClass();
-}
-
-function getProcessDiagramIframe() {
-  return $("#process-diagram-iframe").contents();
-}
-
-function addElementFrequency(elementId, frequencyRatio, backgroundColor, textColor) {
-  getProcessDiagramIframe()
-    .find(`#sprotty_${elementId}`)
-    .append(
-      `<svg>
-        <g>
-          <rect rx="7" ry="7" x="19" y="20" width="30" height="14" style="fill: rgb(${backgroundColor})"></rect>
-          <text x="34" y="26" dy=".4em" style="fill: rgb(${textColor})">${frequencyRatio}</text>
-        </g>
-      </svg>`
-    );
-}
-
-function loadIframe(recheckIndicator) {
-  let iframe = document.getElementById("process-diagram-iframe");
-  let recheckFrameTimer = setTimeout(function () {
-    loadIframe(true);
-  }, 500);
-
-  if (recheckIndicator) {
-    const iframeDoc = iframe.contentDocument;
-    if (iframeDoc.readyState == "complete") {
-      santizeDiagram();
-      clearTimeout(recheckFrameTimer);
-      return;
-    }
-  }
-}
-
-function renderAdditionalInformation(innerText) {
-  const sprotty = getProcessDiagramIframe().find("#sprotty");
-  if (sprotty) {
-    sprotty.append(createBarWithText(innerText));
-  }
-}
-
-function isAdditionalInformationNotRendered(sprottyNode) {
-  return sprottyNode.find("#additional-information").length != 1;
-}
-
-function createText(innerText) {
-  var newText = document.createElementNS("http://www.w3.org/1999/xhtml", "text");
-  newText.setAttributeNS(null, "class", "sprotty-label label addtional-information");
-  var textNode = document.createTextNode(innerText);
-  newText.appendChild(textNode);
-  return newText;
-}
-
-function createBarWithText(text) {
-  let bar = createDivWithClass("ivy-viewport-bar");
-  bar.setAttribute("id", "additional-information")
-  bar.setAttribute("style", "left: 1rem; right: auto");
-  let innerBox = createDivWithClass("viewport-bar");
-  let innerText = createText(text);
-  innerBox.appendChild(innerText);
-  bar.appendChild(innerBox)
-  return bar;
-}
-
-function createDivWithClass(cssClass) {
-  let div = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
-  div.setAttribute("class", cssClass);
-  return div;
+function getCenterizeButton() {
+  return $("#process-analytic-viewer").contents().find("#fitToScreenBtn");
 }
 
 function updateUrlForIframe() {
-  const dataUrl = $(
-    "[id$='process-analytics-form:hidden-image']")
-    .attr("src");
+  const dataUrl = $("[id$='process-analytics-form:hidden-image']").attr("src");
   const encodedDataUrl = encodeURIComponent(dataUrl);
   const currentViewerUrl = $("[id$='process-analytic-viewer']").attr("src");
-  const url = currentViewerUrl + '&miningUrl=' + encodedDataUrl;
+  const url = currentViewerUrl + "&miningUrl=" + encodedDataUrl;
   $("[id$='process-analytic-viewer']").attr("src", url);
+}
+
+function captureIframe() {
+  centerizeIframeImages();
+  captureScreenFromIframe("process-analytic-viewer");
+}
+
+function captureScreenFromIframe(id) {
+  const iframe = $(`#${id}`)[0];
+  html2canvas(iframe.contentWindow.document.body)
+    .then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const outputImage = document.getElementById("output-image");
+      outputImage.src = imgData;
+    })
+    .catch((err) => {
+      console.error("Error capturing iframe content:", err);
+    });
+}
+
+function centerizeIframeImages() {
+  const returnToCenterBtn = getCenterizeButton();
+  if (returnToCenterBtn) {
+    returnToCenterBtn.click();
+    setTimeout(500);
+  } else {
+    console.error("Button not found!");
+  }
 }
