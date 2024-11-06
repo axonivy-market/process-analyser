@@ -18,12 +18,14 @@ jobs:
     needs: build
     runs-on: 'bpmn-statistic'
     steps:
+      - uses: actions/checkout@v4
+
       - name: Download artifact
         uses: actions/download-artifact@v4
 
       - name: Copy file
         run: |
-          version=11.3.1-SNAPSHOT
+          version=$(xml sel -t -m "//_:project" -v _:version pom.xml)
           echo "Extracted version: $version"
           artifactDir=artifact/bpmn-statistic
           engineDir=/var/tools/ivy/11/applications/BPMN-STATISTIC
