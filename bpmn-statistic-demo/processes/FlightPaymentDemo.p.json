@@ -9,11 +9,7 @@
       "type" : "RequestStart",
       "name" : "flightPayment.ivp",
       "config" : {
-        "signature" : "flightPayment",
-        "input" : {
-          "map" : { },
-          "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
-        }
+        "signature" : "flightPayment"
       },
       "visual" : {
         "at" : { "x" : 96, "y" : 384 }
@@ -40,8 +36,7 @@
       "name" : "Check payment method",
       "config" : {
         "task" : {
-          "name" : "Check payment method",
-          "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"190A58A4E3D99BAD-f3\");"
+          "name" : "Check payment method"
         }
       },
       "visual" : {
@@ -58,14 +53,6 @@
       "id" : "f5",
       "type" : "Script",
       "name" : "validate payment method",
-      "config" : {
-        "output" : {
-          "code" : [
-            "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();",
-            "Thread.sleep(Math.random()*10000);"
-          ]
-        }
-      },
       "visual" : {
         "at" : { "x" : 392, "y" : 384 }
       },
@@ -81,8 +68,7 @@
       "name" : "Confirm payment information",
       "config" : {
         "task" : {
-          "name" : "Confirm payment information",
-          "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"190A58A4E3D99BAD-f7\");"
+          "name" : "Confirm payment information"
         }
       },
       "visual" : {
@@ -101,16 +87,6 @@
       "id" : "f9",
       "type" : "Script",
       "name" : "record payment",
-      "config" : {
-        "output" : {
-          "code" : [
-            "import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;",
-            "WorkflowUtils.record();",
-            "Thread.sleep(Math.random()*10000);",
-            "WorkflowUtils.record(\"190A58A4E3D99BAD-f1\");"
-          ]
-        }
-      },
       "visual" : {
         "at" : { "x" : 896, "y" : 384 }
       },
@@ -129,7 +105,7 @@
       ],
       "config" : {
         "conditions" : {
-          "f8" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(Math.random()>0.5,\"190A58A4E3D99BAD-f7\")"
+          "f8" : "Math.random()>0.5"
         }
       },
       "visual" : {
