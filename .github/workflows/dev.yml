@@ -22,7 +22,8 @@ jobs:
         with:
           sparse-checkout: |
             pom.xml
-          sparse-checkout-cone-mode: true
+          sparse-checkout-cone-mode: false
+          ref: develop
 
       - name: Download artifact
         uses: actions/download-artifact@v4
