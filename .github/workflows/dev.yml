@@ -23,7 +23,7 @@ jobs:
 
       - name: Copy file
         run: |
-          version=$(xml sel -t -m "//_:project" -v _:version pom.xml)
+          version=11.3.1-SNAPSHOT
           echo "Extracted version: $version"
           artifactDir=artifact/bpmn-statistic
           engineDir=/var/tools/ivy/11/applications/BPMN-STATISTIC
