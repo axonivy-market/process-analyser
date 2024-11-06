@@ -30,7 +30,7 @@ Dialogs:
             RelativeValue: Relative Value
             RequireMessage: Please select a process
             ShowStatistic: Show Statistic
-            TimeInterval: Time interval
+            TimeInterval: Please select a time interval
             Title: Process Mining Demo
             TotalElements: In total there are {0} element(s).
             Type: Type
