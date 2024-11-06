@@ -29,9 +29,8 @@
         </p:panelGrid>
 
         <p:panelGrid id="search-fields" columns="3" layout="grid"
-          styleClass="ui-fluid"
-          columnClasses="ui-g-4 p-0 pr-2, ui-g-4 p-0 pl-1 pr-1, ui-g-4 p-0 pl-2"
-          style="margin-bottom: 32px">
+          styleClass="ui-fluid mb-3"
+          columnClasses="ui-g-4 p-0 pr-2, ui-g-4 p-0 pl-1 pr-1, ui-g-4 p-0 pl-2">
 
           <h:panelGroup>
             <p:outputLabel for="moduleDropdown"
@@ -74,7 +73,18 @@
             </p:selectOneMenu>
           </h:panelGroup>
         </p:panelGrid>
-        
+
+        <h:panelGroup id="time-interval-group"
+          styleClass="field col-12 grid formgrid align-items-start p-0 m-0 mb-3"
+          layout="block">
+          <ui:include src="TimeIntervalFilter.xhtml" />
+          <p:remoteCommand id="filter-data-by-interval-rc"
+            name="filterDataByIntervalRC"
+            actionListener="#{processesAnalyticsBean.updateDataOnChangingFilter()}"
+            process="@this" partialSubmit="true"
+            update="arrow-statistics" />
+        </h:panelGroup>
+
         <iframe id="process-analytic-viewer"
           src="#{processesAnalyticsBean.bpmnIframeSourceUrl}"
           width="100% " height="400" />
