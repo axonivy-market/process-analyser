@@ -1,7 +1,6 @@
 const JUMP_OUT_BTN_CLASS = "ivy-jump-out";
 const DIAGRAM_IFRAME_ID = "process-analytic-viewer";
 const FIT_TO_SCREEN_BUTTON_ID = "fitToScreenBtn";
-const HIDDEN_IMAGE_ID = "image-source";
 const DEFAULT_SLEEP_TIME_IN_MS = 750;
 
 function getCenterizeButton() {
@@ -22,8 +21,12 @@ function queryObjectById(id) {
   return $(buildIdRef(id));
 }
 
+function queryObjectByIdInForm(id) {
+  return $(`[id$='process-analytics-form:${id}']`);
+}
+
 function updateUrlForIframe() {
-  const dataUrl = $("[id$='process-analytics-form:hidden-image']").attr("src");
+  const dataUrl = queryObjectByIdInForm("hidden-image").attr("src");
   const encodedDataUrl = encodeURIComponent(dataUrl);
   const currentViewerUrl = $("[id$='process-analytic-viewer']").attr("src");
   const url = currentViewerUrl + "&miningUrl=" + encodedDataUrl;
@@ -31,17 +34,21 @@ function updateUrlForIframe() {
 }
 
 async function getDiagramData() {
-  await returnToFirstLayout(); 
-  await centerizeIframeImages();
-  return captureScreenFromIframe();
+  await returnToFirstLayer();
+  await centerizeIframeImage();
+  await captureScreenFromIframe();
 }
 
-function captureScreenFromIframe() {
+async function captureScreenFromIframe() {
   const iframe = queryObjectById(DIAGRAM_IFRAME_ID)[0];
-  html2canvas(iframe.contentWindow.document.body)
+  await html2canvas(iframe.contentWindow.document.body)
     .then((canvas) => {
-      const encodedImg = canvas.toDataURL("image/png");
-      queryObjectById(HIDDEN_IMAGE_ID).val(encodedImg);
+      const encodedImg = canvas.toDataURL("image/jpeg");
+      const link = document.createElement("a");
+      link.id = "haha"
+      link.href = encodedImg;
+      link.download = "diagram.jpeg";
+      link.click();
     })
     .catch((err) => {
       console.error("Error capturing iframe content:", err);
@@ -54,14 +61,14 @@ function getJumpOutBtn() {
     .find(buildClassRef(JUMP_OUT_BTN_CLASS))[0];
 }
 
-async function returnToFirstLayout() {
- 	if(getJumpOutBtn()) {
+async function returnToFirstLayer() {
+  if (getJumpOutBtn()) {
     await getJumpOutBtn().click();
     await wait(DEFAULT_SLEEP_TIME_IN_MS);
- 	}
+  }
 }
 
-async function centerizeIframeImages() {
+async function centerizeIframeImage() {
   const returnToCenterBtn = getCenterizeButton();
   if (returnToCenterBtn) {
     await returnToCenterBtn.click();
@@ -72,5 +79,5 @@ async function centerizeIframeImages() {
 }
 
 function wait(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
