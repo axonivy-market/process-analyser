@@ -8,6 +8,7 @@ const DEFAULT_IMAGE_TYPE = "image/jpeg";
 const ANCHOR_TAG = "a";
 const CURRENT_PROCESS_LABEL = "processDropdown_label";
 const HIDDEN_IMAGE_ID = "hidden-image";
+const JUMP_OUT_BTN_CLASS = "ivy-jump-out";
 
 function getCenterizeButton() {
   return queryObjectById(DIAGRAM_IFRAME_ID)
@@ -77,8 +78,10 @@ async function updateMissingCssForChildSelector() {
 }
 
 async function returnToFirstLayer() {
-  window.frames[DIAGRAM_IFRAME_ID].src += "";
-  await wait(DEFAULT_SLEEP_TIME_IN_MS * 2);
+  if (getJumpOutBtn()) {
+    await getJumpOutBtn().click();
+    await wait(DEFAULT_SLEEP_TIME_IN_MS);
+  }
 }
 
 async function centerizeIframeImage() {
@@ -108,4 +111,10 @@ async function hideViewPortBar(boolean) {
 
 function getContentsById(id) {
   return queryObjectById(id).contents();
+}
+
+function getJumpOutBtn() {
+  return queryObjectById(DIAGRAM_IFRAME_ID)
+    .contents()
+    .find(buildClassRef(JUMP_OUT_BTN_CLASS))[0];
 }

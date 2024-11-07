@@ -31,7 +31,6 @@
         </p:panelGrid>
         <p:outputPanel>
             <br />
-            <p:commandButton value="Capture as PNG" onclick="getDiagramData(); return false;" />
         </p:outputPanel>
         <p:panelGrid id="search-fields" columns="3" layout="grid"
           styleClass="ui-fluid mb-3"
@@ -141,7 +140,10 @@
         <h:panelGroup
           styleClass="col-12 p-0 inline-flex justify-content-end" rendered="#{processesAnalyticsBean.nodes.size() > 0}"
           layout="block">
-          <p:commandButton icon="pi pi-upload" styleClass="export-excel-button"
+          <p:commandButton icon="pi pi-upload" styleClass="action-button mr-3"
+            value="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessAnalytics/ExportJPEG')}"
+            onclick="getDiagramData(); return false;" />
+          <p:commandButton icon="pi pi-upload" styleClass="action-button"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessAnalytics/ExportExcel')}">
             <p:dataExporter type="csv" target="node" fileName="#{processesAnalyticsBean.generateNameOfExcelFile()}" />
           </p:commandButton>
