@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +23,7 @@ import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
 import com.axonivy.utils.bpmnstatistic.constants.ProcessAnalyticsConstants;
 import com.axonivy.utils.bpmnstatistic.enums.KpiType;
 import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
+import com.axonivy.utils.bpmnstatistic.utils.DateUtils;
 import com.axonivy.utils.bpmnstatistic.utils.JacksonUtils;
 import com.axonivy.utils.bpmnstatistic.utils.ProcessesMonitorUtils;
 
@@ -29,6 +31,7 @@ import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.cm.ContentObject;
 import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.environment.Ivy;
+import ch.ivyteam.ivy.location.IParser.ParseException;
 import ch.ivyteam.ivy.process.rdm.IProcess;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
@@ -99,6 +102,14 @@ public class ProcessesAnalyticsBean {
     processMiningData = null;
     nodes = new ArrayList<>();
     bpmnIframeSourceUrl = StringUtils.EMPTY;
+  }
+
+  public void updateDataOnChangingFilter() throws ParseException {
+    var parameterMap = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+    String from = parameterMap.get(ProcessAnalyticsConstants.FROM);
+    String to = parameterMap.get(ProcessAnalyticsConstants.TO);
+    timeIntervalFilter.setFrom(DateUtils.parseDateFromString(from));
+    timeIntervalFilter.setTo(DateUtils.parseDateFromString(to));
   }
 
   public void onShowStatisticBtnClick() {
