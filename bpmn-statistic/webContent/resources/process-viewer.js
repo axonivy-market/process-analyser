@@ -2,6 +2,12 @@ const JUMP_OUT_BTN_CLASS = "ivy-jump-out";
 const DIAGRAM_IFRAME_ID = "process-analytic-viewer";
 const FIT_TO_SCREEN_BUTTON_ID = "fitToScreenBtn";
 const DEFAULT_SLEEP_TIME_IN_MS = 750;
+const SPROTTY_VIEWPORT_BAR_ID = "sprotty_ivy-viewport-bar";
+const HIDDEN_CLASS = "hidden";
+const CHILD_DIV_FROM_NODE_ELEMENT_SELECTOR = ".node-child-label > div";
+const DEFAULT_IMAGE_TYPE = "image/jpeg";
+const ANCHOR_TAG = "a";
+const CURRENT_PROCESS_LABEL = "processDropdown_label";
 
 function getCenterizeButton() {
   return queryObjectById(DIAGRAM_IFRAME_ID)
@@ -41,17 +47,32 @@ async function getDiagramData() {
 
 async function captureScreenFromIframe() {
   const iframe = queryObjectById(DIAGRAM_IFRAME_ID)[0];
-  await html2canvas(iframe.contentWindow.document.body)
+  await hideViewPortBar(true);
+  await updateMissingCssForChildSelector();
+  await html2canvas(iframe.contentWindow.document.body, { allowTaint: true })
     .then((canvas) => {
-      const encodedImg = canvas.toDataURL("image/jpeg");
-      const link = document.createElement("a");
-      link.id = "haha"
+      const imagenName = queryObjectByIdInForm(CURRENT_PROCESS_LABEL).text();
+      const encodedImg = canvas.toDataURL(DEFAULT_IMAGE_TYPE);
+      const link = document.createElement(ANCHOR_TAG);
+      link.id = "tmp-anchor";
       link.href = encodedImg;
-      link.download = "diagram.jpeg";
+      link.download = `${imagenName}.jpeg`;
       link.click();
     })
     .catch((err) => {
       console.error("Error capturing iframe content:", err);
+    });
+  await hideViewPortBar(false);
+}
+
+async function updateMissingCssForChildSelector() {
+  getContentsById(DIAGRAM_IFRAME_ID)
+    .find(CHILD_DIV_FROM_NODE_ELEMENT_SELECTOR)
+    .css({
+      "align-items": "center",
+      "display": "flex",
+      "justify-content": "center",
+      "height": "100%",
     });
 }
 
@@ -80,4 +101,19 @@ async function centerizeIframeImage() {
 
 function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function hideViewPortBar(boolean) {
+  const viewPortBar = getContentsById(DIAGRAM_IFRAME_ID).find(
+    buildIdRef(SPROTTY_VIEWPORT_BAR_ID)
+  );
+  if (boolean) {
+    viewPortBar.addClass(HIDDEN_CLASS);
+  } else {
+    viewPortBar.removeClass(HIDDEN_CLASS);
+  }
+}
+
+function getContentsById(id) {
+  return queryObjectById(id).contents();
 }
