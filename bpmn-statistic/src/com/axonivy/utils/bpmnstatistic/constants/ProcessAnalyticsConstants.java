@@ -28,4 +28,5 @@ public class ProcessAnalyticsConstants {
   public static final String MODULE_PATH = "%s/%s/";
   public static final String JPEG_EXTENSION = ".jpeg";
   public static final String COMMA = ",";
+  public static final String ANALYSIS_EXCEL_FILE_PATTERN = "Analysis_Of_%s";
 }
