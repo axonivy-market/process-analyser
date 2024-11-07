@@ -1,13 +1,13 @@
-const JUMP_OUT_BTN_CLASS = "ivy-jump-out";
 const DIAGRAM_IFRAME_ID = "process-analytic-viewer";
 const FIT_TO_SCREEN_BUTTON_ID = "fitToScreenBtn";
-const DEFAULT_SLEEP_TIME_IN_MS = 750;
+const DEFAULT_SLEEP_TIME_IN_MS = 500;
 const SPROTTY_VIEWPORT_BAR_ID = "sprotty_ivy-viewport-bar";
 const HIDDEN_CLASS = "hidden";
 const CHILD_DIV_FROM_NODE_ELEMENT_SELECTOR = ".node-child-label > div";
 const DEFAULT_IMAGE_TYPE = "image/jpeg";
 const ANCHOR_TAG = "a";
 const CURRENT_PROCESS_LABEL = "processDropdown_label";
+const HIDDEN_IMAGE_ID = "hidden-image";
 
 function getCenterizeButton() {
   return queryObjectById(DIAGRAM_IFRAME_ID)
@@ -32,11 +32,11 @@ function queryObjectByIdInForm(id) {
 }
 
 function updateUrlForIframe() {
-  const dataUrl = queryObjectByIdInForm("hidden-image").attr("src");
+  const dataUrl = queryObjectByIdInForm(HIDDEN_IMAGE_ID).attr("src");
   const encodedDataUrl = encodeURIComponent(dataUrl);
-  const currentViewerUrl = $("[id$='process-analytic-viewer']").attr("src");
+  const currentViewerUrl = window.frames[DIAGRAM_IFRAME_ID].src;
   const url = currentViewerUrl + "&miningUrl=" + encodedDataUrl;
-  $("[id$='process-analytic-viewer']").attr("src", url);
+  window.frames[DIAGRAM_IFRAME_ID].src = url;
 }
 
 async function getDiagramData() {
@@ -76,17 +76,9 @@ async function updateMissingCssForChildSelector() {
     });
 }
 
-function getJumpOutBtn() {
-  return queryObjectById(DIAGRAM_IFRAME_ID)
-    .contents()
-    .find(buildClassRef(JUMP_OUT_BTN_CLASS))[0];
-}
-
 async function returnToFirstLayer() {
-  if (getJumpOutBtn()) {
-    await getJumpOutBtn().click();
-    await wait(DEFAULT_SLEEP_TIME_IN_MS);
-  }
+  window.frames[DIAGRAM_IFRAME_ID].src += "";
+  await wait(DEFAULT_SLEEP_TIME_IN_MS * 2);
 }
 
 async function centerizeIframeImage() {
