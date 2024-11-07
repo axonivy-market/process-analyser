@@ -2,8 +2,7 @@ name: Dev-Build
 
 on:
   push:
-  schedule:
-    - cron:  '21 21 * * *'
+    branches: [ "develop" ]
   workflow_dispatch:
 
 jobs:
@@ -23,7 +22,6 @@ jobs:
           sparse-checkout: |
             pom.xml
           sparse-checkout-cone-mode: false
-          ref: develop
 
       - name: Download artifact
         uses: actions/download-artifact@v4
@@ -31,7 +29,6 @@ jobs:
       - name: Copy file
         run: |
           version=$(xml sel -t -m "//_:project" -v _:version pom.xml)
-          echo "Extracted version: $version"
           artifactDir=artifact/bpmn-statistic
           engineDir=/var/tools/ivy/11/applications/BPMN-STATISTIC
           cp ${artifactDir}/target/bpmn-statistic-${version}.iar $engineDir/bpmn-statistic/1.iar
