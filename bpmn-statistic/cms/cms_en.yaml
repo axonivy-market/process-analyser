@@ -6,6 +6,8 @@ Dialogs:
     axonivy:
       utils:
         bpmnstatistic:
+          ProcessAnalytics:
+            ExportExcel: Export Excel
           ProcessesMonitor:
             AnalysisType: Analysis Type
             AnalysisTypeRequiredMessage: Please select an analysis type
