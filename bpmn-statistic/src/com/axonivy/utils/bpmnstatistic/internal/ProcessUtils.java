@@ -184,7 +184,8 @@ public class ProcessUtils {
   private static boolean isIWebStartableNeedToRecordStatistic(IWebStartable process) {
     String  pmName = process.pmv().getProcessModel().getName();
     return !(StringUtils.equals(pmName, ProcessAnalyticsConstants.BPMN_STATISTIC_PMV_NAME)
-        || StringUtils.contains(pmName, ProcessAnalyticsConstants.PORTAL_PMV_SUFFIX));
+        || StringUtils.contains(pmName, ProcessAnalyticsConstants.PORTAL_PMV_SUFFIX))
+        && process instanceof IProcessWebStartable;
   }
 
   public static boolean isContainFlowFromSubElement(List<SequenceFlow> flows) {
