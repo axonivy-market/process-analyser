@@ -9,6 +9,7 @@ const ANCHOR_TAG = "a";
 const CURRENT_PROCESS_LABEL = "processDropdown_label";
 const HIDDEN_IMAGE_ID = "hidden-image";
 const JUMP_OUT_BTN_CLASS = "ivy-jump-out";
+const IVY_PROCESS_EXTENSION = ".ivp";
 
 function getCenterizeButton() {
   return queryObjectById(DIAGRAM_IFRAME_ID)
@@ -52,7 +53,8 @@ async function captureScreenFromIframe() {
   await updateMissingCssForChildSelector();
   await html2canvas(iframe.contentWindow.document.body, { allowTaint: true })
     .then((canvas) => {
-      const imagenName = queryObjectByIdInForm(CURRENT_PROCESS_LABEL).text();
+      let imagenName = queryObjectByIdInForm(CURRENT_PROCESS_LABEL).text();
+      imagenName = imagenName.split(DEFAULT_IMAGE_TYPE)[0];
       const encodedImg = canvas.toDataURL(DEFAULT_IMAGE_TYPE);
       const link = document.createElement(ANCHOR_TAG);
       link.id = "tmp-anchor";
