@@ -8,6 +8,7 @@ Dialogs:
         bpmnstatistic:
           ProcessAnalytics:
             ExportExcel: Export Excel
+            ExportJPEG: Export JPEG
           ProcessesMonitor:
             AnalysisType: Analysis Type
             AnalysisTypeRequiredMessage: Please select an analysis type

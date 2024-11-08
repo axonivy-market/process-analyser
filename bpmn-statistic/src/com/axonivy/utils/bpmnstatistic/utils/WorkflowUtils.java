@@ -33,7 +33,7 @@ public class WorkflowUtils {
   private static final String SLASH = "/";
 
   private static void updateWorkflowInfo(String fromElementPid, Boolean conditionIsTrue, String toElementPid) {
-    fromElementPid = StringUtils.defaultString(fromElementPid, ProcessUtils.getCurrentElementPid());
+    fromElementPid = StringUtils.defaultIfBlank(fromElementPid, ProcessUtils.getCurrentElementPid());
     Long currentCaseId = ProcessUtils.getCurrentCaseId();
     String processRawPid = ProcessUtils.getProcessPidFromElement(fromElementPid);
 
