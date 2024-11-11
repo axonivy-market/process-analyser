@@ -21,11 +21,13 @@ import com.axonivy.utils.bpmnstatistic.bo.ProcessMiningData;
 import com.axonivy.utils.bpmnstatistic.bo.TimeFrame;
 import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
 import com.axonivy.utils.bpmnstatistic.constants.ProcessAnalyticsConstants;
+import com.axonivy.utils.bpmnstatistic.enums.IvyVariable;
 import com.axonivy.utils.bpmnstatistic.enums.KpiType;
 import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
 import com.axonivy.utils.bpmnstatistic.utils.DateUtils;
 import com.axonivy.utils.bpmnstatistic.utils.JacksonUtils;
 import com.axonivy.utils.bpmnstatistic.utils.ProcessesMonitorUtils;
+import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;
 
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.cm.ContentObject;
@@ -33,6 +35,13 @@ import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.location.IParser.ParseException;
 import ch.ivyteam.ivy.process.rdm.IProcess;
+import ch.ivyteam.ivy.security.exec.Sudo;
+import ch.ivyteam.ivy.workflow.CaseState;
+import ch.ivyteam.ivy.workflow.ICase;
+import ch.ivyteam.ivy.workflow.ITask;
+import ch.ivyteam.ivy.workflow.custom.field.ICustomField;
+import ch.ivyteam.ivy.workflow.query.CaseQuery;
+import ch.ivyteam.ivy.workflow.query.TaskQuery;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
 
@@ -53,6 +62,7 @@ public class ProcessesAnalyticsBean {
   private String miningUrl;
   private ContentObject processMiningDataJsonFile;
   private String bpmnIframeSourceUrl;
+  private List<String> availableCustomFields = new ArrayList<>();
 
   @PostConstruct
   private void init() {
@@ -92,6 +102,8 @@ public class ProcessesAnalyticsBean {
 
   public void onProcessSelect() {
     resetStatisticValue();
+    Ivy.log().warn("selectedProcess onProcessSelect" + selectedProcess);
+    getCaseAndTaskCustomFields();
   }
 
   public void onKpiTypeSelect() {
@@ -103,6 +115,58 @@ public class ProcessesAnalyticsBean {
     nodes = new ArrayList<>();
     bpmnIframeSourceUrl = StringUtils.EMPTY;
   }
+  
+  public List<ICustomField<?>> getCaseAndTaskCustomFields() { 
+    Optional.ofNullable(getSelectedIProcessWebStartable()).ifPresent(process -> {
+      selectedPid = process.pid().getParent().toString();
+    });
+    Ivy.log().warn("selectedPid " + selectedPid);
+   return Sudo.get(() -> {
+      TaskQuery taskQuery = TaskQuery.create().where().requestPath().isLike(String.format("%%%s%%", selectedPid));
+      List<ITask> tasks = new ArrayList<>();
+        tasks = Ivy.wf().getTaskQueryExecutor().getResults(taskQuery);
+        Ivy.log().warn("tasks " + tasks.size());
+        List<ICustomField<?>> allCustomFields = new ArrayList<>();
+        getCustomFields(allCustomFields, tasks, selectedPid);
+        Ivy.log().warn("allCustomFields " + allCustomFields.size());
+        for(ICustomField field: allCustomFields) {
+          Ivy.log().warn("fieldName " + field.name());
+          availableCustomFields.add(field.name());
+          availableCustomFields.stream().distinct().toList();
+        }
+        availableCustomFields.forEach(a -> Ivy.log().warn("a " + a.toString()));
+        Ivy.log().warn("availableCustomFields " + availableCustomFields.size());
+      return allCustomFields;
+    });
+  }
+  
+  public void getCustomFields1(List<ICustomField<?>> allCustomFields, List<ITask> tasks, String selectedPid) {
+    List<ICustomField<?>> taskCustomFields = new ArrayList<>();
+    List<ICustomField<?>> caseCustomFields = new ArrayList<>();
+    for (ITask task : tasks) {
+      Ivy.log().warn("taskId " + task.getId());
+      taskCustomFields = task.customFields().all();
+      caseCustomFields = task.getCase().customFields().all();
+    }
+    Ivy.log().warn("taskCustomFields " + taskCustomFields.size());
+    Ivy.log().warn("caseCustomFields " + caseCustomFields.size());
+    allCustomFields.addAll(taskCustomFields);
+    allCustomFields.addAll(caseCustomFields);
+  }
+  
+  public void getCustomFields(List<ICustomField<?>> allCustomFields, List<ITask> tasks, String selectedPid) {
+    for (ITask task : tasks) {
+        List<ICustomField<?>> taskCustomFields = task.customFields().all();
+        List<ICustomField<?>> caseCustomFields = task.getCase().customFields().all();
+
+        Ivy.log().warn("taskCustomFields " + taskCustomFields.size());
+        Ivy.log().warn("caseCustomFields " + caseCustomFields.size());
+
+        allCustomFields.addAll(taskCustomFields);
+        allCustomFields.addAll(caseCustomFields);
+    }
+}
+
 
   public void updateDataOnChangingFilter() throws ParseException {
     var parameterMap = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
@@ -136,11 +200,13 @@ public class ProcessesAnalyticsBean {
   }
 
   private void loadNodes() {
+    Ivy.log().warn("selectedProcess " + selectedProcess);
     if (StringUtils.isNotBlank(selectedProcess) && StringUtils.isNotBlank(selectedModule) && selectedKpiType != null) {
       Optional.ofNullable(getSelectedIProcessWebStartable()).ifPresent(process -> {
         int totalFrequency = 0;
         processMiningData = new ProcessMiningData();
         selectedPid = process.pid().getParent().toString();
+        Ivy.log().warn("selectedPid " + selectedPid);
         processMiningData.setProcessId(selectedPid);
         processMiningData.setProcessName(selectedProcess);
         processMiningData.setKpiType(selectedKpiType);
@@ -216,5 +282,13 @@ public class ProcessesAnalyticsBean {
 
   public String getBpmnIframeSourceUrl() {
     return bpmnIframeSourceUrl;
+  }
+
+  public List<String> getAvailableCustomFields() {
+    return availableCustomFields;
+  }
+
+  public void setAvailableCustomFields(List<String> availableCustomFields) {
+    this.availableCustomFields = availableCustomFields;
   }
 }

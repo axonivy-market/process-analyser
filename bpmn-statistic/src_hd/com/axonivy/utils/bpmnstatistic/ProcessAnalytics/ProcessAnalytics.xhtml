@@ -90,6 +90,35 @@
             process="@this" partialSubmit="true"
             update="arrow-statistics" />
         </h:panelGroup>
+        
+      <!--   <h:panelGroup id="custom-filter-group-abc"
+          layout="block">
+          <ui:include src="CustomFilter.xhtml" />
+          <p:remoteCommand id="filter-data-by-interval-rc"
+            name="filterDataByIntervalRC"
+            actionListener="#{processesAnalyticsBean.updateDataOnChangingFilter()}"
+            process="@this" partialSubmit="true"
+            update="arrow-statistics" />
+        </h:panelGroup> -->
+
+        <h:panelGroup id="custom-filter-group" styleClass="field col-12 grid formgrid align-items-start p-0 m-0 mb-3">
+          <div>
+            <p:outputLabel
+              value="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/CustomFilters')}" />
+          </div>
+
+          <div class="col-12 p-0 m-0 pr-2">
+            <p:selectCheckboxMenu id="multiple" multiple="true" emptyLabel="None" updateLabel="true"
+              style="min-width: 15rem" panelStyle="width: 30rem" scrollHeight="250"
+              value="#{customFilterBean.customFilters}">
+              <p:ajax event="change" listener="#{timeIntervalFilterBean.onSelectType()}" />
+              <!--         <p:ajax event="itemUnselect" listener="#{checkboxView.onItemUnselect}" /> -->
+                <f:selectItems
+                value="#{processesAnalyticsBean.availableCustomFields}" var="availableCustomField" itemValue="#{availableCustomField}"
+                itemLabel="#{availableCustomField.toString()}"/>
+            </p:selectCheckboxMenu>
+          </div>
+        </h:panelGroup>
 
         <iframe id="process-analytic-viewer"
           src="#{processesAnalyticsBean.bpmnIframeSourceUrl}"

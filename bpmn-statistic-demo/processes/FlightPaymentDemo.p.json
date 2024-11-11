@@ -36,7 +36,10 @@
       "name" : "Check payment method",
       "config" : {
         "task" : {
-          "name" : "Check payment method"
+          "name" : "Check payment method",
+          "customFields" : [
+            { "name" : "test", "type" : "STRING", "value" : "\"I'm testing\"" }
+          ]
         }
       },
       "visual" : {
@@ -68,7 +71,10 @@
       "name" : "Confirm payment information",
       "config" : {
         "task" : {
-          "name" : "Confirm payment information"
+          "name" : "Confirm payment information",
+          "customFields" : [
+            { "name" : "test", "type" : "TEXT", "value" : "\"I'm testing text custom field\"" }
+          ]
         }
       },
       "visual" : {

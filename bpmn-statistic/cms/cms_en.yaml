@@ -32,6 +32,7 @@ Dialogs:
             RequireMessage: Please select a process
             ShowStatistic: Show Statistic
             TimeInterval: Please select a time interval
+            CustomFilters: Custom filters
             Title: Process Mining Demo
             TotalElements: In total there are {0} element(s).
             Type: Type
