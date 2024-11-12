@@ -243,7 +243,7 @@ public class ProcessesMonitorUtils {
    * AxonIvy system db.
    **/
   public static List<Node> filterInitialStatisticByIntervalWithoutModifyingProcess(IProcessWebStartable processStart,
-      TimeIntervalFilter timeIntervalFilter, KpiType analysisType) {
+      TimeIntervalFilter timeIntervalFilter, KpiType analysisType, Map<String,List<String>> selectedCustomFilters) {
     if (Objects.isNull(processStart)) {
       return Collections.emptyList();
     }
@@ -251,6 +251,7 @@ public class ProcessesMonitorUtils {
     maxArrowFrequency = 0;
     List<Node> results = new ArrayList<>();
     Long taskStartId = WorkflowUtils.getTaskStartIdFromPID(processStart.pid().toString());
+    Ivy.log().warn("taskStartId " + taskStartId);
     List<ICase> cases = getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter);
     List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
     extractedArrowFromProcessElements(processElements, results);

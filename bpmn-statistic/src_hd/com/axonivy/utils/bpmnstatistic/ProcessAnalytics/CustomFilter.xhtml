@@ -31,7 +31,7 @@
     <!-- Dropdown menu for each selected field -->
     <div class="col-4 p-0 m-0 pr-2">
       <p:selectOneMenu value="#{customFilterBean.selectedCustomFilters[fieldName]}" id="dropdown_#{fieldName}">
-        <!-- Populate the dropdown options with values from customFieldMap for the current field -->
+        <!-- Populate the   dropdown options with values from customFieldMap for the current field -->
         <f:selectItems value="#{customFilterBean.selectedCustomFilters[fieldName]}" var="optionValue"
           itemValue="#{optionValue}" itemLabel="#{optionValue}" />
         <p:ajax listener="#{processesAnalyticsBean.onDropdownChange}" process="@this" partialSubmit="true"

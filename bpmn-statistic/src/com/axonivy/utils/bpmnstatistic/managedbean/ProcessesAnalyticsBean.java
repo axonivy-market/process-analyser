@@ -65,6 +65,9 @@ public class ProcessesAnalyticsBean {
   private String bpmnIframeSourceUrl;
   private List<String> availableCustomFields = new ArrayList<>();
   private Map<String, List<String>> customFieldMap = new HashMap<>();
+  private Map<String,List<String>> selectedCustomFilters = new HashMap<>();
+  private boolean isFilterDropdownVisible;
+  private List<String> selectedKeys = new ArrayList<>();
 
   @PostConstruct
   private void init() {
@@ -104,7 +107,6 @@ public class ProcessesAnalyticsBean {
 
   public void onProcessSelect() {
     resetStatisticValue();
-    Ivy.log().warn("selectedProcess onProcessSelect" + selectedProcess);
     getCaseAndTaskCustomFields();
   }
 
@@ -128,19 +130,9 @@ public class ProcessesAnalyticsBean {
         tasks = Ivy.wf().getTaskQueryExecutor().getResults(taskQuery);
         List<ICustomField<?>> allCustomFields = new ArrayList<>();
         getCustomFields(allCustomFields, tasks, selectedPid);
-//        Set<String> uniqueNames = new HashSet<>();
-//       
-//        for (ICustomField<?> field : allCustomFields) {
-//            String fieldName = field.name();
-//            if (uniqueNames.add(fieldName)) {
-//                availableCustomFields.add(fieldName);
-//            }
-//        }
-
         for (ICustomField<?> field : allCustomFields) {
             String fieldName = field.name();
             String fieldValue = (String) field.getOrNull();
-Ivy.log().warn("fieldValue " + fieldValue);
             customFieldMap.computeIfAbsent(fieldName, k -> new ArrayList<>()).add(fieldValue);
         }
 
@@ -150,12 +142,27 @@ Ivy.log().warn("fieldValue " + fieldValue);
 
   public void getCustomFields(List<ICustomField<?>> allCustomFields, List<ITask> tasks, String selectedPid) {
     for (ITask task : tasks) {
-        List<ICustomField<?>> taskCustomFields = task.customFields().all();
-        List<ICustomField<?>> caseCustomFields = task.getCase().customFields().all();
-        allCustomFields.addAll(taskCustomFields);
-        allCustomFields.addAll(caseCustomFields);
+      List<ICustomField<?>> taskCustomFields = task.customFields().all();
+      List<ICustomField<?>> caseCustomFields = task.getCase().customFields().all();
+      allCustomFields.addAll(taskCustomFields);
+      allCustomFields.addAll(caseCustomFields);
     }
-}
+  }
+
+  public void onSelectCustomField() {
+    selectedCustomFilters.clear();
+    for (String key : selectedKeys) {
+      if (customFieldMap.containsKey(key)) {
+        List<String> distinctValues = customFieldMap.get(key).stream().distinct().toList();
+        selectedCustomFilters.put(key, distinctValues);
+      }
+    }
+    setFilterDropdownVisible(!selectedCustomFilters.isEmpty());
+  }
+  
+  public void onDropdownChange() {
+    resetStatisticValue();
+  }
 
   public void updateDataOnChangingFilter() throws ParseException {
     var parameterMap = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
@@ -189,20 +196,18 @@ Ivy.log().warn("fieldValue " + fieldValue);
   }
 
   private void loadNodes() {
-    Ivy.log().warn("selectedProcess " + selectedProcess);
     if (StringUtils.isNotBlank(selectedProcess) && StringUtils.isNotBlank(selectedModule) && selectedKpiType != null) {
       Optional.ofNullable(getSelectedIProcessWebStartable()).ifPresent(process -> {
         int totalFrequency = 0;
         processMiningData = new ProcessMiningData();
         selectedPid = process.pid().getParent().toString();
-        Ivy.log().warn("selectedPid " + selectedPid);
         processMiningData.setProcessId(selectedPid);
         processMiningData.setProcessName(selectedProcess);
         processMiningData.setKpiType(selectedKpiType);
         TimeFrame timeFrame = new TimeFrame(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo());
         processMiningData.setTimeFrame(timeFrame);
         nodes = ProcessesMonitorUtils.filterInitialStatisticByIntervalWithoutModifyingProcess(
-            getSelectedIProcessWebStartable(), timeIntervalFilter, selectedKpiType);
+            getSelectedIProcessWebStartable(), timeIntervalFilter, selectedKpiType, selectedCustomFilters);
         for (Node node : nodes) {
           totalFrequency += node.getFrequency();
         }
@@ -287,5 +292,29 @@ Ivy.log().warn("fieldValue " + fieldValue);
 
   public void setCustomFieldMap(Map<String, List<String>> customFieldMap) {
     this.customFieldMap = customFieldMap;
+  }
+
+  public Map<String, List<String>> getSelectedCustomFilters() {
+    return selectedCustomFilters;
+  }
+
+  public void setSelectedCustomFilters(Map<String, List<String>> selectedCustomFilters) {
+    this.selectedCustomFilters = selectedCustomFilters;
+  }
+
+  public boolean isFilterDropdownVisible() {
+    return isFilterDropdownVisible;
+  }
+
+  public void setFilterDropdownVisible(boolean isFilterDropdownVisible) {
+    this.isFilterDropdownVisible = isFilterDropdownVisible;
+  }
+
+  public List<String> getSelectedKeys() {
+    return selectedKeys;
+  }
+
+  public void setSelectedKeys(List<String> selectedKeys) {
+    this.selectedKeys = selectedKeys;
   }
 }
