@@ -10,10 +10,6 @@
       "name" : "Book flight tickets",
       "config" : {
         "signature" : "bookFlight",
-        "input" : {
-          "map" : { },
-          "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
-        },
         "task" : {
           "name" : "Search a Flight"
         },
@@ -68,11 +64,7 @@
           "type" : "DialogCall",
           "name" : "Search for a Flight",
           "config" : {
-            "dialog" : "com.axonivy.utils.bpmnstatistic.demo.SearchingFlight:start()",
-            "call" : {
-              "map" : { },
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
-            }
+            "dialog" : "com.axonivy.utils.bpmnstatistic.demo.SearchingFlight:start()"
           },
           "visual" : {
             "at" : { "x" : 392, "y" : 256 }
@@ -102,8 +94,7 @@
           "name" : "Re-search a flight",
           "config" : {
             "task" : {
-              "name" : "Re-search a flight",
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S10-f8\");"
+              "name" : "Re-search a flight"
             }
           },
           "visual" : {
@@ -157,8 +148,7 @@
           "name" : "Submit personal and payment info",
           "config" : {
             "task" : {
-              "name" : "Submit Personal and Payment Info",
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S20-f1\");"
+              "name" : "Submit Personal and Payment Info"
             }
           },
           "visual" : {
@@ -177,10 +167,6 @@
           "name" : "Submit personal information",
           "config" : {
             "dialog" : "com.axonivy.utils.bpmnstatistic.demo.SubmitPersonalInformation:start()",
-            "call" : {
-              "map" : { },
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
-            },
             "output" : {
               "map" : {
                 "out" : "in",
@@ -217,8 +203,7 @@
           "name" : "Rework submit personal and payment info",
           "config" : {
             "task" : {
-              "name" : "Rework for submit Personal and Payment Info",
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S20-f5\");"
+              "name" : "Rework for submit Personal and Payment Info"
             }
           },
           "visual" : {
@@ -248,7 +233,7 @@
       "name" : "Back to searching step?",
       "config" : {
         "conditions" : {
-          "f20" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(in.isBackToSearchPage,\"18F3D6C205210455-S21\")"
+          "f20" : "in.isBackToSearchPage"
         }
       },
       "visual" : {
@@ -271,7 +256,7 @@
       "name" : "Back to submit information step?",
       "config" : {
         "conditions" : {
-          "f24" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(in.isBackToSubmitInformationPage,\"18F3D6C205210455-f12\")"
+          "f24" : "in.isBackToSubmitInformationPage"
         }
       },
       "visual" : {
@@ -318,8 +303,7 @@
           "name" : "Display booking information",
           "config" : {
             "task" : {
-              "name" : "Display booking information",
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S21-f1\");"
+              "name" : "Display booking information"
             }
           },
           "visual" : {
@@ -338,10 +322,6 @@
           "name" : "DisplayBookingInformation",
           "config" : {
             "dialog" : "com.axonivy.utils.bpmnstatistic.demo.DisplayBookingInformation:start()",
-            "call" : {
-              "map" : { },
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
-            },
             "output" : {
               "map" : {
                 "out" : "in",
@@ -404,8 +384,7 @@
               "responsible" : {
                 "activator" : "SYSTEM"
               },
-              "skipTasklist" : true,
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S22-f1\");"
+              "skipTasklist" : true
             }
           },
           "visual" : {
@@ -458,7 +437,7 @@
       "name" : "Charge later?",
       "config" : {
         "conditions" : {
-          "f23" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(in.isChargeLater,\"18F3D6C205210455-S25\")"
+          "f23" : "in.isChargeLater"
         }
       },
       "visual" : {
@@ -523,8 +502,7 @@
               "responsible" : {
                 "activator" : "SYSTEM"
               },
-              "skipTasklist" : true,
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S23-f1\");"
+              "skipTasklist" : true
             }
           },
           "visual" : {
@@ -541,11 +519,6 @@
           "id" : "S23-f3",
           "type" : "Script",
           "name" : "Create booking",
-          "config" : {
-            "output" : {
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
-            }
-          },
           "visual" : {
             "at" : { "x" : 176, "y" : 304 }
           },
@@ -565,8 +538,7 @@
               "responsible" : {
                 "activator" : "SYSTEM"
               },
-              "skipTasklist" : true,
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S23-f6\");"
+              "skipTasklist" : true
             }
           },
           "visual" : {
@@ -624,8 +596,7 @@
               "responsible" : {
                 "activator" : "SYSTEM"
               },
-              "skipTasklist" : true,
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S25-f1\");"
+              "skipTasklist" : true
             }
           },
           "visual" : {
@@ -642,11 +613,6 @@
           "id" : "S25-f3",
           "type" : "Script",
           "name" : "Hold seats script",
-          "config" : {
-            "output" : {
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
-            }
-          },
           "visual" : {
             "at" : { "x" : 328, "y" : 256 }
           },
@@ -673,7 +639,7 @@
       "name" : "Paid?",
       "config" : {
         "conditions" : {
-          "f13" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.isWorkflowInfoUpdatedByPidAndAdditionalCondition(in.isPaid,\"18F3D6C205210455-S23\")"
+          "f13" : "in.isPaid"
         }
       },
       "visual" : {
@@ -721,8 +687,7 @@
           "name" : "Charge for ticket",
           "config" : {
             "task" : {
-              "name" : "Charge for ticket",
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S60-f1\");"
+              "name" : "Charge for ticket"
             }
           },
           "visual" : {
@@ -741,10 +706,6 @@
           "name" : "ChargeForTickets",
           "config" : {
             "dialog" : "com.axonivy.utils.bpmnstatistic.demo.ChargeForTickets:start()",
-            "call" : {
-              "map" : { },
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
-            },
             "output" : {
               "map" : {
                 "out" : "in",
@@ -807,8 +768,7 @@
               "responsible" : {
                 "activator" : "SYSTEM"
               },
-              "skipTasklist" : true,
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6C205210455-S40-f1\");"
+              "skipTasklist" : true
             }
           },
           "visual" : {

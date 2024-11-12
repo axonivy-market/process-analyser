@@ -417,10 +417,6 @@
       "name" : "Recommend destination for aviation to plan",
       "config" : {
         "signature" : "recommendDestination",
-        "input" : {
-          "map" : { },
-          "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
-        },
         "task" : {
           "name" : "Marketing recommend destination"
         },
@@ -464,14 +460,7 @@
           "type" : "DialogCall",
           "name" : "RecommendDestination",
           "config" : {
-            "dialog" : "com.axonivy.utils.bpmnstatistic.demo.RecommendDestination:start()",
-            "call" : {
-              "map" : { },
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record();"
-            },
-            "output" : {
-              "code" : "com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils.record(\"18F3D6D7AEE204DA-f25\");"
-            }
+            "dialog" : "com.axonivy.utils.bpmnstatistic.demo.RecommendDestination:start()"
           },
           "visual" : {
             "at" : { "x" : 336, "y" : 256 },
