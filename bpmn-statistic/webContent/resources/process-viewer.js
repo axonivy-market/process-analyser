@@ -54,7 +54,7 @@ async function captureScreenFromIframe() {
   await html2canvas(iframe.contentWindow.document.body, { allowTaint: true })
     .then((canvas) => {
       let imagenName = queryObjectByIdInForm(CURRENT_PROCESS_LABEL).text();
-      imagenName = imagenName.split(DEFAULT_IMAGE_TYPE)[0];
+      imagenName = imagenName.split(IVY_PROCESS_EXTENSION)[0];
       const encodedImg = canvas.toDataURL(DEFAULT_IMAGE_TYPE);
       const link = document.createElement(ANCHOR_TAG);
       link.id = "tmp-anchor";
