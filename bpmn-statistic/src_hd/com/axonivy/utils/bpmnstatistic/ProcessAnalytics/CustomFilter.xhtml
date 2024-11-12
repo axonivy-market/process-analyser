@@ -3,23 +3,45 @@
   xmlns:ic="http://ivyteam.ch/jsf/component" xmlns:p="http://primefaces.org/ui"
   xmlns:pe="http://primefaces.org/ui/extensions">
 <h:body>
-  <h:panelGroup styleClass="col-12 m-0 p-0 mb-2">
+<!--   <h:panelGroup styleClass="col-12 m-0 p-0 mb-2"> -->
+  <h:panelGroup id="custom-filter-group" styleClass="field col-12 grid formgrid align-items-start p-0 m-0 mb-3">
     <div>
       <p:outputLabel value="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/CustomFilters')}" />
     </div>
 
     <div class="col-12 p-0 m-0 pr-2">
-      <p:selectCheckboxMenu id="multiple" multiple="true" emptyLabel="None" updateLabel="true"
-        style="min-width: 15rem" panelStyle="width: 30rem" scrollHeight="250"
-        value="#{customFilterBean.customFilters}">
-        <p:ajax event="change" listener="#{timeIntervalFilterBean.onSelectType()}" />
-<!--         <p:ajax event="itemUnselect" listener="#{checkboxView.onItemUnselect}" /> -->
-        <f:selectItems value="#{timeIntervalFilterBean.intervalTypes}" var="type" itemValue="#{type}"
-          itemLabel="#{type.getCmsName()}" />
+      <p:selectCheckboxMenu id="multiple" multiple="true" emptyLabel="None" updateLabel="true" style="min-width: 15rem"
+        panelStyle="width: 30rem" scrollHeight="250" value="#{customFilterBean.selectedCustomFilters.keySet()}">
+        <p:ajax event="change" listener="#{processesAnalyticsBean.onSelectCustomField()}" />
+        <f:selectItems value="#{processesAnalyticsBean.customFieldMap.keySet()}" var="fieldName"
+          itemValue="#{fieldName}" itemLabel="#{fieldName}" />
       </p:selectCheckboxMenu>
     </div>
   </h:panelGroup>
+  
+  <h:panelGroup id="process-custom-filter" styleClass="col-12 px-0 mx-0 grid formgrid ui-fluid">
+  <div class="col-12 m-0 p-0 mb-2">
+  <!-- Iterate over each selected custom field in customFilters -->
+  <ui:repeat value="#{customFilterBean.selectedCustomFilters.keySet()}" var="fieldName">
+    <!-- Output the label for each selected field -->
+    <div class="col-12 p-0 m-0 pr-2 mb-2">
+      <p:outputLabel value="#{fieldName}" />
+    </div>
 
+    <!-- Dropdown menu for each selected field -->
+    <div class="col-4 p-0 m-0 pr-2">
+      <p:selectOneMenu value="#{customFilterBean.selectedCustomFilters[fieldName]}" id="dropdown_#{fieldName}">
+        <!-- Populate the dropdown options with values from customFieldMap for the current field -->
+        <f:selectItems value="#{customFilterBean.selectedCustomFilters[fieldName]}" var="optionValue"
+          itemValue="#{optionValue}" itemLabel="#{optionValue}" />
+        <p:ajax listener="#{processesAnalyticsBean.onDropdownChange}" process="@this" partialSubmit="true"
+          update="@form" />
+      </p:selectOneMenu>
+    </div>
+  </ui:repeat>
+</div>
+
+  </h:panelGroup>
   <!--  <h:panelGroup id="process-custom-filter" styleClass="col-12 px-0 mx-0 grid formgrid ui-fluid">
    Type
     <div class="col-12 m-0 p-0 mb-2">
@@ -28,34 +50,6 @@
     </div>
     <div class="col-4 p-0 m-0 pr-2">
       <p:selectOneMenu value="#{timeIntervalFilterBean.selectedType}">
-        <f:selectItems value="#{timeIntervalFilterBean.intervalTypes}" var="type" itemValue="#{type}"
-          itemLabel="#{type.getCmsName()}" />
-        <p:ajax listener="#{timeIntervalFilterBean.onSelectType()}" process="@this" partialSubmit="true"
-          update="process-time-interval" />
-      </p:selectOneMenu>
-    </div>
-
-    <div class="col-12 m-0 p-0 mb-2">
-      <p:outputLabel
-        value="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/TimeInterval')}" />
-    </div>
-    <div class="col-4 p-0 m-0 pr-2">
-      <p:selectOneMenu value="#{timeIntervalFilterBean.selectedType}" id="process-interval">
-        <f:selectItems value="#{timeIntervalFilterBean.intervalTypes}" var="type" itemValue="#{type}"
-          itemLabel="#{type.getCmsName()}" />
-        <p:ajax listener="#{timeIntervalFilterBean.onSelectType()}" process="@this" partialSubmit="true"
-          update="process-time-interval" />
-      </p:selectOneMenu>
-    </div>
-
-
-     From
-    <div class="col-12 m-0 p-0 mb-2">
-      <p:outputLabel
-        value="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/TimeInterval')}" />
-    </div>
-    <div class="col-4 p-0 m-0 pr-2">
-      <p:selectOneMenu value="#{timeIntervalFilterBean.selectedType}" id="process-interval">
         <f:selectItems value="#{timeIntervalFilterBean.intervalTypes}" var="type" itemValue="#{type}"
           itemLabel="#{type.getCmsName()}" />
         <p:ajax listener="#{timeIntervalFilterBean.onSelectType()}" process="@this" partialSubmit="true"

@@ -2,6 +2,7 @@ package com.axonivy.utils.bpmnstatistic.managedbean;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -63,6 +64,7 @@ public class ProcessesAnalyticsBean {
   private ContentObject processMiningDataJsonFile;
   private String bpmnIframeSourceUrl;
   private List<String> availableCustomFields = new ArrayList<>();
+  private Map<String, List<String>> customFieldMap = new HashMap<>();
 
   @PostConstruct
   private void init() {
@@ -116,57 +118,44 @@ public class ProcessesAnalyticsBean {
     bpmnIframeSourceUrl = StringUtils.EMPTY;
   }
   
-  public List<ICustomField<?>> getCaseAndTaskCustomFields() { 
+  public Map<String, List<String>> getCaseAndTaskCustomFields() { 
     Optional.ofNullable(getSelectedIProcessWebStartable()).ifPresent(process -> {
       selectedPid = process.pid().getParent().toString();
     });
-    Ivy.log().warn("selectedPid " + selectedPid);
    return Sudo.get(() -> {
       TaskQuery taskQuery = TaskQuery.create().where().requestPath().isLike(String.format("%%%s%%", selectedPid));
       List<ITask> tasks = new ArrayList<>();
         tasks = Ivy.wf().getTaskQueryExecutor().getResults(taskQuery);
-        Ivy.log().warn("tasks " + tasks.size());
         List<ICustomField<?>> allCustomFields = new ArrayList<>();
         getCustomFields(allCustomFields, tasks, selectedPid);
-        Ivy.log().warn("allCustomFields " + allCustomFields.size());
-        for(ICustomField field: allCustomFields) {
-          Ivy.log().warn("fieldName " + field.name());
-          availableCustomFields.add(field.name());
-          availableCustomFields.stream().distinct().toList();
+//        Set<String> uniqueNames = new HashSet<>();
+//       
+//        for (ICustomField<?> field : allCustomFields) {
+//            String fieldName = field.name();
+//            if (uniqueNames.add(fieldName)) {
+//                availableCustomFields.add(fieldName);
+//            }
+//        }
+
+        for (ICustomField<?> field : allCustomFields) {
+            String fieldName = field.name();
+            String fieldValue = (String) field.getOrNull();
+Ivy.log().warn("fieldValue " + fieldValue);
+            customFieldMap.computeIfAbsent(fieldName, k -> new ArrayList<>()).add(fieldValue);
         }
-        availableCustomFields.forEach(a -> Ivy.log().warn("a " + a.toString()));
-        Ivy.log().warn("availableCustomFields " + availableCustomFields.size());
-      return allCustomFields;
+
+      return customFieldMap;
     });
   }
-  
-  public void getCustomFields1(List<ICustomField<?>> allCustomFields, List<ITask> tasks, String selectedPid) {
-    List<ICustomField<?>> taskCustomFields = new ArrayList<>();
-    List<ICustomField<?>> caseCustomFields = new ArrayList<>();
-    for (ITask task : tasks) {
-      Ivy.log().warn("taskId " + task.getId());
-      taskCustomFields = task.customFields().all();
-      caseCustomFields = task.getCase().customFields().all();
-    }
-    Ivy.log().warn("taskCustomFields " + taskCustomFields.size());
-    Ivy.log().warn("caseCustomFields " + caseCustomFields.size());
-    allCustomFields.addAll(taskCustomFields);
-    allCustomFields.addAll(caseCustomFields);
-  }
-  
+
   public void getCustomFields(List<ICustomField<?>> allCustomFields, List<ITask> tasks, String selectedPid) {
     for (ITask task : tasks) {
         List<ICustomField<?>> taskCustomFields = task.customFields().all();
         List<ICustomField<?>> caseCustomFields = task.getCase().customFields().all();
-
-        Ivy.log().warn("taskCustomFields " + taskCustomFields.size());
-        Ivy.log().warn("caseCustomFields " + caseCustomFields.size());
-
         allCustomFields.addAll(taskCustomFields);
         allCustomFields.addAll(caseCustomFields);
     }
 }
-
 
   public void updateDataOnChangingFilter() throws ParseException {
     var parameterMap = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
@@ -290,5 +279,13 @@ public class ProcessesAnalyticsBean {
 
   public void setAvailableCustomFields(List<String> availableCustomFields) {
     this.availableCustomFields = availableCustomFields;
+  }
+
+  public Map<String, List<String>> getCustomFieldMap() {
+    return customFieldMap;
+  }
+
+  public void setCustomFieldMap(Map<String, List<String>> customFieldMap) {
+    this.customFieldMap = customFieldMap;
   }
 }
