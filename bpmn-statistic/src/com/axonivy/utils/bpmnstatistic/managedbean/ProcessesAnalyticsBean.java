@@ -114,6 +114,7 @@ public class ProcessesAnalyticsBean {
     processMiningData = null;
     nodes = new ArrayList<>();
     bpmnIframeSourceUrl = StringUtils.EMPTY;
+    selectedCustomFilters = new HashMap<>();
   }
 
   public Map<CustomFieldType, Map<String, List<Object>>> getCaseAndTaskCustomFields() {
@@ -141,7 +142,8 @@ public class ProcessesAnalyticsBean {
   }
 
   private List<ITask> getTasksFromSelectedProcess() {
-    return TaskQuery.create().where().requestPath().isLike(String.format("%%%s%%", selectedPid)).executor().results();
+    return TaskQuery.create().where().requestPath()
+        .isLike(String.format(ProcessAnalyticsConstants.LIKE_TEXT_SEARCH, selectedPid)).executor().results();
   }
 
   private List<ICustomField<?>> getAllCustomFields(List<ITask> tasks) {
@@ -158,20 +160,15 @@ public class ProcessesAnalyticsBean {
     selectedCustomFilters.clear();
     for (String fieldName : selectedKeys) {
       for (Map.Entry<CustomFieldType, Map<String, List<Object>>> entry : customFieldsByType.entrySet()) {
-          CustomFieldType fieldType = entry.getKey();
-          Map<String, List<Object>> fieldMap = entry.getValue();
+        CustomFieldType fieldType = entry.getKey();
+        Map<String, List<Object>> fieldMap = entry.getValue();
 
-          if (fieldMap.containsKey(fieldName)) {
-              // Get the first distinct value (or default to an empty string if not needed).
-              Object selectedValue = fieldMap.get(fieldName).stream().distinct().findFirst().orElse(null);
-
-              // Insert selected single value per fieldName under the correct CustomFieldType
-              selectedCustomFilters
-                  .computeIfAbsent(fieldType, k -> new HashMap<>())
-                  .put(fieldName, selectedValue);
-          }
+        if (fieldMap.containsKey(fieldName)) {
+          Object selectedValue = fieldMap.get(fieldName).stream().distinct().findFirst().orElse(null);
+          selectedCustomFilters.computeIfAbsent(fieldType, k -> new HashMap<>()).put(fieldName, selectedValue);
+        }
       }
-  }
+    }
     setFilterDropdownVisible(!selectedCustomFilters.isEmpty());
   }
 
