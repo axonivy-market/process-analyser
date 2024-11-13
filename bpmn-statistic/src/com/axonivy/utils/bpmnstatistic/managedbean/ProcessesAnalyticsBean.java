@@ -59,9 +59,9 @@ public class ProcessesAnalyticsBean {
   private ContentObject processMiningDataJsonFile;
   private String bpmnIframeSourceUrl;
   private List<String> availableCustomFields = new ArrayList<>();
-  private Map<String, List<String>> customFieldMap = new HashMap<>();
-  private Map<CustomFieldType, Map<String, List<String>>> customFieldsByType = new HashMap<>();
-  private Map<CustomFieldType, Map<String, String>> selectedCustomFilters = new HashMap<>();
+  private Map<String, List<Object>> customFieldMap = new HashMap<>();
+  private Map<CustomFieldType, Map<String, List<Object>>> customFieldsByType = new HashMap<>();
+  private Map<CustomFieldType, Map<String, Object>> selectedCustomFilters = new HashMap<>();
   private List<String> selectedKeys = new ArrayList<>();
   private boolean isFilterDropdownVisible;
 
@@ -116,7 +116,7 @@ public class ProcessesAnalyticsBean {
     bpmnIframeSourceUrl = StringUtils.EMPTY;
   }
 
-  public Map<CustomFieldType, Map<String, List<String>>> getCaseAndTaskCustomFields() {
+  public Map<CustomFieldType, Map<String, List<Object>>> getCaseAndTaskCustomFields() {
     Optional.ofNullable(getSelectedIProcessWebStartable()).ifPresent(process -> {
       selectedPid = process.pid().getParent().toString();
     });
@@ -127,10 +127,14 @@ public class ProcessesAnalyticsBean {
       for (ICustomField<?> customField : allCustomFields) {
         CustomFieldType customFieldType = customField.type();
         String customFieldName = customField.name();
-        String customFieldValue = (String) customField.getOrNull();
-
-        customFieldMap = customFieldsByType.computeIfAbsent(customFieldType, k -> new HashMap<>());
-        customFieldMap.computeIfAbsent(customFieldName, k -> new ArrayList<>()).add(customFieldValue);
+        Object customFieldValue = customField.getOrNull();
+        if (customFieldValue != null) {
+          customFieldMap = customFieldsByType.computeIfAbsent(customFieldType, k -> new HashMap<>());
+          List<Object> valuesList = customFieldMap.computeIfAbsent(customFieldName, k -> new ArrayList<>());
+          if (!valuesList.contains(customFieldValue)) {
+            valuesList.add(customFieldValue);
+          }
+        }
       }
       return customFieldsByType;
     });
@@ -153,13 +157,13 @@ public class ProcessesAnalyticsBean {
   public void onCustomFieldSelect() {
     selectedCustomFilters.clear();
     for (String fieldName : selectedKeys) {
-      for (Map.Entry<CustomFieldType, Map<String, List<String>>> entry : customFieldsByType.entrySet()) {
+      for (Map.Entry<CustomFieldType, Map<String, List<Object>>> entry : customFieldsByType.entrySet()) {
           CustomFieldType fieldType = entry.getKey();
-          Map<String, List<String>> fieldMap = entry.getValue();
+          Map<String, List<Object>> fieldMap = entry.getValue();
 
           if (fieldMap.containsKey(fieldName)) {
               // Get the first distinct value (or default to an empty string if not needed).
-              String selectedValue = fieldMap.get(fieldName).stream().distinct().findFirst().orElse("");
+              Object selectedValue = fieldMap.get(fieldName).stream().distinct().findFirst().orElse(null);
 
               // Insert selected single value per fieldName under the correct CustomFieldType
               selectedCustomFilters
@@ -297,27 +301,27 @@ public class ProcessesAnalyticsBean {
     this.availableCustomFields = availableCustomFields;
   }
 
-  public Map<String, List<String>> getCustomFieldMap() {
+  public Map<String, List<Object>> getCustomFieldMap() {
     return customFieldMap;
   }
 
-  public void setCustomFieldMap(Map<String, List<String>> customFieldMap) {
+  public void setCustomFieldMap(Map<String, List<Object>> customFieldMap) {
     this.customFieldMap = customFieldMap;
   }
 
-  public Map<CustomFieldType, Map<String, List<String>>> getCustomFieldsByType() {
+  public Map<CustomFieldType, Map<String, List<Object>>> getCustomFieldsByType() {
     return customFieldsByType;
   }
 
-  public void setCustomFieldsByType(Map<CustomFieldType, Map<String, List<String>>> customFieldsByType) {
+  public void setCustomFieldsByType(Map<CustomFieldType, Map<String, List<Object>>> customFieldsByType) {
     this.customFieldsByType = customFieldsByType;
   }
 
-  public Map<CustomFieldType, Map<String, String>> getSelectedCustomFilters() {
+  public Map<CustomFieldType, Map<String, Object>> getSelectedCustomFilters() {
     return selectedCustomFilters;
   }
 
-  public void setSelectedCustomFilters(Map<CustomFieldType, Map<String, String>> selectedCustomFilters) {
+  public void setSelectedCustomFilters(Map<CustomFieldType, Map<String, Object>> selectedCustomFilters) {
     this.selectedCustomFilters = selectedCustomFilters;
   }
 

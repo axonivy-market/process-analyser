@@ -3,7 +3,7 @@
   "id" : "1931E17D8D630D1C",
   "kind" : "HTML_DIALOG",
   "config" : {
-    "data" : "com.axonivy.utils.bpmnstatistic.component.CustomFilter.CustomFilterData"
+    "data" : "com.axonivy.utils.bpmnstatistic.component.CustomFilterViewer.CustomFilterViewerData"
   },
   "elements" : [ {
       "id" : "f0",
