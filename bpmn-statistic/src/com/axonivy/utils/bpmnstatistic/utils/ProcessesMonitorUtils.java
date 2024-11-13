@@ -33,7 +33,9 @@ import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
 import ch.ivyteam.ivy.workflow.CaseState;
 import ch.ivyteam.ivy.workflow.ICase;
+import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 import ch.ivyteam.ivy.workflow.query.CaseQuery;
+import ch.ivyteam.ivy.workflow.query.TaskQuery;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 
 @SuppressWarnings("restriction")
@@ -243,7 +245,7 @@ public class ProcessesMonitorUtils {
    * AxonIvy system db.
    **/
   public static List<Node> filterInitialStatisticByIntervalWithoutModifyingProcess(IProcessWebStartable processStart,
-      TimeIntervalFilter timeIntervalFilter, KpiType analysisType, Map<String,List<String>> selectedCustomFilters) {
+      TimeIntervalFilter timeIntervalFilter, KpiType analysisType, Map<CustomFieldType, Map<String, String>> selectedCustomFilters) {
     if (Objects.isNull(processStart)) {
       return Collections.emptyList();
     }
@@ -251,8 +253,7 @@ public class ProcessesMonitorUtils {
     maxArrowFrequency = 0;
     List<Node> results = new ArrayList<>();
     Long taskStartId = WorkflowUtils.getTaskStartIdFromPID(processStart.pid().toString());
-    Ivy.log().warn("taskStartId " + taskStartId);
-    List<ICase> cases = getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter);
+    List<ICase> cases = getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter, selectedCustomFilters);
     List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
     extractedArrowFromProcessElements(processElements, results);
     updateFrequencyForNodes(results, processElements, cases);
@@ -325,11 +326,52 @@ public class ProcessesMonitorUtils {
   }
 
   private static List<ICase> getAllCasesFromTaskStartIdWithTimeInterval(Long taskStartId,
-      TimeIntervalFilter timeIntervalFilter) {
-    return CaseQuery.create().where().state().isEqual(CaseState.DONE).and().taskStartId().isEqual(taskStartId).and()
+      TimeIntervalFilter timeIntervalFilter, Map<CustomFieldType, Map<String, String>> selectedCustomFilters) {
+    CaseQuery query = CaseQuery.create().where().state().isEqual(CaseState.DONE).and().taskStartId().isEqual(taskStartId).and()
         .startTimestamp().isGreaterOrEqualThan(timeIntervalFilter.getFrom()).and().startTimestamp()
-        .isLowerOrEqualThan(timeIntervalFilter.getTo()).executor().results();
+        .isLowerOrEqualThan(timeIntervalFilter.getTo());
+    
+    if (!selectedCustomFilters.isEmpty()) {
+      for (Map.Entry<CustomFieldType, Map<String, String>> typeEntry : selectedCustomFilters.entrySet()) {
+          CustomFieldType customFieldType = typeEntry.getKey();
+          Map<String, String> fieldMap = typeEntry.getValue();
+
+          for (Map.Entry<String, String> fieldEntry : fieldMap.entrySet()) {
+              String fieldName = fieldEntry.getKey();
+              String fieldValue = fieldEntry.getValue();
+
+              query = addCustomFieldCondition(query, customFieldType, fieldName, fieldValue);
+          }
+      }
   }
+    Ivy.log().warn("query " + query);
+    return Ivy.wf().getCaseQueryExecutor().getResults(query);
+  }
+  
+  private static CaseQuery addCustomFieldCondition(CaseQuery query, CustomFieldType customFieldType, String fieldName, String fieldValue) {
+    switch (customFieldType) {
+        case STRING:
+            query = query.where().and().customField().stringField(fieldName).isLike(fieldValue)
+                         .or().tasks(TaskQuery.create().where().customField().stringField(fieldName).isLike(fieldValue));
+            break;
+        case TEXT:
+            query = query.where().and().customField().textField(fieldName).isLike(fieldValue)
+                         .or().tasks(TaskQuery.create().where().customField().textField(fieldName).isLike(fieldValue));
+            break;
+        case NUMBER:
+            query = query.where().and().customField().numberField(fieldName).isLike(fieldValue)
+                         .or().tasks(TaskQuery.create().where().customField().numberField(fieldName).isLike(fieldValue));
+            break;
+//        case TIMESTAMP:
+//            query = query.where().and().customField().timestampField(fieldName).isLike(fieldValue)
+//                         .or().tasks(TaskQuery.create().where().customField().timestampField(fieldName).isLike(fieldValue));
+//            break;
+        default:
+            break;
+    }
+    return query;
+}
+
 
   private static void updateNodeWiwthDefinedFrequency(int value, Node node) {
     Long releativeValue = (long) (value == 0 ? 0: 1);

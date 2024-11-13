@@ -2,7 +2,6 @@ package com.axonivy.utils.bpmnstatistic.managedbean;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -22,13 +21,11 @@ import com.axonivy.utils.bpmnstatistic.bo.ProcessMiningData;
 import com.axonivy.utils.bpmnstatistic.bo.TimeFrame;
 import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
 import com.axonivy.utils.bpmnstatistic.constants.ProcessAnalyticsConstants;
-import com.axonivy.utils.bpmnstatistic.enums.IvyVariable;
 import com.axonivy.utils.bpmnstatistic.enums.KpiType;
 import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
 import com.axonivy.utils.bpmnstatistic.utils.DateUtils;
 import com.axonivy.utils.bpmnstatistic.utils.JacksonUtils;
 import com.axonivy.utils.bpmnstatistic.utils.ProcessesMonitorUtils;
-import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;
 
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.cm.ContentObject;
@@ -37,11 +34,9 @@ import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.location.IParser.ParseException;
 import ch.ivyteam.ivy.process.rdm.IProcess;
 import ch.ivyteam.ivy.security.exec.Sudo;
-import ch.ivyteam.ivy.workflow.CaseState;
-import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.ITask;
+import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 import ch.ivyteam.ivy.workflow.custom.field.ICustomField;
-import ch.ivyteam.ivy.workflow.query.CaseQuery;
 import ch.ivyteam.ivy.workflow.query.TaskQuery;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
@@ -65,9 +60,10 @@ public class ProcessesAnalyticsBean {
   private String bpmnIframeSourceUrl;
   private List<String> availableCustomFields = new ArrayList<>();
   private Map<String, List<String>> customFieldMap = new HashMap<>();
-  private Map<String,List<String>> selectedCustomFilters = new HashMap<>();
-  private boolean isFilterDropdownVisible;
+  private Map<CustomFieldType, Map<String, List<String>>> customFieldsByType = new HashMap<>();
+  private Map<CustomFieldType, Map<String, String>> selectedCustomFilters = new HashMap<>();
   private List<String> selectedKeys = new ArrayList<>();
+  private boolean isFilterDropdownVisible;
 
   @PostConstruct
   private void init() {
@@ -119,48 +115,63 @@ public class ProcessesAnalyticsBean {
     nodes = new ArrayList<>();
     bpmnIframeSourceUrl = StringUtils.EMPTY;
   }
-  
-  public Map<String, List<String>> getCaseAndTaskCustomFields() { 
+
+  public Map<CustomFieldType, Map<String, List<String>>> getCaseAndTaskCustomFields() {
     Optional.ofNullable(getSelectedIProcessWebStartable()).ifPresent(process -> {
       selectedPid = process.pid().getParent().toString();
     });
-   return Sudo.get(() -> {
-      TaskQuery taskQuery = TaskQuery.create().where().requestPath().isLike(String.format("%%%s%%", selectedPid));
-      List<ITask> tasks = new ArrayList<>();
-        tasks = Ivy.wf().getTaskQueryExecutor().getResults(taskQuery);
-        List<ICustomField<?>> allCustomFields = new ArrayList<>();
-        getCustomFields(allCustomFields, tasks, selectedPid);
-        for (ICustomField<?> field : allCustomFields) {
-            String fieldName = field.name();
-            String fieldValue = (String) field.getOrNull();
-            customFieldMap.computeIfAbsent(fieldName, k -> new ArrayList<>()).add(fieldValue);
-        }
+    return Sudo.get(() -> {
+      List<ITask> tasks = getTasksFromSelectedProcess();
+      List<ICustomField<?>> allCustomFields = getAllCustomFields(tasks);
+      customFieldsByType.clear();
+      for (ICustomField<?> customField : allCustomFields) {
+        CustomFieldType customFieldType = customField.type();
+        String customFieldName = customField.name();
+        String customFieldValue = (String) customField.getOrNull();
 
-      return customFieldMap;
+        customFieldMap = customFieldsByType.computeIfAbsent(customFieldType, k -> new HashMap<>());
+        customFieldMap.computeIfAbsent(customFieldName, k -> new ArrayList<>()).add(customFieldValue);
+      }
+      return customFieldsByType;
     });
   }
 
-  public void getCustomFields(List<ICustomField<?>> allCustomFields, List<ITask> tasks, String selectedPid) {
-    for (ITask task : tasks) {
-      List<ICustomField<?>> taskCustomFields = task.customFields().all();
-      List<ICustomField<?>> caseCustomFields = task.getCase().customFields().all();
-      allCustomFields.addAll(taskCustomFields);
-      allCustomFields.addAll(caseCustomFields);
-    }
+  private List<ITask> getTasksFromSelectedProcess() {
+    return TaskQuery.create().where().requestPath().isLike(String.format("%%%s%%", selectedPid)).executor().results();
   }
 
-  public void onSelectCustomField() {
-    selectedCustomFilters.clear();
-    for (String key : selectedKeys) {
-      if (customFieldMap.containsKey(key)) {
-        List<String> distinctValues = customFieldMap.get(key).stream().distinct().toList();
-        selectedCustomFilters.put(key, distinctValues);
-      }
+  private List<ICustomField<?>> getAllCustomFields(List<ITask> tasks) {
+    List<ICustomField<?>> allCustomFields = new ArrayList<>();
+
+    for (ITask task : tasks) {
+      allCustomFields.addAll(task.customFields().all());
+      allCustomFields.addAll(task.getCase().customFields().all());
     }
+    return allCustomFields;
+  }
+
+  public void onCustomFieldSelect() {
+    selectedCustomFilters.clear();
+    for (String fieldName : selectedKeys) {
+      for (Map.Entry<CustomFieldType, Map<String, List<String>>> entry : customFieldsByType.entrySet()) {
+          CustomFieldType fieldType = entry.getKey();
+          Map<String, List<String>> fieldMap = entry.getValue();
+
+          if (fieldMap.containsKey(fieldName)) {
+              // Get the first distinct value (or default to an empty string if not needed).
+              String selectedValue = fieldMap.get(fieldName).stream().distinct().findFirst().orElse("");
+
+              // Insert selected single value per fieldName under the correct CustomFieldType
+              selectedCustomFilters
+                  .computeIfAbsent(fieldType, k -> new HashMap<>())
+                  .put(fieldName, selectedValue);
+          }
+      }
+  }
     setFilterDropdownVisible(!selectedCustomFilters.isEmpty());
   }
-  
-  public void onDropdownChange() {
+
+  public void onCustomFieldChange() {
     resetStatisticValue();
   }
 
@@ -294,11 +305,19 @@ public class ProcessesAnalyticsBean {
     this.customFieldMap = customFieldMap;
   }
 
-  public Map<String, List<String>> getSelectedCustomFilters() {
+  public Map<CustomFieldType, Map<String, List<String>>> getCustomFieldsByType() {
+    return customFieldsByType;
+  }
+
+  public void setCustomFieldsByType(Map<CustomFieldType, Map<String, List<String>>> customFieldsByType) {
+    this.customFieldsByType = customFieldsByType;
+  }
+
+  public Map<CustomFieldType, Map<String, String>> getSelectedCustomFilters() {
     return selectedCustomFilters;
   }
 
-  public void setSelectedCustomFilters(Map<String, List<String>> selectedCustomFilters) {
+  public void setSelectedCustomFilters(Map<CustomFieldType, Map<String, String>> selectedCustomFilters) {
     this.selectedCustomFilters = selectedCustomFilters;
   }
 
