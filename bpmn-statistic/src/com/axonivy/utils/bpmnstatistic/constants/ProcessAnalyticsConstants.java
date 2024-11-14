@@ -1,5 +1,7 @@
 package com.axonivy.utils.bpmnstatistic.constants;
 
+import java.util.List;
+
 public class ProcessAnalyticsConstants {
   public static final String REMOVE_DEFAULT_HIGHLIGHT_JS_FUNCTION = "santizeDiagram();";
   public static final String UPDATE_FREQUENCY_COUNT_FOR_TASK_FUNCTION = "addElementFrequency('%s', '%s', '%s', '%s');";
@@ -28,4 +30,6 @@ public class ProcessAnalyticsConstants {
   public static final String MODULE_PATH = "%s/%s/";
   public static final String ANALYSIS_EXCEL_FILE_PATTERN = "Analysis_Of_%s";
   public static final String LIKE_TEXT_SEARCH = "%%%s%%";
+  public static final List<String> PAYMENT_METHODS =
+      List.of("PayPal", "Apple Pay", "Google Pay", "Cash", "Bank Transfer", "Alipay", "WeChat Pay");
 }

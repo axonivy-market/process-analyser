@@ -13,6 +13,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PF;
 
@@ -332,7 +333,7 @@ public class ProcessesMonitorUtils {
         .isEqual(taskStartId).and().startTimestamp().isGreaterOrEqualThan(timeIntervalFilter.getFrom()).and()
         .startTimestamp().isLowerOrEqualThan(timeIntervalFilter.getTo());
 
-    if (!selectedCustomFilters.isEmpty()) {
+    if (ObjectUtils.isNotEmpty(selectedCustomFilters)) {
       for (Map.Entry<CustomFieldType, Map<String, Object>> typeEntry : selectedCustomFilters.entrySet()) {
         CustomFieldType customFieldType = typeEntry.getKey();
         Map<String, Object> fieldMap = typeEntry.getValue();
@@ -350,6 +351,7 @@ public class ProcessesMonitorUtils {
 
   private static CaseQuery addCustomFieldCondition(CaseQuery query, CustomFieldType customFieldType, String fieldName,
       Object fieldValue) {
+    Ivy.log().warn("fieldValue " + fieldValue);
     switch (customFieldType) {
       case STRING:
         query = query.where().and().customField().stringField(fieldName).isEqual((String) fieldValue).or()

@@ -11,10 +11,13 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.UnselectEvent;
 
 import com.axonivy.utils.bpmnstatistic.bo.Node;
 import com.axonivy.utils.bpmnstatistic.bo.ProcessMiningData;
@@ -113,7 +116,7 @@ public class ProcessesAnalyticsBean {
     processMiningData = null;
     nodes = new ArrayList<>();
     bpmnIframeSourceUrl = StringUtils.EMPTY;
-    selectedCustomFilters = new HashMap<>();
+//    selectedCustomFilters = new HashMap<>();
   }
 
   public Map<CustomFieldType, Map<String, List<Object>>> getCaseAndTaskCustomFields() {
@@ -130,9 +133,9 @@ public class ProcessesAnalyticsBean {
         Object customFieldValue = customField.getOrNull();
         if (customFieldValue != null) {
           availableCustomFields = customFieldsByType.computeIfAbsent(customFieldType, k -> new HashMap<>());
-          List<Object> valuesList = availableCustomFields.computeIfAbsent(customFieldName, k -> new ArrayList<>());
-          if (!valuesList.contains(customFieldValue)) {
-            valuesList.add(customFieldValue);
+          List<Object> addedCustomFieldValues = availableCustomFields.computeIfAbsent(customFieldName, k -> new ArrayList<>());
+          if (!addedCustomFieldValues.contains(customFieldValue)) {
+            addedCustomFieldValues.add(customFieldValue);
           }
         }
       }
@@ -156,15 +159,15 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onCustomFieldSelect() {
-    selectedCustomFilters.clear();
-    for (String fieldName : selectedCustomFieldNames) {
+//    selectedCustomFilters.clear();
+    for (String customFieldName : selectedCustomFieldNames) {
       for (Map.Entry<CustomFieldType, Map<String, List<Object>>> entry : customFieldsByType.entrySet()) {
         CustomFieldType fieldType = entry.getKey();
-        Map<String, List<Object>> fieldMap = entry.getValue();
+        Map<String, List<Object>> addedCustomFields = entry.getValue();
 
-        if (fieldMap.containsKey(fieldName)) {
-          Object selectedValue = fieldMap.get(fieldName).stream().distinct().findFirst().orElse(null);
-          selectedCustomFilters.computeIfAbsent(fieldType, k -> new HashMap<>()).put(fieldName, selectedValue);
+        if (addedCustomFields.containsKey(customFieldName)) {
+          Object customFieldValue = addedCustomFields.get(customFieldName).stream().distinct().findFirst().orElse(null);
+          selectedCustomFilters.computeIfAbsent(fieldType, k -> new HashMap<>()).put(customFieldName, customFieldValue);
         }
       }
     }
@@ -172,7 +175,9 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onCustomFieldValueSelect() {
-    resetStatisticValue();
+//    resetStatisticValue();
+//  String abs = (String) UIComponent.getCurrentComponent(FacesContext.getCurrentInstance()).getAttributes().toString();
+//    Ivy.log().warn(abs);
   }
 
   public void updateDataOnChangingFilter() throws ParseException {
