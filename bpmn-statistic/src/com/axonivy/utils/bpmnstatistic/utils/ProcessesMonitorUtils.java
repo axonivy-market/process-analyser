@@ -5,11 +5,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -20,13 +18,11 @@ import org.primefaces.PF;
 import com.axonivy.utils.bpmnstatistic.bo.AlternativePath;
 import com.axonivy.utils.bpmnstatistic.bo.Node;
 import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
-import com.axonivy.utils.bpmnstatistic.bo.WorkflowProgress;
 import com.axonivy.utils.bpmnstatistic.constants.ProcessAnalyticsConstants;
 import com.axonivy.utils.bpmnstatistic.enums.KpiType;
 import com.axonivy.utils.bpmnstatistic.enums.IvyVariable;
 import com.axonivy.utils.bpmnstatistic.enums.NodeType;
 import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
-import com.axonivy.utils.bpmnstatistic.repo.WorkflowProgressRepository;
 import com.axonivy.utils.bpmnstatistic.service.IvyTaskOccurrenceService;
 
 import ch.ivyteam.ivy.environment.Ivy;
@@ -43,10 +39,6 @@ import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 
 @SuppressWarnings("restriction")
 public class ProcessesMonitorUtils {
-  private static final WorkflowProgressRepository repo = WorkflowProgressRepository.getInstance();
-  private static int maxArrowFrequency = 0;
-  private static int maxElementFrequency = 0;
-
   private ProcessesMonitorUtils() {
   }
 
@@ -106,38 +98,11 @@ public class ProcessesMonitorUtils {
     arrowNode.setType(NodeType.ARROW);
     return arrowNode;
   }
+  
 
-  /**
-   * Update the table of arrow from this process base on the current version of
-   * process.
-   * 
-   * @param processStart       selected process start
-   * @param timeIntervalFilter selected time interval
-   * @return list of arrow (sequence flow) with its basic statistic data
-   *         (duration, frequency)
-   */
-  public static List<Node> filterInitialStatisticByInterval(IProcessWebStartable processStart,
-      TimeIntervalFilter timeIntervalFilter, KpiType analysisType) {
-    List<Node> results = new ArrayList<>();
-    maxArrowFrequency = 0;
-    if (Objects.nonNull(processStart)) {
-      String processRawPid = ProcessUtils.getProcessPidFromElement(processStart.pid().toString());
-      // Get all of element from process in 1st layer (which is not nested from sub)
-      List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
 
-      extractedArrowFromProcessElements(processElements, results);
 
-      Map<String, Node> nodeMap = results.stream().collect(Collectors.toMap(Node::getId, Function.identity()));
-      List<WorkflowProgress> recordedProgresses = repo.findByProcessRawPidInTime(processRawPid, timeIntervalFilter);
-      recordedProgresses.stream().forEach(record -> updateElementOrArrowByWorkflowProgress(nodeMap, record));
-      nodeMap.keySet().stream().forEach(key -> {
-        Node node = nodeMap.get(key);
-        node.setRelativeValue((float) node.getFrequency() / maxArrowFrequency);
-        updateNodeByAnalysisType(node, analysisType);
-      });
-    }
-    return results;
-  }
+
 
   /**
    * Get outgoing arrows from each element. If the current element is sub
@@ -169,44 +134,6 @@ public class ProcessesMonitorUtils {
     return elementNode;
   }
 
-  /**
-   * Update info of current arrow by Workflow progress from database & update max
-   * frequency of the whole element from this process.
-   * 
-   * @param arrow    current arrow
-   * @param progress single progress instance of this arrow
-   */
-  private static void updateElementOrArrowByWorkflowProgress(Map<String, Node> nodeMap, WorkflowProgress record) {
-    if (StringUtils.isBlank(record.getArrowId())) {
-      updateElementByWorkflowProgress(nodeMap, record);
-    } else {
-      updateArrowByWorkflowProgress(nodeMap, record);
-    }
-  }
-
-  private static void updateElementByWorkflowProgress(Map<String, Node> nodeMap, WorkflowProgress record) {
-    Node element = nodeMap.get(record.getProcessRawPid());
-    if (Objects.isNull(element)) {
-      return;
-    }
-    int newFrequency = element.getFrequency() + 1;
-    element.setFrequency(newFrequency);
-    maxElementFrequency = maxElementFrequency < newFrequency ? newFrequency : maxElementFrequency;
-  }
-
-  private static void updateArrowByWorkflowProgress(Map<String, Node> nodeMap, WorkflowProgress record) {
-    Node arrow = nodeMap.get(record.getArrowId());
-    if (Objects.isNull(arrow)) {
-      return;
-    }
-    int currentFrequency = arrow.getFrequency();
-    int newFrequency = currentFrequency + 1;
-    if (Objects.nonNull(record.getDuration())) {
-      arrow.setMedianDuration(((arrow.getMedianDuration() * currentFrequency) + record.getDuration()) / newFrequency);
-      arrow.setFrequency(newFrequency);
-    }
-    maxArrowFrequency = maxArrowFrequency < newFrequency ? newFrequency : maxArrowFrequency;
-  }
 
   private static void updateNodeByAnalysisType(Node node, KpiType analysisType) {
     if (KpiType.FREQUENCY == analysisType) {
@@ -219,28 +146,7 @@ public class ProcessesMonitorUtils {
     }
   }
 
-  public static List<Node> filterStatisticByInterval(IProcessWebStartable processStart,
-      TimeIntervalFilter timeIntervalFilter, KpiType analysisType) {
-    List<Node> results = new ArrayList<>();
-    maxArrowFrequency = 0;
-    if (Objects.nonNull(processStart)) {
-      String processRawPid = ProcessUtils.getProcessPidFromElement(processStart.pid().toString());
-      // Get all of element from process in 1st layer (which is not nested from sub)
-      List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
 
-      extractedArrowFromProcessElements(processElements, results);
-
-      Map<String, Node> nodeMap = results.stream().collect(Collectors.toMap(Node::getId, Function.identity()));
-      List<WorkflowProgress> recordedProgresses = repo.findByProcessRawPidInTime(processRawPid, timeIntervalFilter);
-      recordedProgresses.stream().forEach(record -> updateElementOrArrowByWorkflowProgress(nodeMap, record));
-      nodeMap.keySet().stream().forEach(key -> {
-        Node node = nodeMap.get(key);
-        node.setRelativeValue((float) node.getFrequency() / maxArrowFrequency);
-        updateNodeByAnalysisType(node, analysisType);
-      });
-    }
-    return results;
-  }
 
   /**
    * New approach to show bpmn statistic data without modifying original process.
@@ -253,7 +159,6 @@ public class ProcessesMonitorUtils {
       return Collections.emptyList();
     }
     
-    maxArrowFrequency = 0;
     List<Node> results = new ArrayList<>();
     Long taskStartId = WorkflowUtils.getTaskStartIdFromPID(processStart.pid().toString());
     List<ICase> cases = getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter, selectedCustomFilters);
@@ -298,7 +203,7 @@ public class ProcessesMonitorUtils {
       List<ICase> cases) {
     cases.stream().forEach(currentCase -> {
       List<String> taskIdDoneInCase = currentCase.tasks().all().stream()
-          .map(iTask -> WorkflowUtils.getTaskElementIdFromRequestPath(iTask.getRequestPath())).toList();
+          .map(iTask -> ProcessUtils.getTaskElementIdFromRequestPath(iTask.getRequestPath())).toList();
 
       Optional<AlternativePath> runningPathOpt = paths.stream()
           .filter(path -> taskIdDoneInCase.contains(path.getTaskSwitchEventIdOnPath())).findFirst()
