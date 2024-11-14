@@ -36,6 +36,7 @@ import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
 import ch.ivyteam.ivy.workflow.CaseState;
 import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
+import ch.ivyteam.ivy.workflow.custom.field.ICustomFieldMeta;
 import ch.ivyteam.ivy.workflow.query.CaseQuery;
 import ch.ivyteam.ivy.workflow.query.TaskQuery;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
@@ -247,7 +248,7 @@ public class ProcessesMonitorUtils {
    * AxonIvy system db.
    **/
   public static List<Node> filterInitialStatisticByIntervalWithoutModifyingProcess(IProcessWebStartable processStart,
-      TimeIntervalFilter timeIntervalFilter, KpiType analysisType, Map<CustomFieldType, Map<String, Object>> selectedCustomFilters) {
+      TimeIntervalFilter timeIntervalFilter, KpiType analysisType, Map<ICustomFieldMeta, Object> selectedCustomFilters) {
     if (Objects.isNull(processStart)) {
       return Collections.emptyList();
     }
@@ -328,46 +329,42 @@ public class ProcessesMonitorUtils {
   }
 
   private static List<ICase> getAllCasesFromTaskStartIdWithTimeInterval(Long taskStartId,
-      TimeIntervalFilter timeIntervalFilter, Map<CustomFieldType, Map<String, Object>> selectedCustomFilters) {
+      TimeIntervalFilter timeIntervalFilter, Map<ICustomFieldMeta, Object> selectedCustomFilters) {
     CaseQuery query = CaseQuery.create().where().state().isEqual(CaseState.DONE).and().taskStartId()
         .isEqual(taskStartId).and().startTimestamp().isGreaterOrEqualThan(timeIntervalFilter.getFrom()).and()
         .startTimestamp().isLowerOrEqualThan(timeIntervalFilter.getTo());
 
     if (ObjectUtils.isNotEmpty(selectedCustomFilters)) {
-      for (Map.Entry<CustomFieldType, Map<String, Object>> typeEntry : selectedCustomFilters.entrySet()) {
-        CustomFieldType customFieldType = typeEntry.getKey();
-        Map<String, Object> fieldMap = typeEntry.getValue();
+      for (Map.Entry<ICustomFieldMeta, Object> entry : selectedCustomFilters.entrySet()) {
+        ICustomFieldMeta customField = entry.getKey();
+        Object fieldValue = entry.getValue();
 
-        for (Map.Entry<String, Object> fieldEntry : fieldMap.entrySet()) {
-          String fieldName = fieldEntry.getKey();
-          Object fieldValue = fieldEntry.getValue();
-
-          query = addCustomFieldCondition(query, customFieldType, fieldName, fieldValue);
-        }
+        query = addCustomFieldCondition(query, customField, fieldValue);
       }
     }
     return Ivy.wf().getCaseQueryExecutor().getResults(query);
   }
 
-  private static CaseQuery addCustomFieldCondition(CaseQuery query, CustomFieldType customFieldType, String fieldName,
-      Object fieldValue) {
-    Ivy.log().warn("fieldValue " + fieldValue);
+  private static CaseQuery addCustomFieldCondition(CaseQuery query, ICustomFieldMeta customField, Object fieldValue) {
+    String customFieldName = customField.name();
+    CustomFieldType customFieldType = customField.type();
+    Ivy.log().warn("fieldName " + customFieldName);
     switch (customFieldType) {
       case STRING:
-        query = query.where().and().customField().stringField(fieldName).isEqual((String) fieldValue).or()
-            .tasks(TaskQuery.create().where().customField().stringField(fieldName).isEqual((String) fieldValue));
+        query = query.where().and().customField().stringField(customFieldName).isEqual((String) fieldValue).or()
+            .tasks(TaskQuery.create().where().customField().stringField(customFieldName).isEqual((String) fieldValue));
         break;
       case TEXT:
-        query = query.where().and().customField().textField(fieldName).isEqual((String) fieldValue).or()
-            .tasks(TaskQuery.create().where().customField().textField(fieldName).isEqual((String) fieldValue));
+        query = query.where().and().customField().textField(customFieldName).isEqual((String) fieldValue).or()
+            .tasks(TaskQuery.create().where().customField().textField(customFieldName).isEqual((String) fieldValue));
         break;
       case NUMBER:
-        query = query.where().and().customField().numberField(fieldName).isEqual((Number) fieldValue).or()
-            .tasks(TaskQuery.create().where().customField().numberField(fieldName).isEqual((Number) fieldValue));
+        query = query.where().and().customField().numberField(customFieldName).isEqual((Number) fieldValue).or()
+            .tasks(TaskQuery.create().where().customField().numberField(customFieldName).isEqual((Number) fieldValue));
         break;
       case TIMESTAMP:
-        query = query.where().and().customField().timestampField(fieldName).isEqual((Date) fieldValue).or()
-            .tasks(TaskQuery.create().where().customField().timestampField(fieldName).isEqual((Date) fieldValue));
+        query = query.where().and().customField().timestampField(customFieldName).isEqual((Date) fieldValue).or()
+            .tasks(TaskQuery.create().where().customField().timestampField(customFieldName).isEqual((Date) fieldValue));
         break;
       default:
         break;

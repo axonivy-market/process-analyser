@@ -36,10 +36,7 @@
       "name" : "Check payment method",
       "config" : {
         "task" : {
-          "name" : "Check payment method",
-          "customFields" : [
-            { "name" : "test", "type" : "STRING", "value" : "\"I'm testing\"" }
-          ]
+          "name" : "Check payment method"
         }
       },
       "visual" : {
@@ -56,6 +53,19 @@
       "id" : "f5",
       "type" : "Script",
       "name" : "validate payment method",
+      "config" : {
+        "output" : {
+          "code" : [
+            "import com.axonivy.utils.bpmnstatistic.constants.ProcessAnalyticsConstants;",
+            "import java.util.Random;",
+            "",
+            "Random random = new Random();",
+            "int index = random.nextInt(ProcessAnalyticsConstants.PAYMENT_METHODS.size());",
+            "",
+            "ivy.task.customFields().textField(\"PaymentMethod\").set(ProcessAnalyticsConstants.PAYMENT_METHODS.get(index));"
+          ]
+        }
+      },
       "visual" : {
         "at" : { "x" : 392, "y" : 384 }
       },
@@ -73,7 +83,7 @@
         "task" : {
           "name" : "Confirm payment information",
           "customFields" : [
-            { "name" : "e-wallet payment", "type" : "STRING", "value" : "\"No\"" }
+            { "name" : "EWalletPayment", "type" : "STRING", "value" : "\"No\"" }
           ]
         }
       },
@@ -93,6 +103,16 @@
       "id" : "f9",
       "type" : "Script",
       "name" : "record payment",
+      "config" : {
+        "output" : {
+          "code" : [
+            "import java.util.Random;",
+            "",
+            "Random random = new Random();",
+            "ivy.case.customFields().numberField(\"Price\").set(random.nextInt(200, 5000));"
+          ]
+        }
+      },
       "visual" : {
         "at" : { "x" : 896, "y" : 384 }
       },
@@ -135,8 +155,9 @@
       "name" : "Confirm payment with e-wallet",
       "config" : {
         "task" : {
+          "name" : "Confirm payment with e-wallet",
           "customFields" : [
-            { "name" : "e-wallet payment", "type" : "STRING", "value" : "\"Yes\"" }
+            { "name" : "EWalletPayment", "type" : "STRING", "value" : "\"Yes\"" }
           ]
         }
       },
