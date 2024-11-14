@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
@@ -160,7 +161,7 @@ public class ProcessesMonitorUtils {
     }
     
     List<Node> results = new ArrayList<>();
-    Long taskStartId = WorkflowUtils.getTaskStartIdFromPID(processStart.pid().toString());
+    Long taskStartId = ProcessUtils.getTaskStartIdFromPID(processStart.pid().toString());
     List<ICase> cases = getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter, selectedCustomFilters);
     List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
     extractedArrowFromProcessElements(processElements, results);
@@ -254,6 +255,7 @@ public class ProcessesMonitorUtils {
     String customFieldName = customField.name();
     CustomFieldType customFieldType = customField.type();
     Ivy.log().warn("fieldName " + customFieldName);
+    Ivy.log().warn("fieldValue " + fieldValue);
     switch (customFieldType) {
       case STRING:
         query = query.where().and().customField().stringField(customFieldName).isEqual((String) fieldValue).or()

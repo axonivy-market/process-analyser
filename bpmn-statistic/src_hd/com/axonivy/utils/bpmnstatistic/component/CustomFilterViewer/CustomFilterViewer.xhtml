@@ -28,24 +28,22 @@
       </p:selectCheckboxMenu>
     </div>
 
-      <p:panelGrid id="process-custom-filter" columns="3" styleClass="ui-g-12 p-0"
-        columnClasses="col-4 p-0 m-0 pr-2, col-4 p-0 pl-1 pr-1, col-4 p-0 pl-2">
-        <c:forEach items="#{processesAnalyticsBean.selectedCustomFilters.entrySet()}" var="fieldEntry">
-          <h:panelGroup styleClass="ui-fluid">
-            <p:outputLabel styleClass="ui-g-12" value="#{fieldEntry.key.name()}"
-              rendered="#{processesAnalyticsBean.filterDropdownVisible}" />
-            <p:selectOneMenu id="#{fieldEntry.key.name()}-dropdown" styleClass="ui-g-12"
-              value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key]}"
-              rendered="#{processesAnalyticsBean.filterDropdownVisible}">
-              <f:selectItems value="#{processesAnalyticsBean.customFieldsByType[fieldEntry.key]}" var="optionValue"
-                itemValue="#{optionValue}" itemLabel="#{optionValue}" />
-              <p:ajax event="itemSelect" process="@this #{fieldEntry.key.name()}-dropdown" partialSubmit="true"
-              listener="#{processesAnalyticsBean.onCustomFieldChange}" />
-                <f:param name="fieldEntryKey" value="#{fieldEntry.key.name()}"/>
-            </p:selectOneMenu>
-          </h:panelGroup>
-        </c:forEach>
-      </p:panelGrid>
+  <h:panelGroup layout="block" styleClass="col-12 justify-content-between p-0 inline-flex">
+      <ui:repeat value="#{processesAnalyticsBean.selectedCustomFilters.entrySet()}" var="fieldEntry">
+        <h:panelGroup styleClass="ui-fluid col-3 p-0" layout="block" style="width:32.5%;">
+          <p:outputLabel styleClass="ui-g-12" value="#{fieldEntry.key.name()}"
+            rendered="#{processesAnalyticsBean.filterDropdownVisible}" />
+          <p:selectOneMenu  styleClass="ui-g-12"
+            value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key]}"
+            rendered="#{processesAnalyticsBean.filterDropdownVisible}">
+            <f:selectItems value="#{processesAnalyticsBean.customFieldsByType[fieldEntry.key]}" var="optionValue"
+              itemValue="#{optionValue}" itemLabel="#{optionValue}" />
+            <p:ajax event="itemSelect" process="@this">
+            </p:ajax>
+          </p:selectOneMenu>
+        </h:panelGroup>
+      </ui:repeat>
+   </h:panelGroup>
   </h:panelGroup>
 </cc:implementation>
 </html>
