@@ -1,95 +1,122 @@
-function removeExecutedClass() {
-  getProcessDiagramIframe().find(".executed").removeClass("executed");
+const DIAGRAM_IFRAME_ID = "process-analytic-viewer";
+const FIT_TO_SCREEN_BUTTON_ID = "fitToScreenBtn";
+const DEFAULT_SLEEP_TIME_IN_MS = 500;
+const SPROTTY_VIEWPORT_BAR_ID = "sprotty_ivy-viewport-bar";
+const HIDDEN_CLASS = "hidden";
+const CHILD_DIV_FROM_NODE_ELEMENT_SELECTOR = ".node-child-label > div";
+const DEFAULT_IMAGE_TYPE = "image/jpeg";
+const ANCHOR_TAG = "a";
+const CURRENT_PROCESS_LABEL = "processDropdown_label";
+const HIDDEN_IMAGE_ID = "hidden-image";
+const JUMP_OUT_BTN_CLASS = "ivy-jump-out";
+const IVY_PROCESS_EXTENSION = ".ivp";
+
+function getCenterizeButton() {
+  return queryObjectById(DIAGRAM_IFRAME_ID)
+    .contents()
+    .find(buildIdRef(FIT_TO_SCREEN_BUTTON_ID))[0];
 }
 
-function removeDefaultFrequency() {
-  getProcessDiagramIframe()
-    .find(".execution-badge")
-    .each(function () {
-      $(this).parent().remove();
-    });
+function buildIdRef(id) {
+  return `#${id}`;
 }
 
-function santizeDiagram() {
-  removeDefaultFrequency();
-  removeExecutedClass();
+function buildClassRef(cssClass) {
+  return `.${cssClass}`;
 }
 
-function getProcessDiagramIframe() {
-  return $("#process-diagram-iframe").contents();
+function queryObjectById(id) {
+  return $(buildIdRef(id));
 }
 
-function addElementFrequency(elementId, frequencyRatio, backgroundColor, textColor) {
-  getProcessDiagramIframe()
-    .find(`#sprotty_${elementId}`)
-    .append(
-      `<svg>
-        <g>
-          <rect rx="7" ry="7" x="19" y="20" width="30" height="14" style="fill: rgb(${backgroundColor})"></rect>
-          <text x="34" y="26" dy=".4em" style="fill: rgb(${textColor})">${frequencyRatio}</text>
-        </g>
-      </svg>`
-    );
-}
-
-function loadIframe(recheckIndicator) {
-  let iframe = document.getElementById("process-diagram-iframe");
-  let recheckFrameTimer = setTimeout(function () {
-    loadIframe(true);
-  }, 500);
-
-  if (recheckIndicator) {
-    const iframeDoc = iframe.contentDocument;
-    if (iframeDoc.readyState == "complete") {
-      santizeDiagram();
-      clearTimeout(recheckFrameTimer);
-      return;
-    }
-  }
-}
-
-function renderAdditionalInformation(innerText) {
-  const sprotty = getProcessDiagramIframe().find("#sprotty");
-  if (sprotty) {
-    sprotty.append(createBarWithText(innerText));
-  }
-}
-
-function isAdditionalInformationNotRendered(sprottyNode) {
-  return sprottyNode.find("#additional-information").length != 1;
-}
-
-function createText(innerText) {
-  var newText = document.createElementNS("http://www.w3.org/1999/xhtml", "text");
-  newText.setAttributeNS(null, "class", "sprotty-label label addtional-information");
-  var textNode = document.createTextNode(innerText);
-  newText.appendChild(textNode);
-  return newText;
-}
-
-function createBarWithText(text) {
-  let bar = createDivWithClass("ivy-viewport-bar");
-  bar.setAttribute("id", "additional-information")
-  bar.setAttribute("style", "left: 1rem; right: auto");
-  let innerBox = createDivWithClass("viewport-bar");
-  let innerText = createText(text);
-  innerBox.appendChild(innerText);
-  bar.appendChild(innerBox)
-  return bar;
-}
-
-function createDivWithClass(cssClass) {
-  let div = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
-  div.setAttribute("class", cssClass);
-  return div;
+function queryObjectByIdInForm(id) {
+  return $(`[id$='process-analytics-form:${id}']`);
 }
 
 function updateUrlForIframe() {
-  const dataUrl = $(
-    "[id$='process-analytics-form:hidden-image']")
-    .attr("src");
+  const dataUrl = queryObjectByIdInForm(HIDDEN_IMAGE_ID).attr("src");
   const encodedDataUrl = encodeURIComponent(dataUrl);
-  const currentViewerUrl = $("[id$='process-analytic-viewer']").attr("src");
-  const url = currentViewerUrl + '&miningUrl=' + encodedDataUrl;
-  $("[id$='process-analytic-viewer']").attr("src", url);
+  const currentViewerUrl = window.frames[DIAGRAM_IFRAME_ID].src;
+  const url = currentViewerUrl + "&miningUrl=" + encodedDataUrl;
+  window.frames[DIAGRAM_IFRAME_ID].src = url;
+}
+
+async function getDiagramData() {
+  await returnToFirstLayer();
+  await centerizeIframeImage();
+  await captureScreenFromIframe();
+}
+
+async function captureScreenFromIframe() {
+  const iframe = queryObjectById(DIAGRAM_IFRAME_ID)[0];
+  await hideViewPortBar(true);
+  await updateMissingCssForChildSelector();
+  await html2canvas(iframe.contentWindow.document.body, { allowTaint: true })
+    .then((canvas) => {
+      let imagenName = queryObjectByIdInForm(CURRENT_PROCESS_LABEL).text();
+      imagenName = imagenName.split(IVY_PROCESS_EXTENSION)[0];
+      const encodedImg = canvas.toDataURL(DEFAULT_IMAGE_TYPE);
+      const link = document.createElement(ANCHOR_TAG);
+      link.id = "tmp-anchor";
+      link.href = encodedImg;
+      link.download = `${imagenName}.jpeg`;
+      link.click();
+    })
+    .catch((err) => {
+      console.error("Error capturing iframe content:", err);
+    });
+  await hideViewPortBar(false);
+}
+
+async function updateMissingCssForChildSelector() {
+  getContentsById(DIAGRAM_IFRAME_ID)
+    .find(CHILD_DIV_FROM_NODE_ELEMENT_SELECTOR)
+    .css({
+      "align-items": "center",
+      "display": "flex",
+      "justify-content": "center",
+      "height": "100%",
+    });
+}
+
+async function returnToFirstLayer() {
+  if (getJumpOutBtn()) {
+    await getJumpOutBtn().click();
+    await wait(DEFAULT_SLEEP_TIME_IN_MS);
+  }
+}
+
+async function centerizeIframeImage() {
+  const returnToCenterBtn = getCenterizeButton();
+  if (returnToCenterBtn) {
+    await returnToCenterBtn.click();
+    await wait(DEFAULT_SLEEP_TIME_IN_MS);
+  } else {
+    console.error("Button not found!");
+  }
+}
+
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function hideViewPortBar(boolean) {
+  const viewPortBar = getContentsById(DIAGRAM_IFRAME_ID).find(
+    buildIdRef(SPROTTY_VIEWPORT_BAR_ID)
+  );
+  if (boolean) {
+    viewPortBar.addClass(HIDDEN_CLASS);
+  } else {
+    viewPortBar.removeClass(HIDDEN_CLASS);
+  }
+}
+
+function getContentsById(id) {
+  return queryObjectById(id).contents();
+}
+
+function getJumpOutBtn() {
+  return queryObjectById(DIAGRAM_IFRAME_ID)
+    .contents()
+    .find(buildClassRef(JUMP_OUT_BTN_CLASS))[0];
 }
