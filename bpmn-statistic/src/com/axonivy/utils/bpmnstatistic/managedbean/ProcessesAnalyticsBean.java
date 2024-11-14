@@ -128,7 +128,9 @@ public class ProcessesAnalyticsBean {
 
     return Sudo.get(() -> {
       List<ITask> tasks = TaskQuery.create().where().requestPath()
-          .isLike(String.format(ProcessAnalyticsConstants.LIKE_TEXT_SEARCH, selectedPid)).executor().results();
+          .isLike(String.format(ProcessAnalyticsConstants.LIKE_TEXT_SEARCH, selectedPid)).and().startTimestamp()
+          .isGreaterOrEqualThan(timeIntervalFilter.getFrom()).and().startTimestamp()
+          .isLowerOrEqualThan(timeIntervalFilter.getTo()).executor().results();
       List<ICustomField<?>> allCustomFields = getAllCustomFields(tasks);
       customFieldsByType.clear();
 
@@ -150,7 +152,6 @@ public class ProcessesAnalyticsBean {
 
   private List<ICustomField<?>> getAllCustomFields(List<ITask> tasks) {
     List<ICustomField<?>> allCustomFields = new ArrayList<>();
-
     for (ITask task : tasks) {
       allCustomFields.addAll(task.customFields().all());
       allCustomFields.addAll(task.getCase().customFields().all());
@@ -180,6 +181,8 @@ public class ProcessesAnalyticsBean {
     String to = parameterMap.get(ProcessAnalyticsConstants.TO);
     timeIntervalFilter.setFrom(DateUtils.parseDateFromString(from));
     timeIntervalFilter.setTo(DateUtils.parseDateFromString(to));
+    resetCustomFieldFilterValues();
+    getCaseAndTaskCustomFields();
   }
 
   public void onShowStatisticBtnClick() {

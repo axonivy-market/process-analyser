@@ -254,7 +254,6 @@ public class ProcessesMonitorUtils {
   private static CaseQuery addCustomFieldCondition(CaseQuery query, ICustomFieldMeta customFieldMeta, Object customFieldValue) {
     String customFieldName = customFieldMeta.name();
     CustomFieldType customFieldType = customFieldMeta.type();
-    Ivy.log().warn("fieldName " + customFieldName);
     switch (customFieldType) {
       case STRING:
         query = query.where().and().customField().stringField(customFieldName).isEqual((String) customFieldValue).or()
