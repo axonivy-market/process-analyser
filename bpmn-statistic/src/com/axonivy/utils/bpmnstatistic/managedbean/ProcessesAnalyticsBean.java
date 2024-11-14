@@ -58,11 +58,10 @@ public class ProcessesAnalyticsBean {
   private String miningUrl;
   private ContentObject processMiningDataJsonFile;
   private String bpmnIframeSourceUrl;
-  private List<String> availableCustomFields = new ArrayList<>();
-  private Map<String, List<Object>> customFieldMap = new HashMap<>();
+  private Map<String, List<Object>> availableCustomFields = new HashMap<>();
   private Map<CustomFieldType, Map<String, List<Object>>> customFieldsByType = new HashMap<>();
   private Map<CustomFieldType, Map<String, Object>> selectedCustomFilters = new HashMap<>();
-  private List<String> selectedKeys = new ArrayList<>();
+  private List<String> selectedCustomFieldNames = new ArrayList<>();
   private boolean isFilterDropdownVisible;
 
   @PostConstruct
@@ -130,8 +129,8 @@ public class ProcessesAnalyticsBean {
         String customFieldName = customField.name();
         Object customFieldValue = customField.getOrNull();
         if (customFieldValue != null) {
-          customFieldMap = customFieldsByType.computeIfAbsent(customFieldType, k -> new HashMap<>());
-          List<Object> valuesList = customFieldMap.computeIfAbsent(customFieldName, k -> new ArrayList<>());
+          availableCustomFields = customFieldsByType.computeIfAbsent(customFieldType, k -> new HashMap<>());
+          List<Object> valuesList = availableCustomFields.computeIfAbsent(customFieldName, k -> new ArrayList<>());
           if (!valuesList.contains(customFieldValue)) {
             valuesList.add(customFieldValue);
           }
@@ -158,7 +157,7 @@ public class ProcessesAnalyticsBean {
 
   public void onCustomFieldSelect() {
     selectedCustomFilters.clear();
-    for (String fieldName : selectedKeys) {
+    for (String fieldName : selectedCustomFieldNames) {
       for (Map.Entry<CustomFieldType, Map<String, List<Object>>> entry : customFieldsByType.entrySet()) {
         CustomFieldType fieldType = entry.getKey();
         Map<String, List<Object>> fieldMap = entry.getValue();
@@ -172,7 +171,7 @@ public class ProcessesAnalyticsBean {
     setFilterDropdownVisible(!selectedCustomFilters.isEmpty());
   }
 
-  public void onCustomFieldChange() {
+  public void onCustomFieldValueSelect() {
     resetStatisticValue();
   }
 
@@ -290,20 +289,12 @@ public class ProcessesAnalyticsBean {
     return bpmnIframeSourceUrl;
   }
 
-  public List<String> getAvailableCustomFields() {
+  public Map<String, List<Object>> getAvailableCustomFields() {
     return availableCustomFields;
   }
 
-  public void setAvailableCustomFields(List<String> availableCustomFields) {
+  public void setAvailableCustomFields(Map<String, List<Object>> availableCustomFields) {
     this.availableCustomFields = availableCustomFields;
-  }
-
-  public Map<String, List<Object>> getCustomFieldMap() {
-    return customFieldMap;
-  }
-
-  public void setCustomFieldMap(Map<String, List<Object>> customFieldMap) {
-    this.customFieldMap = customFieldMap;
   }
 
   public Map<CustomFieldType, Map<String, List<Object>>> getCustomFieldsByType() {
@@ -330,11 +321,11 @@ public class ProcessesAnalyticsBean {
     this.isFilterDropdownVisible = isFilterDropdownVisible;
   }
 
-  public List<String> getSelectedKeys() {
-    return selectedKeys;
+  public List<String> getSelectedCustomFieldNames() {
+    return selectedCustomFieldNames;
   }
 
-  public void setSelectedKeys(List<String> selectedKeys) {
-    this.selectedKeys = selectedKeys;
+  public void setSelectedCustomFieldNames(List<String> selectedCustomFieldNames) {
+    this.selectedCustomFieldNames = selectedCustomFieldNames;
   }
 }

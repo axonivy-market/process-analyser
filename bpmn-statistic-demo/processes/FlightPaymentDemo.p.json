@@ -73,7 +73,7 @@
         "task" : {
           "name" : "Confirm payment information",
           "customFields" : [
-            { "name" : "test", "type" : "TEXT", "value" : "\"I'm testing text custom field\"" }
+            { "name" : "e-wallet payment", "type" : "STRING", "value" : "\"No\"" }
           ]
         }
       },
@@ -86,7 +86,7 @@
               "save record from",
               "e-wallet"
             ],
-            "offset" : { "x" : 18, "y" : -18 }
+            "offset" : { "x" : 50, "y" : -130 }
           } }
       ]
     }, {
@@ -106,7 +106,7 @@
       "id" : "f11",
       "type" : "Alternative",
       "name" : [
-        "is e-waller",
+        "is e-wallet",
         "payment?"
       ],
       "config" : {
@@ -123,11 +123,29 @@
             "name" : "no",
             "offset" : { "x" : 1, "y" : -10 }
           } },
-        { "id" : "f13", "to" : "f9", "via" : [ { "x" : 528, "y" : 272 }, { "x" : 896, "y" : 272 } ], "label" : {
+        { "id" : "f13", "to" : "f14", "via" : [ { "x" : 528, "y" : 272 } ], "label" : {
             "name" : "yes",
-            "segment" : 1.6,
-            "offset" : { "x" : -141, "y" : -10 }
+            "segment" : 1.36,
+            "offset" : { "x" : -61, "y" : 46 }
           } }
+      ]
+    }, {
+      "id" : "f14",
+      "type" : "TaskSwitchEvent",
+      "name" : "Confirm payment with e-wallet",
+      "config" : {
+        "task" : {
+          "customFields" : [
+            { "name" : "e-wallet payment", "type" : "STRING", "value" : "\"Yes\"" }
+          ]
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 672, "y" : 272 },
+        "labelOffset" : { "x" : 14, "y" : 34 }
+      },
+      "connect" : [
+        { "id" : "f15", "to" : "f9", "via" : [ { "x" : 896, "y" : 272 } ], "color" : "default" }
       ]
     } ],
   "layout" : {

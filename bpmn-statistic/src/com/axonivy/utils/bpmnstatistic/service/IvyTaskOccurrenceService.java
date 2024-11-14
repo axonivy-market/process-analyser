@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.utils.bpmnstatistic.bo.TaskOccurrence;
+import com.axonivy.utils.bpmnstatistic.constants.ProcessAnalyticsConstants;
 import com.axonivy.utils.bpmnstatistic.enums.IvyVariable;
 import com.axonivy.utils.bpmnstatistic.utils.WorkflowUtils;
 
@@ -17,7 +18,6 @@ import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.query.TaskQuery;
 
 public class IvyTaskOccurrenceService {
-  private static final String LIKE_TEXT_SEARCH = "%%%s%%";
 
   private IvyTaskOccurrenceService() {
   }
@@ -29,8 +29,9 @@ public class IvyTaskOccurrenceService {
 
   private static HashMap<String, TaskOccurrence> getHashMapTaskOccurrencesByProcessId(String processId) {
     return Sudo.get(() -> {
-      TaskQuery taskQuery = TaskQuery.create().where().requestPath().isLike(String.format(LIKE_TEXT_SEARCH, processId))
-          .orderBy().startTaskSwitchEventId();
+      TaskQuery taskQuery = TaskQuery.create().where().requestPath()
+          .isLike(String.format(ProcessAnalyticsConstants.LIKE_TEXT_SEARCH, processId)).orderBy()
+          .startTaskSwitchEventId();
       HashMap<String, TaskOccurrence> map = new HashMap<>();
       countTaskOccurrencesByTaskQuery(map, taskQuery);
       return map;
