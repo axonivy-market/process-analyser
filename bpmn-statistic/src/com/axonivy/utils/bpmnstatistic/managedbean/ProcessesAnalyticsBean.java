@@ -97,11 +97,13 @@ public class ProcessesAnalyticsBean {
       selectedProcess = null;
     }
     resetStatisticValue();
+    resetCustomFieldFilterValues();
   }
 
   public void onProcessSelect() {
     resetStatisticValue();
     getCaseAndTaskCustomFields();
+    resetCustomFieldFilterValues();
   }
 
   public void onKpiTypeSelect() {
@@ -112,6 +114,11 @@ public class ProcessesAnalyticsBean {
     processMiningData = null;
     nodes = new ArrayList<>();
     bpmnIframeSourceUrl = StringUtils.EMPTY;
+  }
+
+  private void resetCustomFieldFilterValues() {
+    selectedCustomFieldNames = new ArrayList<>();
+    setFilterDropdownVisible(false);
   }
 
   public Map<ICustomFieldMeta, List<Object>> getCaseAndTaskCustomFields() {
@@ -152,7 +159,6 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onCustomFieldSelect() {
-    
     selectedCustomFilters.clear();
     for (String customFieldName : selectedCustomFieldNames) {
       for (Map.Entry<ICustomFieldMeta, List<Object>> entry : customFieldsByType.entrySet()) {

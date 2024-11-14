@@ -28,7 +28,7 @@
       </p:selectCheckboxMenu>
     </div>
 
-  <h:panelGroup layout="block" styleClass="col-12 justify-content-between p-0 inline-flex">
+  <h:panelGroup layout="block" styleClass="col-12 p-0 gap-3 inline-flex">
       <ui:repeat value="#{processesAnalyticsBean.selectedCustomFilters.entrySet()}" var="fieldEntry">
         <h:panelGroup styleClass="ui-fluid col-3 p-0" layout="block" style="width:32.5%;">
           <p:outputLabel styleClass="ui-g-12" value="#{fieldEntry.key.name()}"

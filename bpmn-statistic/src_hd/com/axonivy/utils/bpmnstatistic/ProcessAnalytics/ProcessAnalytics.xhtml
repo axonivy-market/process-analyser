@@ -46,7 +46,7 @@
               <f:selectItems
                 value="#{processesAnalyticsBean.availableModules}"
                 var="module" itemLabel="#{module}" itemValue="#{module}" />
-              <p:ajax event="itemSelect" update="process-analytics-form"
+              <p:ajax event="change" update="process-analytics-form"
                 listener="#{processesAnalyticsBean.onModuleSelect}" />
             </p:selectOneMenu>
           </h:panelGroup>
@@ -60,7 +60,7 @@
                 itemValue="#{null}" noSelectionOption="true" />
               <f:selectItems
                 value="#{processesAnalyticsBean.availableProcesses}" />
-              <p:ajax event="itemSelect" update="process-analytics-form"
+              <p:ajax event="change" update="process-analytics-form"
                 listener="#{processesAnalyticsBean.onProcessSelect}" />
             </p:selectOneMenu>
           </h:panelGroup>
