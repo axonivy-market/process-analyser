@@ -48,23 +48,32 @@ async function getDiagramData() {
 }
 
 async function captureScreenFromIframe() {
-  const iframe = queryObjectById(DIAGRAM_IFRAME_ID)[0];
   await hideViewPortBar(true);
   await updateMissingCssForChildSelector();
-  await html2canvas(iframe.contentWindow.document.body, { allowTaint: true })
-    .then((canvas) => {
-      let imagenName = queryObjectByIdInForm(CURRENT_PROCESS_LABEL).text();
-      imagenName = imagenName.split(IVY_PROCESS_EXTENSION)[0];
-      const encodedImg = canvas.toDataURL(DEFAULT_IMAGE_TYPE);
-      const link = document.createElement(ANCHOR_TAG);
-      link.id = "tmp-anchor";
-      link.href = encodedImg;
-      link.download = `${imagenName}.jpeg`;
-      link.click();
-    })
-    .catch((err) => {
-      console.error("Error capturing iframe content:", err);
-    });
+
+  // Increase resolution for capturing image
+  const iframe = await setIframeResolution("1920px", "1080px");
+  const svgContent = iframe.contentWindow.document.body;
+
+  await html2canvas(svgContent, {
+    width: 1920,
+    height: 1080,
+    scale: 1,
+    allowTaint: true
+  }).then(canvas => {
+    const imgData = canvas.toDataURL(DEFAULT_IMAGE_TYPE);
+    let imageName = queryObjectByIdInForm(CURRENT_PROCESS_LABEL).text();
+    imageName = imageName.split(IVY_PROCESS_EXTENSION)[0];
+    const downloadLink = document.createElement(ANCHOR_TAG);
+    downloadLink.href = imgData;
+    downloadLink.download = `${imageName}.jpeg`;
+    downloadLink.click();
+  }).catch(error => {
+    console.error("Capture failed:", error);
+  });
+
+  // Reset resolution for iframe
+  await setIframeResolution("100%","400")
   await hideViewPortBar(false);
 }
 
@@ -77,6 +86,13 @@ async function updateMissingCssForChildSelector() {
       "justify-content": "center",
       "height": "100%",
     });
+}
+
+async function setIframeResolution(width, height) {
+  const iframe = queryObjectById(DIAGRAM_IFRAME_ID)[0];
+  iframe.style.width = width;
+  iframe.style.height = height;
+  return iframe;
 }
 
 async function returnToFirstLayer() {
