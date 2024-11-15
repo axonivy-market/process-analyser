@@ -9,7 +9,7 @@ CustomFields:
 #      Label: My task custom field
 #      Description: This new task custom field can be used to ...
 #      Type: STRING
-#  Cases:e-wallet payment
+#  Cases:
 #    MyCaseCustomField:
 #      Label: My case custom field
 #      Description: This new case custom field can be used to ...
