@@ -53,28 +53,27 @@ async function getDiagramData() {
 }
 
 async function captureScreenFromIframe() {
+  const iframe = queryObjectById(DIAGRAM_IFRAME_ID)[0];
   await hideViewPortBar(true);
   await updateMissingCssForChildSelector();
-  const iframe = queryObjectById(DIAGRAM_IFRAME_ID)[0];
-  const svgContent = iframe.contentWindow.document.body;
 
-  await html2canvas(svgContent, {
+  await html2canvas(iframe.contentWindow.document.body, {
     width: 1920,
     height: 1080,
     scale: 1,
     allowTaint: true,
   })
     .then((canvas) => {
-      const imgData = canvas.toDataURL(DEFAULT_IMAGE_TYPE);
       let imageName = queryObjectByIdInForm(CURRENT_PROCESS_LABEL).text();
       imageName = imageName.split(IVY_PROCESS_EXTENSION)[0];
-      const downloadLink = document.createElement(ANCHOR_TAG);
-      downloadLink.href = imgData;
-      downloadLink.download = `${imageName}.jpeg`;
-      downloadLink.click();
+      const encodedImg = canvas.toDataURL(DEFAULT_IMAGE_TYPE);
+      const link = document.createElement(ANCHOR_TAG);
+      link.href = encodedImg;
+      link.download = `${imageName}.jpeg`;
+      link.click();
     })
-    .catch((error) => {
-      console.error("Capture failed:", error);
+    .catch((err) => {
+      console.error("Error capturing iframe content:", err);
     });
   await hideViewPortBar(false);
 }
