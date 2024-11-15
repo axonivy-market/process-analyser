@@ -10,6 +10,12 @@ const CURRENT_PROCESS_LABEL = "processDropdown_label";
 const HIDDEN_IMAGE_ID = "hidden-image";
 const JUMP_OUT_BTN_CLASS = "ivy-jump-out";
 const IVY_PROCESS_EXTENSION = ".ivp";
+const NODE_WITH_ICON_BESIDE_SELECTOR =
+  "g[id*=_label]:has(~.activity-icon) .node-child-label>div";
+const FULL_HD_RESOLUTION_WIDTH = "1920px";
+const FULL_HD_RESOLUTION_HEIGHT = "1080px";
+const DEFAULT_IFRAME_WIDTH = "100%";
+const DEFAULT_IFRAME_HEIGHT = "400px";
 
 function getCenterizeButton() {
   return queryObjectById(DIAGRAM_IFRAME_ID)
@@ -43,23 +49,34 @@ function updateUrlForIframe() {
 
 async function getDiagramData() {
   await returnToFirstLayer();
+  await setIframeResolution(
+    FULL_HD_RESOLUTION_WIDTH,
+    FULL_HD_RESOLUTION_HEIGHT
+  );
+  await wait(DEFAULT_SLEEP_TIME_IN_MS);
   await centerizeIframeImage();
   await captureScreenFromIframe();
+  await setIframeResolution(DEFAULT_IFRAME_WIDTH, DEFAULT_IFRAME_HEIGHT);
 }
 
 async function captureScreenFromIframe() {
   const iframe = queryObjectById(DIAGRAM_IFRAME_ID)[0];
   await hideViewPortBar(true);
   await updateMissingCssForChildSelector();
-  await html2canvas(iframe.contentWindow.document.body, { allowTaint: true })
+
+  await html2canvas(iframe.contentWindow.document.body, {
+    width: 1920,
+    height: 1080,
+    scale: 1,
+    allowTaint: true,
+  })
     .then((canvas) => {
-      let imagenName = queryObjectByIdInForm(CURRENT_PROCESS_LABEL).text();
-      imagenName = imagenName.split(IVY_PROCESS_EXTENSION)[0];
+      let imageName = queryObjectByIdInForm(CURRENT_PROCESS_LABEL).text();
+      imageName = imageName.split(IVY_PROCESS_EXTENSION)[0];
       const encodedImg = canvas.toDataURL(DEFAULT_IMAGE_TYPE);
       const link = document.createElement(ANCHOR_TAG);
-      link.id = "tmp-anchor";
       link.href = encodedImg;
-      link.download = `${imagenName}.jpeg`;
+      link.download = `${imageName}.jpeg`;
       link.click();
     })
     .catch((err) => {
@@ -77,6 +94,15 @@ async function updateMissingCssForChildSelector() {
       "justify-content": "center",
       "height": "100%",
     });
+  getContentsById(DIAGRAM_IFRAME_ID)
+    .find(NODE_WITH_ICON_BESIDE_SELECTOR)
+    .css({ "margin-left": "40px", "text-align": "start" });
+}
+
+async function setIframeResolution(width, height) {
+  const iframe = queryObjectById(DIAGRAM_IFRAME_ID)[0];
+  iframe.width = width;
+  iframe.height = height;
 }
 
 async function returnToFirstLayer() {
@@ -90,7 +116,7 @@ async function centerizeIframeImage() {
   const returnToCenterBtn = getCenterizeButton();
   if (returnToCenterBtn) {
     await returnToCenterBtn.click();
-    await wait(DEFAULT_SLEEP_TIME_IN_MS);
+    await wait(DEFAULT_SLEEP_TIME_IN_MS * 1.5);
   } else {
     console.error("Button not found!");
   }
