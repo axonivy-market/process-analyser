@@ -10,6 +10,8 @@ const CURRENT_PROCESS_LABEL = "processDropdown_label";
 const HIDDEN_IMAGE_ID = "hidden-image";
 const JUMP_OUT_BTN_CLASS = "ivy-jump-out";
 const IVY_PROCESS_EXTENSION = ".ivp";
+const NODE_WITH_ICON_BESIDE_SELECTOR =
+  "g[id*=_label]:has(~.activity-icon) .node-child-label>div";
 
 function getCenterizeButton() {
   return queryObjectById(DIAGRAM_IFRAME_ID)
@@ -44,9 +46,10 @@ function updateUrlForIframe() {
 async function getDiagramData() {
   await returnToFirstLayer();
   await setIframeResolution("1920px", "1080px");
+  await wait(DEFAULT_SLEEP_TIME_IN_MS);
   await centerizeIframeImage();
   await captureScreenFromIframe();
-  await setIframeResolution("100%", "400");
+  await setIframeResolution("100%", "400px");
 }
 
 async function captureScreenFromIframe() {
@@ -59,18 +62,20 @@ async function captureScreenFromIframe() {
     width: 1920,
     height: 1080,
     scale: 1,
-    allowTaint: true
-  }).then(canvas => {
-    const imgData = canvas.toDataURL(DEFAULT_IMAGE_TYPE);
-    let imageName = queryObjectByIdInForm(CURRENT_PROCESS_LABEL).text();
-    imageName = imageName.split(IVY_PROCESS_EXTENSION)[0];
-    const downloadLink = document.createElement(ANCHOR_TAG);
-    downloadLink.href = imgData;
-    downloadLink.download = `${imageName}.jpeg`;
-    downloadLink.click();
-  }).catch(error => {
-    console.error("Capture failed:", error);
-  });
+    allowTaint: true,
+  })
+    .then((canvas) => {
+      const imgData = canvas.toDataURL(DEFAULT_IMAGE_TYPE);
+      let imageName = queryObjectByIdInForm(CURRENT_PROCESS_LABEL).text();
+      imageName = imageName.split(IVY_PROCESS_EXTENSION)[0];
+      const downloadLink = document.createElement(ANCHOR_TAG);
+      downloadLink.href = imgData;
+      downloadLink.download = `${imageName}.jpeg`;
+      downloadLink.click();
+    })
+    .catch((error) => {
+      console.error("Capture failed:", error);
+    });
   await hideViewPortBar(false);
 }
 
@@ -83,13 +88,15 @@ async function updateMissingCssForChildSelector() {
       "justify-content": "center",
       "height": "100%",
     });
+  getContentsById(DIAGRAM_IFRAME_ID)
+    .find(NODE_WITH_ICON_BESIDE_SELECTOR)
+    .css({ "margin-left": "40px", "text-align": "start" });
 }
 
 async function setIframeResolution(width, height) {
   const iframe = queryObjectById(DIAGRAM_IFRAME_ID)[0];
-  iframe.style.width = width;
-  iframe.style.height = height;
-  return iframe;
+  iframe.width = width;
+  iframe.height = height;
 }
 
 async function returnToFirstLayer() {
@@ -103,7 +110,7 @@ async function centerizeIframeImage() {
   const returnToCenterBtn = getCenterizeButton();
   if (returnToCenterBtn) {
     await returnToCenterBtn.click();
-    await wait(DEFAULT_SLEEP_TIME_IN_MS);
+    await wait(DEFAULT_SLEEP_TIME_IN_MS * 1.5);
   } else {
     console.error("Button not found!");
   }
