@@ -12,6 +12,10 @@ const JUMP_OUT_BTN_CLASS = "ivy-jump-out";
 const IVY_PROCESS_EXTENSION = ".ivp";
 const NODE_WITH_ICON_BESIDE_SELECTOR =
   "g[id*=_label]:has(~.activity-icon) .node-child-label>div";
+const FULL_HD_RESOLUTION_WIDTH = "1920px";
+const FULL_HD_RESOLUTION_HEIGHT = "1080px";
+const DEFAULT_IFRAME_WIDTH = "100%";
+const DEFAULT_IFRAME_HEIGHT = "400px";
 
 function getCenterizeButton() {
   return queryObjectById(DIAGRAM_IFRAME_ID)
@@ -45,11 +49,14 @@ function updateUrlForIframe() {
 
 async function getDiagramData() {
   await returnToFirstLayer();
-  await setIframeResolution("1920px", "1080px");
+  await setIframeResolution(
+    FULL_HD_RESOLUTION_WIDTH,
+    FULL_HD_RESOLUTION_HEIGHT
+  );
   await wait(DEFAULT_SLEEP_TIME_IN_MS);
   await centerizeIframeImage();
   await captureScreenFromIframe();
-  await setIframeResolution("100%", "400px");
+  await setIframeResolution(DEFAULT_IFRAME_WIDTH, DEFAULT_IFRAME_HEIGHT);
 }
 
 async function captureScreenFromIframe() {
