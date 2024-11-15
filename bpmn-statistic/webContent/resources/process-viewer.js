@@ -43,16 +43,16 @@ function updateUrlForIframe() {
 
 async function getDiagramData() {
   await returnToFirstLayer();
+  await setIframeResolution("1920px", "1080px");
   await centerizeIframeImage();
   await captureScreenFromIframe();
+  await setIframeResolution("100%", "400");
 }
 
 async function captureScreenFromIframe() {
   await hideViewPortBar(true);
   await updateMissingCssForChildSelector();
-
-  // Increase resolution for capturing image
-  const iframe = await setIframeResolution("1920px", "1080px");
+  const iframe = queryObjectById(DIAGRAM_IFRAME_ID)[0];
   const svgContent = iframe.contentWindow.document.body;
 
   await html2canvas(svgContent, {
@@ -71,9 +71,6 @@ async function captureScreenFromIframe() {
   }).catch(error => {
     console.error("Capture failed:", error);
   });
-
-  // Reset resolution for iframe
-  await setIframeResolution("100%","400")
   await hideViewPortBar(false);
 }
 
