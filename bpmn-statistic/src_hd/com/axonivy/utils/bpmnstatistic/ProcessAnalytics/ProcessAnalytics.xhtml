@@ -32,9 +32,11 @@
         <p:outputPanel>
             <br />
         </p:outputPanel>
+
+
         <p:panelGrid id="search-fields" columns="3" layout="grid"
           styleClass="ui-fluid mb-3"
-          columnClasses="ui-g-4 p-0 pr-2, ui-g-4 p-0 pl-1 pr-1, ui-g-4 p-0 pl-2">
+          columnClasses="ui-g-4, ui-g-4, ui-g-4">
 
           <h:panelGroup>
             <p:outputLabel for="moduleDropdown"
@@ -93,7 +95,7 @@
 
         <hr />
 
-        <ic:com.axonivy.utils.bpmnstatistic.component.CustomFilterViewer
+        <ic:com.axonivy.utils.bpmnstatistic.component.CustomFilter
           processesAnalyticsBean="#{processesAnalyticsBean}" />
 
         <iframe id="process-analytic-viewer"

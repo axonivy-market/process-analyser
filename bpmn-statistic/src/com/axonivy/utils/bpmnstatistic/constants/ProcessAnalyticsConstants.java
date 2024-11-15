@@ -28,6 +28,4 @@ public class ProcessAnalyticsConstants {
   public static final String MODULE_PATH = "%s/%s/";
   public static final String ANALYSIS_EXCEL_FILE_PATTERN = "Analysis_Of_%s";
   public static final String LIKE_TEXT_SEARCH = "%%%s%%";
-  public static final String[] PAYMENT_METHODS =
-    {"PayPal", "Apple Pay", "Google Pay", "Cash", "Bank Transfer", "Alipay", "WeChat Pay"};
 }

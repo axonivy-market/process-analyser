@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.utils.bpmnstatistic.bo.TaskOccurrence;
+import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
 import com.axonivy.utils.bpmnstatistic.constants.ProcessAnalyticsConstants;
 import com.axonivy.utils.bpmnstatistic.enums.IvyVariable;
 import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
@@ -15,6 +16,8 @@ import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.security.exec.Sudo;
 import ch.ivyteam.ivy.workflow.ITask;
+import ch.ivyteam.ivy.workflow.custom.field.ICustomField;
+import ch.ivyteam.ivy.workflow.custom.field.ICustomFieldMeta;
 import ch.ivyteam.ivy.workflow.query.TaskQuery;
 
 public class IvyTaskOccurrenceService {
@@ -30,7 +33,7 @@ public class IvyTaskOccurrenceService {
   private static HashMap<String, TaskOccurrence> getHashMapTaskOccurrencesByProcessId(String processId) {
     return Sudo.get(() -> {
       TaskQuery taskQuery = TaskQuery.create().where().requestPath()
-          .isLike(String.format(ProcessAnalyticsConstants.LIKE_TEXT_SEARCH, processId)).orderBy()
+          .isLike(getRequestPath(processId)).orderBy()
           .startTaskSwitchEventId();
       HashMap<String, TaskOccurrence> map = new HashMap<>();
       countTaskOccurrencesByTaskQuery(map, taskQuery);
@@ -87,5 +90,54 @@ public class IvyTaskOccurrenceService {
     }
 
     return result;
+  }
+
+  public static Map<ICustomFieldMeta, List<Object>> getCaseAndTaskCustomFields(String selectedPid,
+      TimeIntervalFilter timeIntervalFilter, Map<ICustomFieldMeta, List<Object>> customFieldsByType) {
+    return Sudo.get(() -> {
+      TaskQuery taskQuery = TaskQuery.create().where().requestPath().isLike(getRequestPath(selectedPid)).and()
+          .startTimestamp().isGreaterOrEqualThan(timeIntervalFilter.getFrom()).and().startTimestamp()
+          .isLowerOrEqualThan(timeIntervalFilter.getTo());
+
+      List<ITask> tasks = new ArrayList<>();
+      int maxQueryResults = Integer.valueOf(Ivy.var().get(IvyVariable.MAX_QUERY_RESULTS.getVariableName()));
+      Integer startIndex = 0;
+
+      do {
+        tasks = Ivy.wf().getTaskQueryExecutor().getResults(taskQuery, startIndex, maxQueryResults);
+        startIndex += maxQueryResults;
+      } while (maxQueryResults == tasks.size());
+
+      List<ICustomField<?>> allCustomFields = getAllCustomFields(tasks);
+      customFieldsByType.clear();
+
+      for (ICustomField<?> customField : allCustomFields) {
+        ICustomFieldMeta fieldMeta = customField.meta();
+        Object customFieldValue = customField.getOrNull();
+
+        if (customFieldValue != null) {
+          List<Object> addedCustomFieldValues = customFieldsByType.computeIfAbsent(fieldMeta, k -> new ArrayList<>());
+
+          if (!addedCustomFieldValues.contains(customFieldValue)) {
+            addedCustomFieldValues.add(customFieldValue);
+          }
+        }
+      }
+      return customFieldsByType;
+    });
+  }
+
+  private static List<ICustomField<?>> getAllCustomFields(List<ITask> tasks) {
+    List<ICustomField<?>> allCustomFields = new ArrayList<>();
+    for (ITask task : tasks) {
+      allCustomFields.addAll(task.customFields().all());
+      allCustomFields.addAll(task.getCase().getBusinessCase().customFields().all());
+      allCustomFields.addAll(task.getCase().customFields().all());
+    }
+    return allCustomFields;
+  }
+
+  private static String getRequestPath(String processId) {
+    return String.format(ProcessAnalyticsConstants.LIKE_TEXT_SEARCH, processId);
   }
 }

@@ -56,13 +56,13 @@
       "config" : {
         "output" : {
           "code" : [
-            "import com.axonivy.utils.bpmnstatistic.constants.ProcessAnalyticsConstants;",
+            "import com.axonivy.utils.bpmnstatistic.constants.FlightConstants;",
             "import java.util.Random;",
             "",
             "Random random = new Random();",
-            "int index = random.nextInt(ProcessAnalyticsConstants.PAYMENT_METHODS.size());",
+            "int index = random.nextInt(FlightConstants.PAYMENT_METHODS.size());",
             "",
-            "ivy.task.customFields().textField(\"PaymentMethod\").set(ProcessAnalyticsConstants.PAYMENT_METHODS.get(index));"
+            "ivy.task.customFields().textField(\"PaymentMethod\").set(FlightConstants.PAYMENT_METHODS.get(index));"
           ]
         }
       },

@@ -23,6 +23,7 @@ import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
 import com.axonivy.utils.bpmnstatistic.constants.ProcessAnalyticsConstants;
 import com.axonivy.utils.bpmnstatistic.enums.KpiType;
 import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
+import com.axonivy.utils.bpmnstatistic.service.IvyTaskOccurrenceService;
 import com.axonivy.utils.bpmnstatistic.utils.DateUtils;
 import com.axonivy.utils.bpmnstatistic.utils.JacksonUtils;
 import com.axonivy.utils.bpmnstatistic.utils.ProcessesMonitorUtils;
@@ -33,11 +34,7 @@ import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.location.IParser.ParseException;
 import ch.ivyteam.ivy.process.rdm.IProcess;
-import ch.ivyteam.ivy.security.exec.Sudo;
-import ch.ivyteam.ivy.workflow.ITask;
-import ch.ivyteam.ivy.workflow.custom.field.ICustomField;
 import ch.ivyteam.ivy.workflow.custom.field.ICustomFieldMeta;
-import ch.ivyteam.ivy.workflow.query.TaskQuery;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
 
@@ -126,37 +123,7 @@ public class ProcessesAnalyticsBean {
       selectedPid = process.pid().getParent().toString();
     });
 
-    return Sudo.get(() -> {
-      List<ITask> tasks = TaskQuery.create().where().requestPath()
-          .isLike(String.format(ProcessAnalyticsConstants.LIKE_TEXT_SEARCH, selectedPid)).and().startTimestamp()
-          .isGreaterOrEqualThan(timeIntervalFilter.getFrom()).and().startTimestamp()
-          .isLowerOrEqualThan(timeIntervalFilter.getTo()).executor().results();
-      List<ICustomField<?>> allCustomFields = getAllCustomFields(tasks);
-      customFieldsByType.clear();
-
-      for (ICustomField<?> customField : allCustomFields) {
-        ICustomFieldMeta fieldMeta = customField.meta();
-        Object customFieldValue = customField.getOrNull();
-
-        if (customFieldValue != null) {
-          List<Object> addedCustomFieldValues = customFieldsByType.computeIfAbsent(fieldMeta, k -> new ArrayList<>());
-
-          if (!addedCustomFieldValues.contains(customFieldValue)) {
-            addedCustomFieldValues.add(customFieldValue);
-          }
-        }
-      }
-      return customFieldsByType;
-    });
-  }
-
-  private List<ICustomField<?>> getAllCustomFields(List<ITask> tasks) {
-    List<ICustomField<?>> allCustomFields = new ArrayList<>();
-    for (ITask task : tasks) {
-      allCustomFields.addAll(task.customFields().all());
-      allCustomFields.addAll(task.getCase().customFields().all());
-    }
-    return allCustomFields;
+    return IvyTaskOccurrenceService.getCaseAndTaskCustomFields(selectedPid, timeIntervalFilter, customFieldsByType);
   }
 
   public void onCustomFieldSelect() {
