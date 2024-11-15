@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.axonivy.utils.bpmnstatistic.bo.CustomFieldFilter;
 import com.axonivy.utils.bpmnstatistic.bo.TaskOccurrence;
 import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
 import com.axonivy.utils.bpmnstatistic.constants.ProcessAnalyticsConstants;
@@ -17,7 +18,6 @@ import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.security.exec.Sudo;
 import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.custom.field.ICustomField;
-import ch.ivyteam.ivy.workflow.custom.field.ICustomFieldMeta;
 import ch.ivyteam.ivy.workflow.query.TaskQuery;
 
 public class IvyTaskOccurrenceService {
@@ -92,8 +92,8 @@ public class IvyTaskOccurrenceService {
     return result;
   }
 
-  public static Map<ICustomFieldMeta, List<Object>> getCaseAndTaskCustomFields(String selectedPid,
-      TimeIntervalFilter timeIntervalFilter, Map<ICustomFieldMeta, List<Object>> customFieldsByType) {
+  public static Map<CustomFieldFilter, List<Object>> getCaseAndTaskCustomFields(String selectedPid,
+      TimeIntervalFilter timeIntervalFilter, Map<CustomFieldFilter, List<Object>> customFieldsByType) {
     return Sudo.get(() -> {
       TaskQuery taskQuery = TaskQuery.create().where().requestPath().isLike(getRequestPath(selectedPid)).and()
           .startTimestamp().isGreaterOrEqualThan(timeIntervalFilter.getFrom()).and().startTimestamp()
@@ -101,40 +101,42 @@ public class IvyTaskOccurrenceService {
 
       List<ITask> tasks = new ArrayList<>();
       int maxQueryResults = Integer.valueOf(Ivy.var().get(IvyVariable.MAX_QUERY_RESULTS.getVariableName()));
-      Integer startIndex = 0;
+      int startIndex = 0;
 
       do {
         tasks = Ivy.wf().getTaskQueryExecutor().getResults(taskQuery, startIndex, maxQueryResults);
         startIndex += maxQueryResults;
       } while (maxQueryResults == tasks.size());
 
-      List<ICustomField<?>> allCustomFields = getAllCustomFields(tasks);
-      customFieldsByType.clear();
-
-      for (ICustomField<?> customField : allCustomFields) {
-        ICustomFieldMeta fieldMeta = customField.meta();
-        Object customFieldValue = customField.getOrNull();
-
-        if (customFieldValue != null) {
-          List<Object> addedCustomFieldValues = customFieldsByType.computeIfAbsent(fieldMeta, k -> new ArrayList<>());
-
-          if (!addedCustomFieldValues.contains(customFieldValue)) {
-            addedCustomFieldValues.add(customFieldValue);
-          }
+      for (ITask task : tasks) {
+        addCustomFieldsToCustomFieldsByType(task.customFields().all(), false, customFieldsByType);
+        if (task.getCase() != null) {
+          addCustomFieldsToCustomFieldsByType(task.getCase().getBusinessCase().customFields().all(), true, customFieldsByType);
+          addCustomFieldsToCustomFieldsByType(task.getCase().customFields().all(), true, customFieldsByType);
         }
       }
+
       return customFieldsByType;
     });
   }
 
-  private static List<ICustomField<?>> getAllCustomFields(List<ITask> tasks) {
-    List<ICustomField<?>> allCustomFields = new ArrayList<>();
-    for (ITask task : tasks) {
-      allCustomFields.addAll(task.customFields().all());
-      allCustomFields.addAll(task.getCase().getBusinessCase().customFields().all());
-      allCustomFields.addAll(task.getCase().customFields().all());
+  private static void addCustomFieldsToCustomFieldsByType(List<ICustomField<?>> customFields, boolean isCustomFieldFromCase,
+      Map<CustomFieldFilter, List<Object>> customFieldsByType) {
+    for (ICustomField<?> customField : customFields) {
+      Object customFieldValue = customField.getOrNull();
+      if (customFieldValue != null) {
+        CustomFieldFilter customFieldFilter = new CustomFieldFilter();
+        customFieldFilter.setCustomFieldMeta(customField.meta());
+        customFieldFilter.setCustomFieldFromCase(isCustomFieldFromCase);
+
+        List<Object> addedCustomFieldValues =
+            customFieldsByType.computeIfAbsent(customFieldFilter, k -> new ArrayList<>());
+
+        if (!addedCustomFieldValues.contains(customFieldValue)) {
+          addedCustomFieldValues.add(customFieldValue);
+        }
+      }
     }
-    return allCustomFields;
   }
 
   private static String getRequestPath(String processId) {

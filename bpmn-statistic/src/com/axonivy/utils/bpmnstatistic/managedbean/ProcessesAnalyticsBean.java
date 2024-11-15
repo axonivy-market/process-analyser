@@ -16,6 +16,7 @@ import javax.faces.context.FacesContext;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.axonivy.utils.bpmnstatistic.bo.CustomFieldFilter;
 import com.axonivy.utils.bpmnstatistic.bo.Node;
 import com.axonivy.utils.bpmnstatistic.bo.ProcessMiningData;
 import com.axonivy.utils.bpmnstatistic.bo.TimeFrame;
@@ -34,7 +35,6 @@ import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.location.IParser.ParseException;
 import ch.ivyteam.ivy.process.rdm.IProcess;
-import ch.ivyteam.ivy.workflow.custom.field.ICustomFieldMeta;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
 
@@ -55,8 +55,8 @@ public class ProcessesAnalyticsBean {
   private String miningUrl;
   private ContentObject processMiningDataJsonFile;
   private String bpmnIframeSourceUrl;
-  private Map<ICustomFieldMeta, List<Object>> customFieldsByType = new HashMap<>();
-  private Map<ICustomFieldMeta, Object> selectedCustomFilters = new HashMap<>();
+  private Map<CustomFieldFilter, List<Object>> customFieldsByType = new HashMap<>();
+  private Map<CustomFieldFilter, Object> selectedCustomFilters = new HashMap<>();
   private List<String> selectedCustomFieldNames = new ArrayList<>();
   private boolean isFilterDropdownVisible;
 
@@ -118,7 +118,7 @@ public class ProcessesAnalyticsBean {
     setFilterDropdownVisible(false);
   }
 
-  public Map<ICustomFieldMeta, List<Object>> getCaseAndTaskCustomFields() {
+  public Map<CustomFieldFilter, List<Object>> getCaseAndTaskCustomFields() {
     Optional.ofNullable(getSelectedIProcessWebStartable()).ifPresent(process -> {
       selectedPid = process.pid().getParent().toString();
     });
@@ -129,13 +129,13 @@ public class ProcessesAnalyticsBean {
   public void onCustomFieldSelect() {
     selectedCustomFilters.clear();
     for (String customFieldName : selectedCustomFieldNames) {
-      for (Map.Entry<ICustomFieldMeta, List<Object>> entry : customFieldsByType.entrySet()) {
-        ICustomFieldMeta customFieldMeta = entry.getKey();
+      for (Map.Entry<CustomFieldFilter, List<Object>> entry : customFieldsByType.entrySet()) {
+        CustomFieldFilter customFieldFilter = entry.getKey();
         List<Object> customFieldValues = entry.getValue();
 
-        if (customFieldMeta.name().equals(customFieldName)) {
+        if (customFieldFilter.getCustomFieldMeta().name().equals(customFieldName)) {
           Object customFieldValue = customFieldValues.stream().distinct().findFirst().orElse(null);
-          selectedCustomFilters.put(customFieldMeta, customFieldValue);
+          selectedCustomFilters.put(customFieldFilter, customFieldValue);
         }
       }
     }
@@ -258,19 +258,19 @@ public class ProcessesAnalyticsBean {
     return bpmnIframeSourceUrl;
   }
 
-  public Map<ICustomFieldMeta, List<Object>> getCustomFieldsByType() {
+  public Map<CustomFieldFilter, List<Object>> getCustomFieldsByType() {
     return customFieldsByType;
   }
 
-  public void setCustomFieldsByType(Map<ICustomFieldMeta, List<Object>> customFieldsByType) {
+  public void setCustomFieldsByType(Map<CustomFieldFilter, List<Object>> customFieldsByType) {
     this.customFieldsByType = customFieldsByType;
   }
 
-  public Map<ICustomFieldMeta, Object> getSelectedCustomFilters() {
+  public Map<CustomFieldFilter, Object> getSelectedCustomFilters() {
     return selectedCustomFilters;
   }
 
-  public void setSelectedCustomFilters(Map<ICustomFieldMeta, Object> selectedCustomFilters) {
+  public void setSelectedCustomFilters(Map<CustomFieldFilter, Object> selectedCustomFilters) {
     this.selectedCustomFilters = selectedCustomFilters;
   }
 
