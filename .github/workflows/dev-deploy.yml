@@ -1,0 +1,40 @@
+name: Dev-Deploy-Build
+
+on:
+  push:
+    branches: [ "develop" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: axonivy-market/github-workflows/.github/workflows/dev.yml@v4
+    with:
+      ivyVersion: 11
+      ivyPluginVersion: 11.3.0
+      testerVersion: 11.3.0
+
+  deploy:
+    needs: build
+    runs-on: 'bpmn-statistic'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            pom.xml
+          sparse-checkout-cone-mode: false
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+
+      - name: Copy file
+        run: |
+          version=$(xml sel -t -m "//_:project" -v _:version pom.xml)
+          artifactDir=artifact/bpmn-statistic
+          engineDir=/var/tools/ivy/11/applications/BPMN-STATISTIC
+          cp ${artifactDir}/target/bpmn-statistic-${version}.iar $engineDir/bpmn-statistic/1.iar
+          cp ${artifactDir}-demo/target/bpmn-statistic-demo-${version}.iar $engineDir/bpmn-statistic-demo/1.iar
+
+      - name: Restart engine
+        run: |
+          cd /etc/docker-compose/engine/11
+          docker compose restart

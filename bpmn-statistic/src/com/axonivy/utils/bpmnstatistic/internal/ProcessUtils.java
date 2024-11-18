@@ -29,6 +29,7 @@ import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
 import ch.ivyteam.ivy.process.model.value.PID;
 import ch.ivyteam.ivy.process.rdm.IProcessManager;
 import ch.ivyteam.ivy.security.exec.Sudo;
+import ch.ivyteam.ivy.workflow.IProcessStart;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
 
@@ -182,9 +183,10 @@ public class ProcessUtils {
   }
 
   private static boolean isIWebStartableNeedToRecordStatistic(IWebStartable process) {
-    String  pmName = process.pmv().getProcessModel().getName();
+    String pmName = process.pmv().getProcessModel().getName();
     return !(StringUtils.equals(pmName, ProcessAnalyticsConstants.BPMN_STATISTIC_PMV_NAME)
-        || StringUtils.contains(pmName, ProcessAnalyticsConstants.PORTAL_PMV_SUFFIX));
+        || StringUtils.contains(pmName, ProcessAnalyticsConstants.PORTAL_PMV_SUFFIX))
+        && process instanceof IProcessWebStartable;
   }
 
   public static boolean isContainFlowFromSubElement(List<SequenceFlow> flows) {
@@ -200,5 +202,20 @@ public class ProcessUtils {
     return Optional.ofNullable(processElements).orElse(Collections.emptyList()).stream()
         .filter(ProcessUtils::isAlternativeInstance).map(element -> (Alternative) element)
         .filter(alternative -> alternative.getOutgoing().size() > 1).toList();
+  }
+
+  @SuppressWarnings("removal")
+  public static Long getTaskStartIdFromPID(String rawPid) {
+    return Ivy.session().getStartableProcessStarts().stream()
+        .filter(start -> StringUtils.equals(rawPid, start.getProcessElementId())).findFirst().map(IProcessStart::getId)
+        .orElse(0L);
+  }
+
+  public static String getTaskElementIdFromRequestPath(String requestPath) {
+    String[] arr = requestPath.split(ProcessAnalyticsConstants.SLASH);
+    // Request Path contains: {PROCESS ID}/.../{NAME OF TASK}
+    // So we have get the node before /{NAME OF TASK}
+    // Ignore case {PROCESS ID}/{NAME OF TASK}
+    return arr.length > 2 ? arr[arr.length - 2] : StringUtils.EMPTY;
   }
 }
