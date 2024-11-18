@@ -31,8 +31,8 @@ jobs:
           version=$(xml sel -t -m "//_:project" -v _:version pom.xml)
           artifactDir=artifact/bpmn-statistic
           engineDeployDir=/var/tools/ivy/11/deploy/BPMN-STATISTIC
-          cp ${artifactDir}/target/bpmn-statistic-${version}.iar $engineDeployDir/bpmn-statistic-${version}.iar
-          cp ${artifactDir}-demo/target/bpmn-statistic-demo-${version}.iar $engineDeployDir/bpmn-statistic-demo-${version}.iar
+          install -m 666 ${artifactDir}/target/bpmn-statistic-${version}.iar $engineDeployDir/bpmn-statistic-${version}.iar
+          install -m 666 ${artifactDir}-demo/target/bpmn-statistic-demo-${version}.iar $engineDeployDir/bpmn-statistic-demo-${version}.iar
 
       - name: Restart engine
         run: |
