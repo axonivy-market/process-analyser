@@ -56,7 +56,7 @@ public class ProcessesAnalyticsBean {
   private ContentObject processMiningDataJsonFile;
   private String bpmnIframeSourceUrl;
   private Map<CustomFieldFilter, List<Object>> customFieldsByType = new HashMap<>();
-  private Map<CustomFieldFilter, Object> selectedCustomFilters = new HashMap<>();
+  private Map<CustomFieldFilter, List<Object>> selectedCustomFilters = new HashMap<>();
   private List<String> selectedCustomFieldNames = new ArrayList<>();
   private boolean isFilterDropdownVisible;
 
@@ -131,15 +131,28 @@ public class ProcessesAnalyticsBean {
     for (String customFieldName : selectedCustomFieldNames) {
       for (Map.Entry<CustomFieldFilter, List<Object>> entry : customFieldsByType.entrySet()) {
         CustomFieldFilter customFieldFilter = entry.getKey();
-        List<Object> customFieldValues = entry.getValue();
+//        List<Object> customFieldValues = entry.getValue().stream().distinct().toList();
 
         if (customFieldFilter.getCustomFieldMeta().name().equals(customFieldName)) {
-          Object customFieldValue = customFieldValues.stream().distinct().findFirst().orElse(null);
-          selectedCustomFilters.put(customFieldFilter, customFieldValue);
+          selectedCustomFilters.put(customFieldFilter, new ArrayList<>());
         }
       }
     }
-    setFilterDropdownVisible(!selectedCustomFilters.isEmpty());
+    setFilterDropdownVisible(!selectedCustomFieldNames.isEmpty());
+  }
+
+  public double getMinValue(String fieldName) {
+    return customFieldsByType.entrySet().stream()
+        .filter(entry -> entry.getKey().getCustomFieldMeta().name().equals(fieldName))
+        .flatMap(entry -> entry.getValue().stream()).filter(obj -> obj instanceof Number)
+        .mapToDouble(obj -> ((Number) obj).doubleValue()).min().orElse(0);
+  }
+
+  public double getMaxValue(String fieldName) {
+    return customFieldsByType.entrySet().stream()
+        .filter(entry -> entry.getKey().getCustomFieldMeta().name().equals(fieldName))
+        .flatMap(entry -> entry.getValue().stream()).filter(obj -> obj instanceof Number)
+        .mapToDouble(obj -> ((Number) obj).doubleValue()).max().orElse(100);
   }
 
   public void updateDataOnChangingFilter() throws ParseException {
@@ -266,11 +279,11 @@ public class ProcessesAnalyticsBean {
     this.customFieldsByType = customFieldsByType;
   }
 
-  public Map<CustomFieldFilter, Object> getSelectedCustomFilters() {
+  public Map<CustomFieldFilter, List<Object>> getSelectedCustomFilters() {
     return selectedCustomFilters;
   }
 
-  public void setSelectedCustomFilters(Map<CustomFieldFilter, Object> selectedCustomFilters) {
+  public void setSelectedCustomFilters(Map<CustomFieldFilter, List<Object>> selectedCustomFilters) {
     this.selectedCustomFilters = selectedCustomFilters;
   }
 

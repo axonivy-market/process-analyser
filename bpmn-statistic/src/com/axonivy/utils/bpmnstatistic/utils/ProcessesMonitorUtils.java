@@ -155,7 +155,7 @@ public class ProcessesMonitorUtils {
    * AxonIvy system db.
    **/
   public static List<Node> filterInitialStatisticByIntervalWithoutModifyingProcess(IProcessWebStartable processStart,
-      TimeIntervalFilter timeIntervalFilter, KpiType analysisType, Map<CustomFieldFilter, Object> selectedCustomFilters) {
+      TimeIntervalFilter timeIntervalFilter, KpiType analysisType, Map<CustomFieldFilter, List<Object>> selectedCustomFilters) {
     if (Objects.isNull(processStart)) {
       return Collections.emptyList();
     }
@@ -235,7 +235,7 @@ public class ProcessesMonitorUtils {
   }
 
   private static List<ICase> getAllCasesFromTaskStartIdWithTimeInterval(Long taskStartId,
-      TimeIntervalFilter timeIntervalFilter, Map<CustomFieldFilter, Object> selectedCustomFilters) {
+      TimeIntervalFilter timeIntervalFilter, Map<CustomFieldFilter, List<Object>> selectedCustomFilters) {
     CaseQuery query = CaseQuery.create().where().state().isEqual(CaseState.DONE).and().taskStartId()
         .isEqual(taskStartId).and().startTimestamp().isGreaterOrEqualThan(timeIntervalFilter.getFrom()).and()
         .startTimestamp().isLowerOrEqualThan(timeIntervalFilter.getTo());
@@ -243,11 +243,13 @@ public class ProcessesMonitorUtils {
     if (ObjectUtils.isNotEmpty(selectedCustomFilters)) {
       CaseQuery subQuery = CaseQuery.create();
 
-      for (Map.Entry<CustomFieldFilter, Object> entry : selectedCustomFilters.entrySet()) {
+      for (Map.Entry<CustomFieldFilter, List<Object>> entry : selectedCustomFilters.entrySet()) {
         CustomFieldFilter customFieldFilter = entry.getKey();
-        Object customFieldValue = entry.getValue();
+        List<Object> customFieldValues = entry.getValue();
 
-        addCustomFieldCondition(subQuery, customFieldFilter, customFieldValue);
+        for (Object customFieldValue : customFieldValues) {
+          addCustomFieldCondition(subQuery, customFieldFilter, customFieldValue);
+        }
       }
 
       query.where().andOverall(subQuery);
@@ -261,7 +263,7 @@ public class ProcessesMonitorUtils {
     boolean isCustomFieldFromCase = customFieldFilter.isCustomFieldFromCase();
     String customFieldName = customFieldFilter.getCustomFieldMeta().name();
     CustomFieldType customFieldType = customFieldFilter.getCustomFieldMeta().type();
-
+    Ivy.log().warn((String) customFieldValue);
     switch (customFieldType) {
       case STRING:
         String stringValue = (String) customFieldValue;

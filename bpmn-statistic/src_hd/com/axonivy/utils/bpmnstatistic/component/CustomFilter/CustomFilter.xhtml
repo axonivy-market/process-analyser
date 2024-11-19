@@ -34,13 +34,39 @@
         <h:panelGroup styleClass="ui-fluid col-4 p-0" layout="block">
           <p:outputLabel styleClass="ui-g-12" value="#{fieldEntry.key.customFieldMeta.name()}"
             rendered="#{processesAnalyticsBean.filterDropdownVisible}" />
-          <p:selectOneMenu styleClass="ui-g-12" value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key]}"
-            rendered="#{processesAnalyticsBean.filterDropdownVisible}">
+
+          <!-- NUMBER -->
+          <h:panelGrid styleClass="ui-fluid mb-3" columns="1" style="margin-bottom: 10px"
+            rendered="#{processesAnalyticsBean.filterDropdownVisible and fieldEntry.key.customFieldMeta.type() eq 'NUMBER'}">
+            <h:outputText id="displayRange"
+              value="Between #{processesAnalyticsBean.getMinValue(fieldEntry.key.customFieldMeta.name())} and #{processesAnalyticsBean.getMaxValue(fieldEntry.key.customFieldMeta.name())}" />
+            <p:slider for="min,max" range="true" id="slider"
+              minValue="#{processesAnalyticsBean.getMinValue(fieldEntry.key.customFieldMeta.name())}"
+              maxValue="#{processesAnalyticsBean.getMaxValue(fieldEntry.key.customFieldMeta.name())}"
+              displayTemplate="Between {min} and {max}">
+              <p:ajax event="slideEnd" process="@this" update="slider" />
+            </p:slider>
+            <h:inputHidden id="min" value="#{processesAnalyticsBean.getMinValue(fieldEntry.key.customFieldMeta.name())}" />
+            <h:inputHidden id="max" value="#{processesAnalyticsBean.getMaxValue(fieldEntry.key.customFieldMeta.name())}" />
+          </h:panelGrid>
+
+          <!-- STRING, NUMBER -->
+          <p:selectCheckboxMenu id="dropdown" styleClass="col-12 p-0 m-0" dynamic="true" filter="true"
+            filterMatchMode="startsWith" updateLabel="true" style="width: 15rem" panelStyle="width: 15rem"
+            scrollHeight="250" value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key]}"
+            rendered="#{processesAnalyticsBean.filterDropdownVisible and 
+                ('STRING' == fieldEntry.key.customFieldMeta.type() or 
+                 'TEXT' == fieldEntry.key.customFieldMeta.type())}">
             <f:selectItems value="#{processesAnalyticsBean.customFieldsByType[fieldEntry.key]}" var="optionValue"
               itemValue="#{optionValue}" itemLabel="#{optionValue}" />
-            <p:ajax event="itemSelect" process="@this">
-            </p:ajax>
-          </p:selectOneMenu>
+            <f:attribute name="fieldFilter" value="#{fieldEntry.key}" />
+            <p:ajax event="change" process="@this" partialSubmit="true" />
+          </p:selectCheckboxMenu>
+
+          <!-- TIMESTAMP -->
+          <p:datePicker id="range" selectionMode="range"
+            value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key]}" readonlyInput="true"
+            rendered="#{processesAnalyticsBean.filterDropdownVisible and fieldEntry.key.customFieldMeta.type() eq 'TIMESTAMP'}" />
         </h:panelGroup>
       </ui:repeat>
     </h:panelGroup>
