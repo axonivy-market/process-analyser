@@ -8,7 +8,6 @@ import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 public class AlternativePath {
   private SequenceFlow originFlow;
   private List<String> nodeIdsInPath;
-  private String endProcessElementId;
   private String taskSwitchEventIdOnPath;
 
   public String getTaskSwitchEventIdOnPath() {
@@ -25,14 +24,6 @@ public class AlternativePath {
 
   public void setOriginFlow(SequenceFlow originFlow) {
     this.originFlow = originFlow;
-  }
-
-  public String getEndProcessElementId() {
-    return endProcessElementId;
-  }
-
-  public void setEndProcessElementId(String endProcessElementId) {
-    this.endProcessElementId = endProcessElementId;
   }
 
   public List<String> getNodeIdsInPath() {

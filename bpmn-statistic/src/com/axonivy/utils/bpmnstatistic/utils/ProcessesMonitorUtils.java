@@ -101,7 +101,7 @@ public class ProcessesMonitorUtils {
    * All of material which is use to analyzing will be based on task data from
    * AxonIvy system db.
    **/
-  public static List<Node> filterInitialStatisticByIntervalWithoutModifyingProcess(IProcessWebStartable processStart,
+  public static List<Node> filterInitialStatisticByIntervalTime(IProcessWebStartable processStart,
       TimeIntervalFilter timeIntervalFilter, KpiType analysisType) {
     if (Objects.isNull(processStart)) {
       return Collections.emptyList();

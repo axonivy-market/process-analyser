@@ -146,7 +146,7 @@ public class ProcessesAnalyticsBean {
         processMiningData.setKpiType(selectedKpiType);
         TimeFrame timeFrame = new TimeFrame(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo());
         processMiningData.setTimeFrame(timeFrame);
-        nodes = ProcessesMonitorUtils.filterInitialStatisticByIntervalWithoutModifyingProcess(
+        nodes = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(
             getSelectedIProcessWebStartable(), timeIntervalFilter, selectedKpiType);
         for (Node node : nodes) {
           totalFrequency += node.getFrequency();
