@@ -39,11 +39,11 @@ public class ProcessesMonitorUtils {
    * @param pid rawPid of selected process
    */
 
-  public static List<Node> convertProcessElementInfoToArrows(ProcessElement element) {
-    return element.getOutgoing().stream().map(flow -> convertSequenceFlowToArrow(flow)).collect(Collectors.toList());
+  public static List<Node> convertProcessElementInfoToNode(ProcessElement element) {
+    return element.getOutgoing().stream().map(flow -> convertSequenceFlowToNode(flow)).collect(Collectors.toList());
   }
 
-  private static Node convertSequenceFlowToArrow(SequenceFlow flow) {
+  public static Node convertSequenceFlowToNode(SequenceFlow flow) {
     Node arrowNode = new Node();
     arrowNode.setId(ProcessUtils.getElementPid(flow));
     arrowNode.setLabel(flow.getName());
@@ -63,17 +63,17 @@ public class ProcessesMonitorUtils {
    *                        workflow
    * @param results         list of existing arrow from previous step
    */
-  private static void extractedArrowFromProcessElements(List<ProcessElement> processElements, List<Node> results) {
+  public static void extractNodesFromProcessElements(List<ProcessElement> processElements, List<Node> results) {
     processElements.forEach(element -> {
       results.add(convertProcessElementToNode(element));
-      results.addAll(convertProcessElementInfoToArrows(element));
+      results.addAll(convertProcessElementInfoToNode(element));
       if (ProcessUtils.isEmbeddedElementInstance(element)) {
-        extractedArrowFromProcessElements(ProcessUtils.getNestedProcessElementsFromSub(element), results);
+        extractNodesFromProcessElements(ProcessUtils.getNestedProcessElementsFromSub(element), results);
       }
     });
   }
 
-  private static Node convertProcessElementToNode(ProcessElement element) {
+  public static Node convertProcessElementToNode(ProcessElement element) {
     Node elementNode = new Node();
     elementNode.setId(element.getPid().toString());
     elementNode.setLabel(element.getName());
@@ -85,7 +85,7 @@ public class ProcessesMonitorUtils {
   }
 
 
-  private static void updateNodeByAnalysisType(Node node, KpiType analysisType) {
+  public static void updateNodeByAnalysisType(Node node, KpiType analysisType) {
     if (KpiType.FREQUENCY == analysisType) {
       node.setLabelValue(node.getFrequency());
     } else {
@@ -111,7 +111,7 @@ public class ProcessesMonitorUtils {
     Long taskStartId = ProcessUtils.getTaskStartIdFromPID(processStart.pid().toString());
     List<ICase> cases = getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter);
     List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
-    extractedArrowFromProcessElements(processElements, results);
+    extractNodesFromProcessElements(processElements, results);
     updateFrequencyForNodes(results, processElements, cases);
     results.stream().forEach(node -> updateNodeByAnalysisType(node, analysisType));
     return results;
@@ -121,7 +121,7 @@ public class ProcessesMonitorUtils {
    * For this version, we cover 2 simple cases: + Process without alternative. +
    * Process with 1 alternative.
    **/
-  private static List<Node> updateFrequencyForNodes(List<Node> results, List<ProcessElement> processElements,
+  public static List<Node> updateFrequencyForNodes(List<Node> results, List<ProcessElement> processElements,
       List<ICase> cases) {
     List<Alternative> alternatives = ProcessUtils.extractAlterNativeElementsWithMultiOutGoing(processElements);
     if (CollectionUtils.isEmpty(alternatives)) {
@@ -132,7 +132,7 @@ public class ProcessesMonitorUtils {
     return results;
   }
 
-  private static void handleFrequencyForAlternativePath(Alternative alternative, List<Node> results,
+  public static void handleFrequencyForAlternativePath(Alternative alternative, List<Node> results,
       List<ICase> cases) {
     List<AlternativePath> paths = new ArrayList<>();
     List<SequenceFlow> mainFlowFromAlternative = alternative.getOutgoing();
@@ -147,7 +147,7 @@ public class ProcessesMonitorUtils {
     results.stream().forEach(node -> node.setRelativeValue((float) node.getFrequency()/cases.size()));
   }
 
-  private static void updateFrequencyForCaseWithSimpleAlternative(List<AlternativePath> paths, List<Node> results,
+  public static void updateFrequencyForCaseWithSimpleAlternative(List<AlternativePath> paths, List<Node> results,
       List<ICase> cases) {
     cases.stream().forEach(currentCase -> {
       List<String> taskIdDoneInCase = currentCase.tasks().all().stream()
@@ -168,7 +168,7 @@ public class ProcessesMonitorUtils {
     });
   }
 
-  private static void followPath(AlternativePath path, SequenceFlow currentFlow) {
+  public static void followPath(AlternativePath path, SequenceFlow currentFlow) {
     ProcessElement destinationElement = (ProcessElement) currentFlow.getTarget();
     path.getNodeIdsInPath().add(ProcessUtils.getElementPid(currentFlow));
     if (ProcessUtils.isTaskSwitchEvent(destinationElement)) {
@@ -181,14 +181,14 @@ public class ProcessesMonitorUtils {
     destinationElement.getOutgoing().forEach(outGoingPath -> followPath(path, outGoingPath));
   }
 
-  private static List<ICase> getAllCasesFromTaskStartIdWithTimeInterval(Long taskStartId,
+  public static List<ICase> getAllCasesFromTaskStartIdWithTimeInterval(Long taskStartId,
       TimeIntervalFilter timeIntervalFilter) {
     return CaseQuery.create().where().state().isEqual(CaseState.DONE).and().taskStartId().isEqual(taskStartId).and()
         .startTimestamp().isGreaterOrEqualThan(timeIntervalFilter.getFrom()).and().startTimestamp()
         .isLowerOrEqualThan(timeIntervalFilter.getTo()).executor().results();
   }
 
-  private static void updateNodeWiwthDefinedFrequency(int value, Node node) {
+  public static void updateNodeWiwthDefinedFrequency(int value, Node node) {
     Long releativeValue = (long) (value == 0 ? 0: 1);
     node.setRelativeValue(releativeValue);
     node.setLabelValue(Objects.requireNonNullElse(value, 0));

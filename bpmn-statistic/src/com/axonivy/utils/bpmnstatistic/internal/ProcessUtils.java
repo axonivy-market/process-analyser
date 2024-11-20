@@ -86,7 +86,7 @@ public class ProcessUtils {
     return result;
   }
 
-  private static boolean isIWebStartableNeedToRecordStatistic(IWebStartable process) {
+  public static boolean isIWebStartableNeedToRecordStatistic(IWebStartable process) {
     String pmName = process.pmv().getProcessModel().getName();
     return !(StringUtils.equals(pmName, ProcessAnalyticsConstants.BPMN_STATISTIC_PMV_NAME)
         || StringUtils.contains(pmName, ProcessAnalyticsConstants.PORTAL_PMV_SUFFIX))
