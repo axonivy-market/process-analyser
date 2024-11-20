@@ -17,7 +17,6 @@ public class JacksonUtils {
     } catch (JsonProcessingException e) {
       Ivy.log().error(e);
     }
-
     return result;
   }
 }

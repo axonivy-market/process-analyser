@@ -2,28 +2,22 @@ package com.axonivy.utils.bpmnstatistic.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.primefaces.PF;
 
 import com.axonivy.utils.bpmnstatistic.bo.AlternativePath;
 import com.axonivy.utils.bpmnstatistic.bo.Node;
 import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
 import com.axonivy.utils.bpmnstatistic.constants.ProcessAnalyticsConstants;
 import com.axonivy.utils.bpmnstatistic.enums.KpiType;
-import com.axonivy.utils.bpmnstatistic.enums.IvyVariable;
 import com.axonivy.utils.bpmnstatistic.enums.NodeType;
 import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
-import com.axonivy.utils.bpmnstatistic.service.IvyTaskOccurrenceService;
 
-import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
@@ -44,40 +38,6 @@ public class ProcessesMonitorUtils {
    * 
    * @param pid rawPid of selected process
    */
-  public static void showStatisticData(String pid) {
-    Objects.requireNonNull(pid);
-    HashMap<String, Integer> taskCountMap = IvyTaskOccurrenceService.countTaskOccurrencesByProcessId(pid);
-    int maxFrequency = findMaxFrequency(taskCountMap);
-    String textColorRGBCode = String.valueOf(Ivy.var().get(IvyVariable.FREQUENCY_NUMBER_COLOR.getVariableName()));
-    PF.current().executeScript(ProcessAnalyticsConstants.REMOVE_DEFAULT_HIGHLIGHT_JS_FUNCTION);
-    for (Entry<String, Integer> entry : taskCountMap.entrySet()) {
-      String backgroundColorRGBCode = getRGBCodefromFrequency(maxFrequency, entry.getValue());
-      PF.current().executeScript(String.format(ProcessAnalyticsConstants.UPDATE_FREQUENCY_COUNT_FOR_TASK_FUNCTION,
-          entry.getKey(), entry.getValue(), backgroundColorRGBCode, textColorRGBCode));
-    }
-  }
-
-  public static int findMaxFrequency(HashMap<String, Integer> taskCountMap) {
-    int max = 0;
-    for (Entry<String, Integer> entry : taskCountMap.entrySet()) {
-      max = max < entry.getValue() ? entry.getValue() : max;
-    }
-    return max;
-  }
-
-  private static String getRGBCodefromFrequency(int max, int current) {
-    int level = (int) (max == 0 ? ProcessAnalyticsConstants.DEFAULT_BACKGROUND_COLOR_LEVEL
-        : Math.ceil(current * ProcessAnalyticsConstants.HIGHEST_LEVEL_OF_BACKGROUND_COLOR / max));
-    return String.valueOf(
-        Ivy.var().get(String.format(ProcessAnalyticsConstants.FREQUENCY_BACKGROUND_COLOR_LEVEL_VARIABLE_PATTERN, level)));
-  }
-
-  public static void showAdditionalInformation(String instancesCount, String fromDate, String toDate) {
-    String additionalInformation = String.format(ProcessAnalyticsConstants.ADDITIONAL_INFORMATION_FORMAT, instancesCount,
-        fromDate, toDate);
-    PF.current().executeScript(
-        String.format(ProcessAnalyticsConstants.UPDATE_ADDITIONAL_INFORMATION_FUNCTION, additionalInformation));
-  }
 
   public static List<Node> convertProcessElementInfoToArrows(ProcessElement element) {
     return element.getOutgoing().stream().map(flow -> convertSequenceFlowToArrow(flow)).collect(Collectors.toList());
@@ -93,11 +53,6 @@ public class ProcessesMonitorUtils {
     arrowNode.setType(NodeType.ARROW);
     return arrowNode;
   }
-  
-
-
-
-
 
   /**
    * Get outgoing arrows from each element. If the current element is sub
@@ -140,8 +95,6 @@ public class ProcessesMonitorUtils {
       node.setRelativeValue(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     }
   }
-
-
 
   /**
    * New approach to show bpmn statistic data without modifying original process.
@@ -241,5 +194,4 @@ public class ProcessesMonitorUtils {
     node.setLabelValue(Objects.requireNonNullElse(value, 0));
     node.setFrequency(value);
   }
-
 }

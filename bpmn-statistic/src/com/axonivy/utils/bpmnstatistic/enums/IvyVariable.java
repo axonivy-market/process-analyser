@@ -1,7 +1,7 @@
 package com.axonivy.utils.bpmnstatistic.enums;
 
 public enum IvyVariable {
-  MAX_QUERY_RESULTS("maxQueryResults"), FREQUENCY_NUMBER_COLOR("frequencyNumberColor");
+  MAX_QUERY_RESULTS("maxQueryResults");
 
   private String variableName;
 

@@ -1,5 +1,5 @@
 # == Variables ==
-# 
+#
 # You can define here your project Variables.
 # If you want to define/override a Variable for a specific Environment, 
 # add an additional ‘variables.yaml’ file in a subdirectory in the ‘Config’ folder: 
@@ -7,12 +7,4 @@
 #
 Variables:
   # Maximum query results per query task
-  maxQueryResults: 10000
-  frequencyNumberColor: '50,50,50'
-  frequencyBackgroundColorLevel1: '255,255,255'
-  frequencyBackgroundColorLevel2: '224,224,224'
-  frequencyBackgroundColorLevel3: '193,193,193'
-  frequencyBackgroundColorLevel4: '162,162,162'
-  frequencyBackgroundColorLevel5: '131,131,131'
-  frequencyBackgroundColorLevel6: '100,100,100'
-  
+  maxQueryResults: "10000"
