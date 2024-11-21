@@ -75,7 +75,6 @@ public class IvyTaskOccurrenceService {
     } else {
       taskOccurrence = new TaskOccurrence(startTaskSwitchEventId, 1);
     }
-
     return taskOccurrence;
   }
 
@@ -84,7 +83,6 @@ public class IvyTaskOccurrenceService {
     for (Map.Entry<String, TaskOccurrence> entry : taskOccurrenceMap.entrySet()) {
       result.put(entry.getKey(), entry.getValue().getOccurrence());
     }
-
     return result;
   }
 }

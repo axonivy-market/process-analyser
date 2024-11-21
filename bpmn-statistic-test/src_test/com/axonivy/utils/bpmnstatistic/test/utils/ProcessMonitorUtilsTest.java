@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -15,34 +14,18 @@ import com.axonivy.utils.bpmnstatistic.bo.Node;
 import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
 import com.axonivy.utils.bpmnstatistic.enums.KpiType;
 import com.axonivy.utils.bpmnstatistic.enums.NodeType;
-import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
+import com.axonivy.utils.bpmnstatistic.test.BaseSetup;
 import com.axonivy.utils.bpmnstatistic.utils.ProcessesMonitorUtils;
 
 import ch.ivyteam.ivy.environment.IvyTest;
-import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
-import ch.ivyteam.ivy.process.model.element.ProcessElement;
-import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
 import ch.ivyteam.ivy.workflow.ICase;
-import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 
 @IvyTest
-@SuppressWarnings("restriction")
-public class ProcessMonitorUtilsTest {
-  private static IProcessWebStartable testProcessStart;
-  private static final String TEST_PROCESS_NAME = "test.ivp";
-  private static final String TEST_PROCESS_ELEMENT_START_PID = "193485C5ABDFEA93-f0";
-  private static final String TEST_FLOW_PID_FROM_START_ELEMENT = "193485C5ABDFEA93-f2";
-  private static ProcessElement startProcessElement;
-  private static SequenceFlow flowFromStartElement;
+public class ProcessMonitorUtilsTest extends BaseSetup {
 
   @BeforeAll
   static void setUp() {
-    testProcessStart = (IProcessWebStartable) ProcessUtils.getAllProcesses().stream()
-        .filter(start -> StringUtils.contains(start.getName(), TEST_PROCESS_NAME)).findAny().orElse(null);
-    startProcessElement = ProcessUtils.getProcessElementsFromIProcessWebStartable(testProcessStart).stream()
-        .filter(element -> StringUtils.contains(element.getPid().toString(), TEST_PROCESS_ELEMENT_START_PID)).findAny()
-        .orElse(null);
-    flowFromStartElement = startProcessElement.getOutgoing().get(0);
+    prepareData();
   }
 
   @Test
@@ -104,8 +87,8 @@ public class ProcessMonitorUtilsTest {
     ICase mockCase = ICase.current();
     Node mockNode = new Node();
     assertThat(mockNode.getLabel()).isNull();
-    List<Node> results = ProcessesMonitorUtils.updateFrequencyForNodes(List.of(mockNode),
-        new ArrayList<ProcessElement>(), List.of(mockCase));
+    List<Node> results = ProcessesMonitorUtils.updateFrequencyForNodes(List.of(mockNode), new ArrayList<>(),
+        List.of(mockCase));
     assertThat(results.size()).isNotZero();
     assertThat(results.get(0).getLabelValue()).isEqualTo(1);
   }
@@ -113,7 +96,7 @@ public class ProcessMonitorUtilsTest {
   @Test
   void test_followPath() {
     AlternativePath testPath = new AlternativePath();
-    SequenceFlow flowFromAlternative = ((Alternative) flowFromStartElement.getTarget()).getOutgoing().get(0);
+    var flowFromAlternative = getFirstFlowFromAlternative();
     testPath.setOriginFlow(flowFromAlternative);
     testPath.setNodeIdsInPath(new ArrayList<>());
     ProcessesMonitorUtils.followPath(testPath, flowFromAlternative);
