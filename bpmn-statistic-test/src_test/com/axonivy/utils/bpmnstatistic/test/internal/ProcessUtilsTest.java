@@ -59,13 +59,6 @@ public class ProcessUtilsTest extends BaseSetup {
   }
 
   @Test
-  void test_getProcessElementsFromPmvAndProcessPid() {
-    var results = ProcessUtils.getProcessElementsFromPmvAndProcessPid(testProcessStart.pmv(), TEST_PROCESS_RAW_PID);
-    assertThat(results).isNotEmpty();
-    assertThat(results.size()).isEqualTo(5);
-  }
-
-  @Test
   void test_getNestedProcessElementsFromSub() {
     assertThat(ProcessUtils.getNestedProcessElementsFromSub(startProcessElement)).isEmpty();
   }

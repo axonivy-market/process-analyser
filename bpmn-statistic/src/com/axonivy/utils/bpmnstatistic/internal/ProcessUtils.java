@@ -12,7 +12,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.utils.bpmnstatistic.constants.ProcessAnalyticsConstants;
 
+import ch.ivyteam.ivy.application.IProcessModel;
 import ch.ivyteam.ivy.application.IProcessModelVersion;
+import ch.ivyteam.ivy.bpm.engine.restricted.model.IProcess;
+import ch.ivyteam.ivy.bpm.engine.restricted.model.IProcessElement;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.model.BaseElement;
 import ch.ivyteam.ivy.process.model.Process;
@@ -58,17 +61,12 @@ public class ProcessUtils {
     return Collections.emptyList();
   }
 
-  public static List<ProcessElement> getProcessElementsFromPmvAndProcessPid(IProcessModelVersion pmv,
-      String processRawPid) {
-    var manager = IProcessManager.instance().getProjectDataModelFor(pmv);
-    Process process = manager.findProcess(processRawPid, true).getModel();
-    return process.getProcessElements();
-  }
-
   public static List<ProcessElement> getProcessElementsFromIProcessWebStartable(IProcessWebStartable startElement) {
     if (Objects.nonNull(startElement)) {
       String processRawPid = getProcessPidFromElement(startElement.pid().toString());
-      return getProcessElementsFromPmvAndProcessPid(startElement.pmv(), processRawPid);
+      var manager = IProcessManager.instance().getProjectDataModelFor(startElement.pmv());
+      Process process = manager.findProcess(processRawPid, true).getModel();
+      return process.getProcessElements();
     }
     return Collections.emptyList();
   }
