@@ -82,7 +82,6 @@ public class ProcessUtils {
 
   public static boolean isIWebStartableNeedToRecordStatistic(IWebStartable process) {
     String pmName = process.pmv().getProcessModel().getName();
-    Ivy.log().warn(pmName);
     return !(StringUtils.equals(pmName, ProcessAnalyticsConstants.PROCESS_ANALYZER_PMV_NAME)
         || StringUtils.contains(pmName, ProcessAnalyticsConstants.PORTAL_PMV_SUFFIX))
         && process instanceof IProcessWebStartable;

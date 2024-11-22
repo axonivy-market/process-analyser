@@ -7,30 +7,8 @@
         "projects": [
           {
             "groupId": "com.axonivy.utils.process.analyzer",
-            "artifactId": "process-analyzer-demo",
-            "version": "${version}",
-            "type": "iar"
-          }
-        ],
-        "repositories": [
-          {
-            "id": "maven.axonivy.com",
-            "url": "https://maven.axonivy.com",
-            "snapshots": {
-              "enabled": "true"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "id": "maven-dependency",
-      "data": {
-        "dependencies": [
-          {
-            "groupId": "com.axonivy.utils.process.analyzer",
             "artifactId": "process-analyzer",
-            "version": "${version}",
+            "version": "11.3.1-SNAPSHOT",
             "type": "iar"
           }
         ],
