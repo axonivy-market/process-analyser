@@ -1,0 +1,509 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/process/11.3.0/process.json",
+  "id" : "18F3D6D7AEE204DA",
+  "config" : {
+    "data" : "com.axonivy.utils.process.analyzer.demo.data.FlightPlanningDemoData"
+  },
+  "elements" : [ {
+      "id" : "f0",
+      "type" : "RequestStart",
+      "name" : "Plan a Flight",
+      "config" : {
+        "signature" : "planFlight",
+        "task" : {
+          "name" : "Planner plan a flight"
+        },
+        "case" : {
+          "name" : "Planning a flight"
+        }
+      },
+      "tags" : [
+        "demo"
+      ],
+      "visual" : {
+        "at" : { "x" : 112, "y" : 592 }
+      },
+      "connect" : [
+        { "id" : "f3", "to" : "S10" }
+      ]
+    }, {
+      "id" : "S10",
+      "type" : "EmbeddedProcess",
+      "name" : "Planing a Flight",
+      "elements" : [ {
+          "id" : "S10-g0",
+          "type" : "EmbeddedStart",
+          "visual" : {
+            "at" : { "x" : 48, "y" : 272 }
+          },
+          "parentConnector" : "f3",
+          "connect" : [
+            { "id" : "S10-f1", "to" : "S10-f3" }
+          ]
+        }, {
+          "id" : "S10-g1",
+          "type" : "EmbeddedEnd",
+          "visual" : {
+            "at" : { "x" : 256, "y" : 464 }
+          },
+          "parentConnector" : "f2"
+        }, {
+          "id" : "S10-g2",
+          "type" : "EmbeddedStart",
+          "visual" : {
+            "at" : { "x" : 472, "y" : 272 }
+          },
+          "parentConnector" : "f6",
+          "connect" : [
+            { "id" : "S10-f7", "to" : "S10-f6" }
+          ]
+        }, {
+          "id" : "S10-f3",
+          "type" : "DialogCall",
+          "name" : "Planning a Flight",
+          "config" : {
+            "dialog" : "com.axonivy.utils.process.analyzer.demo.PlanningFlight:start()"
+          },
+          "visual" : {
+            "at" : { "x" : 256, "y" : 272 }
+          },
+          "connect" : [
+            { "id" : "S10-f0", "to" : "S10-g1" }
+          ]
+        }, {
+          "id" : "S10-f6",
+          "type" : "TaskSwitchEvent",
+          "name" : "PLanner re-plan a flight",
+          "config" : {
+            "task" : {
+              "name" : "Re-plan a flight"
+            }
+          },
+          "visual" : {
+            "at" : { "x" : 392, "y" : 272 },
+            "labelOffset" : { "x" : 14, "y" : 34 }
+          },
+          "connect" : [
+            { "id" : "S10-f5", "to" : "S10-f3" }
+          ]
+        } ],
+      "visual" : {
+        "at" : { "x" : 280, "y" : 592 }
+      },
+      "connect" : [
+        { "id" : "f2", "to" : "S20" }
+      ]
+    }, {
+      "id" : "S20",
+      "type" : "EmbeddedProcess",
+      "name" : "Flight Plan Approval",
+      "elements" : [ {
+          "id" : "S20-g0",
+          "type" : "EmbeddedStart",
+          "visual" : {
+            "at" : { "x" : 64, "y" : 352 }
+          },
+          "parentConnector" : "f2",
+          "connect" : [
+            { "id" : "S20-f2", "to" : "S20-f1" }
+          ]
+        }, {
+          "id" : "S20-g1",
+          "type" : "EmbeddedEnd",
+          "visual" : {
+            "at" : { "x" : 576, "y" : 352 }
+          },
+          "parentConnector" : "f5"
+        }, {
+          "id" : "S20-f1",
+          "type" : "TaskSwitchEvent",
+          "name" : "Approve the plan of planner",
+          "config" : {
+            "task" : {
+              "name" : "Approve the plan of planner"
+            }
+          },
+          "visual" : {
+            "at" : { "x" : 184, "y" : 352 },
+            "labelOffset" : { "x" : 14, "y" : 34 }
+          },
+          "connect" : [
+            { "id" : "S20-f4", "to" : "S20-f3" }
+          ]
+        }, {
+          "id" : "S20-f3",
+          "type" : "DialogCall",
+          "name" : "FlightPlanApproval",
+          "config" : {
+            "dialog" : "com.axonivy.utils.process.analyzer.demo.FlightPlanApproval:start()",
+            "output" : {
+              "map" : {
+                "out" : "in",
+                "out.isManagerApprove" : "result.isManagerApprove"
+              }
+            }
+          },
+          "visual" : {
+            "at" : { "x" : 376, "y" : 352 },
+            "size" : { "width" : 120 }
+          },
+          "connect" : [
+            { "id" : "S20-f0", "to" : "S20-g1" }
+          ]
+        } ],
+      "visual" : {
+        "at" : { "x" : 280, "y" : 784 }
+      },
+      "connect" : [
+        { "id" : "f5", "to" : "f4" }
+      ]
+    }, {
+      "id" : "f4",
+      "type" : "Alternative",
+      "name" : "Approve?",
+      "config" : {
+        "conditions" : {
+          "f17" : "in.isManagerApprove"
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 456, "y" : 784 },
+        "labelOffset" : { "x" : 64, "y" : 8 }
+      },
+      "connect" : [
+        { "id" : "f17", "to" : "S21", "label" : {
+            "name" : "Yes"
+          } },
+        { "id" : "f7", "to" : "f10", "label" : {
+            "name" : "No"
+          } }
+      ]
+    }, {
+      "id" : "S21",
+      "type" : "EmbeddedProcess",
+      "name" : "Check and Maintain an Aircraft",
+      "elements" : [ {
+          "id" : "S21-g0",
+          "type" : "EmbeddedStart",
+          "visual" : {
+            "at" : { "x" : 64, "y" : 352 }
+          },
+          "parentConnector" : "f17",
+          "connect" : [
+            { "id" : "S21-f2", "to" : "S21-f1" }
+          ]
+        }, {
+          "id" : "S21-g1",
+          "type" : "EmbeddedEnd",
+          "visual" : {
+            "at" : { "x" : 496, "y" : 352 }
+          },
+          "parentConnector" : "f9"
+        }, {
+          "id" : "S21-f1",
+          "type" : "TaskSwitchEvent",
+          "name" : "Engineering check aircraft",
+          "config" : {
+            "task" : {
+              "name" : "Engineering check aircraft"
+            }
+          },
+          "visual" : {
+            "at" : { "x" : 176, "y" : 352 },
+            "labelOffset" : { "x" : 14, "y" : 34 }
+          },
+          "connect" : [
+            { "id" : "S21-f4", "to" : "S21-f3" }
+          ]
+        }, {
+          "id" : "S21-f3",
+          "type" : "DialogCall",
+          "name" : "CheckAircraft",
+          "config" : {
+            "dialog" : "com.axonivy.utils.process.analyzer.demo.CheckAircraft:start()",
+            "output" : {
+              "map" : {
+                "out" : "in",
+                "out.isEngineeringApproveAircraft" : "result.isEngineeringApproveAircraft"
+              }
+            }
+          },
+          "visual" : {
+            "at" : { "x" : 344, "y" : 352 }
+          },
+          "connect" : [
+            { "id" : "S21-f0", "to" : "S21-g1" }
+          ]
+        } ],
+      "visual" : {
+        "at" : { "x" : 456, "y" : 976 }
+      },
+      "connect" : [
+        { "id" : "f9", "to" : "f8" }
+      ]
+    }, {
+      "id" : "f8",
+      "type" : "Alternative",
+      "name" : "Is AirCraft ready for the flight?",
+      "config" : {
+        "conditions" : {
+          "f14" : "in.isEngineeringApproveAircraft"
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 648, "y" : 976 },
+        "labelOffset" : { "x" : 120, "y" : 8 }
+      },
+      "connect" : [
+        { "id" : "f14", "to" : "f13", "via" : [ { "x" : 648, "y" : 1216 } ], "label" : {
+            "name" : "Yes",
+            "segment" : 0.65
+          }, "var" : "in1" },
+        { "id" : "f11", "to" : "f10", "via" : [ { "x" : 648, "y" : 592 } ], "label" : {
+            "name" : "No",
+            "segment" : 0.87
+          } }
+      ]
+    }, {
+      "id" : "f10",
+      "type" : "Alternative",
+      "visual" : {
+        "at" : { "x" : 456, "y" : 592 }
+      },
+      "connect" : [
+        { "id" : "f6", "to" : "S10" }
+      ]
+    }, {
+      "id" : "f13",
+      "type" : "TaskSwitchGateway",
+      "config" : {
+        "tasks" : [ {
+            "id" : "TaskA",
+            "name" : "Send emails to pilots",
+            "responsible" : {
+              "activator" : "SYSTEM"
+            },
+            "skipTasklist" : true
+          }, {
+            "id" : "TaskB",
+            "name" : "Send emails to cabin crews",
+            "responsible" : {
+              "activator" : "SYSTEM"
+            },
+            "skipTasklist" : true
+          } ]
+      },
+      "visual" : {
+        "at" : { "x" : 720, "y" : 1216 }
+      },
+      "connect" : [
+        { "id" : "f15", "to" : "S30", "via" : [ { "x" : 720, "y" : 1152 } ], "condition" : "ivp==\"TaskA.ivp\"" },
+        { "id" : "f16", "to" : "S40", "via" : [ { "x" : 720, "y" : 1280 } ], "condition" : "ivp==\"TaskB.ivp\"" }
+      ]
+    }, {
+      "id" : "S30",
+      "type" : "EmbeddedProcess",
+      "name" : "Send Email to Pilots",
+      "elements" : [ {
+          "id" : "S30-g0",
+          "type" : "EmbeddedStart",
+          "visual" : {
+            "at" : { "x" : 64, "y" : 256 }
+          },
+          "parentConnector" : "f15",
+          "connect" : [
+            { "id" : "S30-f2", "to" : "S30-f1" }
+          ]
+        }, {
+          "id" : "S30-g1",
+          "type" : "EmbeddedEnd",
+          "visual" : {
+            "at" : { "x" : 464, "y" : 256 }
+          },
+          "parentConnector" : "f20"
+        }, {
+          "id" : "S30-f1",
+          "type" : "EMail",
+          "name" : "Send emails to pilots",
+          "config" : {
+            "headers" : {
+              "subject" : "Here's your job",
+              "from" : "manager@axonivy.com",
+              "to" : "pilot@axonivy.com"
+            },
+            "message" : {
+              "body" : "Send emails to pilots"
+            }
+          },
+          "visual" : {
+            "at" : { "x" : 304, "y" : 256 }
+          },
+          "connect" : [
+            { "id" : "S30-f0", "to" : "S30-g1" }
+          ]
+        } ],
+      "visual" : {
+        "at" : { "x" : 904, "y" : 1152 }
+      },
+      "connect" : [
+        { "id" : "f20", "to" : "f19", "via" : [ { "x" : 1104, "y" : 1152 } ] }
+      ]
+    }, {
+      "id" : "S40",
+      "type" : "EmbeddedProcess",
+      "name" : "Send Email to Cabin Crews",
+      "elements" : [ {
+          "id" : "S40-g0",
+          "type" : "EmbeddedStart",
+          "visual" : {
+            "at" : { "x" : 64, "y" : 256 }
+          },
+          "parentConnector" : "f16",
+          "connect" : [
+            { "id" : "S40-f1", "to" : "S40-f3" }
+          ]
+        }, {
+          "id" : "S40-g1",
+          "type" : "EmbeddedEnd",
+          "visual" : {
+            "at" : { "x" : 512, "y" : 256 }
+          },
+          "parentConnector" : "f21"
+        }, {
+          "id" : "S40-f3",
+          "type" : "EMail",
+          "name" : "Send emails to cabin crews",
+          "config" : {
+            "headers" : {
+              "subject" : "Here's your job",
+              "from" : "manager@axonivy.com",
+              "to" : "cabincrew@axonivy.com"
+            },
+            "message" : {
+              "body" : "Send emails to cabin crews"
+            }
+          },
+          "visual" : {
+            "at" : { "x" : 336, "y" : 256 }
+          },
+          "connect" : [
+            { "id" : "S40-f0", "to" : "S40-g1" }
+          ]
+        } ],
+      "visual" : {
+        "at" : { "x" : 904, "y" : 1280 }
+      },
+      "connect" : [
+        { "id" : "f21", "to" : "f19", "via" : [ { "x" : 1104, "y" : 1280 } ] }
+      ]
+    }, {
+      "id" : "f19",
+      "type" : "Alternative",
+      "visual" : {
+        "at" : { "x" : 1104, "y" : 1216 }
+      },
+      "connect" : [
+        { "id" : "f23", "to" : "f22" }
+      ]
+    }, {
+      "id" : "f22",
+      "type" : "TaskEnd",
+      "visual" : {
+        "at" : { "x" : 1248, "y" : 1216 }
+      }
+    }, {
+      "id" : "f1",
+      "type" : "RequestStart",
+      "name" : "Recommend destination for aviation to plan",
+      "config" : {
+        "signature" : "recommendDestination",
+        "task" : {
+          "name" : "Marketing recommend destination"
+        },
+        "case" : {
+          "name" : "Recommend destination"
+        }
+      },
+      "tags" : [
+        "demo"
+      ],
+      "visual" : {
+        "at" : { "x" : 112, "y" : 1456 },
+        "labelOffset" : { "x" : 81, "y" : 33 }
+      },
+      "connect" : [
+        { "id" : "f24", "to" : "S60" }
+      ]
+    }, {
+      "id" : "S60",
+      "type" : "EmbeddedProcess",
+      "name" : "Destination Recommendation",
+      "elements" : [ {
+          "id" : "S60-g0",
+          "type" : "EmbeddedStart",
+          "visual" : {
+            "at" : { "x" : 144, "y" : 256 }
+          },
+          "parentConnector" : "f24",
+          "connect" : [
+            { "id" : "S60-f2", "to" : "S60-f1" }
+          ]
+        }, {
+          "id" : "S60-g1",
+          "type" : "EmbeddedEnd",
+          "visual" : {
+            "at" : { "x" : 496, "y" : 256 }
+          },
+          "parentConnector" : "f26"
+        }, {
+          "id" : "S60-f1",
+          "type" : "DialogCall",
+          "name" : "RecommendDestination",
+          "config" : {
+            "dialog" : "com.axonivy.utils.process.analyzer.demo.RecommendDestination:start()"
+          },
+          "visual" : {
+            "at" : { "x" : 336, "y" : 256 },
+            "size" : { "width" : 152 }
+          },
+          "connect" : [
+            { "id" : "S60-f0", "to" : "S60-g1" }
+          ]
+        } ],
+      "visual" : {
+        "at" : { "x" : 376, "y" : 1456 }
+      },
+      "connect" : [
+        { "id" : "f26", "to" : "f25" }
+      ]
+    }, {
+      "id" : "f25",
+      "type" : "TaskEnd",
+      "visual" : {
+        "at" : { "x" : 544, "y" : 1456 }
+      }
+    } ],
+  "layout" : {
+    "lanes" : [ {
+        "name" : "FlightPlanningDemo",
+        "offset" : 488,
+        "size" : 1056,
+        "lanes" : [ {
+            "name" : "Aviation planner",
+            "size" : 192
+          }, {
+            "name" : "Airport manager",
+            "size" : 192
+          }, {
+            "name" : "Maintenance and Engineering",
+            "size" : 192
+          }, {
+            "name" : "System",
+            "size" : 288
+          }, {
+            "name" : "Marketing",
+            "size" : 192
+          } ]
+      } ]
+  }
+}

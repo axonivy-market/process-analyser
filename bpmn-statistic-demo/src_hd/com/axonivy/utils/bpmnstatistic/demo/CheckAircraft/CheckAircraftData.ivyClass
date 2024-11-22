@@ -1,4 +1,0 @@
-CheckAircraftData #class
-com.axonivy.utils.bpmnstatistic.demo.CheckAircraft #namespace
-isEngineeringApproveAircraft Boolean #field
-isEngineeringApproveAircraft PERSISTENT #fieldModifier

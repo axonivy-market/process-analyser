@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.axonivy.com/process/11.3.0/process.json",
+  "id": "18F57318040D80B0",
+  "kind": "HTML_DIALOG",
+  "config": {
+    "data": "com.axonivy.utils.process.analyzer.demo.PlanningFlight.PlanningFlightData"
+  },
+  "elements": [
+    {
+      "id": "f0",
+      "type": "HtmlDialogStart",
+      "name": "start()",
+      "config": {
+        "signature": "start",
+        "guid": "18F57318041955DC"
+      },
+      "visual": {
+        "at": {
+          "x": 96,
+          "y": 64
+        }
+      },
+      "connect": [
+        {
+          "id": "f2",
+          "to": "f1"
+        }
+      ]
+    },
+    {
+      "id": "f1",
+      "type": "HtmlDialogEnd",
+      "visual": {
+        "at": {
+          "x": 224,
+          "y": 64
+        }
+      }
+    },
+    {
+      "id": "f3",
+      "type": "HtmlDialogEventStart",
+      "name": "close",
+      "config": {
+        "guid": "18F57318041A037C"
+      },
+      "visual": {
+        "at": {
+          "x": 96,
+          "y": 160
+        }
+      },
+      "connect": [
+        {
+          "id": "f5",
+          "to": "f4"
+        }
+      ]
+    },
+    {
+      "id": "f4",
+      "type": "HtmlDialogExit",
+      "visual": {
+        "at": {
+          "x": 224,
+          "y": 160
+        }
+      }
+    }
+  ]
+}

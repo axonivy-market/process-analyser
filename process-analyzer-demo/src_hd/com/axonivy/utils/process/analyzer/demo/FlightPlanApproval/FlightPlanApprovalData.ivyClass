@@ -1,0 +1,4 @@
+FlightPlanApprovalData #class
+com.axonivy.utils.process.analyzer.demo.FlightPlanApproval #namespace
+isManagerApprove Boolean #field
+isManagerApprove PERSISTENT #fieldModifier

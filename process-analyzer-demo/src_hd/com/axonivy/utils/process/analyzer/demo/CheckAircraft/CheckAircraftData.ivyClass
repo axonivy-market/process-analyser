@@ -1,0 +1,4 @@
+CheckAircraftData #class
+com.axonivy.utils.process.analyzer.demo.CheckAircraft #namespace
+isEngineeringApproveAircraft Boolean #field
+isEngineeringApproveAircraft PERSISTENT #fieldModifier

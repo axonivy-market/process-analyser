@@ -1,0 +1,6 @@
+SubmitPersonalInformationData #class
+com.axonivy.utils.process.analyzer.demo.SubmitPersonalInformation #namespace
+isChargeLater Boolean #field
+isChargeLater PERSISTENT #fieldModifier
+isBackToSearchPage Boolean #field
+isBackToSearchPage PERSISTENT #fieldModifier

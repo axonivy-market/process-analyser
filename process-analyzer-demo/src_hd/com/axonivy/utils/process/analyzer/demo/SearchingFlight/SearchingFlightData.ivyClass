@@ -1,0 +1,10 @@
+SearchingFlightData #class
+com.axonivy.utils.process.analyzer.demo.SearchingFlight #namespace
+flightId String #field
+flightId PERSISTENT #fieldModifier
+selectedFrom String #field
+selectedFrom PERSISTENT #fieldModifier
+selectedTo String #field
+selectedTo PERSISTENT #fieldModifier
+selectedTime java.util.Date #field
+selectedTime PERSISTENT #fieldModifier
