@@ -12,10 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.utils.process.analyzer.constants.ProcessAnalyticsConstants;
 
-import ch.ivyteam.ivy.application.IProcessModel;
-import ch.ivyteam.ivy.application.IProcessModelVersion;
-import ch.ivyteam.ivy.bpm.engine.restricted.model.IProcess;
-import ch.ivyteam.ivy.bpm.engine.restricted.model.IProcessElement;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.model.BaseElement;
 import ch.ivyteam.ivy.process.model.Process;
