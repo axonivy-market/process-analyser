@@ -36,21 +36,25 @@
             rendered="#{processesAnalyticsBean.filterDropdownVisible}" />
 
           <!-- NUMBER -->
-          <h:panelGrid styleClass="ui-fluid mb-3" columns="1" style="margin-bottom: 10px"
-            rendered="#{processesAnalyticsBean.filterDropdownVisible and fieldEntry.key.customFieldMeta.type() eq 'NUMBER'}">
-            <h:outputText id="displayRange"
-              value="Between #{processesAnalyticsBean.getMinValue(fieldEntry.key.customFieldMeta.name())} and #{processesAnalyticsBean.getMaxValue(fieldEntry.key.customFieldMeta.name())}" />
-            <p:slider for="min,max" range="true" id="slider"
-              minValue="#{processesAnalyticsBean.getMinValue(fieldEntry.key.customFieldMeta.name())}"
-              maxValue="#{processesAnalyticsBean.getMaxValue(fieldEntry.key.customFieldMeta.name())}"
-              displayTemplate="Between {min} and {max}">
-              <p:ajax event="slideEnd" process="@this" update="slider" />
-            </p:slider>
-            <h:inputHidden id="min" value="#{processesAnalyticsBean.getMinValue(fieldEntry.key.customFieldMeta.name())}" />
-            <h:inputHidden id="max" value="#{processesAnalyticsBean.getMaxValue(fieldEntry.key.customFieldMeta.name())}" />
-          </h:panelGrid>
+          <h:outputText id="displayRange"
+            rendered="#{processesAnalyticsBean.filterDropdownVisible and fieldEntry.key.customFieldMeta.type() eq 'NUMBER'}"
+            value="Between #{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][0]} and #{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][1]}" />
 
-          <!-- STRING, NUMBER -->
+          <p:slider for="minValue,maxValue" range="true" display="displayRange"
+            displayTemplate="Between {min} and {max}"
+            minValue="#{processesAnalyticsBean.getMinValue(fieldEntry.key.customFieldMeta.name())}"
+            maxValue="#{processesAnalyticsBean.getMaxValue(fieldEntry.key.customFieldMeta.name())}"
+            rendered="#{processesAnalyticsBean.filterDropdownVisible and fieldEntry.key.customFieldMeta.type() eq 'NUMBER'}">
+
+            <p:ajax event="slideEnd"
+              listener="#{processesAnalyticsBean.onSliderChange(fieldEntry.key, processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][0], processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][1] )}"
+              process="@this" partialSubmit="true" />
+          </p:slider>
+
+          <h:inputHidden id="minValue" value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][0]}" />
+          <h:inputHidden id="maxValue" value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][1]}" />
+
+          <!-- STRING, TEXT -->
           <p:selectCheckboxMenu id="dropdown" styleClass="col-12 p-0 m-0" dynamic="true" filter="true"
             filterMatchMode="startsWith" updateLabel="true" style="width: 15rem" panelStyle="width: 15rem"
             scrollHeight="250" value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key]}"
@@ -59,17 +63,20 @@
                  'TEXT' == fieldEntry.key.customFieldMeta.type())}">
             <f:selectItems value="#{processesAnalyticsBean.customFieldsByType[fieldEntry.key]}" var="optionValue"
               itemValue="#{optionValue}" itemLabel="#{optionValue}" />
-            <f:attribute name="fieldFilter" value="#{fieldEntry.key}" />
             <p:ajax event="change" process="@this" partialSubmit="true" />
           </p:selectCheckboxMenu>
 
           <!-- TIMESTAMP -->
-          <p:datePicker id="range" selectionMode="range"
+          <p:datePicker id="range" selectionMode="range" maxdate="#{processesAnalyticsBean.timeIntervalFilter.to}"
             value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key]}" readonlyInput="true"
-            rendered="#{processesAnalyticsBean.filterDropdownVisible and fieldEntry.key.customFieldMeta.type() eq 'TIMESTAMP'}" />
+            rendered="#{processesAnalyticsBean.filterDropdownVisible and fieldEntry.key.customFieldMeta.type() eq 'TIMESTAMP'}">
+            <p:ajax event="dateSelect" process="@this" partialSubmit="true" />
+          </p:datePicker>
+
         </h:panelGroup>
       </ui:repeat>
     </h:panelGroup>
+
   </h:panelGroup>
 </cc:implementation>
 </html>

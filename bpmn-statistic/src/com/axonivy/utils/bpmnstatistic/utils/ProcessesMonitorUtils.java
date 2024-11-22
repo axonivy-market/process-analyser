@@ -1,8 +1,9 @@
 package com.axonivy.utils.bpmnstatistic.utils;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -245,27 +246,42 @@ public class ProcessesMonitorUtils {
 
       for (Map.Entry<CustomFieldFilter, List<Object>> entry : selectedCustomFilters.entrySet()) {
         CustomFieldFilter customFieldFilter = entry.getKey();
-        List<Object> customFieldValues = entry.getValue();
+        Ivy.log().warn("entry.getValue() " + entry.getValue());
+        List<Object> customFieldValues = Arrays.asList(entry.getValue());
+        boolean isCustomFieldTypeString = CustomFieldType.STRING == entry.getKey().getCustomFieldMeta().type();
+        Ivy.log().warn("isCustomFieldTypeString " + isCustomFieldTypeString);
+        if (isCustomFieldTypeString) {
+          List<String> flatList = customFieldValues.stream().filter(value -> value instanceof String[])
+              .map(value -> (String[]) value).flatMap(Arrays::stream).collect(Collectors.toList());
+          List<Object> objectList = new ArrayList<>();
+          flatList.forEach(s -> objectList.add(s));
 
-        for (Object customFieldValue : customFieldValues) {
-          addCustomFieldCondition(subQuery, customFieldFilter, customFieldValue);
+          for (Object customFieldValue : objectList) {
+            addCustomFieldCondition(subQuery, customFieldFilter, customFieldValue);
+          }
+        } else {
+          Ivy.log().warn("customFieldValues " + customFieldValues.size());
+          for (Object customFieldValue : customFieldValues) {
+            addCustomFieldCondition(subQuery, customFieldFilter, customFieldValue);
+          }
         }
       }
-
       query.where().andOverall(subQuery);
     }
 
     return Ivy.wf().getCaseQueryExecutor().getResults(query);
   }
 
+  @SuppressWarnings("unchecked")
   private static void addCustomFieldCondition(CaseQuery subQuery, CustomFieldFilter customFieldFilter,
       Object customFieldValue) {
     boolean isCustomFieldFromCase = customFieldFilter.isCustomFieldFromCase();
     String customFieldName = customFieldFilter.getCustomFieldMeta().name();
     CustomFieldType customFieldType = customFieldFilter.getCustomFieldMeta().type();
-    Ivy.log().warn((String) customFieldValue);
+     Ivy.log().warn(customFieldName);
     switch (customFieldType) {
       case STRING:
+
         String stringValue = (String) customFieldValue;
         if (isCustomFieldFromCase) {
           subQuery.where().and().customField().stringField(customFieldName).isEqual(stringValue);
@@ -286,27 +302,41 @@ public class ProcessesMonitorUtils {
         break;
 
       case NUMBER:
-        Number numberValue = customFieldValue instanceof Number ? (Number) customFieldValue
-            : Double.parseDouble(customFieldValue.toString());
+        Ivy.log().warn("customFieldValue " + customFieldValue);
+        List<String> numberRange = (List<String>) customFieldValue;
+
+        Double startNumber = Double.parseDouble(numberRange.get(0));
+        Double endNumber = Double.parseDouble(numberRange.get(1));
+        Ivy.log().warn(startNumber);
+        Ivy.log().warn(endNumber);
         if (isCustomFieldFromCase) {
-          subQuery.where().and().customField().numberField(customFieldName).isEqual(numberValue);
+          subQuery.where().and().customField().numberField(customFieldName).isGreaterOrEqualThan(startNumber).and()
+              .customField().numberField(customFieldName).isLowerOrEqualThan(endNumber);
         } else {
           subQuery.where().and()
-              .tasks(TaskQuery.create().where().customField().numberField(customFieldName).isEqual(numberValue));
+              .tasks(TaskQuery.create().where().customField().numberField(customFieldName)
+                  .isGreaterOrEqualThan(startNumber).and().customField().numberField(customFieldName)
+                  .isLowerOrEqualThan(endNumber));
         }
         break;
 
       case TIMESTAMP:
-        Date dateValue = customFieldValue instanceof Date ? (Date) customFieldValue
-            : DateUtils.parseDateFromString(customFieldValue.toString());
+        List<LocalDate> dateRange = (List<LocalDate>) customFieldValue;
+        LocalDate startDate = dateRange.get(0);
+        LocalDate endDate = dateRange.get(1);
+
         if (isCustomFieldFromCase) {
-          subQuery.where().and().customField().timestampField(customFieldName).isEqual(dateValue);
+          subQuery.where().and().customField().timestampField(customFieldName)
+              .isGreaterOrEqualThan(java.sql.Date.valueOf(startDate)).and().customField()
+              .timestampField(customFieldName).isLowerOrEqualThan(java.sql.Date.valueOf(endDate));
         } else {
           subQuery.where().and()
-              .tasks(TaskQuery.create().where().customField().timestampField(customFieldName).isEqual(dateValue));
+              .tasks(TaskQuery.create().where().customField().timestampField(customFieldName)
+                  .isGreaterOrEqualThan(java.sql.Date.valueOf(startDate)).and().customField()
+                  .timestampField(customFieldName).isLowerOrEqualThan(java.sql.Date.valueOf(endDate)));
+          Ivy.log().warn(subQuery);
         }
         break;
-
       default:
         break;
     }

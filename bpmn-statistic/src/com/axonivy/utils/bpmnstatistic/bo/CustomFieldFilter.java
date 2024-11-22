@@ -2,8 +2,6 @@ package com.axonivy.utils.bpmnstatistic.bo;
 
 import java.util.Objects;
 
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import ch.ivyteam.ivy.workflow.custom.field.ICustomFieldMeta;
 
 public class CustomFieldFilter {

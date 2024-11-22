@@ -109,7 +109,9 @@
             "import java.util.Random;",
             "",
             "Random random = new Random();",
-            "ivy.case.customFields().numberField(\"Price\").set(random.nextInt(200, 5000));"
+            "ivy.case.customFields().numberField(\"Price\").set(random.nextDouble(200,5000));",
+            "",
+            "ivy.task.customFields().timestampField(\"Date\").set(new Date());"
           ]
         }
       },

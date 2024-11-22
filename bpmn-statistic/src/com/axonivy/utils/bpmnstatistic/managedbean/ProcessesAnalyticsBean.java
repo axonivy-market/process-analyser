@@ -1,6 +1,9 @@
 package com.axonivy.utils.bpmnstatistic.managedbean;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +17,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.utils.bpmnstatistic.bo.CustomFieldFilter;
@@ -35,6 +39,7 @@ import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.location.IParser.ParseException;
 import ch.ivyteam.ivy.process.rdm.IProcess;
+import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
 
@@ -127,17 +132,21 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onCustomFieldSelect() {
-    selectedCustomFilters.clear();
-    for (String customFieldName : selectedCustomFieldNames) {
-      for (Map.Entry<CustomFieldFilter, List<Object>> entry : customFieldsByType.entrySet()) {
-        CustomFieldFilter customFieldFilter = entry.getKey();
-//        List<Object> customFieldValues = entry.getValue().stream().distinct().toList();
+    customFieldsByType.forEach((key, value) -> {
+      boolean isSelectedCustomField = selectedCustomFieldNames.contains(key.getCustomFieldMeta().name());
 
-        if (customFieldFilter.getCustomFieldMeta().name().equals(customFieldName)) {
-          selectedCustomFilters.put(customFieldFilter, new ArrayList<>());
+      if (isSelectedCustomField && ObjectUtils.isEmpty(selectedCustomFilters.get(key))) {
+        if (key.getCustomFieldMeta().type() == CustomFieldType.NUMBER) {
+          double minValue = getMinValue(key.getCustomFieldMeta().name());
+          double maxValue = getMaxValue(key.getCustomFieldMeta().name());
+          selectedCustomFilters.put(key, Arrays.asList(minValue, maxValue));
+        } else {
+          selectedCustomFilters.put(key, new ArrayList<>());
         }
+      } else if (!isSelectedCustomField) {
+        selectedCustomFilters.remove(key);
       }
-    }
+    });
     setFilterDropdownVisible(!selectedCustomFieldNames.isEmpty());
   }
 
@@ -145,14 +154,24 @@ public class ProcessesAnalyticsBean {
     return customFieldsByType.entrySet().stream()
         .filter(entry -> entry.getKey().getCustomFieldMeta().name().equals(fieldName))
         .flatMap(entry -> entry.getValue().stream()).filter(obj -> obj instanceof Number)
-        .mapToDouble(obj -> ((Number) obj).doubleValue()).min().orElse(0);
+        .mapToDouble(obj -> ((Number) obj).doubleValue())
+        .map(value -> BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP).doubleValue()).min().orElse(0);
   }
 
   public double getMaxValue(String fieldName) {
     return customFieldsByType.entrySet().stream()
         .filter(entry -> entry.getKey().getCustomFieldMeta().name().equals(fieldName))
         .flatMap(entry -> entry.getValue().stream()).filter(obj -> obj instanceof Number)
-        .mapToDouble(obj -> ((Number) obj).doubleValue()).max().orElse(100);
+        .mapToDouble(obj -> ((Number) obj).doubleValue())
+        .map(value -> BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP).doubleValue()).max().orElse(100);
+  }
+
+  public void onSliderChange(CustomFieldFilter fieldEntryKey, double minValue, double maxValue) {
+    if (fieldEntryKey.getCustomFieldMeta().type() == CustomFieldType.NUMBER) {
+      Ivy.log().info("Updating range for {0}: {1} - {2}", fieldEntryKey.getCustomFieldMeta().name(), minValue,
+          maxValue);
+      selectedCustomFilters.put(fieldEntryKey, Arrays.asList(minValue, maxValue));
+    }
   }
 
   public void updateDataOnChangingFilter() throws ParseException {
@@ -199,6 +218,7 @@ public class ProcessesAnalyticsBean {
         processMiningData.setKpiType(selectedKpiType);
         TimeFrame timeFrame = new TimeFrame(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo());
         processMiningData.setTimeFrame(timeFrame);
+        Ivy.log().warn("selectedCustomFilters " + selectedCustomFilters.entrySet().toString());
         nodes = ProcessesMonitorUtils.filterInitialStatisticByIntervalWithoutModifyingProcess(
             getSelectedIProcessWebStartable(), timeIntervalFilter, selectedKpiType, selectedCustomFilters);
         for (Node node : nodes) {
@@ -301,5 +321,13 @@ public class ProcessesAnalyticsBean {
 
   public void setSelectedCustomFieldNames(List<String> selectedCustomFieldNames) {
     this.selectedCustomFieldNames = selectedCustomFieldNames;
+  }
+
+  public TimeIntervalFilter getTimeIntervalFilter() {
+    return timeIntervalFilter;
+  }
+
+  public void setTimeIntervalFilter(TimeIntervalFilter timeIntervalFilter) {
+    this.timeIntervalFilter = timeIntervalFilter;
   }
 }
