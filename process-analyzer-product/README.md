@@ -1,11 +1,13 @@
-# bpmn-statistic
-Axon Ivy’s Process Analyzer Tool enables comprehensive insights into your workflow processes. Key features:
+# Process Analyzer
+Axon Ivy’s Process Analyzer Tool enables comprehensive insights into your workflow processes. 
+
+Key features:
 - **Visualize Process Diagrams**
-: Provide a clear view of your processes with dynamic diagram rendering.
+: A clear and intuitive representation of your processes is provided through dynamic diagrams, which you are already familiar with from Axon Ivy.
 - **Statistics at a Glance**
-: Visualize workflow frequency and duration directly on the diagram.
+: Visualize workflow usage and duration directly on the diagram.
 - **Time-Based Analysis**
-: Filter and analyze data for specific time ranges.
+: Filter and analyze data for specific time intervalls.
 - **Custom Attribute Filtering**
 : Utilize process-specific attributes (custom-field from task/case) to filter and refine your analysis for deeper insights.
 - **Flexible Process Selection**
