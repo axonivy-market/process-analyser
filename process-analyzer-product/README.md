@@ -17,7 +17,7 @@ Key features:
 
 ## Demo
 
-- Select the PMV  that matches the desired process and KPI type, then click the **"Show Statistic"** button. This will display a raw data visualized process diagram alongside an analyzed statistics table. *(In this version, the data is limited to **"DONE"** cases with fewer than **TWO** alternative elements in their process.)*
+- Select the PMV that matches the desired process and KPI type, then click the **"Show Statistic"** button. This will display a raw data visualized process diagram alongside an analyzed statistics table. *(In this version, the data is limited to **"DONE"** cases with fewer than **TWO** alternative elements in their process.)*
 
 ![alt text](image1.png)
 
@@ -32,7 +32,19 @@ Key features:
 ![alt text](image3.png)
 
 ## Setup
+The Process Analyzer tool relies on task and case data from the AxonIvy System database for its analysis. Please adhere to the following practices to ensure data accuracy and precision:
+
+- **Deployment of Process Models**
+: To enable the Process Analyzer to access and analyze the desired process data, ensure that both process models are deployed within the same security context.
+
+- **Validation of Alternative Flows**
+: For any process alternative with multiple outgoing flows, ensure that each flow contains at least one task element along its path. *(It's still acceptable if there is only 1 out going path is mising task elements in its flow, as illustrated in the example process provided in the images.)*
+
+![alt text](image4.png)
 
 ```
 @variables.yaml@
 ```
+
+**Notice**
+- **For complex process flows** *- such as those involving numerous alternatives, sub-elements, or rework loops,* we are actively working on enhancing the accuracy of the data.
