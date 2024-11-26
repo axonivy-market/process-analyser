@@ -17,13 +17,13 @@ Key features:
 
 ## Demo
 
-- Select the PMV (within the same security context) that matches the desired process and KPI type, then click the **"Show Statistic"** button. This will display a raw data visualized process diagram alongside an analyzed statistics table. *(In this version, the data is limited to **"DONE"** cases with fewer than **TWO** alternative elements in their process.)*
+- Select the PMV  that matches the desired process and KPI type, then click the **"Show Statistic"** button. This will display a raw data visualized process diagram alongside an analyzed statistics table. *(In this version, the data is limited to **"DONE"** cases with fewer than **TWO** alternative elements in their process.)*
 
 ![alt text](image1.png)
 
-- To gain deeper insights, additional filter criteria have been included: time intervals and custom field values.
-  1) Time interval filter: By default, this filter includes all cases whose start timestamp falls within the specified time range.
-  2) Custom filter: This option allows users to filter cases based on custom field values (from the case or task) that match the specified conditions.
+- To gain deeper insights, additional filter criteria have been included: 
+  1) **Time interval filter:** By default, this filter includes all **"DONE"** cases with a start timestamp that falls within the specified time range.
+  2) **Custom filter:** This option allows users to filter cases based on custom field values (from the case or task) that match the specified conditions.
 
 ![alt text](image2.png)
 
