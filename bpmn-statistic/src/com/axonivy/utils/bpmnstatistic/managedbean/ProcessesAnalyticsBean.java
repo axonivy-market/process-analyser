@@ -104,8 +104,8 @@ public class ProcessesAnalyticsBean {
 
   public void onProcessSelect() {
     resetStatisticValue();
-    getCaseAndTaskCustomFields();
     resetCustomFieldFilterValues();
+    getCaseAndTaskCustomFields();
   }
 
   public void onKpiTypeSelect() {
@@ -120,6 +120,7 @@ public class ProcessesAnalyticsBean {
 
   private void resetCustomFieldFilterValues() {
     selectedCustomFieldNames = new ArrayList<>();
+    customFieldsByType.clear();
     setFilterDropdownVisible(false);
   }
 
@@ -134,9 +135,8 @@ public class ProcessesAnalyticsBean {
   public void onCustomFieldSelect() {
     customFieldsByType.forEach((key, value) -> {
       boolean isSelectedCustomField = selectedCustomFieldNames.contains(key.getCustomFieldMeta().name());
-
       if (isSelectedCustomField && ObjectUtils.isEmpty(selectedCustomFilters.get(key))) {
-        if (key.getCustomFieldMeta().type() == CustomFieldType.NUMBER) {
+        if (CustomFieldType.NUMBER == key.getCustomFieldMeta().type()) {
           double minValue = getMinValue(key.getCustomFieldMeta().name());
           double maxValue = getMaxValue(key.getCustomFieldMeta().name());
           selectedCustomFilters.put(key, Arrays.asList(minValue, maxValue));
@@ -154,23 +154,19 @@ public class ProcessesAnalyticsBean {
     return customFieldsByType.entrySet().stream()
         .filter(entry -> entry.getKey().getCustomFieldMeta().name().equals(fieldName))
         .flatMap(entry -> entry.getValue().stream()).filter(obj -> obj instanceof Number)
-        .mapToDouble(obj -> ((Number) obj).doubleValue())
-        .map(value -> BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP).doubleValue()).min().orElse(0);
+        .mapToDouble(obj -> ((Number) obj).doubleValue()).map(value -> Math.floor(value * 100) / 100).min().orElse(0);
   }
 
   public double getMaxValue(String fieldName) {
     return customFieldsByType.entrySet().stream()
         .filter(entry -> entry.getKey().getCustomFieldMeta().name().equals(fieldName))
         .flatMap(entry -> entry.getValue().stream()).filter(obj -> obj instanceof Number)
-        .mapToDouble(obj -> ((Number) obj).doubleValue())
-        .map(value -> BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP).doubleValue()).max().orElse(100);
+        .mapToDouble(obj -> ((Number) obj).doubleValue()).map(value -> Math.ceil(value * 100) / 100).max().orElse(0);
   }
 
-  public void onSliderChange(CustomFieldFilter fieldEntryKey, double minValue, double maxValue) {
-    if (fieldEntryKey.getCustomFieldMeta().type() == CustomFieldType.NUMBER) {
-      Ivy.log().info("Updating range for {0}: {1} - {2}", fieldEntryKey.getCustomFieldMeta().name(), minValue,
-          maxValue);
-      selectedCustomFilters.put(fieldEntryKey, Arrays.asList(minValue, maxValue));
+  public void onSliderChange(CustomFieldFilter customField, double minValue, double maxValue) {
+    if (CustomFieldType.NUMBER == customField.getCustomFieldMeta().type()) {
+      selectedCustomFilters.put(customField, Arrays.asList(minValue, maxValue));
     }
   }
 
@@ -218,7 +214,6 @@ public class ProcessesAnalyticsBean {
         processMiningData.setKpiType(selectedKpiType);
         TimeFrame timeFrame = new TimeFrame(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo());
         processMiningData.setTimeFrame(timeFrame);
-        Ivy.log().warn("selectedCustomFilters " + selectedCustomFilters.entrySet().toString());
         nodes = ProcessesMonitorUtils.filterInitialStatisticByIntervalWithoutModifyingProcess(
             getSelectedIProcessWebStartable(), timeIntervalFilter, selectedKpiType, selectedCustomFilters);
         for (Node node : nodes) {

@@ -234,6 +234,61 @@ public class ProcessesMonitorUtils {
     path.getNodeIdsInPath().add(ProcessUtils.getElementPid(destinationElement));
     destinationElement.getOutgoing().forEach(outGoingPath -> followPath(path, outGoingPath));
   }
+//  
+//  private static List<ICase> getAllCasesFromTaskStartIdWithTimeInterval(
+//      Long taskStartId,
+//      TimeIntervalFilter timeIntervalFilter,
+//      Map<CustomFieldFilter, List<Object>> selectedCustomFilters
+//) {
+//  CaseQuery query = buildBaseQuery(taskStartId, timeIntervalFilter);
+//
+//  if (ObjectUtils.isNotEmpty(selectedCustomFilters)) {
+//      CaseQuery subQuery = CaseQuery.create();
+//
+//      selectedCustomFilters.forEach((customFieldFilter, customFieldValues) -> {
+//          List<Object> flatValues = flattenCustomFieldValues(customFieldValues, customFieldFilter);
+//
+//          CaseQuery subSubQuery = CaseQuery.create();
+//          flatValues.forEach(value -> addCustomFieldCondition(subSubQuery, customFieldFilter, value));
+//
+//          subQuery.where().or(subSubQuery);
+//      });
+//
+//      query.where().andOverall(subQuery);
+//  }
+//
+//  return Ivy.wf().getCaseQueryExecutor().getResults(query);
+//}
+//
+//private static CaseQuery buildBaseQuery(Long taskStartId, TimeIntervalFilter timeIntervalFilter) {
+//  return CaseQuery.create()
+//          .where()
+//          .state().isEqual(CaseState.DONE)
+//          .and()
+//          .taskStartId().isEqual(taskStartId)
+//          .and()
+//          .startTimestamp().isGreaterOrEqualThan(timeIntervalFilter.getFrom())
+//          .and()
+//          .startTimestamp().isLowerOrEqualThan(timeIntervalFilter.getTo());
+//}
+//
+//private static List<Object> flattenCustomFieldValues(
+//      List<Object> customFieldValues,
+//      CustomFieldFilter customFieldFilter
+//) {
+//  if (isStringFieldType(customFieldFilter)) {
+//      return customFieldValues.stream()
+//              .filter(value -> value instanceof String[])
+//              .flatMap(value -> Arrays.stream((String[]) value))
+//              .collect(Collectors.toList());
+//  }
+//  return customFieldValues;
+//}
+//
+//private static boolean isStringFieldType(CustomFieldFilter customFieldFilter) {
+//  CustomFieldType type = customFieldFilter.getCustomFieldMeta().type();
+//  return type == CustomFieldType.STRING || type == CustomFieldType.TEXT;
+//}
 
   private static List<ICase> getAllCasesFromTaskStartIdWithTimeInterval(Long taskStartId,
       TimeIntervalFilter timeIntervalFilter, Map<CustomFieldFilter, List<Object>> selectedCustomFilters) {
@@ -246,29 +301,34 @@ public class ProcessesMonitorUtils {
 
       for (Map.Entry<CustomFieldFilter, List<Object>> entry : selectedCustomFilters.entrySet()) {
         CustomFieldFilter customFieldFilter = entry.getKey();
-        Ivy.log().warn("entry.getValue() " + entry.getValue());
         List<Object> customFieldValues = Arrays.asList(entry.getValue());
-        boolean isCustomFieldTypeString = CustomFieldType.STRING == entry.getKey().getCustomFieldMeta().type();
-        Ivy.log().warn("isCustomFieldTypeString " + isCustomFieldTypeString);
+        boolean isCustomFieldTypeString = CustomFieldType.STRING == entry.getKey().getCustomFieldMeta().type()
+            || CustomFieldType.TEXT == entry.getKey().getCustomFieldMeta().type();
+
         if (isCustomFieldTypeString) {
           List<String> flatList = customFieldValues.stream().filter(value -> value instanceof String[])
               .map(value -> (String[]) value).flatMap(Arrays::stream).collect(Collectors.toList());
           List<Object> objectList = new ArrayList<>();
           flatList.forEach(s -> objectList.add(s));
-
+          CaseQuery subSubQuery = CaseQuery.create();
           for (Object customFieldValue : objectList) {
-            addCustomFieldCondition(subQuery, customFieldFilter, customFieldValue);
+
+            addCustomFieldCondition(subSubQuery, customFieldFilter, customFieldValue);
+
           }
+          subQuery.where().or(subSubQuery);
+
         } else {
-          Ivy.log().warn("customFieldValues " + customFieldValues.size());
+
+          CaseQuery subSubQuery2 = CaseQuery.create();
           for (Object customFieldValue : customFieldValues) {
-            addCustomFieldCondition(subQuery, customFieldFilter, customFieldValue);
+            addCustomFieldCondition(subSubQuery2, customFieldFilter, customFieldValue);
           }
+          subQuery.where().or(subSubQuery2);
         }
       }
       query.where().andOverall(subQuery);
     }
-
     return Ivy.wf().getCaseQueryExecutor().getResults(query);
   }
 
@@ -278,63 +338,56 @@ public class ProcessesMonitorUtils {
     boolean isCustomFieldFromCase = customFieldFilter.isCustomFieldFromCase();
     String customFieldName = customFieldFilter.getCustomFieldMeta().name();
     CustomFieldType customFieldType = customFieldFilter.getCustomFieldMeta().type();
-     Ivy.log().warn(customFieldName);
+
     switch (customFieldType) {
       case STRING:
-
         String stringValue = (String) customFieldValue;
         if (isCustomFieldFromCase) {
-          subQuery.where().and().customField().stringField(customFieldName).isEqual(stringValue);
+          subQuery.where().or().customField().stringField(customFieldName).isEqual(stringValue);
         } else {
-          subQuery.where().and()
+          subQuery.where().or()
               .tasks(TaskQuery.create().where().customField().stringField(customFieldName).isEqual(stringValue));
         }
         break;
-
       case TEXT:
         String textValue = (String) customFieldValue;
         if (isCustomFieldFromCase) {
-          subQuery.where().and().customField().textField(customFieldName).isEqual(textValue);
+          subQuery.where().or().customField().textField(customFieldName).isEqual(textValue);
         } else {
-          subQuery.where().and()
+          subQuery.where().or()
               .tasks(TaskQuery.create().where().customField().textField(customFieldName).isEqual(textValue));
         }
         break;
-
       case NUMBER:
-        Ivy.log().warn("customFieldValue " + customFieldValue);
         List<String> numberRange = (List<String>) customFieldValue;
 
         Double startNumber = Double.parseDouble(numberRange.get(0));
         Double endNumber = Double.parseDouble(numberRange.get(1));
-        Ivy.log().warn(startNumber);
-        Ivy.log().warn(endNumber);
+
         if (isCustomFieldFromCase) {
-          subQuery.where().and().customField().numberField(customFieldName).isGreaterOrEqualThan(startNumber).and()
+          subQuery.where().or().customField().numberField(customFieldName).isGreaterOrEqualThan(startNumber).and()
               .customField().numberField(customFieldName).isLowerOrEqualThan(endNumber);
         } else {
-          subQuery.where().and()
+          subQuery.where().or()
               .tasks(TaskQuery.create().where().customField().numberField(customFieldName)
                   .isGreaterOrEqualThan(startNumber).and().customField().numberField(customFieldName)
                   .isLowerOrEqualThan(endNumber));
         }
         break;
-
       case TIMESTAMP:
         List<LocalDate> dateRange = (List<LocalDate>) customFieldValue;
         LocalDate startDate = dateRange.get(0);
         LocalDate endDate = dateRange.get(1);
 
         if (isCustomFieldFromCase) {
-          subQuery.where().and().customField().timestampField(customFieldName)
+          subQuery.where().or().customField().timestampField(customFieldName)
               .isGreaterOrEqualThan(java.sql.Date.valueOf(startDate)).and().customField()
               .timestampField(customFieldName).isLowerOrEqualThan(java.sql.Date.valueOf(endDate));
         } else {
-          subQuery.where().and()
+          subQuery.where().or()
               .tasks(TaskQuery.create().where().customField().timestampField(customFieldName)
                   .isGreaterOrEqualThan(java.sql.Date.valueOf(startDate)).and().customField()
                   .timestampField(customFieldName).isLowerOrEqualThan(java.sql.Date.valueOf(endDate)));
-          Ivy.log().warn(subQuery);
         }
         break;
       default:
@@ -348,5 +401,4 @@ public class ProcessesMonitorUtils {
     node.setLabelValue(Objects.requireNonNullElse(value, 0));
     node.setFrequency(value);
   }
-
 }

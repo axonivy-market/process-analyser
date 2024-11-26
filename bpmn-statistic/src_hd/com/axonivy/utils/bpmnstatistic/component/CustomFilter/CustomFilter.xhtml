@@ -9,31 +9,36 @@
 
 <cc:implementation>
   <c:set var="processesAnalyticsBean" value="#{cc.attrs.processesAnalyticsBean}" />
+  <h:panelGroup>
+    <h:panelGroup id="custom-filter-group" styleClass="field col-12 grid formgrid align-items-start p-0 m-0 mb-3"
+      layout="block">
+      <p:outputLabel value="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/CustomFilters')}"
+        styleClass="font-medium" />
+      <div class="col-12 p-0 m-0">
+        <p:selectCheckboxMenu multiple="true"
+          emptyLabel="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/None')}"
+          updateLabel="true" scrollHeight="250" styleClass="w-full"
+          value="#{processesAnalyticsBean.selectedCustomFieldNames}" onShow="displayEmptyOptionsMessage()">
+          <p:ajax event="change" listener="#{processesAnalyticsBean.onCustomFieldSelect}" partialSubmit="true"
+            process="@this" update="custom-filter-group filter-options-group" />
+          <p:ajax event="toggleSelect" listener="#{processesAnalyticsBean.onCustomFieldSelect}" process="@this"
+            update="custom-filter-group filter-options-group" />
+          <p:ajax event="itemUnselect" update="custom-filter-group filter-options-group" process="@this"
+            partialSubmit="true" />
+          <f:selectItems value="#{processesAnalyticsBean.customFieldsByType.keySet()}" var="customFieldFilter"
+            itemValue="#{customFieldFilter.customFieldMeta.name()}"
+            itemLabel="#{customFieldFilter.customFieldMeta.name()}" />
+        </p:selectCheckboxMenu>
+      </div>
+    </h:panelGroup>
 
-  <h:panelGroup id="custom-filter-group" styleClass="field col-12 grid formgrid align-items-start p-0 m-0 mb-3"
-    layout="block">
-    <p:outputLabel value="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/CustomFilters')}"
-      styleClass="font-medium" />
-    <div class="col-12 p-0 m-0">
-      <p:selectCheckboxMenu multiple="true"
-        emptyLabel="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/None')}" updateLabel="true"
-        scrollHeight="250" styleClass="w-full" value="#{processesAnalyticsBean.selectedCustomFieldNames}">
-        <p:ajax event="change" listener="#{processesAnalyticsBean.onCustomFieldSelect}" partialSubmit="true"
-          process="@this" update="custom-filter-group" />
-        <p:ajax event="toggleSelect" listener="#{processesAnalyticsBean.onCustomFieldSelect}" process="@this"
-          update="custom-filter-group" />
-        <p:ajax event="itemUnselect" update="custom-filter-group" process="@this" partialSubmit="true" />
-        <f:selectItems value="#{processesAnalyticsBean.customFieldsByType.keySet()}" var="customFieldFilter"
-          itemValue="#{customFieldFilter.customFieldMeta.name()}"
-          itemLabel="#{customFieldFilter.customFieldMeta.name()}" />
-      </p:selectCheckboxMenu>
-    </div>
-
-    <h:panelGroup layout="block" styleClass="col-12 p-0 grid">
+    <h:panelGroup layout="block" styleClass="field grid" id="filter-options-group">
       <ui:repeat value="#{processesAnalyticsBean.selectedCustomFilters.entrySet()}" var="fieldEntry">
-        <h:panelGroup styleClass="ui-fluid col-4 p-0" layout="block">
-          <p:outputLabel styleClass="ui-g-12" value="#{fieldEntry.key.customFieldMeta.name()}"
-            rendered="#{processesAnalyticsBean.filterDropdownVisible}" />
+        <h:panelGroup styleClass="ui-fluid col-4" layout="block">
+          <div class="col-4 p-0 m-0 mb-2">
+            <p:outputLabel value="#{fieldEntry.key.customFieldMeta.name()}"
+              rendered="#{processesAnalyticsBean.filterDropdownVisible}" />
+          </div>
 
           <!-- NUMBER -->
           <h:outputText id="displayRange"
@@ -41,42 +46,52 @@
             value="Between #{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][0]} and #{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][1]}" />
 
           <p:slider for="minValue,maxValue" range="true" display="displayRange"
-            displayTemplate="Between {min} and {max}"
+            displayTemplate="Between {min} and {max}" styleClass="m-2"
             minValue="#{processesAnalyticsBean.getMinValue(fieldEntry.key.customFieldMeta.name())}"
             maxValue="#{processesAnalyticsBean.getMaxValue(fieldEntry.key.customFieldMeta.name())}"
             rendered="#{processesAnalyticsBean.filterDropdownVisible and fieldEntry.key.customFieldMeta.type() eq 'NUMBER'}">
-
             <p:ajax event="slideEnd"
               listener="#{processesAnalyticsBean.onSliderChange(fieldEntry.key, processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][0], processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][1] )}"
               process="@this" partialSubmit="true" />
           </p:slider>
-
-          <h:inputHidden id="minValue" value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][0]}" />
-          <h:inputHidden id="maxValue" value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][1]}" />
+          <h:inputHidden id="minValue" value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][0]}"
+            rendered="#{fieldEntry.key.customFieldMeta.type() eq 'NUMBER'}" />
+          <h:inputHidden id="maxValue" value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][1]}"
+            rendered="#{fieldEntry.key.customFieldMeta.type() eq 'NUMBER'}" />
 
           <!-- STRING, TEXT -->
-          <p:selectCheckboxMenu id="dropdown" styleClass="col-12 p-0 m-0" dynamic="true" filter="true"
-            filterMatchMode="startsWith" updateLabel="true" style="width: 15rem" panelStyle="width: 15rem"
-            scrollHeight="250" value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key]}"
-            rendered="#{processesAnalyticsBean.filterDropdownVisible and 
+            <p:selectCheckboxMenu id="dropdown" dynamic="true" filter="true" styleClass="col-12 m-0 p-0 grid formgrid"
+              filterMatchMode="startsWith" updateLabel="true" scrollHeight="250" rendered="#{processesAnalyticsBean.filterDropdownVisible and 
                 ('STRING' == fieldEntry.key.customFieldMeta.type() or 
-                 'TEXT' == fieldEntry.key.customFieldMeta.type())}">
-            <f:selectItems value="#{processesAnalyticsBean.customFieldsByType[fieldEntry.key]}" var="optionValue"
-              itemValue="#{optionValue}" itemLabel="#{optionValue}" />
-            <p:ajax event="change" process="@this" partialSubmit="true" />
-          </p:selectCheckboxMenu>
+                 'TEXT' == fieldEntry.key.customFieldMeta.type())}"
+              value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key]}">
+              <f:selectItems value="#{processesAnalyticsBean.customFieldsByType[fieldEntry.key]}" var="optionValue"
+                itemValue="#{optionValue}" itemLabel="#{optionValue}" />
+              <p:ajax event="change" process="@this" partialSubmit="true" />
+            </p:selectCheckboxMenu>
 
           <!-- TIMESTAMP -->
           <p:datePicker id="range" selectionMode="range" maxdate="#{processesAnalyticsBean.timeIntervalFilter.to}"
-            value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key]}" readonlyInput="true"
+            styleClass="col-12 m-0 p-0 grid formgrid" widgetVar="wgtRange" onblur="adjustDateRange('wgtRange')"
+            value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key]}" readonlyInput="true" required="true" requiredMessage="Required!"
             rendered="#{processesAnalyticsBean.filterDropdownVisible and fieldEntry.key.customFieldMeta.type() eq 'TIMESTAMP'}">
             <p:ajax event="dateSelect" process="@this" partialSubmit="true" />
           </p:datePicker>
-
+          <p:message styleClass="col-12 m-0 p-2 grid formgrid" for="range"/>
         </h:panelGroup>
       </ui:repeat>
     </h:panelGroup>
-
   </h:panelGroup>
+  <h:outputScript>
+        function displayEmptyOptionsMessage() {
+            const checkboxMenuPanel = document.querySelector('.ui-selectcheckboxmenu-panel');
+            if (checkboxMenuPanel) {
+                const items = checkboxMenuPanel.querySelectorAll('.ui-selectcheckboxmenu-item');
+                if (items.length === 0) {
+                    checkboxMenuPanel.innerHTML = '<div class="text-center p-2">No custom fields available</div>';
+                }
+            }
+        } 
+    </h:outputScript>
 </cc:implementation>
 </html>

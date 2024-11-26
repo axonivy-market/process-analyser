@@ -33,12 +33,10 @@
             <br />
         </p:outputPanel>
 
-
-        <p:panelGrid id="search-fields" columns="3" layout="grid"
-          styleClass="ui-fluid mb-3"
+        <p:panelGrid id="search-fields" columns="3"
+          styleClass="ui-fluid mb-3" layout="flex"
           columnClasses="ui-g-4, ui-g-4, ui-g-4">
-
-          <h:panelGroup>
+          <h:panelGroup styleClass="ui-g">
             <p:outputLabel for="moduleDropdown"
               value="Please select a module" />
             <p:selectOneMenu id="moduleDropdown"
@@ -53,7 +51,7 @@
             </p:selectOneMenu>
           </h:panelGroup>
 
-          <h:panelGroup>
+          <h:panelGroup styleClass="ui-g">
             <p:outputLabel for="processDropdown"
               value="Please select a process" />
             <p:selectOneMenu id="processDropdown"
@@ -67,7 +65,7 @@
             </p:selectOneMenu>
           </h:panelGroup>
 
-          <h:panelGroup>
+          <h:panelGroup styleClass="ui-g">
             <p:outputLabel for="kpiDropdown" value="Please select a KPI" />
             <p:selectOneMenu id="kpiDropdown"
               value="#{processesAnalyticsBean.selectedKpiType}">
@@ -95,8 +93,7 @@
 
         <hr />
 
-        <ic:com.axonivy.utils.bpmnstatistic.component.CustomFilter
-          processesAnalyticsBean="#{processesAnalyticsBean}" />
+        <ic:com.axonivy.utils.bpmnstatistic.component.CustomFilter processesAnalyticsBean="#{processesAnalyticsBean}" />
 
         <iframe id="process-analytic-viewer"
           src="#{processesAnalyticsBean.bpmnIframeSourceUrl}"
