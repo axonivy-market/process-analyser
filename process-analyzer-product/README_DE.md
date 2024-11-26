@@ -1,18 +1,15 @@
-# bpmn-statistic
-Axon Ivy’s Process Analyzer Tool enables comprehensive insights into your workflow processes. Key features:
-- **Visualize Process Diagrams**
-: Provide a clear view of your processes with dynamic diagram rendering.
-- **Statistics at a Glance**
-: Visualize workflow frequency and duration directly on the diagram.
-- **Time-Based Analysis**
-: Filter and analyze data for specific time ranges.
-- **Custom Attribute Filtering**
-: Utilize process-specific attributes (custom-field from task/case) to filter and refine your analysis for deeper insights.
-- **Flexible Process Selection**
-: Well integrated with any process from the same security context to leverage the tool's robust features.
-- **Export Capabilities**
-: Export diagram and detailed Excel reports with frequency/duration statistics.
+# Prozess Analyzer
+Das Process-Analyzer-Tool von Axon Ivy bietet dir umfassende Einblicke in deine Workflow-Prozesse.
 
+Hauptfunktionen:
+
+- **Prozessdiagramme visualisieren**: Eine klare und intuitive Darstellung deiner Prozesse wird durch dynamische Diagramme ermöglicht, die du schon aus Axon Ivy gewohnt bist.
+- **Übersichtliche Statistiken**: Visualisiere Nutzungsdaten und Auswertungen zur Aufgabendauer direkt im Prozessdiagramm.
+- **Zeitbasierte Analyse**: Filtere und analysiere Daten für spezifische Zeitintervalle
+- **Benutzerdefinierte Attributfilter**: Nutze prozessspezifische Attribute (z. B. benutzerdefinierte Felder aus Aufgaben oder Fällen), um deine Analyse detailliert zu verfeinern.
+- **Flexible Prozessauswahl**: Analyse Prozesse einem Security Kontext 
+- **Export-Funktionen**: Exportiere Prozessdiagramme und detaillierte Excel-Berichte mit Nutzungs- und Dauerstatistiken.
+  
 ## Demo
 
 - Select the PMV (within the same security context) that matches the desired process and KPI type, then click the **"Show Statistic"** button. This will display a raw data visualized process diagram alongside an analyzed statistics table. *(In this version, the data is limited to **"DONE"** cases with fewer than **TWO** alternative elements in their process.)*
