@@ -163,7 +163,7 @@ public class ProcessesAnalyticsBean {
         .mapToDouble(obj -> ((Number) obj).doubleValue()).map(value -> Math.ceil(value * 100) / 100).max().orElse(0);
   }
 
-  public void onSliderChange(CustomFieldFilter customField, double minValue, double maxValue) {
+  public void onNumberSliderChange(CustomFieldFilter customField, double minValue, double maxValue) {
     if (CustomFieldType.NUMBER == customField.getCustomFieldMeta().type()) {
       selectedCustomFilters.put(customField, Arrays.asList(minValue, maxValue));
     }

@@ -51,7 +51,7 @@
             maxValue="#{processesAnalyticsBean.getMaxValue(fieldEntry.key.customFieldMeta.name())}"
             rendered="#{processesAnalyticsBean.filterDropdownVisible and fieldEntry.key.customFieldMeta.type() eq 'NUMBER'}">
             <p:ajax event="slideEnd"
-              listener="#{processesAnalyticsBean.onSliderChange(fieldEntry.key, processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][0], processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][1] )}"
+              listener="#{processesAnalyticsBean.onNumberSliderChange(fieldEntry.key, processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][0], processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][1] )}"
               process="@this" partialSubmit="true" />
           </p:slider>
           <h:inputHidden id="min-value" value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][0]}"

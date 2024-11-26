@@ -36,8 +36,9 @@ public class CustomFieldFilter {
     if (obj == null || this.getClass() != obj.getClass()) {
       return false;
     }
-    CustomFieldFilter that = (CustomFieldFilter) obj;
-    return isCustomFieldFromCase == that.isCustomFieldFromCase && Objects.equals(customFieldMeta, that.customFieldMeta);
+    CustomFieldFilter customFieldFilter = (CustomFieldFilter) obj;
+    return isCustomFieldFromCase == customFieldFilter.isCustomFieldFromCase
+        && Objects.equals(customFieldMeta, customFieldFilter.customFieldMeta);
   }
 
   @Override

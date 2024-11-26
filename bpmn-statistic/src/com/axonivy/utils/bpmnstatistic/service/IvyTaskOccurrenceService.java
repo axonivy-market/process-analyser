@@ -92,6 +92,9 @@ public class IvyTaskOccurrenceService {
     return result;
   }
 
+  /**
+   * Get all custom fields from cases/ business cases and tasks
+   */
   public static Map<CustomFieldFilter, List<Object>> getCaseAndTaskCustomFields(String selectedPid,
       TimeIntervalFilter timeIntervalFilter, Map<CustomFieldFilter, List<Object>> customFieldsByType) {
     return Sudo.get(() -> {
