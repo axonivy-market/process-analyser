@@ -16,6 +16,7 @@ public class DateUtils {
 
   public static final String TIME_PATTERN = "HH:mm";
   public static final String DATE_TIME_PATTERN = "yyyy-MM-dd " + TIME_PATTERN;
+  public static final String DATE_PATTERN = "yyyy-MM-dd";
   private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_TIME_PATTERN);
 
   private DateUtils() {

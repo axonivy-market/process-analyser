@@ -23,15 +23,24 @@
       <h:panelGroup styleClass="col-12 m-0 p-0 grid formgrid" rendered="#{timeIntervalFilterBean.pointSelection}">
         <div class="col-6 pl-1 pr-1">
           <p:calendar value="#{timeIntervalFilterBean.filter.from}" readonly="true"
-            pattern="#{timeIntervalFilterBean.timePattern}" />
+            pattern="#{timeIntervalFilterBean.datePattern}" />
+        </div>
+        <div class="col-6 pr-0"/>
+      </h:panelGroup>
+
+      <h:panelGroup styleClass="col-12 m-0 p-0 grid formgrid" rendered="#{timeIntervalFilterBean.betweenSelection}">
+        <div class="col-6 pl-1 pr-1">
+          <p:datePicker id="date-range" selectionMode="range" required="true"
+            value="#{timeIntervalFilterBean.selectedDateRange}"
+            readonlyInput="true">
+          </p:datePicker>
         </div>
         <div class="col-6 pr-0">
-          <p:calendar value="#{timeIntervalFilterBean.filter.to}" readonly="true"
-            pattern="#{timeIntervalFilterBean.timePattern}" />
+        <p:message for="date-range" styleClass="ml-0" />
         </div>
       </h:panelGroup>
 
-      <h:panelGroup styleClass="col-12 m-0 p-0 grid formgrid" rendered="#{timeIntervalFilterBean.rangeSelection}">
+      <h:panelGroup styleClass="col-12 m-0 p-0 grid formgrid" rendered="#{timeIntervalFilterBean.customSelection}">
         <!-- From -->
         <div class="col-6 pl-1 pr-1">
           <p:calendar showOn="button" value="#{timeIntervalFilterBean.filter.from}"
@@ -50,27 +59,6 @@
         </div>
       </h:panelGroup>
 
-      <h:panelGroup styleClass="col-12 m-0 p-0 grid formgrid"
-        rendered="#{timeIntervalFilterBean.withInSelection or timeIntervalFilterBean.currentSelection}">
-        <!-- Time -->
-        <h:panelGroup id="interval-time-with-in" layout="block" styleClass="col-6 pl-1 pr-1">
-          <p:inputText value="#{timeIntervalFilterBean.currentTime}"
-            readonly="#{timeIntervalFilterBean.currentSelection}" required="true"
-            placeholder="#{ivy.cms.co('/Labels/EnterANumber')}">
-            <p:keyFilter mask="num" />
-            <p:ajax listener="#{timeIntervalFilterBean.unifyFilterAndRefreshData()}" process="@this" update="@this"
-              partialSubmit="true" />
-          </p:inputText>
-        </h:panelGroup>
-        <!-- Unit options -->
-        <div class="col-6 pr-0">
-          <p:selectOneMenu value="#{timeIntervalFilterBean.selectedUnit}">
-            <f:selectItems value="#{timeIntervalFilterBean.intervalUnits}" var="unit" itemValue="#{unit}"
-              itemLabel="#{unit.getCmsName()}" />
-            <p:ajax update="interval-time-with-in" listener="#{timeIntervalFilterBean.onSelectUnit()}" />
-          </p:selectOneMenu>
-        </div>
-      </h:panelGroup>
     </h:panelGroup>
     <div class="col-12">
       <p:message for="process-time-interval" />
