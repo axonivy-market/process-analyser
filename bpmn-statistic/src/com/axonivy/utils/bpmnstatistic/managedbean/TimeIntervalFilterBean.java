@@ -50,7 +50,7 @@ public class TimeIntervalFilterBean implements Serializable {
 
   private static final String FILTER_DATA_BY_INTERVAL_RC_PARAMS_PATTERN = "[{name:'from', value:'%s'}, {name:'to', value:'%s'}]";
   private static final String FILTER_DATA_BY_INTERVAL_RC = "filterDataByIntervalRC(%s);";
-  private static final String PROCESS_TIME_INTERVAL_ID = "monitor-form:process-time-interval";
+  private static final String PROCESS_TIME_INTERVAL_ID = "process-analytics-form:process-time-interval";
 
   private TimeIntervalType selectedType;
   private TimeIntervalUnit selectedUnit;
