@@ -37,7 +37,7 @@
         <div class="col-6 pl-1 pr-1">
           <p:datePicker value="#{timeIntervalFilterBean.filter.from}"
             id="between-date-from"
-            validatorMessage="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/FromToDateValidationMessage')}"
+            validatorMessage="#{ivy.cms.co('/Dialogs/com/axonivy/utils/process/analyzer/ProcessesMonitor/FromToDateValidationMessage')}"
             showIcon="true" showTime="true" timeInput="true"
             pattern="#{timeIntervalFilterBean.timePattern}">
             <p:ajax
@@ -50,7 +50,7 @@
         <div class="col-6 pr-0">
           <p:datePicker value="#{timeIntervalFilterBean.filter.to}"
             id="between-date-to"
-            validatorMessage="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/FromToDateValidationMessage')}"
+            validatorMessage="#{ivy.cms.co('/Dialogs/com/axonivy/utils/process/analyzer/ProcessesMonitor/FromToDateValidationMessage')}"
             showIcon="true" showTime="true" timeInput="true"
             mindate="#{timeIntervalFilterBean.filter.from}"
             pattern="#{timeIntervalFilterBean.timePattern}">
