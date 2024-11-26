@@ -32,20 +32,20 @@
       </div>
     </h:panelGroup>
 
-    <h:panelGroup layout="block" styleClass="field grid" id="filter-options-group">
+    <h:panelGroup layout="block" styleClass="field grid mb-0" id="filter-options-group">
       <ui:repeat value="#{processesAnalyticsBean.selectedCustomFilters.entrySet()}" var="fieldEntry">
-        <h:panelGroup styleClass="ui-fluid col-4" layout="block">
+        <h:panelGroup styleClass="ui-fluid col-4" layout="block" rendered="#{processesAnalyticsBean.filterDropdownVisible}">
           <div class="col-4 p-0 m-0 mb-2">
             <p:outputLabel value="#{fieldEntry.key.customFieldMeta.name()}"
               rendered="#{processesAnalyticsBean.filterDropdownVisible}" />
           </div>
 
           <!-- NUMBER -->
-          <h:outputText id="displayRange"
+          <h:outputText id="number-range"
             rendered="#{processesAnalyticsBean.filterDropdownVisible and fieldEntry.key.customFieldMeta.type() eq 'NUMBER'}"
             value="Between #{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][0]} and #{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][1]}" />
 
-          <p:slider for="minValue,maxValue" range="true" display="displayRange"
+          <p:slider for="min-value, max-value" range="true" display="number-range"
             displayTemplate="Between {min} and {max}" styleClass="m-2"
             minValue="#{processesAnalyticsBean.getMinValue(fieldEntry.key.customFieldMeta.name())}"
             maxValue="#{processesAnalyticsBean.getMaxValue(fieldEntry.key.customFieldMeta.name())}"
@@ -54,30 +54,36 @@
               listener="#{processesAnalyticsBean.onSliderChange(fieldEntry.key, processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][0], processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][1] )}"
               process="@this" partialSubmit="true" />
           </p:slider>
-          <h:inputHidden id="minValue" value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][0]}"
+          <h:inputHidden id="min-value" value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][0]}"
             rendered="#{fieldEntry.key.customFieldMeta.type() eq 'NUMBER'}" />
-          <h:inputHidden id="maxValue" value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][1]}"
+          <h:inputHidden id="max-value" value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][1]}"
             rendered="#{fieldEntry.key.customFieldMeta.type() eq 'NUMBER'}" />
 
           <!-- STRING, TEXT -->
-            <p:selectCheckboxMenu id="dropdown" dynamic="true" filter="true" styleClass="col-12 m-0 p-0 grid formgrid"
-              filterMatchMode="startsWith" updateLabel="true" scrollHeight="250" rendered="#{processesAnalyticsBean.filterDropdownVisible and 
+           <h:panelGroup layout="block" rendered="#{processesAnalyticsBean.filterDropdownVisible and 
                 ('STRING' == fieldEntry.key.customFieldMeta.type() or 
-                 'TEXT' == fieldEntry.key.customFieldMeta.type())}"
+                 'TEXT' == fieldEntry.key.customFieldMeta.type())}">
+            <p:selectCheckboxMenu id="text-dropdown" dynamic="true" filter="true" styleClass="col-12 m-0 p-0 grid formgrid"
+              filterMatchMode="startsWith" updateLabel="true" scrollHeight="250"  required="true"
               value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key]}">
               <f:selectItems value="#{processesAnalyticsBean.customFieldsByType[fieldEntry.key]}" var="optionValue"
                 itemValue="#{optionValue}" itemLabel="#{optionValue}" />
               <p:ajax event="change" process="@this" partialSubmit="true" />
             </p:selectCheckboxMenu>
+            <p:message styleClass="col-12 m-0 p-2 grid formgrid" for="text-dropdown" />
+            </h:panelGroup>
 
           <!-- TIMESTAMP -->
-          <p:datePicker id="range" selectionMode="range" maxdate="#{processesAnalyticsBean.timeIntervalFilter.to}"
-            styleClass="col-12 m-0 p-0 grid formgrid" widgetVar="wgtRange" onblur="adjustDateRange('wgtRange')"
-            value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key]}" readonlyInput="true" required="true" requiredMessage="Required!"
+          <h:panelGroup layout="block">
+          <p:datePicker id="date-range" selectionMode="range" maxdate="#{processesAnalyticsBean.timeIntervalFilter.to}"
+            styleClass="col-12 m-0 p-0 grid formgrid"
+            value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key]}" readonlyInput="true" required="true"
+            requiredMessage="#{ivy.cms.co('/Dialogs/com/axonivy/utils/bpmnstatistic/ProcessesMonitor/DateErrorMessage')}"
             rendered="#{processesAnalyticsBean.filterDropdownVisible and fieldEntry.key.customFieldMeta.type() eq 'TIMESTAMP'}">
             <p:ajax event="dateSelect" process="@this" partialSubmit="true" />
           </p:datePicker>
-          <p:message styleClass="col-12 m-0 p-2 grid formgrid" for="range"/>
+          <p:message styleClass="col-12 m-0 p-2 grid formgrid" for="date-range" />
+          </h:panelGroup>
         </h:panelGroup>
       </ui:repeat>
     </h:panelGroup>

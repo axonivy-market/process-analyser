@@ -234,62 +234,12 @@ public class ProcessesMonitorUtils {
     path.getNodeIdsInPath().add(ProcessUtils.getElementPid(destinationElement));
     destinationElement.getOutgoing().forEach(outGoingPath -> followPath(path, outGoingPath));
   }
-//  
-//  private static List<ICase> getAllCasesFromTaskStartIdWithTimeInterval(
-//      Long taskStartId,
-//      TimeIntervalFilter timeIntervalFilter,
-//      Map<CustomFieldFilter, List<Object>> selectedCustomFilters
-//) {
-//  CaseQuery query = buildBaseQuery(taskStartId, timeIntervalFilter);
-//
-//  if (ObjectUtils.isNotEmpty(selectedCustomFilters)) {
-//      CaseQuery subQuery = CaseQuery.create();
-//
-//      selectedCustomFilters.forEach((customFieldFilter, customFieldValues) -> {
-//          List<Object> flatValues = flattenCustomFieldValues(customFieldValues, customFieldFilter);
-//
-//          CaseQuery subSubQuery = CaseQuery.create();
-//          flatValues.forEach(value -> addCustomFieldCondition(subSubQuery, customFieldFilter, value));
-//
-//          subQuery.where().or(subSubQuery);
-//      });
-//
-//      query.where().andOverall(subQuery);
-//  }
-//
-//  return Ivy.wf().getCaseQueryExecutor().getResults(query);
-//}
-//
-//private static CaseQuery buildBaseQuery(Long taskStartId, TimeIntervalFilter timeIntervalFilter) {
-//  return CaseQuery.create()
-//          .where()
-//          .state().isEqual(CaseState.DONE)
-//          .and()
-//          .taskStartId().isEqual(taskStartId)
-//          .and()
-//          .startTimestamp().isGreaterOrEqualThan(timeIntervalFilter.getFrom())
-//          .and()
-//          .startTimestamp().isLowerOrEqualThan(timeIntervalFilter.getTo());
-//}
-//
-//private static List<Object> flattenCustomFieldValues(
-//      List<Object> customFieldValues,
-//      CustomFieldFilter customFieldFilter
-//) {
-//  if (isStringFieldType(customFieldFilter)) {
-//      return customFieldValues.stream()
-//              .filter(value -> value instanceof String[])
-//              .flatMap(value -> Arrays.stream((String[]) value))
-//              .collect(Collectors.toList());
-//  }
-//  return customFieldValues;
-//}
-//
-//private static boolean isStringFieldType(CustomFieldFilter customFieldFilter) {
-//  CustomFieldType type = customFieldFilter.getCustomFieldMeta().type();
-//  return type == CustomFieldType.STRING || type == CustomFieldType.TEXT;
-//}
 
+  /**
+   * Construct the base query and, if applicable, a sub-query for custom fields. 
+   * For custom fields of type NUMBER or TIMESTAMP, ensure exactly two values are provided. 
+   * For STRING type fields, iterate over each value to build individual sub-queries.
+   **/
   private static List<ICase> getAllCasesFromTaskStartIdWithTimeInterval(Long taskStartId,
       TimeIntervalFilter timeIntervalFilter, Map<CustomFieldFilter, List<Object>> selectedCustomFilters) {
     CaseQuery query = CaseQuery.create().where().state().isEqual(CaseState.DONE).and().taskStartId()
@@ -297,43 +247,41 @@ public class ProcessesMonitorUtils {
         .startTimestamp().isLowerOrEqualThan(timeIntervalFilter.getTo());
 
     if (ObjectUtils.isNotEmpty(selectedCustomFilters)) {
-      CaseQuery subQuery = CaseQuery.create();
+      CaseQuery customFieldsQuery = CaseQuery.create();
 
       for (Map.Entry<CustomFieldFilter, List<Object>> entry : selectedCustomFilters.entrySet()) {
         CustomFieldFilter customFieldFilter = entry.getKey();
-        List<Object> customFieldValues = Arrays.asList(entry.getValue());
-        boolean isCustomFieldTypeString = CustomFieldType.STRING == entry.getKey().getCustomFieldMeta().type()
-            || CustomFieldType.TEXT == entry.getKey().getCustomFieldMeta().type();
+        List<Object> customFieldValues =
+            isStringCustomFieldType(customFieldFilter) ? flattenStringCustomFieldValues(Arrays.asList(entry.getValue()))
+                : Arrays.asList(entry.getValue());
 
-        if (isCustomFieldTypeString) {
-          List<String> flatList = customFieldValues.stream().filter(value -> value instanceof String[])
-              .map(value -> (String[]) value).flatMap(Arrays::stream).collect(Collectors.toList());
-          List<Object> objectList = new ArrayList<>();
-          flatList.forEach(s -> objectList.add(s));
-          CaseQuery subSubQuery = CaseQuery.create();
-          for (Object customFieldValue : objectList) {
-
-            addCustomFieldCondition(subSubQuery, customFieldFilter, customFieldValue);
-
-          }
-          subQuery.where().or(subSubQuery);
-
-        } else {
-
-          CaseQuery subSubQuery2 = CaseQuery.create();
-          for (Object customFieldValue : customFieldValues) {
-            addCustomFieldCondition(subSubQuery2, customFieldFilter, customFieldValue);
-          }
-          subQuery.where().or(subSubQuery2);
+        CaseQuery customFieldQuery = CaseQuery.create();
+        for (Object customFieldValue : customFieldValues) {
+          addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldValue);
         }
+        customFieldsQuery.where().or(customFieldQuery);
       }
-      query.where().andOverall(subQuery);
+
+      query.where().andOverall(customFieldsQuery);
     }
     return Ivy.wf().getCaseQueryExecutor().getResults(query);
   }
 
+  private static boolean isStringCustomFieldType(CustomFieldFilter customFieldFilter) {
+    CustomFieldType type = customFieldFilter.getCustomFieldMeta().type();
+    return CustomFieldType.STRING == type || CustomFieldType.TEXT == type;
+  }
+
+  private static List<Object> flattenStringCustomFieldValues(List<Object> customFieldValues) {
+    return customFieldValues.stream().filter(value -> value instanceof String[]).map(value -> (String[]) value)
+        .flatMap(Arrays::stream).collect(Collectors.toList());
+  }
+
+  /**
+   * Cast values to right type and Create sub-query for each custom field type from case or task
+   **/
   @SuppressWarnings("unchecked")
-  private static void addCustomFieldCondition(CaseQuery subQuery, CustomFieldFilter customFieldFilter,
+  private static void addCustomFieldSubQuery(CaseQuery customFieldQuery, CustomFieldFilter customFieldFilter,
       Object customFieldValue) {
     boolean isCustomFieldFromCase = customFieldFilter.isCustomFieldFromCase();
     String customFieldName = customFieldFilter.getCustomFieldMeta().name();
@@ -343,18 +291,18 @@ public class ProcessesMonitorUtils {
       case STRING:
         String stringValue = (String) customFieldValue;
         if (isCustomFieldFromCase) {
-          subQuery.where().or().customField().stringField(customFieldName).isEqual(stringValue);
+          customFieldQuery.where().or().customField().stringField(customFieldName).isEqual(stringValue);
         } else {
-          subQuery.where().or()
+          customFieldQuery.where().or()
               .tasks(TaskQuery.create().where().customField().stringField(customFieldName).isEqual(stringValue));
         }
         break;
       case TEXT:
         String textValue = (String) customFieldValue;
         if (isCustomFieldFromCase) {
-          subQuery.where().or().customField().textField(customFieldName).isEqual(textValue);
+          customFieldQuery.where().or().customField().textField(customFieldName).isEqual(textValue);
         } else {
-          subQuery.where().or()
+          customFieldQuery.where().or()
               .tasks(TaskQuery.create().where().customField().textField(customFieldName).isEqual(textValue));
         }
         break;
@@ -365,10 +313,10 @@ public class ProcessesMonitorUtils {
         Double endNumber = Double.parseDouble(numberRange.get(1));
 
         if (isCustomFieldFromCase) {
-          subQuery.where().or().customField().numberField(customFieldName).isGreaterOrEqualThan(startNumber).and()
-              .customField().numberField(customFieldName).isLowerOrEqualThan(endNumber);
+          customFieldQuery.where().or().customField().numberField(customFieldName).isGreaterOrEqualThan(startNumber)
+              .and().customField().numberField(customFieldName).isLowerOrEqualThan(endNumber);
         } else {
-          subQuery.where().or()
+          customFieldQuery.where().or()
               .tasks(TaskQuery.create().where().customField().numberField(customFieldName)
                   .isGreaterOrEqualThan(startNumber).and().customField().numberField(customFieldName)
                   .isLowerOrEqualThan(endNumber));
@@ -380,11 +328,11 @@ public class ProcessesMonitorUtils {
         LocalDate endDate = dateRange.get(1);
 
         if (isCustomFieldFromCase) {
-          subQuery.where().or().customField().timestampField(customFieldName)
+          customFieldQuery.where().or().customField().timestampField(customFieldName)
               .isGreaterOrEqualThan(java.sql.Date.valueOf(startDate)).and().customField()
               .timestampField(customFieldName).isLowerOrEqualThan(java.sql.Date.valueOf(endDate));
         } else {
-          subQuery.where().or()
+          customFieldQuery.where().or()
               .tasks(TaskQuery.create().where().customField().timestampField(customFieldName)
                   .isGreaterOrEqualThan(java.sql.Date.valueOf(startDate)).and().customField()
                   .timestampField(customFieldName).isLowerOrEqualThan(java.sql.Date.valueOf(endDate)));

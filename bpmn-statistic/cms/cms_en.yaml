@@ -38,6 +38,7 @@ Dialogs:
             Type: Type
             Version: Version
             None: None
+            DateErrorMessage: Both FromDate and ToDate must be selected.
 Enums:
   KpiType:
     DURATION:

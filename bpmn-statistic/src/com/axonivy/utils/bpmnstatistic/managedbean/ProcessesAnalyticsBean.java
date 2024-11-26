@@ -1,7 +1,5 @@
 package com.axonivy.utils.bpmnstatistic.managedbean;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -136,6 +134,7 @@ public class ProcessesAnalyticsBean {
     customFieldsByType.forEach((key, value) -> {
       boolean isSelectedCustomField = selectedCustomFieldNames.contains(key.getCustomFieldMeta().name());
       if (isSelectedCustomField && ObjectUtils.isEmpty(selectedCustomFilters.get(key))) {
+        // Initialize the number range for custom field type NUMBER
         if (CustomFieldType.NUMBER == key.getCustomFieldMeta().type()) {
           double minValue = getMinValue(key.getCustomFieldMeta().name());
           double maxValue = getMaxValue(key.getCustomFieldMeta().name());
