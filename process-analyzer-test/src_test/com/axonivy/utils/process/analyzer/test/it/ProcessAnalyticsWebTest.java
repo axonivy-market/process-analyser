@@ -12,8 +12,8 @@ import static com.codeborne.selenide.Condition.attribute;
 
 import org.junit.jupiter.api.Test;
 
-@IvyWebTest
-public class ProcessAnalyticsWebTestIT {
+@IvyWebTest(browser = "chrome")
+public class ProcessAnalyticsWebTest {
   private final String TEST_PROCESS_PATH = "process-analyzer-test/193485C5ABDFEA93/test.ivp";
   private final String SHOW_STATISTIC_BTN_CSS_SELECTOR = "#process-analytics-form\\:show-statistic-btn";
   private final String SHOW_MODULE_DROPDOWN_BTN_CSS_SELECTOR = "#process-analytics-form\\:moduleDropdown .ui-selectonemenu-trigger";
