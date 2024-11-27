@@ -34,7 +34,7 @@ public class TimeIntervalFilterTest {
 
   @BeforeEach
   void startProcess() {
-    open(EngineUrl.createProcessUrl("/process-analyzer/1910BF871CE43293/startAnalytic.ivp"));
+    open(EngineUrl.createProcessUrl("process-analyzer/1910BF871CE43293/startAnalytic.ivp"));
   }
 
   @Test
