@@ -28,18 +28,8 @@ import com.axonivy.utils.process.analyzer.internal.ProcessUtils;
 import com.axonivy.utils.process.analyzer.utils.DateUtils;
 import com.axonivy.utils.process.analyzer.utils.JacksonUtils;
 import com.axonivy.utils.process.analyzer.utils.ProcessesMonitorUtils;
-import com.axonivy.utils.bpmnstatistic.bo.CustomFieldFilter;
-import com.axonivy.utils.bpmnstatistic.bo.Node;
-import com.axonivy.utils.bpmnstatistic.bo.ProcessMiningData;
-import com.axonivy.utils.bpmnstatistic.bo.TimeFrame;
-import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
-import com.axonivy.utils.bpmnstatistic.constants.ProcessAnalyticsConstants;
-import com.axonivy.utils.bpmnstatistic.enums.KpiType;
-import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
-import com.axonivy.utils.bpmnstatistic.service.IvyTaskOccurrenceService;
-import com.axonivy.utils.bpmnstatistic.utils.DateUtils;
-import com.axonivy.utils.bpmnstatistic.utils.JacksonUtils;
-import com.axonivy.utils.bpmnstatistic.utils.ProcessesMonitorUtils;
+import com.axonivy.utils.process.analyzer.bo.CustomFieldFilter;
+import com.axonivy.utils.process.analyzer.service.IvyTaskOccurrenceService;
 
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.cm.ContentObject;
@@ -223,7 +213,7 @@ public class ProcessesAnalyticsBean {
         processMiningData.setKpiType(selectedKpiType);
         TimeFrame timeFrame = new TimeFrame(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo());
         processMiningData.setTimeFrame(timeFrame);
-        nodes = ProcessesMonitorUtils.filterInitialStatisticByIntervalWithoutModifyingProcess(
+        nodes = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(
             getSelectedIProcessWebStartable(), timeIntervalFilter, selectedKpiType, selectedCustomFilters);
         for (Node node : nodes) {
           totalFrequency += node.getFrequency();

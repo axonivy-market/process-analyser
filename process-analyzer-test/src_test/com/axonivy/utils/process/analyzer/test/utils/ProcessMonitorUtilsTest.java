@@ -4,12 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import com.axonivy.utils.process.analyzer.bo.AlternativePath;
+import com.axonivy.utils.process.analyzer.bo.CustomFieldFilter;
 import com.axonivy.utils.process.analyzer.bo.Node;
 import com.axonivy.utils.process.analyzer.bo.TimeIntervalFilter;
 import com.axonivy.utils.process.analyzer.enums.KpiType;
@@ -77,7 +79,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
   @Test
   void test_filterInitialStatisticByIntervalTime() {
     List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(testProcessStart,
-        new TimeIntervalFilter(new Date(), new Date()), KpiType.FREQUENCY);
+        new TimeIntervalFilter(new Date(), new Date()), KpiType.FREQUENCY, new HashMap<>());
     assertThat(results.size()).isEqualTo(10);
     assertThat(results.get(0).getLabelValue()).isZero();
   }
@@ -107,7 +109,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
   @Test
   void test_getAllCasesFromTaskStartIdWithTimeInterval() {
     List<ICase> results = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(0L,
-        new TimeIntervalFilter(new Date(), new Date()));
+        new TimeIntervalFilter(new Date(), new Date()), new HashMap<CustomFieldFilter, List<Object>>());
     assertThat(results.size()).isZero();
   }
 

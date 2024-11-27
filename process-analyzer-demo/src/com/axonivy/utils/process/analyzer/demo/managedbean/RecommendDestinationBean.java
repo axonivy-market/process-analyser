@@ -1,4 +1,4 @@
-package com.axonivy.utils.process.analyzer.managedbean;
+package com.axonivy.utils.process.analyzer.demo.managedbean;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;

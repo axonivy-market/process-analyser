@@ -7,12 +7,12 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.axonivy.utils.bpmnstatistic.bo.CustomFieldFilter;
-import com.axonivy.utils.bpmnstatistic.bo.TaskOccurrence;
-import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
-import com.axonivy.utils.bpmnstatistic.constants.ProcessAnalyticsConstants;
-import com.axonivy.utils.bpmnstatistic.enums.IvyVariable;
-import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
+import com.axonivy.utils.process.analyzer.bo.CustomFieldFilter;
+import com.axonivy.utils.process.analyzer.bo.TaskOccurrence;
+import com.axonivy.utils.process.analyzer.bo.TimeIntervalFilter;
+import com.axonivy.utils.process.analyzer.constants.ProcessAnalyticsConstants;
+import com.axonivy.utils.process.analyzer.enums.IvyVariable;
+import com.axonivy.utils.process.analyzer.internal.ProcessUtils;
 
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.security.exec.Sudo;

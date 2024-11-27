@@ -1,4 +1,4 @@
-package com.axonivy.utils.bpmnstatistic.constants;
+package com.axonivy.utils.process.analyzer.demo.constants;
 
 public class FlightConstants {
   public static final String[] PAYMENT_METHODS =

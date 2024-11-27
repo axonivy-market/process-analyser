@@ -56,7 +56,7 @@
       "config" : {
         "output" : {
           "code" : [
-            "import com.axonivy.utils.bpmnstatistic.constants.FlightConstants;",
+            "import com.axonivy.utils.process.analyzer.demo.constants.FlightConstants;",
             "import java.util.Random;",
             "",
             "Random random = new Random();",

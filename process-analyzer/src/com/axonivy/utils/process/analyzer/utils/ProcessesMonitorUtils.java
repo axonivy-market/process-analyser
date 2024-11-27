@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -15,17 +14,16 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.axonivy.utils.bpmnstatistic.bo.AlternativePath;
-import com.axonivy.utils.bpmnstatistic.bo.CustomFieldFilter;
-import com.axonivy.utils.bpmnstatistic.bo.Node;
-import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
-import com.axonivy.utils.bpmnstatistic.constants.ProcessAnalyticsConstants;
-import com.axonivy.utils.bpmnstatistic.enums.KpiType;
-import com.axonivy.utils.bpmnstatistic.enums.IvyVariable;
-import com.axonivy.utils.bpmnstatistic.enums.NodeType;
-import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
-import com.axonivy.utils.bpmnstatistic.service.IvyTaskOccurrenceService;
+import com.axonivy.utils.process.analyzer.bo.AlternativePath;
+import com.axonivy.utils.process.analyzer.bo.CustomFieldFilter;
+import com.axonivy.utils.process.analyzer.bo.Node;
+import com.axonivy.utils.process.analyzer.bo.TimeIntervalFilter;
+import com.axonivy.utils.process.analyzer.constants.ProcessAnalyticsConstants;
+import com.axonivy.utils.process.analyzer.enums.KpiType;
+import com.axonivy.utils.process.analyzer.enums.NodeType;
+import com.axonivy.utils.process.analyzer.internal.ProcessUtils;
 
+import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
@@ -111,7 +109,7 @@ public class ProcessesMonitorUtils {
    * All of material which is use to analyzing will be based on task data from
    * AxonIvy system db.
    **/
-  public static List<Node> filterInitialStatisticByIntervalWithoutModifyingProcess(IProcessWebStartable processStart,
+  public static List<Node> filterInitialStatisticByIntervalTime(IProcessWebStartable processStart,
       TimeIntervalFilter timeIntervalFilter, KpiType analysisType, Map<CustomFieldFilter, List<Object>> selectedCustomFilters) {
     if (Objects.isNull(processStart)) {
       return Collections.emptyList();
@@ -196,7 +194,7 @@ public class ProcessesMonitorUtils {
    * For custom fields of type NUMBER or TIMESTAMP, ensure exactly two values are provided. 
    * For STRING type fields, iterate over each value to build individual sub-queries.
    **/
-  private static List<ICase> getAllCasesFromTaskStartIdWithTimeInterval(Long taskStartId,
+  public static List<ICase> getAllCasesFromTaskStartIdWithTimeInterval(Long taskStartId,
       TimeIntervalFilter timeIntervalFilter, Map<CustomFieldFilter, List<Object>> selectedCustomFilters) {
     CaseQuery query = CaseQuery.create().where().state().isEqual(CaseState.DONE).and().taskStartId()
         .isEqual(taskStartId).and().startTimestamp().isGreaterOrEqualThan(timeIntervalFilter.getFrom()).and()
