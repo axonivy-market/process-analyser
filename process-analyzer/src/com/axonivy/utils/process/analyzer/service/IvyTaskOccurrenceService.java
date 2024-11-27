@@ -94,7 +94,9 @@ public class IvyTaskOccurrenceService {
    * Get all custom fields from cases/ business cases and tasks
    */
   public static Map<CustomFieldFilter, List<Object>> getCaseAndTaskCustomFields(String selectedPid,
-      TimeIntervalFilter timeIntervalFilter, Map<CustomFieldFilter, List<Object>> customFieldsByType) {
+      TimeIntervalFilter timeIntervalFilter) {
+    Map<CustomFieldFilter, List<Object>> customFieldsByType = new HashMap<>();
+
     return Sudo.get(() -> {
       TaskQuery taskQuery = TaskQuery.create().where().requestPath().isLike(getRequestPath(selectedPid)).and()
           .startTimestamp().isGreaterOrEqualThan(timeIntervalFilter.getFrom()).and().startTimestamp()
@@ -111,10 +113,9 @@ public class IvyTaskOccurrenceService {
 
       for (ITask task : tasks) {
         addCustomFieldsToCustomFieldsByType(task.customFields().all(), false, customFieldsByType);
-        if (task.getCase() != null) {
-          addCustomFieldsToCustomFieldsByType(task.getCase().getBusinessCase().customFields().all(), true, customFieldsByType);
-          addCustomFieldsToCustomFieldsByType(task.getCase().customFields().all(), true, customFieldsByType);
-        }
+        addCustomFieldsToCustomFieldsByType(task.getCase().getBusinessCase().customFields().all(), true,
+            customFieldsByType);
+        addCustomFieldsToCustomFieldsByType(task.getCase().customFields().all(), true, customFieldsByType);
       }
 
       return customFieldsByType;
