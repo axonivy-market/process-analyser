@@ -2,11 +2,12 @@ package com.axonivy.utils.process.analyzer.test.it;
 
 import com.axonivy.ivy.webtest.IvyWebTest;
 import com.axonivy.ivy.webtest.engine.EngineUrl;
-import com.codeborne.selenide.Selenide;
 
 import static com.codeborne.selenide.Selenide.open;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
+import static com.codeborne.selenide.Selenide.sleep;
+
 
 import static com.codeborne.selenide.Condition.attribute;
 
@@ -31,19 +32,18 @@ public class ProcessAnalyticsWebTest {
 
     // Chose module, process, kpi
     $(SHOW_MODULE_DROPDOWN_BTN_CSS_SELECTOR).click();
-    Selenide.sleep(200);
+    sleep(500);
     $$(UI_DROPDOWN_MENU_LIST_CSS_SELECTOR).get(1).click();
-    Selenide.sleep(200);
+    sleep(500);
     $(SHOW_PROCESS_DROPDOWN_BTN_CSS_SELECTOR).click();
-    Selenide.sleep(200);
+    sleep(500);
     $$(UI_DROPDOWN_MENU_LIST_CSS_SELECTOR).get(1).click();
-    Selenide.sleep(200);
+    sleep(500);
     $(SHOW_KPI_DROPDOWN_BTN_CSS_SELECTOR).click();
-    Selenide.sleep(200);
+    sleep(500);
     $$(UI_DROPDOWN_MENU_LIST_CSS_SELECTOR).get(1).click();
-    Selenide.sleep(200);
+    sleep(500);
     // Check the status of show statistic btn after data fulfilled
     $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute("disabled", ""));
-
   }
 }
