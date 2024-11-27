@@ -24,9 +24,13 @@ import com.codeborne.selenide.ElementsCollection;
 
 @IvyWebTest
 public class TimeIntervalFilterTest {
-  private static SimpleDateFormat dateFormat = new SimpleDateFormat(DateUtils.DATE_PATTERN);
   private static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DateUtils.DATE_PATTERN);
-  private static SimpleDateFormat dateTimeFormat = new SimpleDateFormat(DateUtils.DATE_TIME_PATTERN);
+  private static SimpleDateFormat dateFormat = new SimpleDateFormat(DateUtils.DATE_PATTERN);
+  private String FROM_TO_PATTERN = "%s - %s";
+  private String START_TIME_DATE_PATTERN = "%s 00:00";
+  private String END_TIME_DATE_PATTERN = "%s 23:59";
+  private int DAY_10_OF_MONTH = 10;
+  private int DAY_20_OF_MONTH = 20;
 
   @BeforeEach
   void startProcess() {
@@ -55,33 +59,44 @@ public class TimeIntervalFilterTest {
   }
 
   @Test
-  public void checkBetweenFilter() {
+  public void testBetweenFilter() {
     openFilterTypes();
     $(By.cssSelector("li[data-label^='Between']")).shouldBe(visible).click();
     $(By.id("process-analytics-form:date-range_input")).shouldBe(visible).shouldBe(exactText("")).click();
     $(By.id("process-analytics-form:date-range_panel")).shouldBe(visible);
-    selectDayOnDateRange("10");
-    selectDayOnDateRange("20");
-    LocalDate day10 = LocalDate.now().withDayOfMonth(10);
-    LocalDate day20 = LocalDate.now().withDayOfMonth(20);
-    String expectation = day10.format(dateTimeFormatter) + " - " + day20.format(dateTimeFormatter);
-    
+    selectDayOnDateRange(DAY_10_OF_MONTH);
+    selectDayOnDateRange(DAY_20_OF_MONTH);
+    LocalDate day10 = LocalDate.now().withDayOfMonth(DAY_10_OF_MONTH);
+    LocalDate day20 = LocalDate.now().withDayOfMonth(DAY_20_OF_MONTH);
+    String expectation =
+        String.format(FROM_TO_PATTERN, day10.format(dateTimeFormatter), day20.format(dateTimeFormatter));
     $(By.id("process-analytics-form:date-range_input")).shouldBe(visible).shouldHave(value(expectation));
   }
-  
-  private void selectDayOnDateRange(String day) {
-    ElementsCollection links = $$(By.cssSelector("div[id='process-analytics-form:date-range_panel'] table tbody tr td a"));
+
+  private void selectDayOnDateRange(int day) {
+    ElementsCollection links =
+        $$(By.cssSelector("div[id='process-analytics-form:date-range_panel'] table tbody tr td a"));
     for (WebElement link : links) {
-        if (link.getText().equals(day)) {
-            link.click();
-            return;
-        }
+      if (link.getText().equals(String.valueOf(day))) {
+        link.click();
+        return;
+      }
     }
+  }
+
+  @Test
+  public void testCustomFilter() {
+    openFilterTypes();
+    $(By.cssSelector("li[data-label^='Custom']")).shouldBe(visible).click();
+    String startTimeToday = String.format(START_TIME_DATE_PATTERN, dateFormat.format(new Date()));
+    $(By.id("process-analytics-form:between-date-from_input")).shouldBe(visible).shouldHave(value(startTimeToday));
+    String endTimeToday = String.format(END_TIME_DATE_PATTERN, dateFormat.format(new Date()));
+    $(By.id("process-analytics-form:between-date-to_input")).shouldBe(visible).shouldHave(value(endTimeToday));
   }
 
   public void openFilterTypes() {
     $(By.id("process-analytics-form:filter-types")).shouldBe(visible).click();
     $(By.id("process-analytics-form:filter-types_items")).shouldBe(visible);
   }
-  
+
 }
