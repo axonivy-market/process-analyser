@@ -96,8 +96,8 @@ public class TimeIntervalFilterTest {
   }
 
   public void openFilterTypes() {
-    $(By.id("process-analytics-form:filter-types_label")).shouldBe(visible).click();
-    $(By.id("process-analytics-form:filter-types_items")).shouldBe(visible, Duration.ofSeconds(1));
+    $(By.id("process-analytics-form:filter-types")).shouldBe(visible, Duration.ofSeconds(1)).click();
+    $(By.id("process-analytics-form:filter-types_panel")).shouldBe(visible, Duration.ofSeconds(1));
   }
 
 }
