@@ -29,10 +29,10 @@ jobs:
       - name: Copy file
         run: |
           version=$(xml sel -t -m "//_:project" -v _:version pom.xml)
-          artifactDir=artifact/bpmn-statistic
-          engineDeployDir=/var/tools/ivy/11/deploy/BPMN-STATISTIC
-          install -m 666 ${artifactDir}/target/bpmn-statistic-${version}.iar $engineDeployDir/bpmn-statistic-${version}.iar
-          install -m 666 ${artifactDir}-demo/target/bpmn-statistic-demo-${version}.iar $engineDeployDir/bpmn-statistic-demo-${version}.iar
+          artifactDir=artifact/process-analyzer
+          engineDeployDir=/var/tools/ivy/11/deploy/PROCESS-ANALYZER
+          install -m 666 ${artifactDir}/target/process-analyzer-${version}.iar $engineDeployDir/process-analyzer-${version}.iar
+          install -m 666 ${artifactDir}-demo/target/process-analyzer-demo-${version}.iar $engineDeployDir/process-analyzer-demo-${version}.iar
 
       - name: Restart engine
         run: |
