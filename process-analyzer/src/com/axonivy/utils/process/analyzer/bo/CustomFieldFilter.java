@@ -1,4 +1,4 @@
-package com.axonivy.utils.bpmnstatistic.bo;
+package com.axonivy.utils.process.analyzer.bo;
 
 import java.util.Objects;
 
