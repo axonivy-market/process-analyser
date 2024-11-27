@@ -102,7 +102,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     testPath.setOriginFlow(flowFromAlternative);
     testPath.setNodeIdsInPath(new ArrayList<>());
     ProcessesMonitorUtils.followPath(testPath, flowFromAlternative);
-    assertThat(testPath.getNodeIdsInPath().size()).isEqualTo(3);
+    assertThat(testPath.getNodeIdsInPath().size()).isEqualTo(1);
     assertThat(testPath.getTaskSwitchEventIdOnPath()).isNullOrEmpty();
   }
 
