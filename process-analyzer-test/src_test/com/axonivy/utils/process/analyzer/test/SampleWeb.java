@@ -33,22 +33,4 @@ public class SampleWeb{
     $("img").shouldBe(attribute("alt", "Logo"));
     $(By.tagName("img")).shouldBe(attribute("alt", "Logo"));
   }
-  
-  @Test
-  @Disabled("illustrative code: needs adaption to your environment")
-  public void fillDialogForm() {
-    // valid links can be copied from the start page of the internal web-browser
-    open(EngineUrl.createProcessUrl("1910BF871CE43293/startAnalytic.ivp"));
-    
-    // fill new customer form
-    $(By.id("form:firstname")).sendKeys("Unit");
-    $(By.id("form:lastname")).sendKeys("Test");
-    
-    // verify that the submit button is enabled, before clicking it.
-    $(By.id("form:submit")).shouldBe(enabled).click();
-    
-    // verify that the registration was successful.
-    $(By.id("form:newCustomer")).shouldBe(visible, text("Unit Test"));
-  }
-  
 }
