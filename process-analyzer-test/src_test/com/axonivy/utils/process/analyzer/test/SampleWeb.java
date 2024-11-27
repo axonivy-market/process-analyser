@@ -23,8 +23,8 @@ import com.axonivy.ivy.webtest.engine.EngineUrl;
  * <a href="https://developer.axonivy.com/doc/11.3/concepts/testing/web-testing.html">WebTesting docs</a>
  * </p>
  */
-@IvyWebTest(headless = false)
-public class SampleWebIT{
+@IvyWebTest
+public class SampleWeb{
 
   @Test
   public void navigateToInfoPage(){
