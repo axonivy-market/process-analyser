@@ -51,16 +51,29 @@ public class TimeIntervalFilterTest {
   }
 
   @Test
-  public void checkYesterdayFilter() {
+  public void testTimeIntervalFilter() {
+    // Test Yesterday type
     openFilterTypes();
     $(By.cssSelector("li[data-label^='Yesterday']")).shouldBe(visible).click();
     LocalDate yesterday = LocalDate.now().minusDays(1);
     $(By.id("process-analytics-form:date-point-selection_input")).shouldBe(visible)
         .shouldHave(value(yesterday.format(dateTimeFormatter)));
-  }
 
-  @Test
-  public void testBetweenFilter() {
+    // Test Today type
+    openFilterTypes();
+    $(By.cssSelector("li[data-label^='Today']")).shouldBe(visible).click();
+    $(By.id("process-analytics-form:date-point-selection_input")).shouldBe(visible)
+        .shouldHave(value(dateFormat.format(new Date())));
+
+    // Test Custom type
+    openFilterTypes();
+    $(By.cssSelector("li[data-label^='Custom']")).shouldBe(visible).click();
+    String startTimeToday = String.format(START_TIME_DATE_PATTERN, dateFormat.format(new Date()));
+    $(By.id("process-analytics-form:between-date-from_input")).shouldBe(visible).shouldHave(value(startTimeToday));
+    String endTimeToday = String.format(END_TIME_DATE_PATTERN, dateFormat.format(new Date()));
+    $(By.id("process-analytics-form:between-date-to_input")).shouldBe(visible).shouldHave(value(endTimeToday));
+
+    // Test Between type
     openFilterTypes();
     $(By.cssSelector("li[data-label^='Between']")).shouldBe(visible).click();
     $(By.id("process-analytics-form:date-range_input")).shouldBe(visible).shouldBe(exactText("")).click();
@@ -74,6 +87,11 @@ public class TimeIntervalFilterTest {
     $(By.id("process-analytics-form:date-range_input")).shouldBe(visible).shouldHave(value(expectation));
   }
 
+  private void openFilterTypes() {
+    $(By.id("process-analytics-form:filter-types")).shouldBe(visible, Duration.ofSeconds(5)).click();
+    $(By.id("process-analytics-form:filter-types_panel")).shouldBe(visible);
+  }
+
   private void selectDayOnDateRange(int day) {
     ElementsCollection links =
         $$(By.cssSelector("div[id='process-analytics-form:date-range_panel'] table tbody tr td a"));
@@ -83,21 +101,6 @@ public class TimeIntervalFilterTest {
         return;
       }
     }
-  }
-
-  @Test
-  public void testCustomFilter() {
-    openFilterTypes();
-    $(By.cssSelector("li[data-label^='Custom']")).shouldBe(visible).click();
-    String startTimeToday = String.format(START_TIME_DATE_PATTERN, dateFormat.format(new Date()));
-    $(By.id("process-analytics-form:between-date-from_input")).shouldBe(visible).shouldHave(value(startTimeToday));
-    String endTimeToday = String.format(END_TIME_DATE_PATTERN, dateFormat.format(new Date()));
-    $(By.id("process-analytics-form:between-date-to_input")).shouldBe(visible).shouldHave(value(endTimeToday));
-  }
-
-  public void openFilterTypes() {
-    $(By.id("process-analytics-form:filter-types")).shouldBe(visible, Duration.ofSeconds(1)).click();
-    $(By.id("process-analytics-form:filter-types_panel")).shouldBe(visible, Duration.ofSeconds(1));
   }
 
 }
