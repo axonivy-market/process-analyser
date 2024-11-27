@@ -53,6 +53,19 @@
       "id" : "f5",
       "type" : "Script",
       "name" : "validate payment method",
+      "config" : {
+        "output" : {
+          "code" : [
+            "import com.axonivy.utils.bpmnstatistic.constants.FlightConstants;",
+            "import java.util.Random;",
+            "",
+            "Random random = new Random();",
+            "int index = random.nextInt(FlightConstants.PAYMENT_METHODS.size());",
+            "",
+            "ivy.task.customFields().textField(\"PaymentMethod\").set(FlightConstants.PAYMENT_METHODS.get(index));"
+          ]
+        }
+      },
       "visual" : {
         "at" : { "x" : 392, "y" : 384 }
       },
@@ -68,7 +81,10 @@
       "name" : "Confirm payment information",
       "config" : {
         "task" : {
-          "name" : "Confirm payment information"
+          "name" : "Confirm payment information",
+          "customFields" : [
+            { "name" : "EWalletPayment", "type" : "STRING", "value" : "\"No\"" }
+          ]
         }
       },
       "visual" : {
@@ -80,13 +96,25 @@
               "save record from",
               "e-wallet"
             ],
-            "offset" : { "x" : 18, "y" : -18 }
+            "offset" : { "x" : 50, "y" : -130 }
           } }
       ]
     }, {
       "id" : "f9",
       "type" : "Script",
       "name" : "record payment",
+      "config" : {
+        "output" : {
+          "code" : [
+            "import java.util.Random;",
+            "",
+            "Random random = new Random();",
+            "ivy.case.customFields().numberField(\"Price\").set(random.nextDouble(200,5000));",
+            "",
+            "ivy.task.customFields().timestampField(\"Date\").set(new Date());"
+          ]
+        }
+      },
       "visual" : {
         "at" : { "x" : 896, "y" : 384 }
       },
@@ -100,7 +128,7 @@
       "id" : "f11",
       "type" : "Alternative",
       "name" : [
-        "is e-waller",
+        "is e-wallet",
         "payment?"
       ],
       "config" : {
@@ -117,11 +145,30 @@
             "name" : "no",
             "offset" : { "x" : 1, "y" : -10 }
           } },
-        { "id" : "f13", "to" : "f9", "via" : [ { "x" : 528, "y" : 272 }, { "x" : 896, "y" : 272 } ], "label" : {
+        { "id" : "f13", "to" : "f14", "via" : [ { "x" : 528, "y" : 272 } ], "label" : {
             "name" : "yes",
-            "segment" : 1.6,
-            "offset" : { "x" : -141, "y" : -10 }
+            "segment" : 1.36,
+            "offset" : { "x" : -61, "y" : 46 }
           } }
+      ]
+    }, {
+      "id" : "f14",
+      "type" : "TaskSwitchEvent",
+      "name" : "Confirm payment with e-wallet",
+      "config" : {
+        "task" : {
+          "name" : "Confirm payment with e-wallet",
+          "customFields" : [
+            { "name" : "EWalletPayment", "type" : "STRING", "value" : "\"Yes\"" }
+          ]
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 672, "y" : 272 },
+        "labelOffset" : { "x" : 14, "y" : 34 }
+      },
+      "connect" : [
+        { "id" : "f15", "to" : "f9", "via" : [ { "x" : 896, "y" : 272 } ], "color" : "default" }
       ]
     } ],
   "layout" : {
