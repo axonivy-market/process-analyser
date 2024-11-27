@@ -8,6 +8,7 @@ import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.open;
 
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -95,8 +96,8 @@ public class TimeIntervalFilterTest {
   }
 
   public void openFilterTypes() {
-    $(By.id("process-analytics-form:filter-types")).shouldBe(visible).click();
-    $(By.id("process-analytics-form:filter-types_items")).shouldBe(visible);
+    $(By.id("process-analytics-form:filter-types_label")).shouldBe(visible).click();
+    $(By.id("process-analytics-form:filter-types_items")).shouldBe(visible, Duration.ofSeconds(1));
   }
 
 }
