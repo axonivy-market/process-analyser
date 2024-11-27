@@ -68,6 +68,7 @@
         <version>3.0.0-M4</version>
         <configuration>
           <argLine>
+            -Dtest.engine.url=${test.engine.url}
             -Dtest.engine.app=processanalyzertestapp
           </argLine>
         </configuration>
