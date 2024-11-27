@@ -52,8 +52,8 @@ public class TimeIntervalFilterTest {
   @Test
   public void checkYesterdayFilter() {
     openFilterTypes();
-    LocalDate yesterday = LocalDate.now().minusDays(1);
     $(By.cssSelector("li[data-label^='Yesterday']")).shouldBe(visible).click();
+    LocalDate yesterday = LocalDate.now().minusDays(1);
     $(By.id("process-analytics-form:date-point-selection_input")).shouldBe(visible)
         .shouldHave(value(yesterday.format(dateTimeFormatter)));
   }
