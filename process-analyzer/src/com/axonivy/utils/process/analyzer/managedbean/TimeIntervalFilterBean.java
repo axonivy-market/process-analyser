@@ -27,7 +27,6 @@ import org.primefaces.PF;
 
 import com.axonivy.utils.process.analyzer.bo.TimeIntervalFilter;
 import com.axonivy.utils.process.analyzer.enums.TimeIntervalType;
-import com.axonivy.utils.process.analyzer.enums.TimeIntervalUnit;
 
 import ch.ivyteam.ivy.environment.Ivy;
 
@@ -77,10 +76,11 @@ public class TimeIntervalFilterBean implements Serializable {
   }
 
   public void onSelectDateRange() {
-    if (CollectionUtils.isEmpty(selectedDateRange)) {
-      
+    if (CollectionUtils.isNotEmpty(selectedDateRange) && selectedDateRange.size() > 1) {
+      filter.setFrom(selectedDateRange.get(0));
+      filter.setTo(selectedDateRange.get(1));
+      unifyFilterAndRefreshData();
     }
-    unifyFilterAndRefreshData();
   }
 
   public void unifyFilterAndRefreshData() {
@@ -111,10 +111,6 @@ public class TimeIntervalFilterBean implements Serializable {
 
   public List<TimeIntervalType> getIntervalTypes() {
     return List.of(TimeIntervalType.values());
-  }
-
-  public List<TimeIntervalUnit> getIntervalUnits() {
-    return List.of(TimeIntervalUnit.values());
   }
 
   public List<Date> getSelectedDateRange() {

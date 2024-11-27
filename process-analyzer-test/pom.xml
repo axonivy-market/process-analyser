@@ -36,10 +36,16 @@
       <type>iar</type>
     </dependency>
     <dependency>
-    	<groupId>com.axonivy.ivy.test</groupId>
-    	<artifactId>unit-tester</artifactId>
-    	<version>${tester.version}</version>
-    	<scope>test</scope>
+      <groupId>com.axonivy.ivy.test</groupId>
+      <artifactId>unit-tester</artifactId>
+      <version>${tester.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.axonivy.ivy.webtest</groupId>
+      <artifactId>web-tester</artifactId>
+      <version>${tester.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <build>

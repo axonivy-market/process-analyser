@@ -10,13 +10,15 @@ import java.time.format.TextStyle;
 import java.util.Date;
 import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
+
 import ch.ivyteam.ivy.environment.Ivy;
 
 public class DateUtils {
 
   public static final String TIME_PATTERN = "HH:mm";
-  public static final String DATE_TIME_PATTERN = "yyyy-MM-dd " + TIME_PATTERN;
-  public static final String DATE_PATTERN = "yyyy-MM-dd";
+  public static final String DATE_PATTERN = "dd/MM/yyyy";
+  public static final String DATE_TIME_PATTERN = DATE_PATTERN + StringUtils.SPACE + TIME_PATTERN;
   private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_TIME_PATTERN);
 
   private DateUtils() {
