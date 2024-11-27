@@ -112,10 +112,12 @@ public class IvyTaskOccurrenceService {
       } while (maxQueryResults == tasks.size());
 
       for (ITask task : tasks) {
+        List<ICustomField<?>> allCustomFieldsFromCases = new ArrayList<>();
+        allCustomFieldsFromCases.addAll(task.getCase().getBusinessCase().customFields().all());
+        allCustomFieldsFromCases.addAll(task.getCase().customFields().all());
+
         addCustomFieldsToCustomFieldsByType(task.customFields().all(), false, customFieldsByType);
-        addCustomFieldsToCustomFieldsByType(task.getCase().getBusinessCase().customFields().all(), true,
-            customFieldsByType);
-        addCustomFieldsToCustomFieldsByType(task.getCase().customFields().all(), true, customFieldsByType);
+        addCustomFieldsToCustomFieldsByType(allCustomFieldsFromCases, true, customFieldsByType);
       }
 
       return customFieldsByType;
