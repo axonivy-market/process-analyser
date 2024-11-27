@@ -56,6 +56,31 @@
         <artifactId>project-build-plugin</artifactId>
         <version>${project.build.plugin.version}</version>
         <extensions>true</extensions>
+        <configuration>
+          <encoding>UTF-8</encoding>
+          <compilerWarnings>false</compilerWarnings>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0-M4</version>
+        <executions>
+          <execution>
+            <id>default-test</id>
+            <phase>test</phase>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </execution>
+          <execution>
+            <id>selenium.web.tests</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
