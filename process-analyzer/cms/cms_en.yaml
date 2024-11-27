@@ -14,6 +14,8 @@ Dialogs:
             ProcessesMonitor:
               AnalysisType: Analysis Type
               AnalysisTypeRequiredMessage: Please select an analysis type
+              CustomFilters: Custom filters
+              DateErrorMessage: Both FromDate and ToDate must be selected.
               DownloadJSONFile: Download JSON file
               ElementId: Element Id
               Frequency: Frequency
@@ -23,6 +25,7 @@ Dialogs:
               MedianDuration: Median Duration
               Module: Module
               NoRecordsFound: No records found.
+              None: None
               PageHeader: Process Monitor Page
               PleaseSelectAnalysisType: Please select an analysis type
               PleaseSelectModule: Please select a module
