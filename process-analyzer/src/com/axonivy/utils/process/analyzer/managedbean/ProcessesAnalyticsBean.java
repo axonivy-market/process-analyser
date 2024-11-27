@@ -1,6 +1,7 @@
 package com.axonivy.utils.process.analyzer.managedbean;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.utils.process.analyzer.bo.Node;
@@ -26,6 +28,18 @@ import com.axonivy.utils.process.analyzer.internal.ProcessUtils;
 import com.axonivy.utils.process.analyzer.utils.DateUtils;
 import com.axonivy.utils.process.analyzer.utils.JacksonUtils;
 import com.axonivy.utils.process.analyzer.utils.ProcessesMonitorUtils;
+import com.axonivy.utils.bpmnstatistic.bo.CustomFieldFilter;
+import com.axonivy.utils.bpmnstatistic.bo.Node;
+import com.axonivy.utils.bpmnstatistic.bo.ProcessMiningData;
+import com.axonivy.utils.bpmnstatistic.bo.TimeFrame;
+import com.axonivy.utils.bpmnstatistic.bo.TimeIntervalFilter;
+import com.axonivy.utils.bpmnstatistic.constants.ProcessAnalyticsConstants;
+import com.axonivy.utils.bpmnstatistic.enums.KpiType;
+import com.axonivy.utils.bpmnstatistic.internal.ProcessUtils;
+import com.axonivy.utils.bpmnstatistic.service.IvyTaskOccurrenceService;
+import com.axonivy.utils.bpmnstatistic.utils.DateUtils;
+import com.axonivy.utils.bpmnstatistic.utils.JacksonUtils;
+import com.axonivy.utils.bpmnstatistic.utils.ProcessesMonitorUtils;
 
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.cm.ContentObject;
@@ -33,6 +47,7 @@ import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.location.IParser.ParseException;
 import ch.ivyteam.ivy.process.rdm.IProcess;
+import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
 
@@ -53,6 +68,10 @@ public class ProcessesAnalyticsBean {
   private String miningUrl;
   private ContentObject processMiningDataJsonFile;
   private String bpmnIframeSourceUrl;
+  private Map<CustomFieldFilter, List<Object>> customFieldsByType = new HashMap<>();
+  private Map<CustomFieldFilter, List<Object>> selectedCustomFilters = new HashMap<>();
+  private List<String> selectedCustomFieldNames = new ArrayList<>();
+  private boolean isFilterDropdownVisible;
 
   @PostConstruct
   private void init() {
@@ -88,10 +107,13 @@ public class ProcessesAnalyticsBean {
       selectedProcess = null;
     }
     resetStatisticValue();
+    resetCustomFieldFilterValues();
   }
 
   public void onProcessSelect() {
     resetStatisticValue();
+    resetCustomFieldFilterValues();
+    getCaseAndTaskCustomFields();
   }
 
   public void onKpiTypeSelect() {
@@ -104,12 +126,67 @@ public class ProcessesAnalyticsBean {
     bpmnIframeSourceUrl = StringUtils.EMPTY;
   }
 
+  private void resetCustomFieldFilterValues() {
+    selectedCustomFieldNames = new ArrayList<>();
+    customFieldsByType.clear();
+    setFilterDropdownVisible(false);
+  }
+
+  public Map<CustomFieldFilter, List<Object>> getCaseAndTaskCustomFields() {
+    Optional.ofNullable(getSelectedIProcessWebStartable()).ifPresent(process -> {
+      selectedPid = process.pid().getParent().toString();
+    });
+
+    return IvyTaskOccurrenceService.getCaseAndTaskCustomFields(selectedPid, timeIntervalFilter, customFieldsByType);
+  }
+
+  public void onCustomFieldSelect() {
+    customFieldsByType.forEach((key, value) -> {
+      boolean isSelectedCustomField = selectedCustomFieldNames.contains(key.getCustomFieldMeta().name());
+      if (isSelectedCustomField && ObjectUtils.isEmpty(selectedCustomFilters.get(key))) {
+        // Initialize the number range for custom field type NUMBER
+        if (CustomFieldType.NUMBER == key.getCustomFieldMeta().type()) {
+          double minValue = getMinValue(key.getCustomFieldMeta().name());
+          double maxValue = getMaxValue(key.getCustomFieldMeta().name());
+          selectedCustomFilters.put(key, Arrays.asList(minValue, maxValue));
+        } else {
+          selectedCustomFilters.put(key, new ArrayList<>());
+        }
+      } else if (!isSelectedCustomField) {
+        selectedCustomFilters.remove(key);
+      }
+    });
+    setFilterDropdownVisible(!selectedCustomFieldNames.isEmpty());
+  }
+
+  public double getMinValue(String fieldName) {
+    return customFieldsByType.entrySet().stream()
+        .filter(entry -> entry.getKey().getCustomFieldMeta().name().equals(fieldName))
+        .flatMap(entry -> entry.getValue().stream()).filter(obj -> obj instanceof Number)
+        .mapToDouble(obj -> ((Number) obj).doubleValue()).map(value -> Math.floor(value * 100) / 100).min().orElse(0);
+  }
+
+  public double getMaxValue(String fieldName) {
+    return customFieldsByType.entrySet().stream()
+        .filter(entry -> entry.getKey().getCustomFieldMeta().name().equals(fieldName))
+        .flatMap(entry -> entry.getValue().stream()).filter(obj -> obj instanceof Number)
+        .mapToDouble(obj -> ((Number) obj).doubleValue()).map(value -> Math.ceil(value * 100) / 100).max().orElse(0);
+  }
+
+  public void onNumberSliderChange(CustomFieldFilter customField, double minValue, double maxValue) {
+    if (CustomFieldType.NUMBER == customField.getCustomFieldMeta().type()) {
+      selectedCustomFilters.put(customField, Arrays.asList(minValue, maxValue));
+    }
+  }
+
   public void updateDataOnChangingFilter() throws ParseException {
     var parameterMap = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
     String from = parameterMap.get(ProcessAnalyticsConstants.FROM);
     String to = parameterMap.get(ProcessAnalyticsConstants.TO);
     timeIntervalFilter.setFrom(DateUtils.parseDateFromString(from));
     timeIntervalFilter.setTo(DateUtils.parseDateFromString(to));
+    resetCustomFieldFilterValues();
+    getCaseAndTaskCustomFields();
   }
 
   public void onShowStatisticBtnClick() {
@@ -146,8 +223,8 @@ public class ProcessesAnalyticsBean {
         processMiningData.setKpiType(selectedKpiType);
         TimeFrame timeFrame = new TimeFrame(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo());
         processMiningData.setTimeFrame(timeFrame);
-        nodes = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(
-            getSelectedIProcessWebStartable(), timeIntervalFilter, selectedKpiType);
+        nodes = ProcessesMonitorUtils.filterInitialStatisticByIntervalWithoutModifyingProcess(
+            getSelectedIProcessWebStartable(), timeIntervalFilter, selectedKpiType, selectedCustomFilters);
         for (Node node : nodes) {
           totalFrequency += node.getFrequency();
         }
@@ -216,5 +293,45 @@ public class ProcessesAnalyticsBean {
 
   public String getBpmnIframeSourceUrl() {
     return bpmnIframeSourceUrl;
+  }
+
+  public Map<CustomFieldFilter, List<Object>> getCustomFieldsByType() {
+    return customFieldsByType;
+  }
+
+  public void setCustomFieldsByType(Map<CustomFieldFilter, List<Object>> customFieldsByType) {
+    this.customFieldsByType = customFieldsByType;
+  }
+
+  public Map<CustomFieldFilter, List<Object>> getSelectedCustomFilters() {
+    return selectedCustomFilters;
+  }
+
+  public void setSelectedCustomFilters(Map<CustomFieldFilter, List<Object>> selectedCustomFilters) {
+    this.selectedCustomFilters = selectedCustomFilters;
+  }
+
+  public boolean isFilterDropdownVisible() {
+    return isFilterDropdownVisible;
+  }
+
+  public void setFilterDropdownVisible(boolean isFilterDropdownVisible) {
+    this.isFilterDropdownVisible = isFilterDropdownVisible;
+  }
+
+  public List<String> getSelectedCustomFieldNames() {
+    return selectedCustomFieldNames;
+  }
+
+  public void setSelectedCustomFieldNames(List<String> selectedCustomFieldNames) {
+    this.selectedCustomFieldNames = selectedCustomFieldNames;
+  }
+
+  public TimeIntervalFilter getTimeIntervalFilter() {
+    return timeIntervalFilter;
+  }
+
+  public void setTimeIntervalFilter(TimeIntervalFilter timeIntervalFilter) {
+    this.timeIntervalFilter = timeIntervalFilter;
   }
 }
