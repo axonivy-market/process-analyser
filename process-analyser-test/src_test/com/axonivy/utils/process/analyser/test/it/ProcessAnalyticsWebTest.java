@@ -18,6 +18,7 @@ import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Condition.attribute;
 
 import org.junit.jupiter.api.Test;
+import org.primefaces.PrimeFaces;
 
 @IvyWebTest
 @IvyTest
@@ -50,6 +51,7 @@ public class ProcessAnalyticsWebTest {
 
   private void clickFirstOptionFromTheDropdown(String dropdownCssSelector) {
     // Click the open dropdown icon
+    Ivy.log().warn(PrimeFaces.class.getPackage().getImplementationVersion());
     Ivy.log().warn($$(dropdownCssSelector +"_items li").size());
 
     $(dropdownCssSelector + DROPDOWN_TRIGGER_DIV_CSS_SELECTOR_SUFFIX).click();
