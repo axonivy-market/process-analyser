@@ -5,6 +5,8 @@ import com.axonivy.ivy.webtest.engine.EngineUrl;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 
+import ch.ivyteam.ivy.environment.Ivy;
+
 import static com.codeborne.selenide.Selenide.open;
 
 import java.time.Duration;
@@ -25,7 +27,7 @@ public class ProcessAnalyticsWebTest {
   private final String PROCESS_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:processDropdown";
   private final String KPI_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:kpiDropdown";
   private final String DROPDOWN_ITEMS_CSS_SELECTOR_SUFFIX = "_items li";
-  private final String DROPDOWN_TRIGGER_DIV_CSS_SELECTOR_SUFFIX = " .ui-selectonemenu-trigger";
+  private final String DROPDOWN_TRIGGER_DIV_CSS_SELECTOR_SUFFIX = " > .ui-selectonemenu-trigger";
   private final String DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX = "_label";
 
   @Test
@@ -46,7 +48,9 @@ public class ProcessAnalyticsWebTest {
 
   private void clickFirstOptionFromTheDropdown(String dropdownCssSelector) {
     // Click the open dropdown icon
+    Ivy.log().warn($(dropdownCssSelector + DROPDOWN_TRIGGER_DIV_CSS_SELECTOR_SUFFIX));
     $(dropdownCssSelector + DROPDOWN_TRIGGER_DIV_CSS_SELECTOR_SUFFIX).click();
+    Ivy.log().warn($$(dropdownCssSelector + DROPDOWN_ITEMS_CSS_SELECTOR_SUFFIX).get(1));
 
     // Find 1st option (index = 1 to avoid choosing default initial option of null)
     SelenideElement targetElement = $$(dropdownCssSelector + DROPDOWN_ITEMS_CSS_SELECTOR_SUFFIX).get(1);
