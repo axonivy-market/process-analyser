@@ -6,6 +6,7 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 
 import ch.ivyteam.ivy.environment.Ivy;
+import ch.ivyteam.ivy.environment.IvyTest;
 
 import static com.codeborne.selenide.Selenide.open;
 
@@ -19,6 +20,7 @@ import static com.codeborne.selenide.Condition.attribute;
 import org.junit.jupiter.api.Test;
 
 @IvyWebTest
+@IvyTest
 public class ProcessAnalyticsWebTest {
   private final String TEST_PROCESS_PATH = "/process-analyser-test/193485C5ABDFEA93/test.ivp";
   private final String SHOW_STATISTIC_BTN_CSS_SELECTOR = "#process-analytics-form\\:show-statistic-btn";
@@ -48,13 +50,14 @@ public class ProcessAnalyticsWebTest {
 
   private void clickFirstOptionFromTheDropdown(String dropdownCssSelector) {
     // Click the open dropdown icon
-    Ivy.log().warn($(dropdownCssSelector + DROPDOWN_TRIGGER_DIV_CSS_SELECTOR_SUFFIX));
-    $(dropdownCssSelector + DROPDOWN_TRIGGER_DIV_CSS_SELECTOR_SUFFIX).click();
-    Ivy.log().warn($$(dropdownCssSelector + DROPDOWN_ITEMS_CSS_SELECTOR_SUFFIX).get(1));
+    Ivy.log().warn($$(dropdownCssSelector +"_items li").size());
 
+    $(dropdownCssSelector + DROPDOWN_TRIGGER_DIV_CSS_SELECTOR_SUFFIX).click();
+    Ivy.log().warn($$(dropdownCssSelector +"_items li").size());
     // Find 1st option (index = 1 to avoid choosing default initial option of null)
     SelenideElement targetElement = $$(dropdownCssSelector + DROPDOWN_ITEMS_CSS_SELECTOR_SUFFIX).get(1);
     String selectedOptionLabel = targetElement.text();
+    Ivy.log().warn(targetElement.describe());
     targetElement.click();
 
     // Check if the label have been change to target option label
