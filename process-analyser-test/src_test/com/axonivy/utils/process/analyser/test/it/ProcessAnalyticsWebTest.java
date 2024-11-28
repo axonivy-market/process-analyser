@@ -1,27 +1,23 @@
 package com.axonivy.utils.process.analyser.test.it;
 
-import com.axonivy.ivy.webtest.IvyWebTest;
-import com.axonivy.ivy.webtest.engine.EngineUrl;
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.SelenideElement;
-
-import static com.codeborne.selenide.Selenide.open;
-
-import java.time.Duration;
-
+import static com.codeborne.selenide.Condition.attribute;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
-import static com.codeborne.selenide.Condition.visible;
 
-import static com.codeborne.selenide.Condition.attribute;
+import java.time.Duration;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
+import com.axonivy.ivy.webtest.IvyWebTest;
+import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.SelenideElement;
+
 @IvyWebTest
-public class ProcessAnalyticsWebTest {
-  private final String TEST_PROCESS_PATH = "process-analyser/1910BF871CE43293/startAnalytic.ivp";
+public class ProcessAnalyticsWebTest extends WebBaseSetup {
+
   private final String SHOW_STATISTIC_BTN_CSS_SELECTOR = "#process-analytics-form\\:show-statistic-btn";
   private final String MODULE_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:moduleDropdown";
   private final String PROCESS_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:processDropdown";
@@ -34,7 +30,7 @@ public class ProcessAnalyticsWebTest {
   @Test
   void showStatisticButtonShouldEnableWhenChosenFulfiled() {
     // Open process analyzer view
-    open(EngineUrl.createProcessUrl(TEST_PROCESS_PATH));
+    startAnalyzingProcess();
 
     // Check the current status of show statistic button
     $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, "true"));
