@@ -6,8 +6,6 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 
-import ch.ivyteam.ivy.environment.IvyTest;
-
 import static com.codeborne.selenide.Selenide.open;
 
 import java.time.Duration;
@@ -22,7 +20,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 @IvyWebTest
-@IvyTest
 public class ProcessAnalyticsWebTest {
   private final String TEST_PROCESS_PATH = "/process-analyser-test/193485C5ABDFEA93/test.ivp";
   private final String SHOW_STATISTIC_BTN_CSS_SELECTOR = "#process-analytics-form\\:show-statistic-btn";
