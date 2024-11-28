@@ -1,16 +1,21 @@
 package com.axonivy.utils.process.analyzer.utils;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.utils.process.analyzer.bo.AlternativePath;
+import com.axonivy.utils.process.analyzer.bo.CustomFieldFilter;
 import com.axonivy.utils.process.analyzer.bo.Node;
 import com.axonivy.utils.process.analyzer.bo.TimeIntervalFilter;
 import com.axonivy.utils.process.analyzer.constants.ProcessAnalyticsConstants;
@@ -18,12 +23,15 @@ import com.axonivy.utils.process.analyzer.enums.KpiType;
 import com.axonivy.utils.process.analyzer.enums.NodeType;
 import com.axonivy.utils.process.analyzer.internal.ProcessUtils;
 
+import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
 import ch.ivyteam.ivy.workflow.CaseState;
 import ch.ivyteam.ivy.workflow.ICase;
+import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 import ch.ivyteam.ivy.workflow.query.CaseQuery;
+import ch.ivyteam.ivy.workflow.query.TaskQuery;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 
 @SuppressWarnings("restriction")
@@ -102,14 +110,14 @@ public class ProcessesMonitorUtils {
    * AxonIvy system db.
    **/
   public static List<Node> filterInitialStatisticByIntervalTime(IProcessWebStartable processStart,
-      TimeIntervalFilter timeIntervalFilter, KpiType analysisType) {
+      TimeIntervalFilter timeIntervalFilter, KpiType analysisType, Map<CustomFieldFilter, List<Object>> selectedCustomFilters) {
     if (Objects.isNull(processStart)) {
       return Collections.emptyList();
     }
     
     List<Node> results = new ArrayList<>();
     Long taskStartId = ProcessUtils.getTaskStartIdFromPID(processStart.pid().toString());
-    List<ICase> cases = getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter);
+    List<ICase> cases = getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter, selectedCustomFilters);
     List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
     extractNodesFromProcessElements(processElements, results);
     updateFrequencyForNodes(results, processElements, cases);
@@ -181,11 +189,112 @@ public class ProcessesMonitorUtils {
     destinationElement.getOutgoing().forEach(outGoingPath -> followPath(path, outGoingPath));
   }
 
+  /**
+   * Construct the base query and, if applicable, a sub-query for custom fields. 
+   * For custom fields of type NUMBER or TIMESTAMP, ensure exactly two values are provided. 
+   * For STRING type fields, iterate over each value to build individual sub-queries.
+   **/
   public static List<ICase> getAllCasesFromTaskStartIdWithTimeInterval(Long taskStartId,
-      TimeIntervalFilter timeIntervalFilter) {
-    return CaseQuery.create().where().state().isEqual(CaseState.DONE).and().taskStartId().isEqual(taskStartId).and()
-        .startTimestamp().isGreaterOrEqualThan(timeIntervalFilter.getFrom()).and().startTimestamp()
-        .isLowerOrEqualThan(timeIntervalFilter.getTo()).executor().results();
+      TimeIntervalFilter timeIntervalFilter, Map<CustomFieldFilter, List<Object>> selectedCustomFilters) {
+    CaseQuery query = CaseQuery.create().where().state().isEqual(CaseState.DONE).and().taskStartId()
+        .isEqual(taskStartId).and().startTimestamp().isGreaterOrEqualThan(timeIntervalFilter.getFrom()).and()
+        .startTimestamp().isLowerOrEqualThan(timeIntervalFilter.getTo());
+
+    if (ObjectUtils.isNotEmpty(selectedCustomFilters)) {
+      CaseQuery customFieldsQuery = CaseQuery.create();
+
+      for (Map.Entry<CustomFieldFilter, List<Object>> entry : selectedCustomFilters.entrySet()) {
+        CustomFieldFilter customFieldFilter = entry.getKey();
+        List<Object> customFieldValues =
+            isStringCustomFieldType(customFieldFilter) ? flattenStringCustomFieldValues(Arrays.asList(entry.getValue()))
+                : Arrays.asList(entry.getValue());
+
+        CaseQuery customFieldQuery = CaseQuery.create();
+        for (Object customFieldValue : customFieldValues) {
+          addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldValue);
+        }
+        customFieldsQuery.where().or(customFieldQuery);
+      }
+
+      query.where().andOverall(customFieldsQuery);
+    }
+    return Ivy.wf().getCaseQueryExecutor().getResults(query);
+  }
+
+  private static boolean isStringCustomFieldType(CustomFieldFilter customFieldFilter) {
+    CustomFieldType type = customFieldFilter.getCustomFieldMeta().type();
+    return CustomFieldType.STRING == type || CustomFieldType.TEXT == type;
+  }
+
+  private static List<Object> flattenStringCustomFieldValues(List<Object> customFieldValues) {
+    return customFieldValues.stream().filter(value -> value instanceof String[]).map(value -> (String[]) value)
+        .flatMap(Arrays::stream).collect(Collectors.toList());
+  }
+
+  /**
+   * Cast values to right type and Create sub-query for each custom field type from case or task
+   **/
+  @SuppressWarnings("unchecked")
+  private static void addCustomFieldSubQuery(CaseQuery customFieldQuery, CustomFieldFilter customFieldFilter,
+      Object customFieldValue) {
+    boolean isCustomFieldFromCase = customFieldFilter.isCustomFieldFromCase();
+    String customFieldName = customFieldFilter.getCustomFieldMeta().name();
+    CustomFieldType customFieldType = customFieldFilter.getCustomFieldMeta().type();
+
+    switch (customFieldType) {
+      case STRING:
+        String stringValue = (String) customFieldValue;
+        if (isCustomFieldFromCase) {
+          customFieldQuery.where().or().customField().stringField(customFieldName).isEqual(stringValue);
+        } else {
+          customFieldQuery.where().or()
+              .tasks(TaskQuery.create().where().customField().stringField(customFieldName).isEqual(stringValue));
+        }
+        break;
+      case TEXT:
+        String textValue = (String) customFieldValue;
+        if (isCustomFieldFromCase) {
+          customFieldQuery.where().or().customField().textField(customFieldName).isEqual(textValue);
+        } else {
+          customFieldQuery.where().or()
+              .tasks(TaskQuery.create().where().customField().textField(customFieldName).isEqual(textValue));
+        }
+        break;
+      case NUMBER:
+        List<String> numberRange = (List<String>) customFieldValue;
+
+        Double startNumber = Double.parseDouble(numberRange.get(0));
+        Double endNumber = Double.parseDouble(numberRange.get(1));
+
+        if (isCustomFieldFromCase) {
+          customFieldQuery.where().or().customField().numberField(customFieldName).isGreaterOrEqualThan(startNumber)
+              .and().customField().numberField(customFieldName).isLowerOrEqualThan(endNumber);
+        } else {
+          customFieldQuery.where().or()
+              .tasks(TaskQuery.create().where().customField().numberField(customFieldName)
+                  .isGreaterOrEqualThan(startNumber).and().customField().numberField(customFieldName)
+                  .isLowerOrEqualThan(endNumber));
+        }
+        break;
+      case TIMESTAMP:
+        List<LocalDate> dateRange = (List<LocalDate>) customFieldValue;
+        LocalDate startDate = dateRange.get(0);
+        LocalDate endDate = dateRange.get(1);
+
+        if (isCustomFieldFromCase) {
+          customFieldQuery.where().or().customField().timestampField(customFieldName)
+              .isGreaterOrEqualThan(java.sql.Date.valueOf(startDate)).and().customField()
+              .timestampField(customFieldName).isLowerOrEqualThan(java.sql.Date.valueOf(endDate));
+        } else {
+          customFieldQuery.where().or()
+              .tasks(TaskQuery.create().where().customField().timestampField(customFieldName)
+                  .isGreaterOrEqualThan(java.sql.Date.valueOf(startDate)).and().customField()
+                  .timestampField(customFieldName).isLowerOrEqualThan(java.sql.Date.valueOf(endDate)));
+        }
+        break;
+      default:
+        break;
+    }
   }
 
   public static void updateNodeWiwthDefinedFrequency(int value, Node node) {

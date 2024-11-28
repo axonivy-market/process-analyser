@@ -7,7 +7,7 @@
   xmlns:pe="http://primefaces.org/ui/extensions">
 <h:body>
   <ui:composition template="/layouts/frame-10-full-width.xhtml">
-    <ui:define name="title">ProcessAnalytics</ui:define>
+    <ui:define name="title">#{ivy.cms.co('/Dialogs/com/axonivy/utils/process/analyzer/ProcessesMonitor/Title')}</ui:define>
     <ui:define name="content">
       <h:outputScript name="resources/process-viewer.js" target="head"/>
       <h:outputScript name="resources/html2canvas.min.js" target="head"/>
@@ -32,11 +32,11 @@
         <p:outputPanel>
             <br />
         </p:outputPanel>
-        <p:panelGrid id="search-fields" columns="3" layout="grid"
-          styleClass="ui-fluid mb-3"
-          columnClasses="ui-g-4 p-0 pr-2, ui-g-4 p-0 pl-1 pr-1, ui-g-4 p-0 pl-2">
 
-          <h:panelGroup>
+        <p:panelGrid id="search-fields" columns="3"
+          styleClass="ui-fluid mb-3" layout="flex"
+          columnClasses="ui-g-4, ui-g-4, ui-g-4">
+          <h:panelGroup styleClass="ui-g">
             <p:outputLabel for="moduleDropdown"
               value="Please select a module" />
             <p:selectOneMenu id="moduleDropdown"
@@ -46,12 +46,12 @@
               <f:selectItems
                 value="#{processesAnalyticsBean.availableModules}"
                 var="module" itemLabel="#{module}" itemValue="#{module}" />
-              <p:ajax event="itemSelect" update="process-analytics-form"
+              <p:ajax event="change" update="process-analytics-form"
                 listener="#{processesAnalyticsBean.onModuleSelect}" />
             </p:selectOneMenu>
           </h:panelGroup>
 
-          <h:panelGroup>
+          <h:panelGroup styleClass="ui-g">
             <p:outputLabel for="processDropdown"
               value="Please select a process" />
             <p:selectOneMenu id="processDropdown"
@@ -60,12 +60,12 @@
                 itemValue="#{null}" noSelectionOption="true" />
               <f:selectItems
                 value="#{processesAnalyticsBean.availableProcesses}" />
-              <p:ajax event="itemSelect" update="process-analytics-form"
+              <p:ajax event="change" update="process-analytics-form"
                 listener="#{processesAnalyticsBean.onProcessSelect}" />
             </p:selectOneMenu>
           </h:panelGroup>
 
-          <h:panelGroup>
+          <h:panelGroup styleClass="ui-g">
             <p:outputLabel for="kpiDropdown" value="Please select a KPI" />
             <p:selectOneMenu id="kpiDropdown"
               value="#{processesAnalyticsBean.selectedKpiType}">
@@ -88,8 +88,12 @@
             name="filterDataByIntervalRC"
             actionListener="#{processesAnalyticsBean.updateDataOnChangingFilter()}"
             process="@this" partialSubmit="true"
-            update="arrow-statistics" />
+            update="arrow-statistics @form" />
         </h:panelGroup>
+
+        <hr />
+
+        <ic:com.axonivy.utils.process.analyzer.component.CustomFilter processesAnalyticsBean="#{processesAnalyticsBean}" />
 
         <iframe id="process-analytic-viewer"
           src="#{processesAnalyticsBean.bpmnIframeSourceUrl}"
