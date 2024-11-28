@@ -19,17 +19,17 @@ Key features:
 
 - Select the PMV that matches the desired process and KPI type, then click the **"Show Statistic"** button. This will display a raw data visualized process diagram alongside an analyzed statistics table. *(In this version, the data is limited to **"DONE"** cases with fewer than **TWO** alternative elements in their process.)*
 
-![alt text](image1.png)
+![show statistic demo](show-statistic.gif)
 
 - To gain deeper insights, additional filter criteria have been included: 
   1) **Time interval filter:** By default, this filter includes all **"DONE"** cases with a start timestamp that falls within the specified time range.
   2) **Custom filter:** This option allows users to filter cases based on custom field values (from the case or task) that match the specified conditions.
 
-![alt text](image2.png)
+![filter data demo](filter-data.gif)
 
 - For reporting purposes, users can export a Excel file containing analyzed data or a FullHD diagram with KPI values directly from the two buttons located at the bottom-right corner of the UI.
 
-![alt text](image3.png)
+![downoad and export demo](download-and-export.png)
 
 ## Setup
 The Process Analyzer tool relies on task and case data from the AxonIvy System database for its analysis. Please adhere to the following practices to ensure data accuracy and precision:
@@ -40,7 +40,7 @@ The Process Analyzer tool relies on task and case data from the AxonIvy System d
 - **Validation of Alternative Flows**
 : For any process alternative with multiple outgoing flows, ensure that each flow contains at least one task element along its path. *(It's still acceptable if there is only 1 out going path is mising task elements in its flow, as illustrated in the example process provided in the images.)*
 
-![alt text](image4.png)
+![setup guideline](setup-guideline.png)
 
 ```
 @variables.yaml@
