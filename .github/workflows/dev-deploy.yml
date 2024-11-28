@@ -29,10 +29,10 @@ jobs:
       - name: Copy file
         run: |
           version=$(xml sel -t -m "//_:project" -v _:version pom.xml)
-          artifactDir=artifact/process-analyzer
-          engineDeployDir=/var/tools/ivy/11/deploy/PROCESS-ANALYZER
-          install -m 666 ${artifactDir}/target/process-analyzer-${version}.iar $engineDeployDir/process-analyzer-${version}.iar
-          install -m 666 ${artifactDir}-demo/target/process-analyzer-demo-${version}.iar $engineDeployDir/process-analyzer-demo-${version}.iar
+          artifactDir=artifact/process-analyser
+          engineDeployDir=/var/tools/ivy/11/deploy/PROCESS-ANALYSER
+          install -m 666 ${artifactDir}/target/process-analyser-${version}.iar $engineDeployDir/process-analyser-${version}.iar
+          install -m 666 ${artifactDir}-demo/target/process-analyser-demo-${version}.iar $engineDeployDir/process-analyser-demo-${version}.iar
 
       - name: Restart engine
         run: |

@@ -1,0 +1,4 @@
+ChargeForTicketsData #class
+com.axonivy.utils.process.analyser.demo.ChargeForTickets #namespace
+isCharge Boolean #field
+isCharge PERSISTENT #fieldModifier

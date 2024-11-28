@@ -1,13 +1,13 @@
 Categories:
   Process:
-    Analyzer:
-      name: Process Analyzer
+    Analyser:
+      name: Process Analyser
 Dialogs:
   com:
     axonivy:
       utils:
         process:
-          analyzer:
+          analyser:
             ProcessAnalytics:
               ExportExcel: Export Excel
               ExportJPEG: Export JPEG
@@ -37,7 +37,7 @@ Dialogs:
               RequireMessage: Please select a process
               ShowStatistic: Show Statistic
               TimeInterval: Please select a time interval
-              Title: Process Analyzer
+              Title: Process Analyser
               TotalElements: In total there are {0} element(s).
               Type: Type
               Version: Version
@@ -81,6 +81,6 @@ Labels:
   EnterANumber: Enter a number
 Processes:
   Process:
-    Analyzer:
+    Analyser:
       description: To show statistic for your processes
-      name: Process Analyzer
+      name: Process Analyser

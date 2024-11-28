@@ -2,7 +2,7 @@
   "$schema" : "https://json-schema.axonivy.com/process/11.3.0/process.json",
   "id" : "18F3D6C205210455",
   "config" : {
-    "data": "com.axonivy.utils.process.analyzer.demo.data.FlightBookingDemoData"
+    "data": "com.axonivy.utils.process.analyser.demo.data.FlightBookingDemoData"
   },
   "elements" : [ {
       "id" : "f0",
@@ -64,7 +64,7 @@
           "type" : "DialogCall",
           "name" : "Search for a Flight",
           "config" : {
-            "dialog": "com.axonivy.utils.process.analyzer.demo.SearchingFlight:start()"
+            "dialog": "com.axonivy.utils.process.analyser.demo.SearchingFlight:start()"
           },
           "visual" : {
             "at" : { "x" : 392, "y" : 256 }
@@ -166,7 +166,7 @@
           "type" : "DialogCall",
           "name" : "Submit personal information",
           "config" : {
-            "dialog": "com.axonivy.utils.process.analyzer.demo.SubmitPersonalInformation:start()",
+            "dialog": "com.axonivy.utils.process.analyser.demo.SubmitPersonalInformation:start()",
             "output" : {
               "map" : {
                 "out" : "in",
@@ -321,7 +321,7 @@
           "type" : "DialogCall",
           "name" : "DisplayBookingInformation",
           "config" : {
-            "dialog": "com.axonivy.utils.process.analyzer.demo.DisplayBookingInformation:start()",
+            "dialog": "com.axonivy.utils.process.analyser.demo.DisplayBookingInformation:start()",
             "output" : {
               "map" : {
                 "out" : "in",
@@ -705,7 +705,7 @@
           "type" : "DialogCall",
           "name" : "ChargeForTickets",
           "config" : {
-            "dialog": "com.axonivy.utils.process.analyzer.demo.ChargeForTickets:start()",
+            "dialog": "com.axonivy.utils.process.analyser.demo.ChargeForTickets:start()",
             "output" : {
               "map" : {
                 "out" : "in",

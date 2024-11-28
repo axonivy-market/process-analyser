@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: process-analyzer
-Bundle-SymbolicName: process-analyzer
+Bundle-Name: process-analyser
+Bundle-SymbolicName: process-analyser
 Bundle-Version: 1.0.0.qualifier
-Automatic-Module-Name: process.analyzer
+Automatic-Module-Name: process.analyser
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: ch.ivyteam.ivy.process.rdm;bundle-version="11.3.1"
