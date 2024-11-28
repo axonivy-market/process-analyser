@@ -18,7 +18,6 @@ import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Condition.attribute;
 
 import org.junit.jupiter.api.Test;
-import org.primefaces.PrimeFaces;
 
 @IvyWebTest
 @IvyTest
@@ -51,11 +50,13 @@ public class ProcessAnalyticsWebTest {
 
   private void clickFirstOptionFromTheDropdown(String dropdownCssSelector) {
     // Click the open dropdown icon
-    Ivy.log().warn(PrimeFaces.class.getPackage().getImplementationVersion());
     Ivy.log().warn($$(dropdownCssSelector +"_items li").size());
-
     $(dropdownCssSelector + DROPDOWN_TRIGGER_DIV_CSS_SELECTOR_SUFFIX).click();
     Ivy.log().warn($$(dropdownCssSelector +"_items li").size());
+    $(dropdownCssSelector+"_items").shouldBe(Condition.visible);
+    for(SelenideElement el : $$(dropdownCssSelector + DROPDOWN_ITEMS_CSS_SELECTOR_SUFFIX)) {
+      el.shouldBe(Condition.visible);
+    }
     // Find 1st option (index = 1 to avoid choosing default initial option of null)
     SelenideElement targetElement = $$(dropdownCssSelector + DROPDOWN_ITEMS_CSS_SELECTOR_SUFFIX).get(1);
     String selectedOptionLabel = targetElement.text();
