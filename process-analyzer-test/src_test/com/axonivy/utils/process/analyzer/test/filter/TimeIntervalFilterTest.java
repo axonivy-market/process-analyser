@@ -22,8 +22,9 @@ import com.axonivy.ivy.webtest.IvyWebTest;
 import com.axonivy.ivy.webtest.engine.EngineUrl;
 import com.axonivy.utils.process.analyzer.utils.DateUtils;
 import com.codeborne.selenide.ElementsCollection;
+import com.codeborne.selenide.Selenide;
 
-@IvyWebTest
+@IvyWebTest(headless = false)
 public class TimeIntervalFilterTest {
   private static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DateUtils.DATE_PATTERN);
   private static SimpleDateFormat dateFormat = new SimpleDateFormat(DateUtils.DATE_PATTERN);
@@ -88,8 +89,11 @@ public class TimeIntervalFilterTest {
   }
 
   private void openFilterTypes() {
-    $(By.id("process-analytics-form:filter-types")).shouldBe(visible, Duration.ofSeconds(5)).click();
-    $(By.id("process-analytics-form:filter-types_panel")).shouldBe(visible);
+    var typeFilter = $(By.id("process-analytics-form:filter-types"));
+    typeFilter.shouldBe(visible);
+    Selenide.sleep(1000);
+    typeFilter.click();
+    $(By.id("process-analytics-form:filter-types_panel")).shouldBe(visible, Duration.ofSeconds(1));
   }
 
   private void selectDayOnDateRange(int day) {
