@@ -1,4 +1,0 @@
-FlightPlanningDemoData #class
-com.axonivy.utils.process.analyzer.demo.data #namespace
-isManagerApprove Boolean #field
-isEngineeringApproveAircraft Boolean #field
