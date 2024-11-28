@@ -1,4 +1,0 @@
-ChargeForTicketsData #class
-com.axonivy.utils.bpmnstatistic.demo.ChargeForTickets #namespace
-isCharge Boolean #field
-isCharge PERSISTENT #fieldModifier
