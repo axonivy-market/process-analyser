@@ -3,6 +3,7 @@ package com.axonivy.utils.process.analyser.test.it;
 import com.axonivy.ivy.webtest.IvyWebTest;
 import com.axonivy.ivy.webtest.engine.EngineUrl;
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 
 import ch.ivyteam.ivy.environment.Ivy;
@@ -29,7 +30,7 @@ public class ProcessAnalyticsWebTest {
   private final String PROCESS_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:processDropdown";
   private final String KPI_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:kpiDropdown";
   private final String DROPDOWN_ITEMS_CSS_SELECTOR_SUFFIX = "_items li";
-  private final String DROPDOWN_TRIGGER_DIV_CSS_SELECTOR_SUFFIX = " > .ui-selectonemenu-trigger";
+//  private final String DROPDOWN_TRIGGER_DIV_CSS_SELECTOR_SUFFIX = " > .ui-selectonemenu-trigger";
   private final String DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX = "_label";
 
   @Test
@@ -50,17 +51,14 @@ public class ProcessAnalyticsWebTest {
 
   private void clickFirstOptionFromTheDropdown(String dropdownCssSelector) {
     // Click the open dropdown icon
-    Ivy.log().warn($$(dropdownCssSelector +"_items li").size());
-    $(dropdownCssSelector + DROPDOWN_TRIGGER_DIV_CSS_SELECTOR_SUFFIX).click();
-    Ivy.log().warn($$(dropdownCssSelector +"_items li").size());
-    $(dropdownCssSelector+"_items").shouldBe(Condition.visible);
-    for(SelenideElement el : $$(dropdownCssSelector + DROPDOWN_ITEMS_CSS_SELECTOR_SUFFIX)) {
-      el.shouldBe(Condition.visible);
-    }
+    var dropdown = $(dropdownCssSelector);
+    dropdown.shouldBe(Condition.visible);
+    Selenide.sleep(1000);
+    dropdown.click();
+    $(dropdownCssSelector+"_items").shouldBe(Condition.visible, Duration.ofSeconds(2));
     // Find 1st option (index = 1 to avoid choosing default initial option of null)
     SelenideElement targetElement = $$(dropdownCssSelector + DROPDOWN_ITEMS_CSS_SELECTOR_SUFFIX).get(1);
     String selectedOptionLabel = targetElement.text();
-    Ivy.log().warn(targetElement.describe());
     targetElement.click();
 
     // Check if the label have been change to target option label
