@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 
 @IvyWebTest
 public class ProcessAnalyticsWebTest {
-  private final String TEST_PROCESS_PATH = "/process-analyser-test/193485C5ABDFEA93/test.ivp";
+  private final String TEST_PROCESS_PATH = "process-analyser/1910BF871CE43293/startAnalytic.ivp";
   private final String SHOW_STATISTIC_BTN_CSS_SELECTOR = "#process-analytics-form\\:show-statistic-btn";
   private final String MODULE_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:moduleDropdown";
   private final String PROCESS_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:processDropdown";
