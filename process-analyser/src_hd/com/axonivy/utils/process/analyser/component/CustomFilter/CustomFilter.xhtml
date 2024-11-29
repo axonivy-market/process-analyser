@@ -35,28 +35,26 @@
       <ui:repeat value="#{managedBean.selectedCustomFilters.entrySet()}" var="fieldEntry">
         <h:panelGroup styleClass="ui-fluid col-4" layout="block" rendered="#{managedBean.filterDropdownVisible}">
           <div class="col-4 p-0 m-0 mb-2">
-            <p:outputLabel value="#{fieldEntry.key.customFieldMeta.name()}"
-              rendered="#{managedBean.filterDropdownVisible}" />
+            <p:outputLabel value="#{fieldEntry.key.customFieldMeta.name()}" />
           </div>
 
           <!-- NUMBER -->
-          <h:outputText id="number-range" rendered="#{fieldEntry.key.customFieldMeta.type() eq 'NUMBER'}"
-            value="#{managedBean.getRangeDisplayForNumberType(managedBean.selectedCustomFilters[fieldEntry.key])}" />
+          <h:panelGroup layout="block" rendered="#{'NUMBER' == fieldEntry.key.customFieldMeta.type()}">
+            <h:outputText id="number-range"
+              value="#{managedBean.getRangeDisplayForNumberType(managedBean.selectedCustomFilters[fieldEntry.key])}" />
 
-          <p:slider for="
+            <p:slider for="
             min-value, max-value" range="true" display="number-range"
-            displayTemplate="Between {min} and {max}" styleClass="m-2"
-            minValue="#{managedBean.getMinValue(fieldEntry.key.customFieldMeta.name())}"
-            maxValue="#{managedBean.getMaxValue(fieldEntry.key.customFieldMeta.name())}"
-            rendered="#{managedBean.filterDropdownVisible and 'NUMBER' == fieldEntry.key.customFieldMeta.type()}">
-            <p:ajax event="slideEnd"
-              listener="#{managedBean.onNumberSliderChange(fieldEntry.key, managedBean.selectedCustomFilters[fieldEntry.key][0], managedBean.selectedCustomFilters[fieldEntry.key][1])}"
-              process="@this" partialSubmit="true" />
-          </p:slider>
-          <h:inputHidden id="min-value" value="#{managedBean.selectedCustomFilters[fieldEntry.key][0]}"
-            rendered="#{fieldEntry.key.customFieldMeta.type() eq 'NUMBER'}" />
-          <h:inputHidden id="max-value" value="#{managedBean.selectedCustomFilters[fieldEntry.key][1]}"
-            rendered="#{fieldEntry.key.customFieldMeta.type() eq 'NUMBER'}" />
+              displayTemplate="{min} - {max}" styleClass="m-2" step="0.01"
+              minValue="#{managedBean.getMinValue(fieldEntry.key.customFieldMeta.name())}"
+              maxValue="#{managedBean.getMaxValue(fieldEntry.key.customFieldMeta.name())}">
+              <p:ajax event="slideEnd"
+                listener="#{managedBean.onNumberSliderChange(fieldEntry.key, managedBean.selectedCustomFilters[fieldEntry.key][0], managedBean.selectedCustomFilters[fieldEntry.key][1])}"
+                process="@this" partialSubmit="true" />
+            </p:slider>
+            <h:inputHidden id="min-value" value="#{managedBean.selectedCustomFilters[fieldEntry.key][0]}" />
+            <h:inputHidden id="max-value" value="#{managedBean.selectedCustomFilters[fieldEntry.key][1]}" />
+          </h:panelGroup>
 
           <!-- STRING, TEXT -->
           <h:panelGroup layout="block"
@@ -72,12 +70,11 @@
           </h:panelGroup>
 
           <!-- TIMESTAMP -->
-          <h:panelGroup layout="block">
+          <h:panelGroup layout="block" rendered="#{'TIMESTAMP' == fieldEntry.key.customFieldMeta.type()}">
             <p:datePicker id="date-range" selectionMode="range" maxdate="#{managedBean.timeIntervalFilter.to}"
               styleClass="col-12 m-0 p-0 grid formgrid" value="#{managedBean.selectedCustomFilters[fieldEntry.key]}"
               readonlyInput="true" required="true" pattern="dd/MM/yyyy"
-              requiredMessage="#{ivy.cms.co('/Dialogs/com/axonivy/utils/process/analyser/ProcessesMonitor/DateErrorMessage')}"
-              rendered="#{'TIMESTAMP' == fieldEntry.key.customFieldMeta.type()}">
+              requiredMessage="#{ivy.cms.co('/Dialogs/com/axonivy/utils/process/analyser/ProcessesMonitor/DateErrorMessage')}">
               <p:ajax event="dateSelect" process="@this" partialSubmit="true" />
             </p:datePicker>
             <p:message styleClass="col-12 m-0 p-2 grid formgrid" for="date-range" />

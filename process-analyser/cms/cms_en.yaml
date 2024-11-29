@@ -27,7 +27,7 @@ Dialogs:
               NoCustomFieldsAvailable: No custom fields available.
               NoRecordsFound: No records found.
               None: None
-              NumberRange: Between {0} and {1}
+              NumberRange: '{0} - {1}'
               PageHeader: Process Monitor Page
               PleaseSelectAnalysisType: Please select an analysis type
               PleaseSelectModule: Please select a module

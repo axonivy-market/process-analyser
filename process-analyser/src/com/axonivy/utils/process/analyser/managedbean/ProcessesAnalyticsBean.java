@@ -154,7 +154,10 @@ public class ProcessesAnalyticsBean {
   }
 
   public double getMinValue(String fieldName) {
-    return getNumberTypeValue(fieldName).map(value -> Math.floor(value * 100) / 100).min().orElse(0);
+    if (getNumberTypeValue(fieldName).count() > 1) {
+      return getNumberTypeValue(fieldName).map(value -> Math.floor(value * 100) / 100).min().orElse(0);
+    }
+    return 0;
   }
 
   public double getMaxValue(String fieldName) {
@@ -175,7 +178,7 @@ public class ProcessesAnalyticsBean {
   }
 
   public String getRangeDisplayForNumberType(List<Double> numberValue) {
-    return Ivy.cms().co("/Dialogs/com/axonivy/utils/process/analyzer/ProcessesMonitor/NumberRange",
+    return Ivy.cms().co("/Dialogs/com/axonivy/utils/process/analyser/ProcessesMonitor/NumberRange",
         Arrays.asList(numberValue.get(0), numberValue.get(1)));
   }
 
