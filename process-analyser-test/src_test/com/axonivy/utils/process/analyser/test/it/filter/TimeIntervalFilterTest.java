@@ -39,19 +39,19 @@ public class TimeIntervalFilterTest extends WebBaseSetup {
   }
 
   @Test
-  public void checkTimeIntervalDropdownExists() {
+  void checkTimeIntervalDropdownExists() {
     $(By.id("process-analytics-form:filter-types")).shouldBe(visible);
   }
 
   @Test
-  public void checkDefaultTimeIntervalFilterType() {
+  void checkDefaultTimeIntervalFilterType() {
     $(By.id("process-analytics-form:filter-types_label")).shouldBe(visible).shouldBe(exactText("Today"));
     String today = dateFormat.format(new Date());
     $(By.id("process-analytics-form:date-point-selection_input")).shouldBe(visible).shouldHave(value(today));
   }
 
   @Test
-  public void testTimeIntervalFilter() {
+  void testTimeIntervalFilter() {
     // Test Yesterday type
     openFilterTypes();
     $(By.cssSelector("li[data-label^='Yesterday']")).shouldBe(visible).click();

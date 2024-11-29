@@ -38,7 +38,7 @@ public class TimeIntervalFilterBean implements Serializable {
   private static final String FILTER_DATA_BY_INTERVAL_RC_PARAMS_PATTERN =
       "[{name:'from', value:'%s'}, {name:'to', value:'%s'}]";
   private static final String FILTER_DATA_BY_INTERVAL_RC = "filterDataByIntervalRC(%s);";
-  private static final String PROCESS_TIME_INTERVAL_ID = "process-analytics-form:process-time-interval";
+  private static final String CUSTOM_DATE_TO_ID = "process-analytics-form:custom-date-to";
 
   private TimeIntervalType selectedType;
   private String currentTime;
@@ -67,8 +67,8 @@ public class TimeIntervalFilterBean implements Serializable {
     }
     if (filter.getFrom().after(filter.getTo())) {
       var message = new FacesMessage(FacesMessage.SEVERITY_ERROR, null,
-          Ivy.cms().co("/Dialogs/com/axonivy/utils/process/analyzer/ProcessesMonitor/FromToDateValidationMessage"));
-      FacesContext.getCurrentInstance().addMessage(PROCESS_TIME_INTERVAL_ID, message);
+          Ivy.cms().co("/Dialogs/com/axonivy/utils/process/analyser/ProcessesMonitor/FromToDateValidationMessage"));
+      FacesContext.getCurrentInstance().addMessage(CUSTOM_DATE_TO_ID, message);
       FacesContext.getCurrentInstance().validationFailed();
       return;
     }
