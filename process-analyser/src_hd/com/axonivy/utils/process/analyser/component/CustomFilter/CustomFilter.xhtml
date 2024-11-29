@@ -4,28 +4,27 @@
   xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions"
   xmlns:c="http://java.sun.com/jsp/jstl/core">
 <cc:interface>
-  <cc:attribute name="processesAnalyticsBean" required="true" />
+  <cc:attribute name="managedBean" required="true" />
 </cc:interface>
 
 <cc:implementation>
-  <c:set var="processesAnalyticsBean" value="#{cc.attrs.processesAnalyticsBean}" />
+  <c:set var="managedBean" value="#{cc.attrs.managedBean}" />
   <h:panelGroup>
     <h:panelGroup id="custom-filter-group" styleClass="field col-12 grid formgrid align-items-start p-0 m-0 mb-3"
       layout="block">
       <p:outputLabel value="#{ivy.cms.co('/Dialogs/com/axonivy/utils/process/analyser/ProcessesMonitor/CustomFilters')}"
         styleClass="font-medium" />
       <div class="col-12 p-0 m-0">
-        <p:selectCheckboxMenu multiple="true"
+        <p:selectCheckboxMenu id="custom-field-name" multiple="true"
           emptyLabel="#{ivy.cms.co('/Dialogs/com/axonivy/utils/process/analyser/ProcessesMonitor/None')}"
-          updateLabel="true" scrollHeight="250" styleClass="w-full"
-          value="#{processesAnalyticsBean.selectedCustomFieldNames}" onShow="displayEmptyOptionsMessage()">
-          <p:ajax event="change" listener="#{processesAnalyticsBean.onCustomFieldSelect}" partialSubmit="true"
-            process="@this" update="custom-filter-group filter-options-group" />
-          <p:ajax event="toggleSelect" listener="#{processesAnalyticsBean.onCustomFieldSelect}" process="@this"
+          updateLabel="true" scrollHeight="250" styleClass="w-full" value="#{managedBean.selectedCustomFieldNames}">
+          <p:ajax event="change" listener="#{managedBean.onCustomFieldSelect}" partialSubmit="true" process="@this"
+            update="custom-filter-group filter-options-group" />
+          <p:ajax event="toggleSelect" listener="#{managedBean.onCustomFieldSelect}" process="@this"
             update="custom-filter-group filter-options-group" />
           <p:ajax event="itemUnselect" update="custom-filter-group filter-options-group" process="@this"
             partialSubmit="true" />
-          <f:selectItems value="#{processesAnalyticsBean.customFieldsByType.keySet()}" var="customFieldFilter"
+          <f:selectItems value="#{managedBean.customFieldsByType.keySet()}" var="customFieldFilter"
             itemValue="#{customFieldFilter.customFieldMeta.name()}"
             itemLabel="#{customFieldFilter.customFieldMeta.name()}" />
         </p:selectCheckboxMenu>
@@ -33,60 +32,62 @@
     </h:panelGroup>
 
     <h:panelGroup layout="block" styleClass="field grid mb-0" id="filter-options-group">
-      <ui:repeat value="#{processesAnalyticsBean.selectedCustomFilters.entrySet()}" var="fieldEntry">
-        <h:panelGroup styleClass="ui-fluid col-4" layout="block" rendered="#{processesAnalyticsBean.filterDropdownVisible}">
+      <ui:repeat value="#{managedBean.selectedCustomFilters.entrySet()}" var="fieldEntry">
+        <h:panelGroup styleClass="ui-fluid col-4" layout="block" rendered="#{managedBean.filterDropdownVisible}">
           <div class="col-4 p-0 m-0 mb-2">
-            <p:outputLabel value="#{fieldEntry.key.customFieldMeta.name()}"
-              rendered="#{processesAnalyticsBean.filterDropdownVisible}" />
+            <p:outputLabel value="#{fieldEntry.key.customFieldMeta.name()}" />
           </div>
 
           <!-- NUMBER -->
-          <h:outputText id="number-range"
-            rendered="#{processesAnalyticsBean.filterDropdownVisible and fieldEntry.key.customFieldMeta.type() eq 'NUMBER'}"
-            value="Between #{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][0]} and #{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][1]}" />
+          <h:panelGroup layout="block" rendered="#{'NUMBER' == fieldEntry.key.customFieldMeta.type()}">
+            <h:outputText id="number-range"
+              value="#{managedBean.getRangeDisplayForNumberType(managedBean.selectedCustomFilters[fieldEntry.key])}" />
 
-          <p:slider for="min-value, max-value" range="true" display="number-range"
-            displayTemplate="Between {min} and {max}" styleClass="m-2"
-            minValue="#{processesAnalyticsBean.getMinValue(fieldEntry.key.customFieldMeta.name())}"
-            maxValue="#{processesAnalyticsBean.getMaxValue(fieldEntry.key.customFieldMeta.name())}"
-            rendered="#{processesAnalyticsBean.filterDropdownVisible and fieldEntry.key.customFieldMeta.type() eq 'NUMBER'}">
-            <p:ajax event="slideEnd"
-              listener="#{processesAnalyticsBean.onNumberSliderChange(fieldEntry.key, processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][0], processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][1] )}"
-              process="@this" partialSubmit="true" />
-          </p:slider>
-          <h:inputHidden id="min-value" value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][0]}"
-            rendered="#{fieldEntry.key.customFieldMeta.type() eq 'NUMBER'}" />
-          <h:inputHidden id="max-value" value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key][1]}"
-            rendered="#{fieldEntry.key.customFieldMeta.type() eq 'NUMBER'}" />
+            <p:slider for="min-value, max-value" range="true" display="number-range" displayTemplate="{min} - {max}"
+              step="0.01" styleClass="m-2 mb-4"
+              minValue="#{managedBean.getMinValue(fieldEntry.key.customFieldMeta.name())}"
+              maxValue="#{managedBean.getMaxValue(fieldEntry.key.customFieldMeta.name())}">
+              <p:ajax event="slideEnd"
+                listener="#{managedBean.onNumberSliderChange(fieldEntry.key, managedBean.selectedCustomFilters[fieldEntry.key][0], managedBean.selectedCustomFilters[fieldEntry.key][1])}"
+                process="@this" partialSubmit="true" />
+            </p:slider>
+            <h:inputHidden id="min-value" value="#{managedBean.selectedCustomFilters[fieldEntry.key][0]}" />
+            <h:inputHidden id="max-value" value="#{managedBean.selectedCustomFilters[fieldEntry.key][1]}" />
+          </h:panelGroup>
 
           <!-- STRING, TEXT -->
-           <h:panelGroup layout="block" rendered="#{processesAnalyticsBean.filterDropdownVisible and 
-                ('STRING' == fieldEntry.key.customFieldMeta.type() or 
-                 'TEXT' == fieldEntry.key.customFieldMeta.type())}">
-            <p:selectCheckboxMenu id="text-dropdown" dynamic="true" filter="true" styleClass="col-12 m-0 p-0 grid formgrid"
-              filterMatchMode="startsWith" updateLabel="true" scrollHeight="250"  required="true"
-              value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key]}">
-              <f:selectItems value="#{processesAnalyticsBean.customFieldsByType[fieldEntry.key]}" var="optionValue"
+          <h:panelGroup layout="block"
+            rendered="#{managedBean.isStringOrTextCustomFieldType(fieldEntry.key.customFieldMeta.type())}">
+            <p:selectCheckboxMenu id="text-dropdown" dynamic="true" filter="true"
+              styleClass="col-12 m-0 p-0 grid formgrid" filterMatchMode="startsWith" updateLabel="true"
+              scrollHeight="250" required="true" value="#{managedBean.selectedCustomFilters[fieldEntry.key]}">
+              <f:selectItems value="#{managedBean.customFieldsByType[fieldEntry.key]}" var="optionValue"
                 itemValue="#{optionValue}" itemLabel="#{optionValue}" />
               <p:ajax event="change" process="@this" partialSubmit="true" />
             </p:selectCheckboxMenu>
             <p:message styleClass="col-12 m-0 p-2 grid formgrid" for="text-dropdown" />
-            </h:panelGroup>
+          </h:panelGroup>
 
           <!-- TIMESTAMP -->
-          <h:panelGroup layout="block">
-          <p:datePicker id="date-range" selectionMode="range" maxdate="#{processesAnalyticsBean.timeIntervalFilter.to}"
-            styleClass="col-12 m-0 p-0 grid formgrid"
-            value="#{processesAnalyticsBean.selectedCustomFilters[fieldEntry.key]}" readonlyInput="true" required="true"
-            requiredMessage="#{ivy.cms.co('/Dialogs/com/axonivy/utils/process/analyser/ProcessesMonitor/DateErrorMessage')}"
-            rendered="#{processesAnalyticsBean.filterDropdownVisible and fieldEntry.key.customFieldMeta.type() eq 'TIMESTAMP'}">
-            <p:ajax event="dateSelect" process="@this" partialSubmit="true" />
-          </p:datePicker>
-          <p:message styleClass="col-12 m-0 p-2 grid formgrid" for="date-range" />
+          <h:panelGroup layout="block" rendered="#{'TIMESTAMP' == fieldEntry.key.customFieldMeta.type()}">
+            <p:datePicker id="date-range" selectionMode="range" maxdate="#{managedBean.timeIntervalFilter.to}"
+              styleClass="col-12 m-0 p-0 grid formgrid" value="#{managedBean.selectedCustomFilters[fieldEntry.key]}"
+              readonlyInput="true" required="true" pattern="dd/MM/yyyy"
+              requiredMessage="#{ivy.cms.co('/Dialogs/com/axonivy/utils/process/analyser/ProcessesMonitor/DateErrorMessage')}">
+              <p:ajax event="dateSelect" process="@this" partialSubmit="true" />
+            </p:datePicker>
+            <p:message styleClass="col-12 m-0 p-2 grid formgrid" for="date-range" />
           </h:panelGroup>
         </h:panelGroup>
       </ui:repeat>
     </h:panelGroup>
   </h:panelGroup>
+  <script>
+    if ($('[id$="custom-field-name_panel"]').find('li').length == 0) {
+      $('[id$="custom-field-name_panel"]').html('<div class="empty-checkbox text-center p-2">#{ivy.cms.co('/Dialogs/com/axonivy/utils/process/analyser/ProcessesMonitor/NoCustomFieldsAvailable')}</div>');
+    } else {
+      $('[id$="custom-field-name_panel"]').find('.empty-checkbox').remove();
+    }
+  </script>
 </cc:implementation>
 </html>
