@@ -1,0 +1,68 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/process/11.3.0/process.json",
+  "id" : "193485C5ABDFEA93",
+  "config" : {
+    "data" : "com.axonivy.utils.process.analyser.test.Data"
+  },
+  "elements" : [ {
+      "id" : "f0",
+      "type" : "RequestStart",
+      "name" : "test",
+      "config" : {
+        "signature" : "test",
+        "case" : {
+          "attachToBusinessCase" : false
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 96, "y" : 64 }
+      },
+      "connect" : [
+        { "id" : "f2", "to" : "f5" }
+      ]
+    }, {
+      "id" : "f1",
+      "type" : "TaskEnd",
+      "visual" : {
+        "at" : { "x" : 544, "y" : 64 },
+        "labelOffset" : { "x" : 13, "y" : 33 }
+      }
+    }, {
+      "id" : "f5",
+      "type" : "Alternative",
+      "config" : {
+        "conditions" : {
+          "f6" : "true",
+          "f9" : ""
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 192, "y" : 64 },
+        "labelOffset" : { "x" : 14, "y" : 34 }
+      },
+      "connect" : [
+        { "id" : "f9", "to" : "f7", "via" : [ { "x" : 192, "y" : 184 }, { "x" : 448, "y" : 184 } ] },
+        { "id" : "f6", "to" : "f3", "color" : "default" }
+      ]
+    }, {
+      "id" : "f7",
+      "type" : "Alternative",
+      "visual" : {
+        "at" : { "x" : 448, "y" : 64 },
+        "labelOffset" : { "x" : 14, "y" : 34 }
+      },
+      "connect" : [
+        { "id" : "f8", "to" : "f1", "color" : "default" }
+      ]
+    }, {
+      "id" : "f3",
+      "type" : "Script",
+      "name" : "empty script",
+      "visual" : {
+        "at" : { "x" : 328, "y" : 64 }
+      },
+      "connect" : [
+        { "id" : "f4", "to" : "f7" }
+      ]
+    } ]
+}

@@ -1,0 +1,45 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/process/11.3.0/process.json",
+  "id" : "1910BF871CE43293",
+  "config" : {
+    "data": "com.axonivy.utils.process.analyser.Data"
+  },
+  "elements" : [ {
+      "id" : "f0",
+      "type" : "RequestStart",
+      "name" : "startAnalytic.ivp",
+      "config" : {
+        "signature" : "startAnalytic",
+        "request" : {
+          "name" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/name\")%>",
+          "description" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/description\")%>",
+          "category" : "ProcessAnalyser"
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 96, "y" : 208 }
+      },
+      "connect" : [
+        { "id" : "f8", "to" : "f1" }
+      ]
+    }, {
+      "id" : "f1",
+      "type" : "DialogCall",
+      "name" : "Processes Analytics",
+      "config" : {
+        "dialog": "com.axonivy.utils.process.analyser.ProcessAnalytics:start()"
+      },
+      "visual" : {
+        "at" : { "x" : 224, "y" : 208 }
+      },
+      "connect" : [
+        { "id" : "f9", "to" : "f2" }
+      ]
+    }, {
+      "id" : "f2",
+      "type" : "TaskEnd",
+      "visual" : {
+        "at" : { "x" : 352, "y" : 208 }
+      }
+    } ]
+}

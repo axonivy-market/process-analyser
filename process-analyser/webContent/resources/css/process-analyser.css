@@ -1,0 +1,31 @@
+body.light button.action-button {
+  background: #E7E7E7;
+  color: #1B1B1B;
+  border: 1px solid #E7E7E7;
+  width: 9rem;
+}
+
+body.light button.action-button.ui-state-hover {
+  background: #BFBFBF;
+  border: 1px solid #BFBFBF;
+}
+
+body.light button.action-button.ui-state-focus {
+  box-shadow: 0 0 0 1px #BFBFBF;
+}
+
+body.dark button.action-button {
+  background: #4F4E4E;
+  color: #FFFFFF;
+  border: 1px solid #4F4E4E;
+  width: 9rem;
+}
+
+body.dark button.action-button.ui-state-hover {
+  background: #757575;
+  border: 1px solid #757575;
+}
+
+body.dark button.action-button.ui-state-focus {
+  box-shadow: 0 0 0 1px #757575;
+}

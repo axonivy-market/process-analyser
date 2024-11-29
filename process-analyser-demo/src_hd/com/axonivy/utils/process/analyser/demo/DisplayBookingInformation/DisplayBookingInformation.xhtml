@@ -1,0 +1,47 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:ic="http://ivyteam.ch/jsf/component"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+<h:body>
+	<ui:composition template="/layouts/frame-10.xhtml">
+		<ui:define name="title">DisplayBookingInformation</ui:define>
+		<ui:define name="content">
+
+			<h1>Here are your booking information:</h1>
+
+			<h:form id="form">
+				<p:messages />
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank ui-fluid"
+					columnClasses="ui-g-12 ui-md-3 ui-lg-2, ui-g-12 ui-md-9 ui-lg-4, ui-g-12 ui-md-3 ui-lg-2, ui-g-12 ui-md-9 ui-lg-4">
+
+					<p:outputLabel value="Flight ticket" for="@next" />
+					<p:inputText value="F-1" />
+					
+					<p:outputLabel value="From" for="@next" />
+					<p:inputText value="HCM" />
+					
+					<p:outputLabel value="To" for="@next" />
+					<p:inputText value="New York" />
+
+				</p:panelGrid>
+				<br />
+				<div class="command-btns">
+					<p:commandLink id="cancel"
+						actionListener="#{ivyWorkflowView.cancel()}" process="@this"
+						value="Cancel" />
+					<p:commandButton id="back" actionListener="#{logic.back}"
+						value="Back" styleClass="mr-2" />
+					<p:commandButton id="proceed" actionListener="#{logic.proceed}"
+						value="Proceed" icon="pi pi-check" />
+				</div>
+			</h:form>
+
+		</ui:define>
+	</ui:composition>
+</h:body>
+
+</html>

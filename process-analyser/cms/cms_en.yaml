@@ -1,0 +1,77 @@
+Categories:
+  Process:
+    Analyser:
+      name: Process Analyser
+Dialogs:
+  com:
+    axonivy:
+      utils:
+        process:
+          analyser:
+            ProcessAnalytics:
+              ExportExcel: Export Excel
+              ExportJPEG: Export JPEG
+            ProcessesMonitor:
+              AnalysisType: Analysis Type
+              AnalysisTypeRequiredMessage: Please select an analysis type
+              CustomFilters: Custom filters
+              DateErrorMessage: Both FromDate and ToDate must be selected.
+              DownloadJSONFile: Download JSON file
+              ElementId: Element Id
+              Frequency: Frequency
+              FromToDateValidationMessage: The FromDate must be before the ToDate
+              Label: Label
+              LabelValue: Label Value
+              MedianDuration: Median Duration
+              Module: Module
+              NoCustomFieldsAvailable: No custom fields available.
+              NoRecordsFound: No records found.
+              None: None
+              NumberRange: '{0} - {1}'
+              PageHeader: Process Monitor Page
+              PleaseSelectAnalysisType: Please select an analysis type
+              PleaseSelectModule: Please select a module
+              PleaseSelectProcess: Please select a process
+              Process: Process
+              ProcessInformation: Process Information
+              ProcessViewer: Process Viewer
+              RelativeValue: Relative Value
+              RequireMessage: Please select a process
+              ShowStatistic: Show Statistic
+              TimeInterval: Please select a time interval
+              Title: Process Analyser
+              TotalElements: In total there are {0} element(s).
+              Type: Type
+              Version: Version
+Enums:
+  KpiType:
+    DURATION:
+      name: Duration
+    FREQUENCY:
+      name: Frequency
+  MonitorVersion:
+    ENHANCEMENT:
+      name: Enhancement
+    INITIAL:
+      name: Initial
+  NodeType:
+    ARROW:
+      name: Arrow
+    ELEMENT:
+      name: Element
+  TimeIntervalType:
+    BETWEEN:
+      name: Between
+    CUSTOM:
+      name: Custom
+    TODAY:
+      name: Today
+    YESTERDAY:
+      name: Yesterday
+Labels:
+  EnterANumber: Enter a number
+Processes:
+  Process:
+    Analyser:
+      description: To show statistic for your processes
+      name: Process Analyser
