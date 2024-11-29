@@ -60,23 +60,12 @@ Enums:
   TimeIntervalType:
     BETWEEN:
       name: Between
-    CURRENT:
-      name: Current
+    CUSTOM:
+      name: Custom
     TODAY:
       name: Today
-    WITHIN_THE_LAST:
-      name: Within the last
-    WITHIN_THE_NEXT:
-      name: Within the next
     YESTERDAY:
       name: Yesterday
-  TimeIntervalUnit:
-    MONTH:
-      name: Month(s)
-    WEEK:
-      name: Week(s)
-    YEAR:
-      name: Year(s)
 Labels:
   EnterANumber: Enter a number
 Processes:
