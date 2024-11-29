@@ -43,9 +43,8 @@
             <h:outputText id="number-range"
               value="#{managedBean.getRangeDisplayForNumberType(managedBean.selectedCustomFilters[fieldEntry.key])}" />
 
-            <p:slider for="
-            min-value, max-value" range="true" display="number-range"
-              displayTemplate="{min} - {max}" styleClass="m-2" step="0.01"
+            <p:slider for="min-value, max-value" range="true" display="number-range" displayTemplate="{min} - {max}"
+              step="0.01" styleClass="m-2 mb-4"
               minValue="#{managedBean.getMinValue(fieldEntry.key.customFieldMeta.name())}"
               maxValue="#{managedBean.getMaxValue(fieldEntry.key.customFieldMeta.name())}">
               <p:ajax event="slideEnd"
