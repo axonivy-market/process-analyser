@@ -17,6 +17,8 @@ import javax.faces.context.FacesContext;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.primefaces.PF;
+import org.primefaces.PrimeFaces;
 
 import com.axonivy.utils.process.analyser.bo.Node;
 import com.axonivy.utils.process.analyser.bo.ProcessMiningData;
@@ -77,10 +79,6 @@ public class ProcessesAnalyticsBean {
     timeIntervalFilter = TimeIntervalFilter.getDefaultFilterSet();
   }
 
-  public KpiType[] getKpiTypes() {
-    return KpiType.values();
-  }
-
   public List<String> getAvailableProcesses() {
     if (StringUtils.isBlank(selectedModule)) {
       return new ArrayList<>();
@@ -92,22 +90,46 @@ public class ProcessesAnalyticsBean {
     return processesMap.keySet();
   }
 
+  private boolean isDiagramAndStatisticRenderable() {
+    return ObjectUtils.allNotNull(selectedProcess, selectedKpiType);
+  }
+
   public void onModuleSelect() {
-    if (StringUtils.isBlank(selectedModule)) {
-      selectedProcess = null;
+    List<String> componentIdsToUpdate = new ArrayList<>();
+    componentIdsToUpdate.add("process-analytics-form:processDropdown");
+    selectedProcess = null;
+    if (StringUtils.isNotBlank(bpmnIframeSourceUrl)) {
+      resetStatisticValue();
+      resetCustomFieldFilterValues();
+      componentIdsToUpdate.addAll(getDiagramAndStatisticWithCustomFilterComponentIds());
     }
-    resetStatisticValue();
-    resetCustomFieldFilterValues();
+    PrimeFaces.current().ajax().update(componentIdsToUpdate);
+  }
+
+  private List<String> getDiagramAndStatisticComponentIds() {
+    List<String> results = new ArrayList<>();
+    results.add("process-analytics-form:arrow-statistics");
+    results.add("process-analytics-form:hidden-image");
+    results.add("process-analytics-form:process-analytic-viewer-panel");
+    results.add("process-analytics-form:show-statistic-btn");
+    return results;
+  }
+  
+  private List<String> getDiagramAndStatisticWithCustomFilterComponentIds() {
+    List<String> results = getDiagramAndStatisticComponentIds();
+    results.add("process-analytics-form:custom-filter-panel:custom-filter-group");
+    return results;
   }
 
   public void onProcessSelect() {
-    resetStatisticValue();
     resetCustomFieldFilterValues();
+    updateDiagramAndStatistic();
     getCaseAndTaskCustomFields();
+    PrimeFaces.current().ajax().update("process-analytics-form:custom-filter-panel:custom-filter-group");
   }
 
   public void onKpiTypeSelect() {
-    resetStatisticValue();
+    updateDiagramAndStatistic();
   }
 
   private void resetStatisticValue() {
@@ -147,6 +169,12 @@ public class ProcessesAnalyticsBean {
       }
     });
     setFilterDropdownVisible(!selectedCustomFieldNames.isEmpty());
+    PF.current().ajax().update("");
+  }
+  
+  private void updateCustomFilterPanel() {
+    List<String> groupIdsToUpdate = List.of("process-analytics-form:custom-filter-panel:custom-filter-group",
+        "process-analytics-form:custom-filter-panel:filter-options-group");
   }
 
   public double getMinValue(String fieldName) {
@@ -177,12 +205,17 @@ public class ProcessesAnalyticsBean {
     timeIntervalFilter.setTo(DateUtils.parseDateFromString(to));
     resetCustomFieldFilterValues();
     getCaseAndTaskCustomFields();
+    updateDiagramAndStatistic();
   }
 
-  public void onShowStatisticBtnClick() {
-    loadNodes();
-    updateProcessMiningDataJson();
-    updateBpmnIframeSourceUrl();
+  public void updateDiagramAndStatistic() {
+    if (isDiagramAndStatisticRenderable()) {
+      loadNodes();
+      updateProcessMiningDataJson();
+      updateBpmnIframeSourceUrl();
+      PF.current().executeScript("updateUrlForIframe()");
+      PrimeFaces.current().ajax().update(getDiagramAndStatisticComponentIds());
+    }
   }
 
   private IProcessWebStartable getSelectedIProcessWebStartable() {
@@ -213,8 +246,8 @@ public class ProcessesAnalyticsBean {
         processMiningData.setKpiType(selectedKpiType);
         TimeFrame timeFrame = new TimeFrame(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo());
         processMiningData.setTimeFrame(timeFrame);
-        nodes = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(
-            getSelectedIProcessWebStartable(), timeIntervalFilter, selectedKpiType, selectedCustomFilters);
+        nodes = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(getSelectedIProcessWebStartable(),
+            timeIntervalFilter, selectedKpiType, selectedCustomFilters);
         for (Node node : nodes) {
           totalFrequency += node.getFrequency();
         }
@@ -235,6 +268,10 @@ public class ProcessesAnalyticsBean {
     return StringUtils.isNotBlank(selectedProcess)
         ? String.format(ProcessAnalyticsConstants.ANALYSIS_EXCEL_FILE_PATTERN, selectedProcess)
         : StringUtils.EMPTY;
+  }
+  
+  public KpiType[] getKpiTypes() {
+    return KpiType.values();
   }
 
   public String getSelectedProcess() {

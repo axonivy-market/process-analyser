@@ -21,10 +21,10 @@
           value="#{processesAnalyticsBean.selectedCustomFieldNames}" onShow="displayEmptyOptionsMessage()">
           <p:ajax event="change" listener="#{processesAnalyticsBean.onCustomFieldSelect}" partialSubmit="true"
             process="@this" update="custom-filter-group filter-options-group" />
-          <p:ajax event="toggleSelect" listener="#{processesAnalyticsBean.onCustomFieldSelect}" process="@this"
+<!--           <p:ajax event="toggleSelect" listener="#{processesAnalyticsBean.onCustomFieldSelect}" process="@this"
             update="custom-filter-group filter-options-group" />
           <p:ajax event="itemUnselect" update="custom-filter-group filter-options-group" process="@this"
-            partialSubmit="true" />
+            partialSubmit="true" / -->>
           <f:selectItems value="#{processesAnalyticsBean.customFieldsByType.keySet()}" var="customFieldFilter"
             itemValue="#{customFieldFilter.customFieldMeta.name()}"
             itemLabel="#{customFieldFilter.customFieldMeta.name()}" />
