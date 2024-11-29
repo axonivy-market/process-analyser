@@ -3,7 +3,7 @@
   <groupId>com.axonivy.utils.process.analyser</groupId>
   <name>process-analyser</name>
   <artifactId>process-analyser-modules</artifactId>
-  <version>11.3.1-SNAPSHOT</version>
+  <version>11.3.1</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -15,7 +15,7 @@
 
   <scm>
     <developerConnection>scm:git:https://github.com/axonivy-market/${project.name}.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>v11.3.1</tag>
   </scm>
 
   <build>
