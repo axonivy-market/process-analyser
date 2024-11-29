@@ -3,7 +3,7 @@
   <groupId>com.axonivy.utils.process.analyser</groupId>
   <name>process-analyser</name>
   <artifactId>process-analyser-modules</artifactId>
-  <version>11.3.1-SNAPSHOT</version>
+  <version>11.3.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
