@@ -93,7 +93,60 @@ public class IvyTaskOccurrenceService {
   /**
    * Get all custom fields from cases/ business cases and tasks
    */
-  public static Map<CustomFieldFilter, List<Object>> getCaseAndTaskCustomFields(String selectedPid,
+  public static List<CustomFieldFilter> getCaseAndTaskCustomFields(String selectedPid,
+      TimeIntervalFilter timeIntervalFilter) {
+    List<CustomFieldFilter> customFieldsByType = new ArrayList<>();
+
+    return Sudo.get(() -> {
+      TaskQuery taskQuery = TaskQuery.create().where().requestPath().isLike(getRequestPath(selectedPid)).and()
+          .startTimestamp().isGreaterOrEqualThan(timeIntervalFilter.getFrom()).and().startTimestamp()
+          .isLowerOrEqualThan(timeIntervalFilter.getTo());
+
+      List<ITask> tasks = new ArrayList<>();
+      int maxQueryResults = Integer.valueOf(Ivy.var().get(IvyVariable.MAX_QUERY_RESULTS.getVariableName()));
+      int startIndex = 0;
+
+      do {
+        tasks = Ivy.wf().getTaskQueryExecutor().getResults(taskQuery, startIndex, maxQueryResults);
+        startIndex += maxQueryResults;
+      } while (maxQueryResults == tasks.size());
+
+      for (ITask task : tasks) {
+        List<ICustomField<?>> allCustomFieldsFromCases = new ArrayList<>();
+        allCustomFieldsFromCases.addAll(task.getCase().getBusinessCase().customFields().all());
+        allCustomFieldsFromCases.addAll(task.getCase().customFields().all());
+
+        addCustomFieldsToCustomFieldsByType(task.customFields().all(), false, customFieldsByType);
+        addCustomFieldsToCustomFieldsByType(allCustomFieldsFromCases, true, customFieldsByType);
+      }
+Ivy.log().warn(customFieldsByType);
+      return customFieldsByType;
+    });
+  }
+
+  private static void addCustomFieldsToCustomFieldsByType(List<ICustomField<?>> customFields,
+      boolean isCustomFieldFromCase, List<CustomFieldFilter> customFieldsByType) {
+
+    for (ICustomField<?> customField : customFields) {
+      Object customFieldValue = customField.getOrNull();
+      if (customFieldValue != null) {
+        CustomFieldFilter customFieldFilter = new CustomFieldFilter();
+        customFieldFilter.setCustomFieldMeta(customField.meta());
+        customFieldFilter.setCustomFieldFromCase(isCustomFieldFromCase);
+//
+//        List<Object> addedCustomFieldValues = new ArrayList<>();
+//
+//        if (!addedCustomFieldValues.contains(customFieldValue)) {
+//          addedCustomFieldValues.add(customFieldValue);
+//        }
+        customFieldFilter.getCustomFieldValues().add(customFieldValue);
+        
+        customFieldsByType.add(customFieldFilter);
+      }
+    }
+  }
+
+  public static Map<CustomFieldFilter, List<Object>> getCaseAndTaskCustomFields1(String selectedPid,
       TimeIntervalFilter timeIntervalFilter) {
     Map<CustomFieldFilter, List<Object>> customFieldsByType = new HashMap<>();
 

@@ -59,8 +59,8 @@ public class ProcessesAnalyticsBean {
   private String miningUrl;
   private ContentObject processMiningDataJsonFile;
   private String bpmnIframeSourceUrl;
-  private Map<CustomFieldFilter, List<Object>> customFieldsByType;
-  private Map<CustomFieldFilter, List<Object>> selectedCustomFilters;
+  private List<CustomFieldFilter> customFieldsByType;
+  private List<CustomFieldFilter> selectedCustomFilters;
   private List<String> selectedCustomFieldNames;
   private boolean isFilterDropdownVisible;
 
@@ -76,8 +76,8 @@ public class ProcessesAnalyticsBean {
         .file(ProcessAnalyticsConstants.DATA_CMS_PATH, ProcessAnalyticsConstants.JSON_EXTENSION);
     miningUrl = processMiningDataJsonFile.uri();
     timeIntervalFilter = TimeIntervalFilter.getDefaultFilterSet();
-    customFieldsByType = new HashMap<>();
-    selectedCustomFilters = new HashMap<>();
+    customFieldsByType = new ArrayList<>();
+    selectedCustomFilters = new ArrayList<>();
     selectedCustomFieldNames = new ArrayList<>();
   }
 
@@ -122,11 +122,11 @@ public class ProcessesAnalyticsBean {
 
   private void resetCustomFieldFilterValues() {
     selectedCustomFieldNames = new ArrayList<>();
-    customFieldsByType.clear();
+    customFieldsByType = new ArrayList<>();
     setFilterDropdownVisible(false);
   }
 
-  public Map<CustomFieldFilter, List<Object>> getCaseAndTaskCustomFields() {
+  public List<CustomFieldFilter> getCaseAndTaskCustomFields() {
     Optional.ofNullable(getSelectedIProcessWebStartable()).ifPresent(process -> {
       selectedPid = process.pid().getParent().toString();
     });
@@ -135,21 +135,21 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onCustomFieldSelect() {
-    customFieldsByType.forEach((key, value) -> {
-      boolean isSelectedCustomField = selectedCustomFieldNames.contains(key.getCustomFieldMeta().name());
-      if (isSelectedCustomField && ObjectUtils.isEmpty(selectedCustomFilters.get(key))) {
-        // Initialize the number range for custom field type NUMBER
-        if (CustomFieldType.NUMBER == key.getCustomFieldMeta().type()) {
-          double minValue = getMinValue(key.getCustomFieldMeta().name());
-          double maxValue = getMaxValue(key.getCustomFieldMeta().name());
-          selectedCustomFilters.put(key, Arrays.asList(minValue, maxValue));
-        } else {
-          selectedCustomFilters.put(key, new ArrayList<>());
-        }
-      } else if (!isSelectedCustomField) {
-        selectedCustomFilters.remove(key);
-      }
-    });
+//    customFieldsByType.forEach(customField -> {
+//      boolean isSelectedCustomField = selectedCustomFieldNames.contains(customField.getCustomFieldMeta().name());
+//      if (isSelectedCustomField && !selectedCustomFilters.contains(customField)) {
+//        // Initialize the number range for custom field type NUMBER
+//        if (CustomFieldType.NUMBER == customField.getCustomFieldMeta().type()) {
+//          double minValue = getMinValue(customField.getCustomFieldMeta().name());
+//          double maxValue = getMaxValue(customField.getCustomFieldMeta().name());
+//          selectedCustomFilters.put(customField, Arrays.asList(minValue, maxValue));
+//        } else {
+//          selectedCustomFilters = new ArrayList<>();
+//        }
+//      } else if (!isSelectedCustomField) {
+//        selectedCustomFilters.remove(customField);
+//      }
+//    });
     setFilterDropdownVisible(!selectedCustomFieldNames.isEmpty());
   }
 
@@ -165,18 +165,18 @@ public class ProcessesAnalyticsBean {
   }
 
   private DoubleStream getNumberTypeValue(String fieldName) {
-    return customFieldsByType.entrySet().stream()
-        .filter(entry -> entry.getKey().getCustomFieldMeta().name().equals(fieldName))
-        .flatMap(entry -> entry.getValue().stream()).filter(obj -> obj instanceof Number)
+    return customFieldsByType.stream()
+        .filter(entry -> entry.getCustomFieldMeta().name().equals(fieldName)).map(CustomFieldFilter::getCustomFieldValues)
         .mapToDouble(obj -> ((Number) obj).doubleValue());
   }
 
-  public void onNumberSliderChange(CustomFieldFilter customField, double minValue, double maxValue) {
-    if (CustomFieldType.NUMBER == customField.getCustomFieldMeta().type()) {
-      selectedCustomFilters.put(customField, Arrays.asList(minValue, maxValue));
-    }
-  }
-
+//  private DoubleStream getNumberTypeValue1(String fieldName) {
+//    return customFieldsByType.entrySet().stream()
+//        .filter(entry -> entry.getKey().getCustomFieldMeta().name().equals(fieldName))
+//        .flatMap(entry -> entry.getValue().stream()).filter(obj -> obj instanceof Number)
+//        .mapToDouble(obj -> ((Number) obj).doubleValue());
+//  }
+//  
   public String getRangeDisplayForNumberType(List<Double> numberValue) {
     return Ivy.cms().co("/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/NumberRange",
         Arrays.asList(numberValue.get(0), numberValue.get(1)));
@@ -298,19 +298,19 @@ public class ProcessesAnalyticsBean {
     return bpmnIframeSourceUrl;
   }
 
-  public Map<CustomFieldFilter, List<Object>> getCustomFieldsByType() {
+  public List<CustomFieldFilter> getCustomFieldsByType() {
     return customFieldsByType;
   }
 
-  public void setCustomFieldsByType(Map<CustomFieldFilter, List<Object>> customFieldsByType) {
+  public void setCustomFieldsByType(List<CustomFieldFilter> customFieldsByType) {
     this.customFieldsByType = customFieldsByType;
   }
 
-  public Map<CustomFieldFilter, List<Object>> getSelectedCustomFilters() {
+  public List<CustomFieldFilter> getSelectedCustomFilters() {
     return selectedCustomFilters;
   }
 
-  public void setSelectedCustomFilters(Map<CustomFieldFilter, List<Object>> selectedCustomFilters) {
+  public void setSelectedCustomFilters(List<CustomFieldFilter> selectedCustomFilters) {
     this.selectedCustomFilters = selectedCustomFilters;
   }
 
