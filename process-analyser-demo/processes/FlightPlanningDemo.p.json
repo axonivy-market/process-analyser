@@ -2,7 +2,7 @@
   "$schema" : "https://json-schema.axonivy.com/process/11.3.0/process.json",
   "id" : "18F3D6D7AEE204DA",
   "config" : {
-    "data": "com.axonivy.utils.process.analyser.demo.data.FlightPlanningDemoData"
+    "data": "com.axonivy.solutions.process.analyser.demo.data.FlightPlanningDemoData"
   },
   "elements" : [ {
       "id" : "f0",
@@ -62,7 +62,7 @@
           "type" : "DialogCall",
           "name" : "Planning a Flight",
           "config" : {
-            "dialog": "com.axonivy.utils.process.analyser.demo.PlanningFlight:start()"
+            "dialog": "com.axonivy.solutions.process.analyser.demo.PlanningFlight:start()"
           },
           "visual" : {
             "at" : { "x" : 256, "y" : 272 }
@@ -135,7 +135,7 @@
           "type" : "DialogCall",
           "name" : "FlightPlanApproval",
           "config" : {
-            "dialog": "com.axonivy.utils.process.analyser.demo.FlightPlanApproval:start()",
+            "dialog": "com.axonivy.solutions.process.analyser.demo.FlightPlanApproval:start()",
             "output" : {
               "map" : {
                 "out" : "in",
@@ -220,7 +220,7 @@
           "type" : "DialogCall",
           "name" : "CheckAircraft",
           "config" : {
-            "dialog": "com.axonivy.utils.process.analyser.demo.CheckAircraft:start()",
+            "dialog": "com.axonivy.solutions.process.analyser.demo.CheckAircraft:start()",
             "output" : {
               "map" : {
                 "out" : "in",
@@ -460,7 +460,7 @@
           "type" : "DialogCall",
           "name" : "RecommendDestination",
           "config" : {
-            "dialog": "com.axonivy.utils.process.analyser.demo.RecommendDestination:start()"
+            "dialog": "com.axonivy.solutions.process.analyser.demo.RecommendDestination:start()"
           },
           "visual" : {
             "at" : { "x" : 336, "y" : 256 },
