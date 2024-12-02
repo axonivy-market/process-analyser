@@ -6,7 +6,7 @@
       "data": {
         "projects": [
           {
-            "groupId": "com.axonivy.utils.process.analyser",
+            "groupId": "com.axonivy.solutions.process.analyser",
             "artifactId": "process-analyser-demo",
             "version": "${version}",
             "type": "iar"
@@ -27,7 +27,7 @@
       "data": {
         "dependencies": [
           {
-            "groupId": "com.axonivy.utils.process.analyser",
+            "groupId": "com.axonivy.solutions.process.analyser",
             "artifactId": "process-analyser",
             "version": "${version}",
             "type": "iar"
