@@ -55,8 +55,8 @@
               minValue="#{managedBean.getMinValue(fieldEntry.key.customFieldMeta.name())}"
               maxValue="#{managedBean.getMaxValue(fieldEntry.key.customFieldMeta.name())}">
               <p:ajax event="slideEnd"
-                listener="#{managedBean.onNumberSliderChange(fieldEntry.key, managedBean.selectedCustomFilters[fieldEntry.key][0], managedBean.selectedCustomFilters[fieldEntry.key][1])}"
-                process="@this" partialSubmit="true" />
+                listener="#{managedBean.updateDiagramAndStatistic}"
+                process="@this min-value max-value" partialSubmit="true" />
             </p:slider>
             <h:inputHidden id="min-value" value="#{managedBean.selectedCustomFilters[fieldEntry.key][0]}" />
             <h:inputHidden id="max-value" value="#{managedBean.selectedCustomFilters[fieldEntry.key][1]}" />

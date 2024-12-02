@@ -217,7 +217,6 @@ public class ProcessesMonitorUtils {
         }
         allCustomFieldsQuery.where().or(customFieldQuery);
       }
-
       query.where().andOverall(allCustomFieldsQuery);
     }
     return Ivy.wf().getCaseQueryExecutor().getResults(query);
@@ -263,10 +262,17 @@ public class ProcessesMonitorUtils {
         }
         break;
       case NUMBER:
-        List<String> numberRange = (List<String>) customFieldValue;
-
-        Double startNumber = Double.parseDouble(numberRange.get(0));
-        Double endNumber = Double.parseDouble(numberRange.get(1));
+        Double startNumber;
+        Double endNumber;
+        try {
+          List<String> numberRange = (List<String>) customFieldValue;
+          startNumber = Double.parseDouble(numberRange.get(0));
+          endNumber = Double.parseDouble(numberRange.get(1));
+        } catch (Exception e) {
+          List<Double> numberRange = (List<Double>) customFieldValue;
+          startNumber = numberRange.get(0);
+          endNumber = numberRange.get(1);
+        }
 
         if (isCustomFieldFromCase) {
           customFieldQuery.where().or().customField().numberField(customFieldName).isGreaterOrEqualThan(startNumber)

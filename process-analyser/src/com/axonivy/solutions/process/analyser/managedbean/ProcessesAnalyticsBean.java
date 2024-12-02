@@ -206,13 +206,6 @@ public class ProcessesAnalyticsBean {
         .mapToDouble(obj -> ((Number) obj).doubleValue());
   }
 
-  public void onNumberSliderChange(CustomFieldFilter customField, double minValue, double maxValue) {
-    if (CustomFieldType.NUMBER == customField.getCustomFieldMeta().type()) {
-      selectedCustomFilters.put(customField, Arrays.asList(minValue, maxValue));
-    }
-    updateDiagramAndStatistic();
-  }
-
   public String getRangeDisplayForNumberType(List<Double> numberValue) {
     return Ivy.cms().co("/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/NumberRange",
         Arrays.asList(numberValue.get(0), numberValue.get(1)));
