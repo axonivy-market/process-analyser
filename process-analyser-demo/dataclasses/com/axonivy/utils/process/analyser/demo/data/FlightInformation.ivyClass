@@ -1,9 +1,0 @@
-FlightInformation #class
-com.axonivy.utils.process.analyser.demo.data #namespace
-planeRegistrationNumber String #field
-startTime java.time.LocalTime #field
-endTime java.time.LocalTime #field
-from String #field
-to String #field
-date java.util.Date #field
-id String #field
