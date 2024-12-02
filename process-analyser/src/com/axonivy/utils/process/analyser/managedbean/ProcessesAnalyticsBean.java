@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -60,9 +61,9 @@ public class ProcessesAnalyticsBean {
   private String miningUrl;
   private ContentObject processMiningDataJsonFile;
   private String bpmnIframeSourceUrl;
-  private Map<CustomFieldFilter, List<Object>> customFieldsByType = new HashMap<>();
-  private Map<CustomFieldFilter, List<Object>> selectedCustomFilters = new HashMap<>();
-  private List<String> selectedCustomFieldNames = new ArrayList<>();
+  private Map<CustomFieldFilter, List<Object>> customFieldsByType;
+  private Map<CustomFieldFilter, List<Object>> selectedCustomFilters;
+  private List<String> selectedCustomFieldNames;
   private boolean isFilterDropdownVisible;
 
   @PostConstruct
@@ -77,6 +78,9 @@ public class ProcessesAnalyticsBean {
         .file(ProcessAnalyticsConstants.DATA_CMS_PATH, ProcessAnalyticsConstants.JSON_EXTENSION);
     miningUrl = processMiningDataJsonFile.uri();
     timeIntervalFilter = TimeIntervalFilter.getDefaultFilterSet();
+    customFieldsByType = new HashMap<>();
+    selectedCustomFilters = new HashMap<>();
+    selectedCustomFieldNames = new ArrayList<>();
   }
 
   public List<String> getAvailableProcesses() {
@@ -148,8 +152,8 @@ public class ProcessesAnalyticsBean {
     Optional.ofNullable(getSelectedIProcessWebStartable()).ifPresent(process -> {
       selectedPid = process.pid().getParent().toString();
     });
-
-    return IvyTaskOccurrenceService.getCaseAndTaskCustomFields(selectedPid, timeIntervalFilter, customFieldsByType);
+    customFieldsByType = IvyTaskOccurrenceService.getCaseAndTaskCustomFields(selectedPid, timeIntervalFilter);
+    return customFieldsByType;
   }
 
   public void onCustomFieldSelect() {
@@ -178,23 +182,32 @@ public class ProcessesAnalyticsBean {
   }
 
   public double getMinValue(String fieldName) {
-    return customFieldsByType.entrySet().stream()
-        .filter(entry -> entry.getKey().getCustomFieldMeta().name().equals(fieldName))
-        .flatMap(entry -> entry.getValue().stream()).filter(obj -> obj instanceof Number)
-        .mapToDouble(obj -> ((Number) obj).doubleValue()).map(value -> Math.floor(value * 100) / 100).min().orElse(0);
+    if (getNumberTypeValue(fieldName).count() > 1) {
+      return getNumberTypeValue(fieldName).map(value -> Math.floor(value * 100) / 100).min().orElse(0);
+    }
+    return 0;
   }
 
   public double getMaxValue(String fieldName) {
+    return getNumberTypeValue(fieldName).map(value -> Math.ceil(value * 100) / 100).max().orElse(0);
+  }
+
+  private DoubleStream getNumberTypeValue(String fieldName) {
     return customFieldsByType.entrySet().stream()
         .filter(entry -> entry.getKey().getCustomFieldMeta().name().equals(fieldName))
         .flatMap(entry -> entry.getValue().stream()).filter(obj -> obj instanceof Number)
-        .mapToDouble(obj -> ((Number) obj).doubleValue()).map(value -> Math.ceil(value * 100) / 100).max().orElse(0);
+        .mapToDouble(obj -> ((Number) obj).doubleValue());
   }
 
   public void onNumberSliderChange(CustomFieldFilter customField, double minValue, double maxValue) {
     if (CustomFieldType.NUMBER == customField.getCustomFieldMeta().type()) {
       selectedCustomFilters.put(customField, Arrays.asList(minValue, maxValue));
     }
+  }
+
+  public String getRangeDisplayForNumberType(List<Double> numberValue) {
+    return Ivy.cms().co("/Dialogs/com/axonivy/utils/process/analyser/ProcessesMonitor/NumberRange",
+        Arrays.asList(numberValue.get(0), numberValue.get(1)));
   }
 
   public void updateDataOnChangingFilter() throws ParseException {
@@ -344,6 +357,10 @@ public class ProcessesAnalyticsBean {
 
   public void setFilterDropdownVisible(boolean isFilterDropdownVisible) {
     this.isFilterDropdownVisible = isFilterDropdownVisible;
+  }
+
+  public boolean isStringOrTextCustomFieldType(CustomFieldType customFieldType) {
+    return CustomFieldType.STRING == customFieldType || CustomFieldType.TEXT == customFieldType;
   }
 
   public List<String> getSelectedCustomFieldNames() {

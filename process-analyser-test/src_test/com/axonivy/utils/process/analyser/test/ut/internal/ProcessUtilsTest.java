@@ -1,4 +1,4 @@
-package com.axonivy.utils.process.analyser.test.internal;
+package com.axonivy.utils.process.analyser.test.ut.internal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
