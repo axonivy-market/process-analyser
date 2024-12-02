@@ -1,4 +1,0 @@
-DisplayBookingInformationData #class
-com.axonivy.solutions.process.analyser.demo.DisplayBookingInformation #namespace
-isBackToSubmitInformationPage Boolean #field
-isBackToSubmitInformationPage PERSISTENT #fieldModifier
