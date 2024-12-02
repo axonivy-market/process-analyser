@@ -173,12 +173,19 @@ public class ProcessesAnalyticsBean {
       }
     });
     setFilterDropdownVisible(!selectedCustomFieldNames.isEmpty());
-    PF.current().ajax().update("");
+    updateCustomFilterPanel();
   }
   
   private void updateCustomFilterPanel() {
     List<String> groupIdsToUpdate = List.of("process-analytics-form:custom-filter-panel:custom-filter-group",
         "process-analytics-form:custom-filter-panel:filter-options-group");
+    PF.current().ajax().update(groupIdsToUpdate);
+  }
+  
+  public void onCustomfieldUnselect() {
+	  onCustomFieldSelect();
+	  updateDiagramAndStatistic();
+	  updateCustomFilterPanel();
   }
 
   public double getMinValue(String fieldName) {
@@ -203,6 +210,7 @@ public class ProcessesAnalyticsBean {
     if (CustomFieldType.NUMBER == customField.getCustomFieldMeta().type()) {
       selectedCustomFilters.put(customField, Arrays.asList(minValue, maxValue));
     }
+    updateDiagramAndStatistic();
   }
 
   public String getRangeDisplayForNumberType(List<Double> numberValue) {
