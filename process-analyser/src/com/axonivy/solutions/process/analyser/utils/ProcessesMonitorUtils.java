@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -205,16 +204,16 @@ public class ProcessesMonitorUtils {
     if (ObjectUtils.isNotEmpty(customFilters)) {
       CaseQuery allCustomFieldsQuery = CaseQuery.create();
 
-      for(CustomFieldFilter customFieldFilter: customFilters) {
-        List<Object> customFieldValues =
-            isStringCustomFieldType(customFieldFilter) ? flattenStringCustomFieldValues(Arrays.asList(customFieldFilter.getCustomFieldValues()))
-                : Arrays.asList(customFieldFilter.getCustomFieldValues());
-        
+      for (CustomFieldFilter customFieldFilter : customFilters) {
+        List<Object> customFieldValues = isStringCustomFieldType(customFieldFilter)
+            ? flattenStringCustomFieldValues(Arrays.asList(customFieldFilter.getCustomFieldValues()))
+            : Arrays.asList(customFieldFilter.getCustomFieldValues());
+Ivy.log().warn(customFieldValues.get(0).toString());
         CaseQuery customFieldQuery = CaseQuery.create();
         for (Object customFieldValue : customFieldValues) {
           addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldValue);
         }
-        
+
         allCustomFieldsQuery.where().or(customFieldQuery);
       }
 
@@ -222,50 +221,13 @@ public class ProcessesMonitorUtils {
     }
     return Ivy.wf().getCaseQueryExecutor().getResults(query);
   }
-  
+
   private static boolean isStringCustomFieldType(CustomFieldFilter customFieldFilter) {
     CustomFieldType type = customFieldFilter.getCustomFieldMeta().type();
     return CustomFieldType.STRING == type || CustomFieldType.TEXT == type;
   }
 
   private static List<Object> flattenStringCustomFieldValues(List<Object> customFieldValues) {
-    return customFieldValues.stream().filter(value -> value instanceof String[]).map(value -> (String[]) value)
-        .flatMap(Arrays::stream).map(obj -> (Object) obj).toList();
-  }
-
-  public static List<ICase> getAllCasesFromTaskStartIdWithTimeInterval1(Long taskStartId,
-      TimeIntervalFilter timeIntervalFilter, Map<CustomFieldFilter, List<Object>> customFilterMap) {
-    CaseQuery query = CaseQuery.create().where().state().isEqual(CaseState.DONE).and().taskStartId()
-        .isEqual(taskStartId).and().startTimestamp().isGreaterOrEqualThan(timeIntervalFilter.getFrom()).and()
-        .startTimestamp().isLowerOrEqualThan(timeIntervalFilter.getTo());
-
-    if (ObjectUtils.isNotEmpty(customFilterMap)) {
-      CaseQuery allCustomFieldsQuery = CaseQuery.create();
-
-      for (Map.Entry<CustomFieldFilter, List<Object>> fieldFilter : customFilterMap.entrySet()) {
-        CustomFieldFilter customFieldFilter = fieldFilter.getKey();
-        List<Object> customFieldValues =
-            isStringCustomFieldType(customFieldFilter) ? flattenStringCustomFieldValues(Arrays.asList(fieldFilter.getValue()))
-                : Arrays.asList(fieldFilter.getValue());
-
-        CaseQuery customFieldQuery = CaseQuery.create();
-        for (Object customFieldValue : customFieldValues) {
-          addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldValue);
-        }
-        allCustomFieldsQuery.where().or(customFieldQuery);
-      }
-
-      query.where().andOverall(allCustomFieldsQuery);
-    }
-    return Ivy.wf().getCaseQueryExecutor().getResults(query);
-  }
-
-  private static boolean isStringCustomFieldType1(CustomFieldFilter customFieldFilter) {
-    CustomFieldType type = customFieldFilter.getCustomFieldMeta().type();
-    return CustomFieldType.STRING == type || CustomFieldType.TEXT == type;
-  }
-
-  private static List<Object> flattenStringCustomFieldValues1(List<Object> customFieldValues) {
     return customFieldValues.stream().filter(value -> value instanceof String[]).map(value -> (String[]) value)
         .flatMap(Arrays::stream).map(obj -> (Object) obj).toList();
   }
@@ -317,6 +279,7 @@ public class ProcessesMonitorUtils {
         break;
       case TIMESTAMP:
         List<LocalDate> dateRange = (List<LocalDate>) customFieldValue;
+        Ivy.log().warn(dateRange);
         Date startDate = DateUtils.getDateFromLocalDate(dateRange.get(0), null);
         Date endDate = DateUtils.getDateFromLocalDate(dateRange.get(1), LocalTime.MAX);
 

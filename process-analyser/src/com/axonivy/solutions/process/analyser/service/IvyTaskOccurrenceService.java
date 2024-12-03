@@ -119,81 +119,65 @@ public class IvyTaskOccurrenceService {
         addCustomFieldsToCustomFieldsByType(task.customFields().all(), false, customFieldsByType);
         addCustomFieldsToCustomFieldsByType(allCustomFieldsFromCases, true, customFieldsByType);
       }
-Ivy.log().warn(customFieldsByType.size());
+      
+      Ivy.log().warn(customFieldsByType.size());
       return customFieldsByType;
     });
   }
 
-  private static void addCustomFieldsToCustomFieldsByType(List<ICustomField<?>> customFields,
-      boolean isCustomFieldFromCase, List<CustomFieldFilter> customFieldsByType) {
-    for (ICustomField<?> customField : customFields) {
+//  private static void addCustomFieldsToCustomFieldsByType(List<ICustomField<?>> customFields,
+//      boolean isCustomFieldFromCase, List<CustomFieldFilter> customFieldsByType) {
+//    for (ICustomField<?> customField : customFields) {
+//      Object customFieldValue = customField.getOrNull();
+//      if (customFieldValue != null) {
+//        CustomFieldFilter customFieldFilter = new CustomFieldFilter();
+//        customFieldFilter.setCustomFieldMeta(customField.meta());
+//        customFieldFilter.setCustomFieldFromCase(isCustomFieldFromCase);
+//
+//        if (customFieldFilter.getCustomFieldValues() == null) {
+//          customFieldFilter.setCustomFieldValues(new ArrayList<>());
+//        }
+//        customFieldFilter.getCustomFieldValues().add(customFieldValue);
+//Ivy.log().warn(customFieldFilter.getCustomFieldValues().toString());
+//        if (!customFieldsByType.contains(customFieldFilter)) {
+//          customFieldsByType.add(customFieldFilter);
+//        }
+//        Ivy.log().warn("name " + customFieldsByType.get(0).getCustomFieldMeta().name());
+//        Ivy.log().warn("size " + customFieldsByType.get(0).getCustomFieldValues().size());
+//      }
+//    }
+//  }
+  
+  private static void addCustomFieldsToCustomFieldsByType(
+      List<ICustomField<?>> customFields, 
+      boolean isCustomFieldFromCase, 
+      List<CustomFieldFilter> customFieldsByType) {
+  Ivy.log().warn(customFields.toString());
+  for (ICustomField<?> customField : customFields) {
       Object customFieldValue = customField.getOrNull();
       if (customFieldValue != null) {
-        CustomFieldFilter customFieldFilter = new CustomFieldFilter();
-        customFieldFilter.setCustomFieldMeta(customField.meta());
-        customFieldFilter.setCustomFieldFromCase(isCustomFieldFromCase);
+          CustomFieldFilter newFilter = new CustomFieldFilter();
+          newFilter.setCustomFieldMeta(customField.meta());
+          newFilter.setCustomFieldFromCase(isCustomFieldFromCase);
 
-        if (customFieldFilter.getCustomFieldValues() == null) {
-          customFieldFilter.setCustomFieldValues(new ArrayList<>());
-        }
-        customFieldFilter.getCustomFieldValues().add(customFieldValue);
+          CustomFieldFilter existingFilter = customFieldsByType.stream()
+              .filter(filter -> filter.equals(newFilter))
+              .findFirst()
+              .orElse(null);
 
-        if (!customFieldsByType.contains(customFieldFilter)) {
-          customFieldsByType.add(customFieldFilter);
-        }
+          if (existingFilter != null) {
+              if (!existingFilter.getCustomFieldValues().contains(customFieldValue)) {
+                  existingFilter.getCustomFieldValues().add(customFieldValue);
+              }
+          } else {
+              newFilter.setCustomFieldValues(new ArrayList<>());
+              newFilter.getCustomFieldValues().add(customFieldValue);
+              customFieldsByType.add(newFilter);
+          }
       }
-    }
   }
 
-  public static Map<CustomFieldFilter, List<Object>> getCaseAndTaskCustomFields1(String selectedPid,
-      TimeIntervalFilter timeIntervalFilter) {
-    Map<CustomFieldFilter, List<Object>> customFieldsByType = new HashMap<>();
-
-    return Sudo.get(() -> {
-      TaskQuery taskQuery = TaskQuery.create().where().requestPath().isLike(getRequestPath(selectedPid)).and()
-          .startTimestamp().isGreaterOrEqualThan(timeIntervalFilter.getFrom()).and().startTimestamp()
-          .isLowerOrEqualThan(timeIntervalFilter.getTo());
-
-      List<ITask> tasks = new ArrayList<>();
-      int maxQueryResults = Integer.valueOf(Ivy.var().get(IvyVariable.MAX_QUERY_RESULTS.getVariableName()));
-      int startIndex = 0;
-
-      do {
-        tasks = Ivy.wf().getTaskQueryExecutor().getResults(taskQuery, startIndex, maxQueryResults);
-        startIndex += maxQueryResults;
-      } while (maxQueryResults == tasks.size());
-
-      for (ITask task : tasks) {
-        List<ICustomField<?>> allCustomFieldsFromCases = new ArrayList<>();
-        allCustomFieldsFromCases.addAll(task.getCase().getBusinessCase().customFields().all());
-        allCustomFieldsFromCases.addAll(task.getCase().customFields().all());
-
-        addCustomFieldsToCustomFieldsByType(task.customFields().all(), false, customFieldsByType);
-        addCustomFieldsToCustomFieldsByType(allCustomFieldsFromCases, true, customFieldsByType);
-      }
-
-      return customFieldsByType;
-    });
-  }
-
-  private static void addCustomFieldsToCustomFieldsByType(List<ICustomField<?>> customFields, boolean isCustomFieldFromCase,
-      Map<CustomFieldFilter, List<Object>> customFieldsByType) {
-    for (ICustomField<?> customField : customFields) {
-      Object customFieldValue = customField.getOrNull();
-      if (customFieldValue != null) {
-        CustomFieldFilter customFieldFilter = new CustomFieldFilter();
-        customFieldFilter.setCustomFieldMeta(customField.meta());
-        customFieldFilter.setCustomFieldFromCase(isCustomFieldFromCase);
-
-        List<Object> addedCustomFieldValues =
-            customFieldsByType.computeIfAbsent(customFieldFilter, k -> new ArrayList<>());
-
-        if (!addedCustomFieldValues.contains(customFieldValue)) {
-          addedCustomFieldValues.add(customFieldValue);
-        }
-      }
-    }
-  }
+}
 
   private static String getRequestPath(String processId) {
     return String.format(ProcessAnalyticsConstants.LIKE_TEXT_SEARCH, processId);

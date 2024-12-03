@@ -16,7 +16,6 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.solutions.process.analyser.bo.Node;
@@ -108,6 +107,9 @@ public class ProcessesAnalyticsBean {
     resetStatisticValue();
     resetCustomFieldFilterValues();
     getCaseAndTaskCustomFields();
+    Ivy.log().warn("value size 0 " + customFieldsByType.get(0).getCustomFieldValues().toString());
+    Ivy.log().warn("value size 1 " + customFieldsByType.get(1).getCustomFieldValues().toString());
+    Ivy.log().warn("value size 3 " + customFieldsByType.get(3).getCustomFieldValues().toString());
   }
 
   public void onKpiTypeSelect() {
@@ -122,7 +124,6 @@ public class ProcessesAnalyticsBean {
 
   private void resetCustomFieldFilterValues() {
     selectedCustomFieldNames = new ArrayList<>();
-    selectedCustomFilters = new ArrayList<>();
     customFieldsByType = new ArrayList<>();
     setFilterDropdownVisible(false);
   }
@@ -138,29 +139,23 @@ public class ProcessesAnalyticsBean {
   public void onCustomFieldSelect() {
     customFieldsByType.forEach(customField -> {
       boolean isSelectedCustomField = selectedCustomFieldNames.contains(customField.getCustomFieldMeta().name());
-      Ivy.log().warn("isSelectedCustomField " + isSelectedCustomField);
       if (isSelectedCustomField && !selectedCustomFilters.contains(customField)) {
         // Initialize the number range for custom field type NUMBER
         if (CustomFieldType.NUMBER == customField.getCustomFieldMeta().type()) {
           double minValue = getMinValue(customField.getCustomFieldMeta().name());
           double maxValue = getMaxValue(customField.getCustomFieldMeta().name());
-          Ivy.log().warn("minValue " + minValue);
-          Ivy.log().warn("maxValue " + maxValue);
           customField.setCustomFieldValues(Arrays.asList(minValue, maxValue));
 
-        } else if(!isSelectedCustomField){
+        } else {
           customField.setCustomFieldValues(new ArrayList<>());
         }
         selectedCustomFilters.add(customField);
-        Ivy.log().warn("selectedCustomFilters1 " + selectedCustomFilters.size());
-      } else {
+      } else if(!isSelectedCustomField) {
         selectedCustomFilters.removeIf(selectedFilter -> selectedFilter.getCustomFieldMeta().name()
             .equals(customField.getCustomFieldMeta().name()));
       }
     });
-    Ivy.log().warn("selectedCustomFilters " + selectedCustomFilters.size());
     setFilterDropdownVisible(!selectedCustomFieldNames.isEmpty());
-    Ivy.log().warn(isFilterDropdownVisible);
   }
 
   public double getMinValue(String fieldName) {
@@ -229,6 +224,7 @@ public class ProcessesAnalyticsBean {
         processMiningData.setKpiType(selectedKpiType);
         TimeFrame timeFrame = new TimeFrame(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo());
         processMiningData.setTimeFrame(timeFrame);
+        Ivy.log().warn("selectedCustomFilters " + selectedCustomFilters);
         nodes = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(
             getSelectedIProcessWebStartable(), timeIntervalFilter, selectedKpiType, selectedCustomFilters);
         for (Node node : nodes) {
