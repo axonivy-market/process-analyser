@@ -112,7 +112,7 @@ public class ProcessesMonitorUtils {
    * AxonIvy system db.
    **/
   public static List<Node> filterInitialStatisticByIntervalTime(IProcessWebStartable processStart,
-      TimeIntervalFilter timeIntervalFilter, KpiType analysisType, Map<CustomFieldFilter, List<Object>> customFilterMap) {
+      TimeIntervalFilter timeIntervalFilter, KpiType analysisType, List<CustomFieldFilter> customFilterMap) {
     if (Objects.isNull(processStart)) {
       return Collections.emptyList();
     }
@@ -197,19 +197,18 @@ public class ProcessesMonitorUtils {
    * For STRING type fields, iterate over each value to build individual sub-queries.
    **/
   public static List<ICase> getAllCasesFromTaskStartIdWithTimeInterval(Long taskStartId,
-      TimeIntervalFilter timeIntervalFilter, Map<CustomFieldFilter, List<Object>> customFilterMap) {
+      TimeIntervalFilter timeIntervalFilter, List<CustomFieldFilter> customFilters) {
     CaseQuery query = CaseQuery.create().where().state().isEqual(CaseState.DONE).and().taskStartId()
         .isEqual(taskStartId).and().startTimestamp().isGreaterOrEqualThan(timeIntervalFilter.getFrom()).and()
         .startTimestamp().isLowerOrEqualThan(timeIntervalFilter.getTo());
 
-    if (ObjectUtils.isNotEmpty(customFilterMap)) {
+    if (ObjectUtils.isNotEmpty(customFilters)) {
       CaseQuery allCustomFieldsQuery = CaseQuery.create();
 
-      for (Map.Entry<CustomFieldFilter, List<Object>> fieldFilter : customFilterMap.entrySet()) {
-        CustomFieldFilter customFieldFilter = fieldFilter.getKey();
-        List<Object> customFieldValues =
-            isStringCustomFieldType(customFieldFilter) ? flattenStringCustomFieldValues(Arrays.asList(fieldFilter.getValue()))
-                : Arrays.asList(fieldFilter.getValue());
+      for (CustomFieldFilter customFieldFilter : customFilters) {
+        List<Object> customFieldValues = isStringCustomFieldType(customFieldFilter)
+            ? flattenStringCustomFieldValues(Arrays.asList(customFieldFilter.getCustomFieldValues()))
+            : Arrays.asList(customFieldFilter.getCustomFieldValues());
 
         CaseQuery customFieldQuery = CaseQuery.create();
         for (Object customFieldValue : customFieldValues) {

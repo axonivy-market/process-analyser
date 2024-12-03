@@ -93,9 +93,9 @@ public class IvyTaskOccurrenceService {
   /**
    * Get all custom fields from cases/ business cases and tasks
    */
-  public static Map<CustomFieldFilter, List<Object>> getCaseAndTaskCustomFields(String selectedPid,
+  public static List<CustomFieldFilter> getCaseAndTaskCustomFields(String selectedPid,
       TimeIntervalFilter timeIntervalFilter) {
-    Map<CustomFieldFilter, List<Object>> customFieldsByType = new HashMap<>();
+    List<CustomFieldFilter> customFieldsByType = new ArrayList<>();
 
     return Sudo.get(() -> {
       TaskQuery taskQuery = TaskQuery.create().where().requestPath().isLike(getRequestPath(selectedPid)).and()
@@ -124,23 +124,33 @@ public class IvyTaskOccurrenceService {
     });
   }
 
-  private static void addCustomFieldsToCustomFieldsByType(List<ICustomField<?>> customFields, boolean isCustomFieldFromCase,
-      Map<CustomFieldFilter, List<Object>> customFieldsByType) {
-    for (ICustomField<?> customField : customFields) {
+  private static void addCustomFieldsToCustomFieldsByType(
+      List<ICustomField<?>> customFields, 
+      boolean isCustomFieldFromCase, 
+      List<CustomFieldFilter> customFieldsByType) {
+  for (ICustomField<?> customField : customFields) {
       Object customFieldValue = customField.getOrNull();
       if (customFieldValue != null) {
-        CustomFieldFilter customFieldFilter = new CustomFieldFilter();
-        customFieldFilter.setCustomFieldMeta(customField.meta());
-        customFieldFilter.setCustomFieldFromCase(isCustomFieldFromCase);
+          CustomFieldFilter newFilter = new CustomFieldFilter();
+          newFilter.setCustomFieldMeta(customField.meta());
+          newFilter.setCustomFieldFromCase(isCustomFieldFromCase);
 
-        List<Object> addedCustomFieldValues =
-            customFieldsByType.computeIfAbsent(customFieldFilter, k -> new ArrayList<>());
+          CustomFieldFilter existingFilter = customFieldsByType.stream()
+              .filter(filter -> filter.equals(newFilter))
+              .findFirst()
+              .orElse(null);
 
-        if (!addedCustomFieldValues.contains(customFieldValue)) {
-          addedCustomFieldValues.add(customFieldValue);
-        }
+          if (existingFilter != null) {
+              if (!existingFilter.getCustomFieldValues().contains(customFieldValue)) {
+                  existingFilter.getCustomFieldValues().add(customFieldValue);
+              }
+          } else {
+              newFilter.setCustomFieldValues(new ArrayList<>());
+              newFilter.getCustomFieldValues().add(customFieldValue);
+              customFieldsByType.add(newFilter);
+          }
       }
-    }
+  }
   }
 
   private static String getRequestPath(String processId) {
