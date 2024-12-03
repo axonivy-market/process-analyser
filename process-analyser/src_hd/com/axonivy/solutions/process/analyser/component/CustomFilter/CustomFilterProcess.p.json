@@ -1,9 +1,9 @@
 {
-  "$schema" : "https://json-schema.axonivy.com/process/11.3.0/process.json",
+  "$schema" : "https://json-schema.axonivy.com/process/12.0.0/process.json",
   "id" : "1931E17D8D630D1C",
   "kind" : "HTML_DIALOG",
   "config" : {
-    "data": "com.axonivy.solutions.process.analyser.component.CustomFilter.CustomFilterData"
+    "data" : "com.axonivy.solutions.process.analyser.component.CustomFilter.CustomFilterData"
   },
   "elements" : [ {
       "id" : "f0",

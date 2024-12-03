@@ -7,11 +7,11 @@ on:
 
 jobs:
   build:
-    uses: axonivy-market/github-workflows/.github/workflows/dev.yml@v4
+    uses: axonivy-market/github-workflows/.github/workflows/dev.yml@v5
     with:
-      ivyVersion: 11
-      ivyPluginVersion: 11.3.0
-      testerVersion: 11.3.0
+      ivyVersion: 12
+      ivyPluginVersion: 12.0.0
+      testerVersion: 12.0.1
 
   deploy:
     needs: build
