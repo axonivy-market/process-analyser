@@ -12,7 +12,8 @@
   <h:panelGroup>
     <h:panelGroup id="custom-filter-group" styleClass="field col-12 grid formgrid align-items-start p-0 m-0 mb-3"
       layout="block">
-      <p:outputLabel value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/CustomFilters')}"
+      <p:outputLabel
+        value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/CustomFilters')}"
         styleClass="font-medium" />
       <div class="col-12 p-0 m-0">
         <p:selectCheckboxMenu id="custom-field-name" multiple="true"
@@ -24,7 +25,7 @@
             update="custom-filter-group filter-options-group" />
           <p:ajax event="itemUnselect" update="custom-filter-group filter-options-group" process="@this"
             partialSubmit="true" />
-          <f:selectItems value="#{managedBean.customFieldsByType.keySet()}" var="customFieldFilter"
+          <f:selectItems value="#{managedBean.customFieldsByType}" var="customFieldFilter"
             itemValue="#{customFieldFilter.customFieldMeta.name()}"
             itemLabel="#{customFieldFilter.customFieldMeta.name()}" />
         </p:selectCheckboxMenu>
@@ -32,47 +33,44 @@
     </h:panelGroup>
 
     <h:panelGroup layout="block" styleClass="field grid mb-0" id="filter-options-group">
-      <ui:repeat value="#{managedBean.selectedCustomFilters.entrySet()}" var="fieldEntry">
+      <ui:repeat value="#{managedBean.selectedCustomFilters}" var="customField">
         <h:panelGroup styleClass="ui-fluid col-4" layout="block" rendered="#{managedBean.filterDropdownVisible}">
           <div class="col-4 p-0 m-0 mb-2">
-            <p:outputLabel value="#{fieldEntry.key.customFieldMeta.name()}" />
+            <p:outputLabel value="#{customField.customFieldMeta.name()}" />
           </div>
 
           <!-- NUMBER -->
-          <h:panelGroup layout="block" rendered="#{'NUMBER' == fieldEntry.key.customFieldMeta.type()}">
+          <h:panelGroup layout="block" rendered="#{'NUMBER' == customField.customFieldMeta.type()}">
             <h:outputText id="number-range"
-              value="#{managedBean.getRangeDisplayForNumberType(managedBean.selectedCustomFilters[fieldEntry.key])}" />
+              value="#{managedBean.getRangeDisplayForNumberType(customField.customFieldValues)}" />
 
             <p:slider for="min-value, max-value" range="true" display="number-range" displayTemplate="{min} - {max}"
               step="0.01" styleClass="m-2 mb-4"
-              minValue="#{managedBean.getMinValue(fieldEntry.key.customFieldMeta.name())}"
-              maxValue="#{managedBean.getMaxValue(fieldEntry.key.customFieldMeta.name())}">
-              <p:ajax event="slideEnd"
-                listener="#{managedBean.onNumberSliderChange(fieldEntry.key, managedBean.selectedCustomFilters[fieldEntry.key][0], managedBean.selectedCustomFilters[fieldEntry.key][1])}"
-                process="@this" partialSubmit="true" />
+              minValue="#{managedBean.getMinValue(customField.customFieldMeta.name())}"
+              maxValue="#{managedBean.getMaxValue(customField.customFieldMeta.name())}">
             </p:slider>
-            <h:inputHidden id="min-value" value="#{managedBean.selectedCustomFilters[fieldEntry.key][0]}" />
-            <h:inputHidden id="max-value" value="#{managedBean.selectedCustomFilters[fieldEntry.key][1]}" />
+            <h:inputHidden id="min-value" value="#{customField.customFieldValues[0]}" />
+            <h:inputHidden id="max-value" value="#{customField.customFieldValues[1]}" />
           </h:panelGroup>
 
           <!-- STRING, TEXT -->
           <h:panelGroup layout="block"
-            rendered="#{managedBean.isStringOrTextCustomFieldType(fieldEntry.key.customFieldMeta.type())}">
+            rendered="#{managedBean.isStringOrTextCustomFieldType(customField.customFieldMeta.type())}">
             <p:selectCheckboxMenu id="text-dropdown" dynamic="true" filter="true"
               styleClass="col-12 m-0 p-0 grid formgrid" filterMatchMode="startsWith" updateLabel="true"
-              scrollHeight="250" required="true" value="#{managedBean.selectedCustomFilters[fieldEntry.key]}">
-              <f:selectItems value="#{managedBean.customFieldsByType[fieldEntry.key]}" var="optionValue"
-                itemValue="#{optionValue}" itemLabel="#{optionValue}" />
+              scrollHeight="250" required="true" value="#{customField.customFieldValues}">
+              <f:selectItems value="#{customField.customFieldValues}" var="optionValue" itemValue="#{optionValue}"
+                itemLabel="#{optionValue}" />
               <p:ajax event="change" process="@this" partialSubmit="true" />
             </p:selectCheckboxMenu>
             <p:message styleClass="col-12 m-0 p-2 grid formgrid" for="text-dropdown" />
           </h:panelGroup>
 
           <!-- TIMESTAMP -->
-          <h:panelGroup layout="block" rendered="#{'TIMESTAMP' == fieldEntry.key.customFieldMeta.type()}">
-            <p:datePicker id="date-range" selectionMode="range" maxdate="#{managedBean.timeIntervalFilter.to}"
-              styleClass="col-12 m-0 p-0 grid formgrid" value="#{managedBean.selectedCustomFilters[fieldEntry.key]}"
-              readonlyInput="true" required="true" pattern="dd/MM/yyyy"
+          <h:panelGroup layout="block" rendered="#{'TIMESTAMP' == customField.customFieldMeta.type()}">
+            <p:datePicker id="date-range" selectionMode="range" showIcon="true"
+              maxdate="#{managedBean.timeIntervalFilter.to}" styleClass="col-12 m-0 p-0 grid formgrid"
+              value="#{customField.customFieldValues}" readonlyInput="true" required="true" pattern="dd/MM/yyyy"
               requiredMessage="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/DateErrorMessage')}">
               <p:ajax event="dateSelect" process="@this" partialSubmit="true" />
             </p:datePicker>
