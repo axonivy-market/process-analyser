@@ -1,9 +1,9 @@
 {
-  "$schema" : "https://json-schema.axonivy.com/process/11.3.0/process.json",
+  "$schema" : "https://json-schema.axonivy.com/process/12.0.0/process.json",
   "id" : "18F5716C3BA68B21",
   "kind" : "HTML_DIALOG",
   "config" : {
-    "data": "com.axonivy.solutions.process.analyser.demo.ChargeForTickets.ChargeForTicketsData"
+    "data" : "com.axonivy.solutions.process.analyser.demo.ChargeForTickets.ChargeForTicketsData"
   },
   "elements" : [ {
       "id" : "f0",

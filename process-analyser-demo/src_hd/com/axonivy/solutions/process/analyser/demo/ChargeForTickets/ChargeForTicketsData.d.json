@@ -1,0 +1,11 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/data-class/12.0.0/data-class.json",
+  "simpleName" : "ChargeForTicketsData",
+  "namespace" : "com.axonivy.solutions.process.analyser.demo.ChargeForTickets",
+  "isBusinessCaseData" : false,
+  "fields" : [ {
+    "name" : "isCharge",
+    "type" : "Boolean",
+    "modifiers" : [ "PERSISTENT" ]
+  } ]
+}

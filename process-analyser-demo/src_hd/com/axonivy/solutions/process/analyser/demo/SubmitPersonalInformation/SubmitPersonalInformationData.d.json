@@ -1,0 +1,15 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/data-class/12.0.0/data-class.json",
+  "simpleName" : "SubmitPersonalInformationData",
+  "namespace" : "com.axonivy.solutions.process.analyser.demo.SubmitPersonalInformation",
+  "isBusinessCaseData" : false,
+  "fields" : [ {
+    "name" : "isChargeLater",
+    "type" : "Boolean",
+    "modifiers" : [ "PERSISTENT" ]
+  }, {
+    "name" : "isBackToSearchPage",
+    "type" : "Boolean",
+    "modifiers" : [ "PERSISTENT" ]
+  } ]
+}

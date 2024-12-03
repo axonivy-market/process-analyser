@@ -1,0 +1,28 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/data-class/12.0.0/data-class.json",
+  "simpleName" : "FlightInformation",
+  "namespace" : "com.axonivy.solutions.process.analyser.demo.data",
+  "isBusinessCaseData" : false,
+  "fields" : [ {
+    "name" : "planeRegistrationNumber",
+    "type" : "String"
+  }, {
+    "name" : "startTime",
+    "type" : "java.time.LocalTime"
+  }, {
+    "name" : "endTime",
+    "type" : "java.time.LocalTime"
+  }, {
+    "name" : "from",
+    "type" : "String"
+  }, {
+    "name" : "to",
+    "type" : "String"
+  }, {
+    "name" : "date",
+    "type" : "java.util.Date"
+  }, {
+    "name" : "id",
+    "type" : "String"
+  } ]
+}
