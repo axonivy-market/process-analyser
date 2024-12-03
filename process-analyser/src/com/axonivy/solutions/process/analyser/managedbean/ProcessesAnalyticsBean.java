@@ -122,6 +122,7 @@ public class ProcessesAnalyticsBean {
 
   private void resetCustomFieldFilterValues() {
     selectedCustomFieldNames = new ArrayList<>();
+    selectedCustomFilters = new ArrayList<>();
     customFieldsByType = new ArrayList<>();
     setFilterDropdownVisible(false);
   }
@@ -135,22 +136,31 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onCustomFieldSelect() {
-//    customFieldsByType.forEach(customField -> {
-//      boolean isSelectedCustomField = selectedCustomFieldNames.contains(customField.getCustomFieldMeta().name());
-//      if (isSelectedCustomField && !selectedCustomFilters.contains(customField)) {
-//        // Initialize the number range for custom field type NUMBER
-//        if (CustomFieldType.NUMBER == customField.getCustomFieldMeta().type()) {
-//          double minValue = getMinValue(customField.getCustomFieldMeta().name());
-//          double maxValue = getMaxValue(customField.getCustomFieldMeta().name());
-//          selectedCustomFilters.put(customField, Arrays.asList(minValue, maxValue));
-//        } else {
-//          selectedCustomFilters = new ArrayList<>();
-//        }
-//      } else if (!isSelectedCustomField) {
-//        selectedCustomFilters.remove(customField);
-//      }
-//    });
+    customFieldsByType.forEach(customField -> {
+      boolean isSelectedCustomField = selectedCustomFieldNames.contains(customField.getCustomFieldMeta().name());
+      Ivy.log().warn("isSelectedCustomField " + isSelectedCustomField);
+      if (isSelectedCustomField && !selectedCustomFilters.contains(customField)) {
+        // Initialize the number range for custom field type NUMBER
+        if (CustomFieldType.NUMBER == customField.getCustomFieldMeta().type()) {
+          double minValue = getMinValue(customField.getCustomFieldMeta().name());
+          double maxValue = getMaxValue(customField.getCustomFieldMeta().name());
+          Ivy.log().warn("minValue " + minValue);
+          Ivy.log().warn("maxValue " + maxValue);
+          customField.setCustomFieldValues(Arrays.asList(minValue, maxValue));
+
+        } else if(!isSelectedCustomField){
+          customField.setCustomFieldValues(new ArrayList<>());
+        }
+        selectedCustomFilters.add(customField);
+        Ivy.log().warn("selectedCustomFilters1 " + selectedCustomFilters.size());
+      } else {
+        selectedCustomFilters.removeIf(selectedFilter -> selectedFilter.getCustomFieldMeta().name()
+            .equals(customField.getCustomFieldMeta().name()));
+      }
+    });
+    Ivy.log().warn("selectedCustomFilters " + selectedCustomFilters.size());
     setFilterDropdownVisible(!selectedCustomFieldNames.isEmpty());
+    Ivy.log().warn(isFilterDropdownVisible);
   }
 
   public double getMinValue(String fieldName) {
@@ -165,18 +175,11 @@ public class ProcessesAnalyticsBean {
   }
 
   private DoubleStream getNumberTypeValue(String fieldName) {
-    return customFieldsByType.stream()
-        .filter(entry -> entry.getCustomFieldMeta().name().equals(fieldName)).map(CustomFieldFilter::getCustomFieldValues)
-        .mapToDouble(obj -> ((Number) obj).doubleValue());
+    return customFieldsByType.stream().filter(entry -> entry.getCustomFieldMeta().name().equals(fieldName))
+        .flatMap(entry -> entry.getCustomFieldValues().stream()).filter(value -> value instanceof Number)
+        .mapToDouble(value -> ((Number) value).doubleValue());
   }
 
-//  private DoubleStream getNumberTypeValue1(String fieldName) {
-//    return customFieldsByType.entrySet().stream()
-//        .filter(entry -> entry.getKey().getCustomFieldMeta().name().equals(fieldName))
-//        .flatMap(entry -> entry.getValue().stream()).filter(obj -> obj instanceof Number)
-//        .mapToDouble(obj -> ((Number) obj).doubleValue());
-//  }
-//  
   public String getRangeDisplayForNumberType(List<Double> numberValue) {
     return Ivy.cms().co("/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/NumberRange",
         Arrays.asList(numberValue.get(0), numberValue.get(1)));

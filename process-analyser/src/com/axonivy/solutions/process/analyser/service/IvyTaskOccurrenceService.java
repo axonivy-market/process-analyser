@@ -119,29 +119,28 @@ public class IvyTaskOccurrenceService {
         addCustomFieldsToCustomFieldsByType(task.customFields().all(), false, customFieldsByType);
         addCustomFieldsToCustomFieldsByType(allCustomFieldsFromCases, true, customFieldsByType);
       }
-Ivy.log().warn(customFieldsByType);
+Ivy.log().warn(customFieldsByType.size());
       return customFieldsByType;
     });
   }
 
   private static void addCustomFieldsToCustomFieldsByType(List<ICustomField<?>> customFields,
       boolean isCustomFieldFromCase, List<CustomFieldFilter> customFieldsByType) {
-
     for (ICustomField<?> customField : customFields) {
       Object customFieldValue = customField.getOrNull();
       if (customFieldValue != null) {
         CustomFieldFilter customFieldFilter = new CustomFieldFilter();
         customFieldFilter.setCustomFieldMeta(customField.meta());
         customFieldFilter.setCustomFieldFromCase(isCustomFieldFromCase);
-//
-//        List<Object> addedCustomFieldValues = new ArrayList<>();
-//
-//        if (!addedCustomFieldValues.contains(customFieldValue)) {
-//          addedCustomFieldValues.add(customFieldValue);
-//        }
+
+        if (customFieldFilter.getCustomFieldValues() == null) {
+          customFieldFilter.setCustomFieldValues(new ArrayList<>());
+        }
         customFieldFilter.getCustomFieldValues().add(customFieldValue);
-        
-        customFieldsByType.add(customFieldFilter);
+
+        if (!customFieldsByType.contains(customFieldFilter)) {
+          customFieldsByType.add(customFieldFilter);
+        }
       }
     }
   }
