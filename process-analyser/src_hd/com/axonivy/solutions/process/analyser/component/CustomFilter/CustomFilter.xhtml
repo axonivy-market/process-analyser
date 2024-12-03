@@ -16,15 +16,22 @@
         styleClass="font-medium" />
       <div class="col-12 p-0 m-0">
         <p:selectCheckboxMenu id="custom-field-name" multiple="true"
-          emptyLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/None')}"
-          updateLabel="true" scrollHeight="250" styleClass="w-full" value="#{managedBean.selectedCustomFieldNames}">
-          <p:ajax event="change" listener="#{managedBean.onCustomFieldSelect}" partialSubmit="true" process="@this"
-            update="custom-filter-group filter-options-group" />
-          <p:ajax event="toggleSelect" listener="#{managedBean.onCustomFieldSelect}" process="@this"
-            update="custom-filter-group filter-options-group" />
-          <p:ajax event="itemUnselect" update="custom-filter-group filter-options-group" process="@this"
-            partialSubmit="true" />
-          <f:selectItems value="#{managedBean.customFieldsByType.keySet()}" var="customFieldFilter"
+          emptyLabel="#{ivy.cms.co('/Dialogs/com/axonivy/utils/process/analyser/ProcessesMonitor/None')}"
+          updateLabel="true" scrollHeight="250" styleClass="w-full"
+          value="#{processesAnalyticsBean.selectedCustomFieldNames}" onShow="displayEmptyOptionsMessage()">
+          <!-- Update 2 group of custom fields only, data keep the same-->
+          <p:ajax event="change"
+            listener="#{managedBean.onCustomFieldSelect}"
+            partialSubmit="true" process="@this" />
+          <!-- Update 2 group of custom fields only, data keep the same -->
+          <p:ajax event="toggleSelect"
+            listener="#{managedBean.onCustomFieldSelect}"
+            process="@this" />
+          <!-- Update data & 2 group of custom fields -->
+          <p:ajax event="itemUnselect"
+            listener="#{managedBean.updateDiagramAndStatistic}"
+            partialSubmit="true" process="@this" />
+          <f:selectItems value="#{processesAnalyticsBean.customFieldsByType.keySet()}" var="customFieldFilter"
             itemValue="#{customFieldFilter.customFieldMeta.name()}"
             itemLabel="#{customFieldFilter.customFieldMeta.name()}" />
         </p:selectCheckboxMenu>
@@ -48,8 +55,8 @@
               minValue="#{managedBean.getMinValue(fieldEntry.key.customFieldMeta.name())}"
               maxValue="#{managedBean.getMaxValue(fieldEntry.key.customFieldMeta.name())}">
               <p:ajax event="slideEnd"
-                listener="#{managedBean.onNumberSliderChange(fieldEntry.key, managedBean.selectedCustomFilters[fieldEntry.key][0], managedBean.selectedCustomFilters[fieldEntry.key][1])}"
-                process="@this" partialSubmit="true" />
+                listener="#{managedBean.updateDiagramAndStatistic}"
+                process="@this min-value max-value" partialSubmit="true" />
             </p:slider>
             <h:inputHidden id="min-value" value="#{managedBean.selectedCustomFilters[fieldEntry.key][0]}" />
             <h:inputHidden id="max-value" value="#{managedBean.selectedCustomFilters[fieldEntry.key][1]}" />
@@ -63,7 +70,7 @@
               scrollHeight="250" required="true" value="#{managedBean.selectedCustomFilters[fieldEntry.key]}">
               <f:selectItems value="#{managedBean.customFieldsByType[fieldEntry.key]}" var="optionValue"
                 itemValue="#{optionValue}" itemLabel="#{optionValue}" />
-              <p:ajax event="change" process="@this" partialSubmit="true" />
+              <p:ajax event="change" listener="#{managedBean.updateDiagramAndStatistic}" process="@this" partialSubmit="true" />
             </p:selectCheckboxMenu>
             <p:message styleClass="col-12 m-0 p-2 grid formgrid" for="text-dropdown" />
           </h:panelGroup>
@@ -74,7 +81,7 @@
               styleClass="col-12 m-0 p-0 grid formgrid" value="#{managedBean.selectedCustomFilters[fieldEntry.key]}"
               readonlyInput="true" required="true" pattern="dd/MM/yyyy"
               requiredMessage="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/DateErrorMessage')}">
-              <p:ajax event="dateSelect" process="@this" partialSubmit="true" />
+              <p:ajax event="dateSelect" process="@this" partialSubmit="true" listener="#{managedBean.updateDiagramAndStatistic}"/>
             </p:datePicker>
             <p:message styleClass="col-12 m-0 p-2 grid formgrid" for="date-range" />
           </h:panelGroup>
