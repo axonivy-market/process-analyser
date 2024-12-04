@@ -211,7 +211,7 @@ public class ProcessesMonitorUtils {
             : Arrays.asList(customFieldFilter.getCustomFieldValues());
 
         CaseQuery customFieldQuery = CaseQuery.create();
-        for (Object customFieldValue : customFieldValues) {
+        for (Object customFieldValue : customFieldFilter.getCustomFieldValues()) {
           addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldValue);
         }
         allCustomFieldsQuery.where().or(customFieldQuery);

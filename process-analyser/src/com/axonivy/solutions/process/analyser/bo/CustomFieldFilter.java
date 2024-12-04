@@ -9,12 +9,14 @@ public class CustomFieldFilter {
   private ICustomFieldMeta customFieldMeta;
   private boolean isCustomFieldFromCase;
   private List<Object> customFieldValues;
+  private List<Object> tempCustomFieldValues;
 
   public CustomFieldFilter(ICustomFieldMeta customFieldMeta, boolean isCustomFieldFromCase,
       List<Object> customFieldValues) {
     this.customFieldMeta = customFieldMeta;
     this.isCustomFieldFromCase = isCustomFieldFromCase;
     this.customFieldValues = customFieldValues;
+    this.tempCustomFieldValues = customFieldValues;
   }
 
   public CustomFieldFilter() {}
@@ -41,6 +43,14 @@ public class CustomFieldFilter {
 
   public void setCustomFieldValues(List<Object> customFieldValues) {
     this.customFieldValues = customFieldValues;
+  }
+
+  public List<Object> getTempCustomFieldValues() {
+    return tempCustomFieldValues;
+  }
+
+  public void setTempCustomFieldValues(List<Object> tempCustomFieldValues) {
+    this.tempCustomFieldValues = tempCustomFieldValues;
   }
 
   @Override

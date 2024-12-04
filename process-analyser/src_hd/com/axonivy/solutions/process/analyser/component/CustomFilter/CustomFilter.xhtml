@@ -45,9 +45,7 @@
               value="#{managedBean.getRangeDisplayForNumberType(customField.customFieldValues)}" />
 
             <p:slider for="min-value, max-value" range="true" display="number-range" displayTemplate="{min} - {max}"
-              step="0.01" styleClass="m-2 mb-4"
-              minValue="#{managedBean.getMinValue(customField.customFieldMeta.name())}"
-              maxValue="#{managedBean.getMaxValue(customField.customFieldMeta.name())}">
+              step="0.01" styleClass="m-2 mb-4" minValue="#{managedBean.minValue}" maxValue="#{managedBean.maxValue}">
             </p:slider>
             <h:inputHidden id="min-value" value="#{customField.customFieldValues[0]}" />
             <h:inputHidden id="max-value" value="#{customField.customFieldValues[1]}" />
@@ -59,7 +57,7 @@
             <p:selectCheckboxMenu id="text-dropdown" dynamic="true" filter="true"
               styleClass="col-12 m-0 p-0 grid formgrid" filterMatchMode="startsWith" updateLabel="true"
               scrollHeight="250" required="true" value="#{customField.customFieldValues}">
-              <f:selectItems value="#{customField.customFieldValues}" var="optionValue" itemValue="#{optionValue}"
+              <f:selectItems value="#{customField.tempCustomFieldValues}" var="optionValue" itemValue="#{optionValue}"
                 itemLabel="#{optionValue}" />
               <p:ajax event="change" process="@this" partialSubmit="true" />
             </p:selectCheckboxMenu>

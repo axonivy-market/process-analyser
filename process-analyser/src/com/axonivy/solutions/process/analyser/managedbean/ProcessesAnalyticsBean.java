@@ -16,7 +16,6 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.solutions.process.analyser.bo.Node;
@@ -63,6 +62,8 @@ public class ProcessesAnalyticsBean {
   private List<CustomFieldFilter> selectedCustomFilters;
   private List<String> selectedCustomFieldNames;
   private boolean isFilterDropdownVisible;
+  private double minValue;
+  private double maxValue;
 
   @PostConstruct
   private void init() {
@@ -140,15 +141,17 @@ public class ProcessesAnalyticsBean {
       if (isSelectedCustomField && !selectedCustomFilters.contains(customField)) {
         // Initialize the number range for custom field type NUMBER
         if (CustomFieldType.NUMBER == customField.getCustomFieldMeta().type()) {
-          double minValue = getMinValue(customField.getCustomFieldMeta().name());
-          double maxValue = getMaxValue(customField.getCustomFieldMeta().name());
+          minValue = getMinValue(customField.getCustomFieldMeta().name());
+          maxValue = getMaxValue(customField.getCustomFieldMeta().name());
           customField.setCustomFieldValues(Arrays.asList(minValue, maxValue));
 
-        } else {
-          customField.setCustomFieldValues(new ArrayList<>());
-        }
+        } 
+//        else {
+//          customField.setCustomFieldValues(new ArrayList<>());
+//        }
         selectedCustomFilters.add(customField);
       } else if(!isSelectedCustomField) {
+        customField.setCustomFieldValues(new ArrayList<>());
         selectedCustomFilters.removeIf(selectedFilter -> selectedFilter.getCustomFieldMeta().name()
             .equals(customField.getCustomFieldMeta().name()));
       }
@@ -169,7 +172,7 @@ public class ProcessesAnalyticsBean {
 
   private DoubleStream getNumberTypeValue(String fieldName) {
     return customFieldsByType.stream().filter(entry -> entry.getCustomFieldMeta().name().equals(fieldName))
-        .flatMap(entry -> entry.getCustomFieldValues().stream()).filter(value -> value instanceof Number)
+        .flatMap(entry -> entry.getTempCustomFieldValues().stream()).filter(value -> value instanceof Number)
         .mapToDouble(value -> ((Number) value).doubleValue());
   }
 
@@ -336,5 +339,21 @@ public class ProcessesAnalyticsBean {
 
   public void setTimeIntervalFilter(TimeIntervalFilter timeIntervalFilter) {
     this.timeIntervalFilter = timeIntervalFilter;
+  }
+
+  public double getMinValue() {
+    return minValue;
+  }
+
+  public void setMinValue(double minValue) {
+    this.minValue = minValue;
+  }
+
+  public double getMaxValue() {
+    return maxValue;
+  }
+
+  public void setMaxValue(double maxValue) {
+    this.maxValue = maxValue;
   }
 }
