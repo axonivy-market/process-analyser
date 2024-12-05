@@ -10,23 +10,7 @@
             "artifactId": "process-analyser-demo",
             "version": "${version}",
             "type": "iar"
-          }
-        ],
-        "repositories": [
-          {
-            "id": "maven.axonivy.com",
-            "url": "https://maven.axonivy.com",
-            "snapshots": {
-              "enabled": "true"
-            }
-          }
-        ]
-      }
-    }, {
-      "id": "maven-dependency",
-      "data": {
-        "dependencies": [
-          {
+          }, {
             "groupId": "com.axonivy.solutions.process.analyser",
             "artifactId": "process-analyser",
             "version": "${version}",
