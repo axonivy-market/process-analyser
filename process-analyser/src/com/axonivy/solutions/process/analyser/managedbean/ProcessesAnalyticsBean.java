@@ -99,15 +99,12 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onModuleSelect() {
-    List<String> componentIdsToUpdate = new ArrayList<>();
-    componentIdsToUpdate.add("process-analytics-form:processDropdown");
     selectedProcess = null;
+    PrimeFaces.current().ajax().update("process-analytics-form:processDropdown");
     if (StringUtils.isNotBlank(bpmnIframeSourceUrl)) {
       resetStatisticValue();
       resetCustomFieldFilterValues();
-      componentIdsToUpdate.addAll(getDiagramAndStatisticWithCustomFilterComponentIds());
     }
-    PrimeFaces.current().ajax().update(componentIdsToUpdate);
   }
 
   private List<String> getDiagramAndStatisticComponentIds() {
@@ -118,18 +115,11 @@ public class ProcessesAnalyticsBean {
     results.add("process-analytics-form:show-statistic-btn");
     return results;
   }
-  
-  private List<String> getDiagramAndStatisticWithCustomFilterComponentIds() {
-    List<String> results = getDiagramAndStatisticComponentIds();
-    results.add("process-analytics-form:custom-filter-panel:custom-filter-group");
-    return results;
-  }
 
   public void onProcessSelect() {
     resetCustomFieldFilterValues();
     updateDiagramAndStatistic();
     getCaseAndTaskCustomFields();
-    PrimeFaces.current().ajax().update("process-analytics-form:custom-filter-panel:custom-filter-group");
   }
 
   public void onKpiTypeSelect() {
@@ -140,12 +130,14 @@ public class ProcessesAnalyticsBean {
     processMiningData = null;
     nodes = new ArrayList<>();
     bpmnIframeSourceUrl = StringUtils.EMPTY;
+    PrimeFaces.current().ajax().update(getDiagramAndStatisticComponentIds());
   }
 
   private void resetCustomFieldFilterValues() {
     selectedCustomFieldNames = new ArrayList<>();
     customFieldsByType.clear();
     setFilterDropdownVisible(false);
+    updateCustomFilterPanel();
   }
 
   public Map<CustomFieldFilter, List<Object>> getCaseAndTaskCustomFields() {
@@ -175,17 +167,17 @@ public class ProcessesAnalyticsBean {
     setFilterDropdownVisible(!selectedCustomFieldNames.isEmpty());
     updateCustomFilterPanel();
   }
-  
+
   private void updateCustomFilterPanel() {
     List<String> groupIdsToUpdate = List.of("process-analytics-form:custom-filter-panel:custom-filter-group",
         "process-analytics-form:custom-filter-panel:filter-options-group");
     PF.current().ajax().update(groupIdsToUpdate);
   }
-  
+
   public void onCustomfieldUnselect() {
-	  onCustomFieldSelect();
-	  updateDiagramAndStatistic();
-	  updateCustomFilterPanel();
+    onCustomFieldSelect();
+    updateDiagramAndStatistic();
+    updateCustomFilterPanel();
   }
 
   public double getMinValue(String fieldName) {
@@ -217,6 +209,7 @@ public class ProcessesAnalyticsBean {
     String to = parameterMap.get(ProcessAnalyticsConstants.TO);
     timeIntervalFilter.setFrom(DateUtils.parseDateFromString(from));
     timeIntervalFilter.setTo(DateUtils.parseDateFromString(to));
+    resetStatisticValue();
     resetCustomFieldFilterValues();
     getCaseAndTaskCustomFields();
     updateDiagramAndStatistic();
@@ -283,7 +276,7 @@ public class ProcessesAnalyticsBean {
         ? String.format(ProcessAnalyticsConstants.ANALYSIS_EXCEL_FILE_PATTERN, selectedProcess)
         : StringUtils.EMPTY;
   }
-  
+
   public KpiType[] getKpiTypes() {
     return KpiType.values();
   }
