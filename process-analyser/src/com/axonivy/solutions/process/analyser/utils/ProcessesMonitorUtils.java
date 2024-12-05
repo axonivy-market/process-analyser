@@ -201,16 +201,11 @@ public class ProcessesMonitorUtils {
         .isEqual(taskStartId).and().startTimestamp().isGreaterOrEqualThan(timeIntervalFilter.getFrom()).and()
         .startTimestamp().isLowerOrEqualThan(timeIntervalFilter.getTo());
 
-    if (ObjectUtils.isNotEmpty(customFilters) && hasCustomFilters(customFilters)) {
+    List<CustomFieldFilter> validCustomFilters = getValidCustomFilters(customFilters);
+    if (ObjectUtils.isNotEmpty(validCustomFilters)) {
       CaseQuery allCustomFieldsQuery = CaseQuery.create();
 
-      for (CustomFieldFilter customFieldFilter : customFilters) {
-
-        // Skip filters with missing values
-        if (ObjectUtils.isEmpty(customFieldFilter.getCustomFieldValues())) {
-          continue;
-        }
-
+      for (CustomFieldFilter customFieldFilter : validCustomFilters) {
         CaseQuery customFieldQuery = CaseQuery.create();
         handleQueryForEachFieldType(customFieldFilter, customFieldQuery);
 
@@ -221,15 +216,17 @@ public class ProcessesMonitorUtils {
     return Ivy.wf().getCaseQueryExecutor().getResults(query);
   }
 
-  private static boolean hasCustomFilters(List<CustomFieldFilter> customFilters) {
-    return customFilters.stream().anyMatch(filter -> ObjectUtils.isNotEmpty(filter.getCustomFieldValues()));
+  private static List<CustomFieldFilter> getValidCustomFilters(List<CustomFieldFilter> customFilters) {
+    return customFilters.stream().filter(filter -> ObjectUtils.isNotEmpty(filter.getCustomFieldValues())
+        || ObjectUtils.isNotEmpty(filter.getTimestampCustomFieldValues())).collect(Collectors.toList());
   }
 
   private static void handleQueryForEachFieldType(CustomFieldFilter customFieldFilter, CaseQuery customFieldQuery) {
     CustomFieldType customFieldType = customFieldFilter.getCustomFieldMeta().type();
+
     switch (customFieldType) {
       case TIMESTAMP:
-        addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldFilter.getTimeStampCustomFieldValues());
+        addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldFilter.getTimestampCustomFieldValues());
         break;
       case NUMBER:
         addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldFilter.getCustomFieldValues());

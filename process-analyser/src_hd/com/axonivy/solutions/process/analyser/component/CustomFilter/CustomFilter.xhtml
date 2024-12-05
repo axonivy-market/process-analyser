@@ -68,7 +68,7 @@
           <h:panelGroup layout="block" rendered="#{'TIMESTAMP' == customField.customFieldMeta.type()}">
             <p:datePicker id="date-range" selectionMode="range" showIcon="true"
               maxdate="#{managedBean.timeIntervalFilter.to}" styleClass="col-12 m-0 p-0 grid formgrid"
-              value="#{customField.timeStampCustomFieldValues}" readonlyInput="true" required="true"
+              value="#{customField.timestampCustomFieldValues}" readonlyInput="true" required="true"
               pattern="dd/MM/yyyy"
               requiredMessage="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/DateErrorMessage')}">
               <p:ajax event="dateSelect" process="@this" partialSubmit="true" />

@@ -11,15 +11,15 @@ public class CustomFieldFilter {
   private boolean isCustomFieldFromCase;
   private List<Object> customFieldValues;
   private List<Object> availableCustomFieldValues;
-  private List<LocalDate> timeStampCustomFieldValues;
+  private List<LocalDate> timestampCustomFieldValues;
 
   public CustomFieldFilter(ICustomFieldMeta customFieldMeta, boolean isCustomFieldFromCase,
-      List<Object> customFieldValues, List<LocalDate> timeStampCustomFieldValues) {
+      List<Object> customFieldValues, List<LocalDate> timestampCustomFieldValues) {
     this.customFieldMeta = customFieldMeta;
     this.isCustomFieldFromCase = isCustomFieldFromCase;
     this.customFieldValues = customFieldValues;
     this.availableCustomFieldValues = customFieldValues;
-    this.timeStampCustomFieldValues = timeStampCustomFieldValues;
+    this.timestampCustomFieldValues = timestampCustomFieldValues;
   }
 
   public CustomFieldFilter() {}
@@ -56,12 +56,12 @@ public class CustomFieldFilter {
     this.availableCustomFieldValues = availableCustomFieldValues;
   }
 
-  public List<LocalDate> getTimeStampCustomFieldValues() {
-    return timeStampCustomFieldValues;
+  public List<LocalDate> getTimestampCustomFieldValues() {
+    return timestampCustomFieldValues;
   }
 
-  public void setTimeStampCustomFieldValues(List<LocalDate> timeStampCustomFieldValues) {
-    this.timeStampCustomFieldValues = timeStampCustomFieldValues;
+  public void setTimestampCustomFieldValues(List<LocalDate> timestampCustomFieldValues) {
+    this.timestampCustomFieldValues = timestampCustomFieldValues;
   }
 
   @Override
