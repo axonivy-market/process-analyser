@@ -213,18 +213,8 @@ public class ProcessesMonitorUtils {
         }
 
         CaseQuery customFieldQuery = CaseQuery.create();
-        if (CustomFieldType.TIMESTAMP == customFieldFilter.getCustomFieldMeta().type()) {
-          addCustomFieldSubQuery(customFieldQuery, customFieldFilter,
-              customFieldFilter.getTimeStampCustomFieldValues());
-        } else {
-          List<Object> customFieldValues =
-              isStringCustomFieldType(customFieldFilter) ? customFieldFilter.getCustomFieldValues()
-                  : Arrays.asList(customFieldFilter.getCustomFieldValues());
+        handleQueryForEachFieldType(customFieldFilter, customFieldQuery);
 
-          for (Object customFieldValue : customFieldValues) {
-            addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldValue);
-          }
-        }
         allCustomFieldsQuery.where().or(customFieldQuery);
       }
 
@@ -233,13 +223,27 @@ public class ProcessesMonitorUtils {
     return Ivy.wf().getCaseQueryExecutor().getResults(query);
   }
 
-  private static boolean hasValidCustomFilters(List<CustomFieldFilter> customFilters) {
-    return customFilters.stream().anyMatch(filter -> ObjectUtils.isNotEmpty(filter.getCustomFieldValues()));
+  private static void handleQueryForEachFieldType(CustomFieldFilter customFieldFilter, CaseQuery customFieldQuery) {
+    CustomFieldType customFieldType = customFieldFilter.getCustomFieldMeta().type();
+    switch (customFieldType) {
+      case TIMESTAMP:
+        addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldFilter.getTimeStampCustomFieldValues());
+        break;
+      case NUMBER:
+        addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldFilter.getCustomFieldValues());
+        break;
+      case STRING:
+      case TEXT:
+        for (Object customFieldValue : customFieldFilter.getCustomFieldValues()) {
+          addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldValue);
+        }
+      default:
+        break;
+    }
   }
 
-  private static boolean isStringCustomFieldType(CustomFieldFilter customFieldFilter) {
-    CustomFieldType type = customFieldFilter.getCustomFieldMeta().type();
-    return CustomFieldType.STRING == type || CustomFieldType.TEXT == type;
+  private static boolean hasValidCustomFilters(List<CustomFieldFilter> customFilters) {
+    return customFilters.stream().anyMatch(filter -> ObjectUtils.isNotEmpty(filter.getCustomFieldValues()));
   }
 
   /**
