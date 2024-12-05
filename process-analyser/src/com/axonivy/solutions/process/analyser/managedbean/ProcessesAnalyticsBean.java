@@ -128,7 +128,7 @@ public class ProcessesAnalyticsBean {
 
   private void resetStatisticValue() {
     processMiningData = null;
-    nodes = new ArrayList<>();
+    nodes.clear();
     bpmnIframeSourceUrl = StringUtils.EMPTY;
     PrimeFaces.current().ajax().update(getDiagramAndStatisticComponentIds());
   }
