@@ -237,6 +237,7 @@ public class ProcessesMonitorUtils {
         for (Object customFieldValue : customFieldFilter.getCustomFieldValues()) {
           addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldValue);
         }
+        break;
       default:
         break;
     }
