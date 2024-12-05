@@ -37,7 +37,7 @@ public class PlanningFlightBean {
 				HCM <--> New York,
 				Amsterdam <--> Delhi,
 				Dubai City <--> Ha Noi,
-				Gen�ve <--> Hong Kong,
+				Genève <--> Hong Kong,
 				Jakarta <--> Kuala Lumpur
 				""";
 
