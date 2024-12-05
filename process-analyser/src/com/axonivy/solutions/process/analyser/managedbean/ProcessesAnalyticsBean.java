@@ -16,6 +16,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PF;
 import org.primefaces.PrimeFaces;
@@ -120,7 +121,10 @@ public class ProcessesAnalyticsBean {
 
   public void onProcessSelect() {
     resetCustomFieldFilterValues();
-    updateDiagramAndStatistic();
+    resetStatisticValue();
+    if(StringUtils.isNotBlank(selectedProcess)) {      
+      updateDiagramAndStatistic();
+    }
     getCaseAndTaskCustomFields();
   }
 
