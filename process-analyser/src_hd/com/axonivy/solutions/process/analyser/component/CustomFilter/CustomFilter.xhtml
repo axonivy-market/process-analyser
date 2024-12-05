@@ -56,9 +56,9 @@
             rendered="#{managedBean.isStringOrTextCustomFieldType(customField.customFieldMeta.type())}">
             <p:selectCheckboxMenu id="text-dropdown" dynamic="true" filter="true"
               styleClass="col-12 m-0 p-0 grid formgrid" filterMatchMode="startsWith" updateLabel="true"
-              scrollHeight="250" required="true" value="#{customField.customFieldValues}">
-              <f:selectItems value="#{customField.tempCustomFieldValues}" var="optionValue" itemValue="#{optionValue}"
-                itemLabel="#{optionValue}" />
+              scrollHeight="250" value="#{customField.customFieldValues}">
+              <f:selectItems value="#{customField.availableCustomFieldValues}" var="optionValue"
+                itemValue="#{optionValue}" itemLabel="#{optionValue}" />
               <p:ajax event="change" process="@this" partialSubmit="true" />
             </p:selectCheckboxMenu>
             <p:message styleClass="col-12 m-0 p-2 grid formgrid" for="text-dropdown" />
@@ -68,9 +68,10 @@
           <h:panelGroup layout="block" rendered="#{'TIMESTAMP' == customField.customFieldMeta.type()}">
             <p:datePicker id="date-range" selectionMode="range" showIcon="true"
               maxdate="#{managedBean.timeIntervalFilter.to}" styleClass="col-12 m-0 p-0 grid formgrid"
-              value="#{customField.customFieldValues}" readonlyInput="true" required="true" pattern="dd/MM/yyyy"
+              value="#{customField.timeStampCustomFieldValues}" readonlyInput="true" required="true"
+              pattern="dd/MM/yyyy"
               requiredMessage="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/DateErrorMessage')}">
-              <p:ajax event="dateSelect" process="@this" partialSubmit="true" listener="#{managedBean.onDateSelect(customField)}" />
+              <p:ajax event="dateSelect" process="@this" partialSubmit="true" />
             </p:datePicker>
             <p:message styleClass="col-12 m-0 p-2 grid formgrid" for="date-range" />
           </h:panelGroup>

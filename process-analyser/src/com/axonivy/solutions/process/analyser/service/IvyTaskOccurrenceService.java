@@ -129,23 +129,22 @@ public class IvyTaskOccurrenceService {
     for (ICustomField<?> customField : customFields) {
       Object customFieldValue = customField.getOrNull();
       if (customFieldValue != null) {
-        CustomFieldFilter newFilter = new CustomFieldFilter();
-        newFilter.setCustomFieldMeta(customField.meta());
-        newFilter.setCustomFieldFromCase(isCustomFieldFromCase);
+        CustomFieldFilter customFieldFilter = new CustomFieldFilter();
+        customFieldFilter.setCustomFieldMeta(customField.meta());
+        customFieldFilter.setCustomFieldFromCase(isCustomFieldFromCase);
 
-        CustomFieldFilter existingFilter =
-            customFieldsByType.stream().filter(filter -> filter.equals(newFilter)).findFirst().orElse(null);
+        CustomFieldFilter existingCustomFieldFilter =
+            customFieldsByType.stream().filter(filter -> filter.equals(customFieldFilter)).findAny().orElse(null);
 
-        if (existingFilter != null) {
-          if (!existingFilter.getTempCustomFieldValues().contains(customFieldValue)) {
-            existingFilter.getTempCustomFieldValues().add(customFieldValue);
+        if (existingCustomFieldFilter != null) {
+          if (!existingCustomFieldFilter.getAvailableCustomFieldValues().contains(customFieldValue)) {
+            existingCustomFieldFilter.getAvailableCustomFieldValues().add(customFieldValue);
           }
         } else {
-          newFilter.setCustomFieldValues(new ArrayList<>());
-//          newFilter.getCustomFieldValues().add(customFieldValue);
-          newFilter.setTempCustomFieldValues(new ArrayList<>());
-          newFilter.getTempCustomFieldValues().add(customFieldValue);
-          customFieldsByType.add(newFilter);
+          customFieldFilter.setCustomFieldValues(new ArrayList<>());
+          customFieldFilter.setAvailableCustomFieldValues(new ArrayList<>());
+          customFieldFilter.getAvailableCustomFieldValues().add(customFieldValue);
+          customFieldsByType.add(customFieldFilter);
         }
       }
     }

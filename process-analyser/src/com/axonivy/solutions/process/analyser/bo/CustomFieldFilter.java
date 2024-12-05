@@ -1,5 +1,6 @@
 package com.axonivy.solutions.process.analyser.bo;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
@@ -9,14 +10,16 @@ public class CustomFieldFilter {
   private ICustomFieldMeta customFieldMeta;
   private boolean isCustomFieldFromCase;
   private List<Object> customFieldValues;
-  private List<Object> tempCustomFieldValues;
+  private List<Object> availableCustomFieldValues;
+  private List<LocalDate> timeStampCustomFieldValues;
 
   public CustomFieldFilter(ICustomFieldMeta customFieldMeta, boolean isCustomFieldFromCase,
-      List<Object> customFieldValues) {
+      List<Object> customFieldValues, List<LocalDate> timeStampCustomFieldValues) {
     this.customFieldMeta = customFieldMeta;
     this.isCustomFieldFromCase = isCustomFieldFromCase;
     this.customFieldValues = customFieldValues;
-    this.tempCustomFieldValues = customFieldValues;
+    this.availableCustomFieldValues = customFieldValues;
+    this.timeStampCustomFieldValues = timeStampCustomFieldValues;
   }
 
   public CustomFieldFilter() {}
@@ -45,12 +48,20 @@ public class CustomFieldFilter {
     this.customFieldValues = customFieldValues;
   }
 
-  public List<Object> getTempCustomFieldValues() {
-    return tempCustomFieldValues;
+  public List<Object> getAvailableCustomFieldValues() {
+    return availableCustomFieldValues;
   }
 
-  public void setTempCustomFieldValues(List<Object> tempCustomFieldValues) {
-    this.tempCustomFieldValues = tempCustomFieldValues;
+  public void setAvailableCustomFieldValues(List<Object> availableCustomFieldValues) {
+    this.availableCustomFieldValues = availableCustomFieldValues;
+  }
+
+  public List<LocalDate> getTimeStampCustomFieldValues() {
+    return timeStampCustomFieldValues;
+  }
+
+  public void setTimeStampCustomFieldValues(List<LocalDate> timeStampCustomFieldValues) {
+    this.timeStampCustomFieldValues = timeStampCustomFieldValues;
   }
 
   @Override

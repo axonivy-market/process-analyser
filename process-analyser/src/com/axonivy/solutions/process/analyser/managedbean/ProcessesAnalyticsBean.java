@@ -145,12 +145,9 @@ public class ProcessesAnalyticsBean {
           maxValue = getMaxValue(customField.getCustomFieldMeta().name());
           customField.setCustomFieldValues(Arrays.asList(minValue, maxValue));
 
-        } 
-//        else {
-//          customField.setCustomFieldValues(new ArrayList<>());
-//        }
+        }
         selectedCustomFilters.add(customField);
-      } else if(!isSelectedCustomField) {
+      } else if (!isSelectedCustomField) {
         customField.setCustomFieldValues(new ArrayList<>());
         selectedCustomFilters.removeIf(selectedFilter -> selectedFilter.getCustomFieldMeta().name()
             .equals(customField.getCustomFieldMeta().name()));
@@ -172,7 +169,7 @@ public class ProcessesAnalyticsBean {
 
   private DoubleStream getNumberTypeValue(String fieldName) {
     return customFieldsByType.stream().filter(entry -> entry.getCustomFieldMeta().name().equals(fieldName))
-        .flatMap(entry -> entry.getTempCustomFieldValues().stream()).filter(value -> value instanceof Number)
+        .flatMap(entry -> entry.getAvailableCustomFieldValues().stream()).filter(value -> value instanceof Number)
         .mapToDouble(value -> ((Number) value).doubleValue());
   }
 
