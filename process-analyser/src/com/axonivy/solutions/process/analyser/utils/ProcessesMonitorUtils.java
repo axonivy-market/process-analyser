@@ -3,11 +3,9 @@ package com.axonivy.solutions.process.analyser.utils;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -112,7 +110,7 @@ public class ProcessesMonitorUtils {
    * AxonIvy system db.
    **/
   public static List<Node> filterInitialStatisticByIntervalTime(IProcessWebStartable processStart,
-      TimeIntervalFilter timeIntervalFilter, KpiType analysisType, Map<CustomFieldFilter, List<Object>> customFilterMap) {
+      TimeIntervalFilter timeIntervalFilter, KpiType analysisType, List<CustomFieldFilter> customFilterMap) {
     if (Objects.isNull(processStart)) {
       return Collections.emptyList();
     }
@@ -195,26 +193,22 @@ public class ProcessesMonitorUtils {
    * Construct the base query and, if applicable, a sub-query for custom fields. 
    * For custom fields of type NUMBER or TIMESTAMP, ensure exactly two values are provided. 
    * For STRING type fields, iterate over each value to build individual sub-queries.
+   * If no customFieldValues are found, subQuery will be ignored
    **/
   public static List<ICase> getAllCasesFromTaskStartIdWithTimeInterval(Long taskStartId,
-      TimeIntervalFilter timeIntervalFilter, Map<CustomFieldFilter, List<Object>> customFilterMap) {
+      TimeIntervalFilter timeIntervalFilter, List<CustomFieldFilter> customFilters) {
     CaseQuery query = CaseQuery.create().where().state().isEqual(CaseState.DONE).and().taskStartId()
         .isEqual(taskStartId).and().startTimestamp().isGreaterOrEqualThan(timeIntervalFilter.getFrom()).and()
         .startTimestamp().isLowerOrEqualThan(timeIntervalFilter.getTo());
 
-    if (ObjectUtils.isNotEmpty(customFilterMap)) {
+    List<CustomFieldFilter> validCustomFilters = getValidCustomFilters(customFilters);
+    if (ObjectUtils.isNotEmpty(validCustomFilters)) {
       CaseQuery allCustomFieldsQuery = CaseQuery.create();
 
-      for (Map.Entry<CustomFieldFilter, List<Object>> fieldFilter : customFilterMap.entrySet()) {
-        CustomFieldFilter customFieldFilter = fieldFilter.getKey();
-        List<Object> customFieldValues =
-            isStringCustomFieldType(customFieldFilter) ? flattenStringCustomFieldValues(Arrays.asList(fieldFilter.getValue()))
-                : Arrays.asList(fieldFilter.getValue());
-
+      for (CustomFieldFilter customFieldFilter : validCustomFilters) {
         CaseQuery customFieldQuery = CaseQuery.create();
-        for (Object customFieldValue : customFieldValues) {
-          addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldValue);
-        }
+        handleQueryForEachFieldType(customFieldFilter, customFieldQuery);
+
         allCustomFieldsQuery.where().or(customFieldQuery);
       }
       query.where().andOverall(allCustomFieldsQuery);
@@ -222,14 +216,30 @@ public class ProcessesMonitorUtils {
     return Ivy.wf().getCaseQueryExecutor().getResults(query);
   }
 
-  private static boolean isStringCustomFieldType(CustomFieldFilter customFieldFilter) {
-    CustomFieldType type = customFieldFilter.getCustomFieldMeta().type();
-    return CustomFieldType.STRING == type || CustomFieldType.TEXT == type;
+  private static List<CustomFieldFilter> getValidCustomFilters(List<CustomFieldFilter> customFilters) {
+    return customFilters.stream().filter(filter -> ObjectUtils.isNotEmpty(filter.getCustomFieldValues())
+        || ObjectUtils.isNotEmpty(filter.getTimestampCustomFieldValues())).collect(Collectors.toList());
   }
 
-  private static List<Object> flattenStringCustomFieldValues(List<Object> customFieldValues) {
-    return customFieldValues.stream().filter(value -> value instanceof String[]).map(value -> (String[]) value)
-        .flatMap(Arrays::stream).map(obj -> (Object) obj).toList();
+  private static void handleQueryForEachFieldType(CustomFieldFilter customFieldFilter, CaseQuery customFieldQuery) {
+    CustomFieldType customFieldType = customFieldFilter.getCustomFieldMeta().type();
+
+    switch (customFieldType) {
+      case TIMESTAMP:
+        addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldFilter.getTimestampCustomFieldValues());
+        break;
+      case NUMBER:
+        addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldFilter.getCustomFieldValues());
+        break;
+      case STRING:
+      case TEXT:
+        for (Object customFieldValue : customFieldFilter.getCustomFieldValues()) {
+          addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldValue);
+        }
+        break;
+      default:
+        break;
+    }
   }
 
   /**

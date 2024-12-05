@@ -93,9 +93,9 @@ public class IvyTaskOccurrenceService {
   /**
    * Get all custom fields from cases/ business cases and tasks
    */
-  public static Map<CustomFieldFilter, List<Object>> getCaseAndTaskCustomFields(String selectedPid,
+  public static List<CustomFieldFilter> getCaseAndTaskCustomFields(String selectedPid,
       TimeIntervalFilter timeIntervalFilter) {
-    Map<CustomFieldFilter, List<Object>> customFieldsByType = new HashMap<>();
+    List<CustomFieldFilter> customFieldsByType = new ArrayList<>();
 
     return Sudo.get(() -> {
       TaskQuery taskQuery = TaskQuery.create().where().requestPath().isLike(getRequestPath(selectedPid)).and()
@@ -124,8 +124,8 @@ public class IvyTaskOccurrenceService {
     });
   }
 
-  private static void addCustomFieldsToCustomFieldsByType(List<ICustomField<?>> customFields, boolean isCustomFieldFromCase,
-      Map<CustomFieldFilter, List<Object>> customFieldsByType) {
+  private static void addCustomFieldsToCustomFieldsByType(List<ICustomField<?>> customFields,
+      boolean isCustomFieldFromCase, List<CustomFieldFilter> customFieldsByType) {
     for (ICustomField<?> customField : customFields) {
       Object customFieldValue = customField.getOrNull();
       if (customFieldValue != null) {
@@ -133,11 +133,18 @@ public class IvyTaskOccurrenceService {
         customFieldFilter.setCustomFieldMeta(customField.meta());
         customFieldFilter.setCustomFieldFromCase(isCustomFieldFromCase);
 
-        List<Object> addedCustomFieldValues =
-            customFieldsByType.computeIfAbsent(customFieldFilter, k -> new ArrayList<>());
+        CustomFieldFilter existingCustomFieldFilter =
+            customFieldsByType.stream().filter(filter -> filter.equals(customFieldFilter)).findAny().orElse(null);
 
-        if (!addedCustomFieldValues.contains(customFieldValue)) {
-          addedCustomFieldValues.add(customFieldValue);
+        if (existingCustomFieldFilter != null) {
+          if (!existingCustomFieldFilter.getAvailableCustomFieldValues().contains(customFieldValue)) {
+            existingCustomFieldFilter.getAvailableCustomFieldValues().add(customFieldValue);
+          }
+        } else {
+          customFieldFilter.setCustomFieldValues(new ArrayList<>());
+          customFieldFilter.setAvailableCustomFieldValues(new ArrayList<>());
+          customFieldFilter.getAvailableCustomFieldValues().add(customFieldValue);
+          customFieldsByType.add(customFieldFilter);
         }
       }
     }
