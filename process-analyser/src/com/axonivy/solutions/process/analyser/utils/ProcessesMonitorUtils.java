@@ -3,7 +3,6 @@ package com.axonivy.solutions.process.analyser.utils;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -202,7 +201,7 @@ public class ProcessesMonitorUtils {
         .isEqual(taskStartId).and().startTimestamp().isGreaterOrEqualThan(timeIntervalFilter.getFrom()).and()
         .startTimestamp().isLowerOrEqualThan(timeIntervalFilter.getTo());
 
-    if (ObjectUtils.isNotEmpty(customFilters) && hasValidCustomFilters(customFilters)) {
+    if (ObjectUtils.isNotEmpty(customFilters) && hasCustomFilters(customFilters)) {
       CaseQuery allCustomFieldsQuery = CaseQuery.create();
 
       for (CustomFieldFilter customFieldFilter : customFilters) {
@@ -217,10 +216,13 @@ public class ProcessesMonitorUtils {
 
         allCustomFieldsQuery.where().or(customFieldQuery);
       }
-
       query.where().andOverall(allCustomFieldsQuery);
     }
     return Ivy.wf().getCaseQueryExecutor().getResults(query);
+  }
+
+  private static boolean hasCustomFilters(List<CustomFieldFilter> customFilters) {
+    return customFilters.stream().anyMatch(filter -> ObjectUtils.isNotEmpty(filter.getCustomFieldValues()));
   }
 
   private static void handleQueryForEachFieldType(CustomFieldFilter customFieldFilter, CaseQuery customFieldQuery) {
@@ -241,10 +243,6 @@ public class ProcessesMonitorUtils {
       default:
         break;
     }
-  }
-
-  private static boolean hasValidCustomFilters(List<CustomFieldFilter> customFilters) {
-    return customFilters.stream().anyMatch(filter -> ObjectUtils.isNotEmpty(filter.getCustomFieldValues()));
   }
 
   /**
