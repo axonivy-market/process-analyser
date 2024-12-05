@@ -16,7 +16,6 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.solutions.process.analyser.bo.Node;
@@ -59,10 +58,12 @@ public class ProcessesAnalyticsBean {
   private String miningUrl;
   private ContentObject processMiningDataJsonFile;
   private String bpmnIframeSourceUrl;
-  private Map<CustomFieldFilter, List<Object>> customFieldsByType;
-  private Map<CustomFieldFilter, List<Object>> selectedCustomFilters;
+  private List<CustomFieldFilter> customFieldsByType;
+  private List<CustomFieldFilter> selectedCustomFilters;
   private List<String> selectedCustomFieldNames;
   private boolean isFilterDropdownVisible;
+  private double minValue;
+  private double maxValue;
 
   @PostConstruct
   private void init() {
@@ -76,8 +77,8 @@ public class ProcessesAnalyticsBean {
         .file(ProcessAnalyticsConstants.DATA_CMS_PATH, ProcessAnalyticsConstants.JSON_EXTENSION);
     miningUrl = processMiningDataJsonFile.uri();
     timeIntervalFilter = TimeIntervalFilter.getDefaultFilterSet();
-    customFieldsByType = new HashMap<>();
-    selectedCustomFilters = new HashMap<>();
+    customFieldsByType = new ArrayList<>();
+    selectedCustomFilters = new ArrayList<>();
     selectedCustomFieldNames = new ArrayList<>();
   }
 
@@ -122,11 +123,11 @@ public class ProcessesAnalyticsBean {
 
   private void resetCustomFieldFilterValues() {
     selectedCustomFieldNames = new ArrayList<>();
-    customFieldsByType.clear();
+    customFieldsByType = new ArrayList<>();
     setFilterDropdownVisible(false);
   }
 
-  public Map<CustomFieldFilter, List<Object>> getCaseAndTaskCustomFields() {
+  public List<CustomFieldFilter> getCaseAndTaskCustomFields() {
     Optional.ofNullable(getSelectedIProcessWebStartable()).ifPresent(process -> {
       selectedPid = process.pid().getParent().toString();
     });
@@ -135,19 +136,21 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onCustomFieldSelect() {
-    customFieldsByType.forEach((key, value) -> {
-      boolean isSelectedCustomField = selectedCustomFieldNames.contains(key.getCustomFieldMeta().name());
-      if (isSelectedCustomField && ObjectUtils.isEmpty(selectedCustomFilters.get(key))) {
+    customFieldsByType.forEach(customField -> {
+      boolean isSelectedCustomField = selectedCustomFieldNames.contains(customField.getCustomFieldMeta().name());
+      if (isSelectedCustomField && !selectedCustomFilters.contains(customField)) {
         // Initialize the number range for custom field type NUMBER
-        if (CustomFieldType.NUMBER == key.getCustomFieldMeta().type()) {
-          double minValue = getMinValue(key.getCustomFieldMeta().name());
-          double maxValue = getMaxValue(key.getCustomFieldMeta().name());
-          selectedCustomFilters.put(key, Arrays.asList(minValue, maxValue));
-        } else {
-          selectedCustomFilters.put(key, new ArrayList<>());
+        if (CustomFieldType.NUMBER == customField.getCustomFieldMeta().type()) {
+          minValue = getMinValue(customField.getCustomFieldMeta().name());
+          maxValue = getMaxValue(customField.getCustomFieldMeta().name());
+          customField.setCustomFieldValues(Arrays.asList(minValue, maxValue));
+
         }
+        selectedCustomFilters.add(customField);
       } else if (!isSelectedCustomField) {
-        selectedCustomFilters.remove(key);
+        customField.setCustomFieldValues(new ArrayList<>());
+        selectedCustomFilters.removeIf(selectedFilter -> selectedFilter.getCustomFieldMeta().name()
+            .equals(customField.getCustomFieldMeta().name()));
       }
     });
     setFilterDropdownVisible(!selectedCustomFieldNames.isEmpty());
@@ -165,16 +168,9 @@ public class ProcessesAnalyticsBean {
   }
 
   private DoubleStream getNumberTypeValue(String fieldName) {
-    return customFieldsByType.entrySet().stream()
-        .filter(entry -> entry.getKey().getCustomFieldMeta().name().equals(fieldName))
-        .flatMap(entry -> entry.getValue().stream()).filter(obj -> obj instanceof Number)
-        .mapToDouble(obj -> ((Number) obj).doubleValue());
-  }
-
-  public void onNumberSliderChange(CustomFieldFilter customField, double minValue, double maxValue) {
-    if (CustomFieldType.NUMBER == customField.getCustomFieldMeta().type()) {
-      selectedCustomFilters.put(customField, Arrays.asList(minValue, maxValue));
-    }
+    return customFieldsByType.stream().filter(entry -> entry.getCustomFieldMeta().name().equals(fieldName))
+        .flatMap(entry -> entry.getAvailableCustomFieldValues().stream()).filter(value -> value instanceof Number)
+        .mapToDouble(value -> ((Number) value).doubleValue());
   }
 
   public String getRangeDisplayForNumberType(List<Double> numberValue) {
@@ -298,19 +294,19 @@ public class ProcessesAnalyticsBean {
     return bpmnIframeSourceUrl;
   }
 
-  public Map<CustomFieldFilter, List<Object>> getCustomFieldsByType() {
+  public List<CustomFieldFilter> getCustomFieldsByType() {
     return customFieldsByType;
   }
 
-  public void setCustomFieldsByType(Map<CustomFieldFilter, List<Object>> customFieldsByType) {
+  public void setCustomFieldsByType(List<CustomFieldFilter> customFieldsByType) {
     this.customFieldsByType = customFieldsByType;
   }
 
-  public Map<CustomFieldFilter, List<Object>> getSelectedCustomFilters() {
+  public List<CustomFieldFilter> getSelectedCustomFilters() {
     return selectedCustomFilters;
   }
 
-  public void setSelectedCustomFilters(Map<CustomFieldFilter, List<Object>> selectedCustomFilters) {
+  public void setSelectedCustomFilters(List<CustomFieldFilter> selectedCustomFilters) {
     this.selectedCustomFilters = selectedCustomFilters;
   }
 
@@ -340,5 +336,21 @@ public class ProcessesAnalyticsBean {
 
   public void setTimeIntervalFilter(TimeIntervalFilter timeIntervalFilter) {
     this.timeIntervalFilter = timeIntervalFilter;
+  }
+
+  public double getMinValue() {
+    return minValue;
+  }
+
+  public void setMinValue(double minValue) {
+    this.minValue = minValue;
+  }
+
+  public double getMaxValue() {
+    return maxValue;
+  }
+
+  public void setMaxValue(double maxValue) {
+    this.maxValue = maxValue;
   }
 }
