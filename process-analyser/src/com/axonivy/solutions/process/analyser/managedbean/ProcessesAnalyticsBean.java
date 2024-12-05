@@ -19,7 +19,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PF;
-import org.primefaces.PrimeFaces;
 
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.ProcessMiningData;
@@ -103,20 +102,11 @@ public class ProcessesAnalyticsBean {
 
   public void onModuleSelect() {
     selectedProcess = null;
-    PrimeFaces.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_DROPDOWN);
+    PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_DROPDOWN);
     if (StringUtils.isNotBlank(bpmnIframeSourceUrl)) {
       resetStatisticValue();
       resetCustomFieldFilterValues();
     }
-  }
-
-  private List<String> getDiagramAndStatisticComponentIds() {
-    List<String> results = new ArrayList<>();
-    results.add(ProcessAnalyticViewComponentId.ARROW_STATISTIC);
-    results.add(ProcessAnalyticViewComponentId.HIDDEN_IMAGE);
-    results.add(ProcessAnalyticViewComponentId.PROCESS_ANALYTIC_VIEWER_PANEL);
-    results.add(ProcessAnalyticViewComponentId.SHOW_STATISTIC_BTN);
-    return results;
   }
 
   public void onProcessSelect() {
@@ -136,7 +126,7 @@ public class ProcessesAnalyticsBean {
     processMiningData = null;
     nodes = new ArrayList<>();
     bpmnIframeSourceUrl = StringUtils.EMPTY;
-    PrimeFaces.current().ajax().update(getDiagramAndStatisticComponentIds());
+    PF.current().ajax().update(ProcessAnalyticViewComponentId.getDiagramAndStatisticComponentIds());
   }
 
   private void resetCustomFieldFilterValues() {
@@ -228,8 +218,8 @@ public class ProcessesAnalyticsBean {
       loadNodes();
       updateProcessMiningDataJson();
       updateBpmnIframeSourceUrl();
-      PF.current().executeScript("updateUrlForIframe()");
-      PrimeFaces.current().ajax().update(getDiagramAndStatisticComponentIds());
+      PF.current().executeScript(ProcessAnalyticsConstants.UPDATE_IFRAME_SOURCE_METHOD_CALL);
+      PF.current().ajax().update(ProcessAnalyticViewComponentId.getDiagramAndStatisticComponentIds());
     }
   }
 

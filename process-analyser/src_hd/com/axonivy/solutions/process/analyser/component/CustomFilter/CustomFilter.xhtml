@@ -18,15 +18,15 @@
         <p:selectCheckboxMenu id="custom-field-name" multiple="true"
           emptyLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/None')}"
           updateLabel="true" scrollHeight="250" styleClass="w-full" value="#{managedBean.selectedCustomFieldNames}">
-          <!-- Update 2 group of custom fields only, data keep the same-->
+          <!-- Update 2 groups of custom fields only, keep data the same-->
           <p:ajax event="change"
             listener="#{managedBean.onCustomFieldSelect}"
             partialSubmit="true" process="@this" />
-          <!-- Update 2 group of custom fields only, data keep the same -->
+          <!-- Update 2 groups of custom fields only, keep data the same -->
           <p:ajax event="toggleSelect"
             listener="#{managedBean.onCustomFieldSelect}"
             process="@this" />
-          <!-- Update data & 2 group of custom fields -->
+          <!-- Update data & 2 groups of custom fields -->
           <p:ajax event="itemUnselect"
             listener="#{managedBean.updateDiagramAndStatistic}"
             partialSubmit="true" process="@this" />
