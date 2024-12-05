@@ -1,0 +1,13 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/data-class/12.0.0/data-class.json",
+  "simpleName" : "FlightPlanningDemoData",
+  "namespace" : "com.axonivy.solutions.process.analyser.demo.data",
+  "isBusinessCaseData" : false,
+  "fields" : [ {
+    "name" : "isManagerApprove",
+    "type" : "Boolean"
+  }, {
+    "name" : "isEngineeringApproveAircraft",
+    "type" : "Boolean"
+  } ]
+}

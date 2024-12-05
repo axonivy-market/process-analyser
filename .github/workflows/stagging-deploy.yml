@@ -1,4 +1,4 @@
-name: Dev-Deploy-Build
+name: Stagging-Deploy-Build
 
 on:
   push:
@@ -7,11 +7,11 @@ on:
 
 jobs:
   build:
-    uses: axonivy-market/github-workflows/.github/workflows/dev.yml@v4
+    uses: axonivy-market/github-workflows/.github/workflows/ci.yml@v5
     with:
-      ivyVersion: 11
-      ivyPluginVersion: 11.3.0
-      testerVersion: 11.3.0
+      mvnArgs: '"-Divy.engine.download.url=https://dev.axonivy.com/permalink/12/axonivy-engine.zip" "-Divy.engine.version=12.0.0" "-Dproject.build.plugin.version=12.0.0" "-Dtester.version=12.0.1"'
+      javaVersion: 21
+      mvnVersion: 3.9.8
 
   deploy:
     needs: build
@@ -30,11 +30,11 @@ jobs:
         run: |
           version=$(xml sel -t -m "//_:project" -v _:version pom.xml)
           artifactDir=artifact/process-analyser
-          engineDeployDir=/var/tools/ivy/11/deploy/PROCESS-ANALYSER
+          engineDeployDir=/var/tools/ivy/12/deploy/PROCESS-ANALYSER
           install -m 666 ${artifactDir}/target/process-analyser-${version}.iar $engineDeployDir/process-analyser-${version}.iar
           install -m 666 ${artifactDir}-demo/target/process-analyser-demo-${version}.iar $engineDeployDir/process-analyser-demo-${version}.iar
 
       - name: Restart engine
         run: |
-          cd /etc/docker-compose/engine/11
+          cd /etc/docker-compose/engine/12
           docker compose restart

@@ -1,7 +1,0 @@
-FlightBookingDemoData #class
-com.axonivy.solutions.process.analyser.demo.data #namespace
-isBackToSearchPage Boolean #field
-isBackToSubmitInformationPage Boolean #field
-isPaid Boolean #field
-isChargeLater Boolean #field
-isChargeLater PERSISTENT #fieldModifier
