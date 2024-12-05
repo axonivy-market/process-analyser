@@ -25,6 +25,7 @@ import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.ProcessMiningData;
 import com.axonivy.solutions.process.analyser.bo.TimeFrame;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
+import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
 import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.internal.ProcessUtils;
@@ -100,7 +101,7 @@ public class ProcessesAnalyticsBean {
 
   public void onModuleSelect() {
     selectedProcess = null;
-    PrimeFaces.current().ajax().update("process-analytics-form:processDropdown");
+    PrimeFaces.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_DROPDOWN);
     if (StringUtils.isNotBlank(bpmnIframeSourceUrl)) {
       resetStatisticValue();
       resetCustomFieldFilterValues();
@@ -109,10 +110,10 @@ public class ProcessesAnalyticsBean {
 
   private List<String> getDiagramAndStatisticComponentIds() {
     List<String> results = new ArrayList<>();
-    results.add("process-analytics-form:arrow-statistics");
-    results.add("process-analytics-form:hidden-image");
-    results.add("process-analytics-form:process-analytic-viewer-panel");
-    results.add("process-analytics-form:show-statistic-btn");
+    results.add(ProcessAnalyticViewComponentId.ARROW_STATISTIC);
+    results.add(ProcessAnalyticViewComponentId.HIDDEN_IMAGE);
+    results.add(ProcessAnalyticViewComponentId.PROCESS_ANALYTIC_VIEWER_PANEL);
+    results.add(ProcessAnalyticViewComponentId.SHOW_STATISTIC_BTN);
     return results;
   }
 
@@ -170,8 +171,8 @@ public class ProcessesAnalyticsBean {
   }
 
   private void updateCustomFilterPanel() {
-    List<String> groupIdsToUpdate = List.of("process-analytics-form:custom-filter-panel:custom-filter-group",
-        "process-analytics-form:custom-filter-panel:filter-options-group");
+    List<String> groupIdsToUpdate = List.of(ProcessAnalyticViewComponentId.CUSTOM_FILTER_GROUP,
+        ProcessAnalyticViewComponentId.CUSTOM_FILTER_OPTIONS_GROUP);
     PF.current().ajax().update(groupIdsToUpdate);
   }
 
