@@ -70,7 +70,7 @@
               maxdate="#{managedBean.timeIntervalFilter.to}" styleClass="col-12 m-0 p-0 grid formgrid"
               value="#{customField.customFieldValues}" readonlyInput="true" required="true" pattern="dd/MM/yyyy"
               requiredMessage="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/DateErrorMessage')}">
-              <p:ajax event="dateSelect" process="@this" partialSubmit="true" />
+              <p:ajax event="dateSelect" process="@this" partialSubmit="true" listener="#{managedBean.onDateSelect(customField)}" />
             </p:datePicker>
             <p:message styleClass="col-12 m-0 p-2 grid formgrid" for="date-range" />
           </h:panelGroup>

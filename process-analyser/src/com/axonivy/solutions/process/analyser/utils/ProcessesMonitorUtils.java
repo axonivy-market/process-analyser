@@ -207,11 +207,13 @@ public class ProcessesMonitorUtils {
 
       for (CustomFieldFilter customFieldFilter : customFilters) {
         List<Object> customFieldValues = isStringCustomFieldType(customFieldFilter)
-            ? flattenStringCustomFieldValues(Arrays.asList(customFieldFilter.getCustomFieldValues()))
+            ? customFieldFilter.getCustomFieldValues()
             : Arrays.asList(customFieldFilter.getCustomFieldValues());
-
+Ivy.log().warn("customFieldFilter " + customFieldFilter.getCustomFieldValues());
+Ivy.log().warn("customFieldValues " + customFieldValues.toString());
         CaseQuery customFieldQuery = CaseQuery.create();
-        for (Object customFieldValue : customFieldFilter.getCustomFieldValues()) {
+        for (Object customFieldValue : customFieldValues) {
+          Ivy.log().warn("customFieldValue " + customFieldValue);
           addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldValue);
         }
         allCustomFieldsQuery.where().or(customFieldQuery);
