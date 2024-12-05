@@ -36,10 +36,10 @@
           columnClasses="ui-g-4, ui-g-4, ui-g-4">
           <h:panelGroup styleClass="ui-g">
             <p:outputLabel for="moduleDropdown"
-              value="Please select a module" />
+              value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectModule')}" />
             <p:selectOneMenu id="moduleDropdown"
               value="#{processesAnalyticsBean.selectedModule}">
-              <f:selectItem itemLabel="Select Module" itemValue="#{null}"
+              <f:selectItem itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectModule')}" itemValue="#{null}"
                 noSelectionOption="true" />
               <f:selectItems
                 value="#{processesAnalyticsBean.availableModules}"
@@ -51,10 +51,10 @@
 
           <h:panelGroup styleClass="ui-g">
             <p:outputLabel for="processDropdown"
-              value="Please select a process" />
+              value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectModule')}" />
             <p:selectOneMenu id="processDropdown"
               value="#{processesAnalyticsBean.selectedProcess}">
-              <f:selectItem itemLabel="Select Process"
+              <f:selectItem itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectProcess')}"
                 itemValue="#{null}" noSelectionOption="true" />
               <f:selectItems
                 value="#{processesAnalyticsBean.availableProcesses}" />
@@ -64,10 +64,10 @@
           </h:panelGroup>
 
           <h:panelGroup styleClass="ui-g">
-            <p:outputLabel for="kpiDropdown" value="Please select a KPI" />
+            <p:outputLabel for="kpiDropdown" value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectKPI')}" />
             <p:selectOneMenu id="kpiDropdown"
               value="#{processesAnalyticsBean.selectedKpiType}">
-              <f:selectItem itemLabel="Select KPI" itemValue="#{null}"
+              <f:selectItem itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectKPI')}" itemValue="#{null}"
                 noSelectionOption="true" />
               <f:selectItems value="#{processesAnalyticsBean.kpiTypes}"
                 var="kpi" itemLabel="#{kpi.getCmsName()}"
@@ -91,7 +91,7 @@
         <hr />
 
         <ic:com.axonivy.solutions.process.analyser.component.CustomFilter
-          id="custom-filter-panel"
+          id="custom-filter-panel-group"
           managedBean="#{processesAnalyticsBean}" />
         <h:panelGroup id="process-analytic-viewer-panel" layout="block">
           <iframe id="process-analytic-viewer"

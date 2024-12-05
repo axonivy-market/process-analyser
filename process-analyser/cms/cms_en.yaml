@@ -29,7 +29,7 @@ Dialogs:
               None: None
               NumberRange: '{0} - {1}'
               PageHeader: Process Monitor Page
-              PleaseSelectAnalysisType: Please select an analysis type
+              PleaseSelectKPI: Please select a KPI
               PleaseSelectModule: Please select a module
               PleaseSelectProcess: Please select a process
               Process: Process
@@ -37,6 +37,9 @@ Dialogs:
               ProcessViewer: Process Viewer
               RelativeValue: Relative Value
               RequireMessage: Please select a process
+              SelectKPI: Select KPI
+              SelectModule: Select Module
+              SelectProcess: Select Process
               ShowStatistic: Show Statistic
               TimeInterval: Please select a time interval
               Title: Process Analyser
