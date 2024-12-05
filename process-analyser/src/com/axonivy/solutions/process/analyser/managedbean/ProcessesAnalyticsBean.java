@@ -134,7 +134,8 @@ public class ProcessesAnalyticsBean {
   }
 
   private void resetCustomFieldFilterValues() {
-    selectedCustomFieldNames = new ArrayList<>();
+    selectedCustomFieldNames.clear();
+    selectedCustomFilters.clear();
     customFieldsByType.clear();
     setFilterDropdownVisible(false);
     updateCustomFilterPanel();
