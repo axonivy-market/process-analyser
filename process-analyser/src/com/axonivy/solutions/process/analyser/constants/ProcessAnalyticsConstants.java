@@ -19,4 +19,5 @@ public class ProcessAnalyticsConstants {
   public static final String MODULE_PATH = "%s/%s/";
   public static final String ANALYSIS_EXCEL_FILE_PATTERN = "Analysis_Of_%s";
   public static final String LIKE_TEXT_SEARCH = "%%%s%%";
+  public static final String UPDATE_IFRAME_SOURCE_METHOD_CALL = "updateUrlForIframe()";
 }
