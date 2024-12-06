@@ -67,7 +67,12 @@
               scrollHeight="250" value="#{customField.customFieldValues}">
               <f:selectItems value="#{customField.availableCustomFieldValues}" var="optionValue"
                 itemValue="#{optionValue}" itemLabel="#{optionValue}" />
-              <p:ajax event="change" listener="#{managedBean.updateDiagramAndStatistic}" process="@this" partialSubmit="true" />
+              <p:ajax event="change"
+                listener="#{managedBean.updateDiagramAndStatistic}" process="@this" partialSubmit="true" />
+              <p:ajax event="toggleSelect"
+                listener="#{managedBean.updateDiagramAndStatistic}" process="@this" partialSubmit="true" />
+              <p:ajax event="itemUnselect"
+                listener="#{managedBean.updateDiagramAndStatistic}" process="@this" partialSubmit="true" />
             </p:selectCheckboxMenu>
             <p:message styleClass="col-12 m-0 p-2 grid formgrid" for="text-dropdown" />
           </h:panelGroup>
@@ -87,12 +92,5 @@
       </ui:repeat>
     </h:panelGroup>
   </h:panelGroup>
-  <script>
-    if ($('[id$="custom-field-name_panel"]').find('li').length == 0) {
-      $('[id$="custom-field-name_panel"]').html('<div class="empty-checkbox text-center p-2">#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/NoCustomFieldsAvailable')}</div>');
-    } else {
-      $('[id$="custom-field-name_panel"]').find('.empty-checkbox').remove();
-    }
-  </script>
 </cc:implementation>
 </html>

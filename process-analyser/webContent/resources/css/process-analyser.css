@@ -31,7 +31,7 @@ body.dark button.action-button.ui-state-focus {
 }
 
 body button.show-statistic-btn {
-	width: 116px !important;
-	float: right;
-	border-radius: 5px;
+  width: 116px !important;
+  float: right;
+  border-radius: 5px;
 }

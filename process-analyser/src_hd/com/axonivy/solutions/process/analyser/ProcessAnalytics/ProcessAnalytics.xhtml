@@ -17,13 +17,14 @@
           name="#{processesAnalyticsBean.miningUrl}" />
         <p:panelGrid columns="2" layout="grid" styleClass="ui-fluid"
           columnClasses="ui-g-6 pl-0, ui-g-6 pr-0 mr-0">
-          <div style="display: flex; align-items: center; height: 100%;">
-            <h3 style="margin-bottom: 0px;">Process Analytics</h3>
-          </div>
+          <h:panelGroup layout="block"  styleClass="flex align-items-center	h-full">
+            <h3 style="margin-bottom: 0px;">#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/Title')}</h3>
+          </h:panelGroup>
 
           <p:commandButton id="show-statistic-btn"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/ShowStatistic')}"
             styleClass="show-statistic-btn"
+            update="process-analytics-form"
             actionListener="#{processesAnalyticsBean.updateDiagramAndStatistic}"
             disabled="#{processesAnalyticsBean.showStatisticBtnDisabled}" />
         </p:panelGrid>
@@ -156,8 +157,18 @@
           </p:commandButton>
         </h:panelGroup>
       </h:form>
+      <script>
+        function addCustomTextForEmptyDropdown() {
+          if ($('[id$="custom-field-name_panel"]').find('li').length == 0) {
+            $('[id$="custom-field-name_panel"]').html('<div class="empty-checkbox text-center p-2">#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/NoCustomFieldsAvailable')}</div>');
+          } else {
+            $('[id$="custom-field-name_panel"]').find('.empty-checkbox').remove();
+          }
+        };
+        addCustomTextForEmptyDropdown;
+        setInterval(addCustomTextForEmptyDropdown, 500);
+      </script>
     </ui:define>
   </ui:composition>
 </h:body>
-
 </html>
