@@ -18,12 +18,18 @@
         <p:selectCheckboxMenu id="custom-field-name" multiple="true"
           emptyLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/None')}"
           updateLabel="true" scrollHeight="250" styleClass="w-full" value="#{managedBean.selectedCustomFieldNames}">
-          <p:ajax event="change" listener="#{managedBean.onCustomFieldSelect}" partialSubmit="true" process="@this"
-            update="custom-filter-group filter-options-group" />
-          <p:ajax event="toggleSelect" listener="#{managedBean.onCustomFieldSelect}" process="@this"
-            update="custom-filter-group filter-options-group" />
-          <p:ajax event="itemUnselect" update="custom-filter-group filter-options-group" process="@this"
-            partialSubmit="true" />
+          <!-- Update 2 groups of custom fields only, keep data the same-->
+          <p:ajax event="change"
+            listener="#{managedBean.onCustomFieldSelect}"
+            partialSubmit="true" process="@this" />
+          <!-- Update 2 groups of custom fields only, keep data the same -->
+          <p:ajax event="toggleSelect"
+            listener="#{managedBean.onCustomFieldSelect}"
+            process="@this" />
+          <!-- Update data & 2 groups of custom fields -->
+          <p:ajax event="itemUnselect"
+            listener="#{managedBean.updateDiagramAndStatistic}"
+            partialSubmit="true" process="@this" />
           <f:selectItems value="#{managedBean.customFieldsByType}" var="customFieldFilter"
             itemValue="#{customFieldFilter.customFieldMeta.name()}"
             itemLabel="#{customFieldFilter.customFieldMeta.name()}" />
@@ -45,6 +51,9 @@
 
             <p:slider for="min-value, max-value" range="true" display="number-range" displayTemplate="{min} - {max}"
               step="0.01" styleClass="m-2 mb-4" minValue="#{managedBean.minValue}" maxValue="#{managedBean.maxValue}">
+              <p:ajax event="slideEnd"
+                listener="#{managedBean.updateDiagramAndStatistic}"
+                process="@this min-value max-value" partialSubmit="true" />
             </p:slider>
             <h:inputHidden id="min-value" value="#{customField.customFieldValues[0]}" />
             <h:inputHidden id="max-value" value="#{customField.customFieldValues[1]}" />
@@ -58,7 +67,12 @@
               scrollHeight="250" value="#{customField.customFieldValues}">
               <f:selectItems value="#{customField.availableCustomFieldValues}" var="optionValue"
                 itemValue="#{optionValue}" itemLabel="#{optionValue}" />
-              <p:ajax event="change" process="@this" partialSubmit="true" />
+              <p:ajax event="change"
+                listener="#{managedBean.updateDiagramAndStatistic}" process="@this" partialSubmit="true" />
+              <p:ajax event="toggleSelect"
+                listener="#{managedBean.updateDiagramAndStatistic}" process="@this" partialSubmit="true" />
+              <p:ajax event="itemUnselect"
+                listener="#{managedBean.updateDiagramAndStatistic}" process="@this" partialSubmit="true" />
             </p:selectCheckboxMenu>
             <p:message styleClass="col-12 m-0 p-2 grid formgrid" for="text-dropdown" />
           </h:panelGroup>
@@ -70,7 +84,7 @@
               value="#{customField.timestampCustomFieldValues}" readonlyInput="true" required="true"
               pattern="dd/MM/yyyy"
               requiredMessage="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/DateErrorMessage')}">
-              <p:ajax event="dateSelect" process="@this" partialSubmit="true" />
+              <p:ajax event="dateSelect" process="@this" partialSubmit="true" listener="#{managedBean.updateDiagramAndStatistic}"/>
             </p:datePicker>
             <p:message styleClass="col-12 m-0 p-2 grid formgrid" for="date-range" />
           </h:panelGroup>
@@ -78,12 +92,5 @@
       </ui:repeat>
     </h:panelGroup>
   </h:panelGroup>
-  <script>
-    if ($('[id$="custom-field-name_panel"]').find('li').length == 0) {
-      $('[id$="custom-field-name_panel"]').html('<div class="empty-checkbox text-center p-2">#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/NoCustomFieldsAvailable')}</div>');
-    } else {
-      $('[id$="custom-field-name_panel"]').find('.empty-checkbox').remove();
-    }
-  </script>
 </cc:implementation>
 </html>

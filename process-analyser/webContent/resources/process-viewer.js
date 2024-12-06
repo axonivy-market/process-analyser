@@ -146,13 +146,3 @@ function getJumpOutBtn() {
     .contents()
     .find(buildClassRef(JUMP_OUT_BTN_CLASS))[0];
 }
-
-function displayEmptyOptionsMessage() {
-  const checkboxMenuPanel = document.querySelector('.ui-selectcheckboxmenu-panel');
-  if (checkboxMenuPanel) {
-    const items = checkboxMenuPanel.querySelectorAll('.ui-selectcheckboxmenu-item');
-    if (items.length === 0) {
-      checkboxMenuPanel.innerHTML = '<div class="text-center p-2">No custom fields available</div>';
-    }
-  }
-}

@@ -29,3 +29,13 @@ body.dark button.action-button.ui-state-hover {
 body.dark button.action-button.ui-state-focus {
   box-shadow: 0 0 0 1px #757575;
 }
+
+body button.show-statistic-btn {
+  width: 116px !important;
+  float: right;
+  border-radius: 5px;
+}
+
+h3 {
+  margin: 0px;
+}

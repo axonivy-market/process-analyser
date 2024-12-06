@@ -17,16 +17,15 @@
           name="#{processesAnalyticsBean.miningUrl}" />
         <p:panelGrid columns="2" layout="grid" styleClass="ui-fluid"
           columnClasses="ui-g-6 pl-0, ui-g-6 pr-0 mr-0">
-          <div style="display: flex; align-items: center; height: 100%;">
-            <h3 style="margin-bottom: 0px;">Process Analytics</h3>
-          </div>
+          <h:panelGroup layout="block"  styleClass="flex align-items-center	h-full">
+            <h3>#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/Title')}</h3>
+          </h:panelGroup>
 
           <p:commandButton id="show-statistic-btn"
-            value="Show Statistic" styleClass="showStatisticBtn"
-            style="width:116px; float: right; border-radius: 5px;"
+            value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/ShowStatistic')}"
+            styleClass="show-statistic-btn"
             update="process-analytics-form"
-            actionListener="#{processesAnalyticsBean.onShowStatisticBtnClick}"
-            oncomplete="updateUrlForIframe()"
+            actionListener="#{processesAnalyticsBean.updateDiagramAndStatistic}"
             disabled="#{processesAnalyticsBean.showStatisticBtnDisabled}" />
         </p:panelGrid>
         <p:outputPanel>
@@ -38,43 +37,43 @@
           columnClasses="ui-g-4, ui-g-4, ui-g-4">
           <h:panelGroup styleClass="ui-g">
             <p:outputLabel for="moduleDropdown"
-              value="Please select a module" />
+              value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectModule')}" />
             <p:selectOneMenu id="moduleDropdown"
               value="#{processesAnalyticsBean.selectedModule}">
-              <f:selectItem itemLabel="Select Module" itemValue=""
+              <f:selectItem itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectModule')}" itemValue="#{null}"
                 noSelectionOption="true" />
               <f:selectItems
                 value="#{processesAnalyticsBean.availableModules}"
                 var="module" itemLabel="#{module}" itemValue="#{module}" />
-              <p:ajax event="change" update="process-analytics-form"
+              <p:ajax event="change" 
                 listener="#{processesAnalyticsBean.onModuleSelect}" />
             </p:selectOneMenu>
           </h:panelGroup>
 
           <h:panelGroup styleClass="ui-g">
             <p:outputLabel for="processDropdown"
-              value="Please select a process" />
+              value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectModule')}" />
             <p:selectOneMenu id="processDropdown"
               value="#{processesAnalyticsBean.selectedProcess}">
-              <f:selectItem itemLabel="Select Process"
+              <f:selectItem itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectProcess')}"
                 itemValue="#{null}" noSelectionOption="true" />
               <f:selectItems
                 value="#{processesAnalyticsBean.availableProcesses}" />
-              <p:ajax event="change" update="process-analytics-form"
+              <p:ajax event="change"
                 listener="#{processesAnalyticsBean.onProcessSelect}" />
             </p:selectOneMenu>
           </h:panelGroup>
 
           <h:panelGroup styleClass="ui-g">
-            <p:outputLabel for="kpiDropdown" value="Please select a KPI" />
+            <p:outputLabel for="kpiDropdown" value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectKPI')}" />
             <p:selectOneMenu id="kpiDropdown"
               value="#{processesAnalyticsBean.selectedKpiType}">
-              <f:selectItem itemLabel="Select KPI" itemValue=""
+              <f:selectItem itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectKPI')}" itemValue="#{null}"
                 noSelectionOption="true" />
               <f:selectItems value="#{processesAnalyticsBean.kpiTypes}"
                 var="kpi" itemLabel="#{kpi.getCmsName()}"
                 itemValue="#{kpi}" />
-              <p:ajax event="itemSelect" update="process-analytics-form"
+              <p:ajax event="itemSelect"
                 listener="#{processesAnalyticsBean.onKpiTypeSelect}" />
             </p:selectOneMenu>
           </h:panelGroup>
@@ -87,17 +86,19 @@
           <p:remoteCommand id="filter-data-by-interval-rc"
             name="filterDataByIntervalRC"
             actionListener="#{processesAnalyticsBean.updateDataOnChangingFilter()}"
-            process="@this" partialSubmit="true"
-            update="arrow-statistics @form" />
+            process="@this" partialSubmit="true"/>
         </h:panelGroup>
 
         <hr />
 
-        <ic:com.axonivy.solutions.process.analyser.component.CustomFilter managedBean="#{processesAnalyticsBean}" />
-
-        <iframe id="process-analytic-viewer"
-          src="#{processesAnalyticsBean.bpmnIframeSourceUrl}"
-          width="100% " height="400" />
+        <ic:com.axonivy.solutions.process.analyser.component.CustomFilter
+          id="custom-filter-panel-group"
+          managedBean="#{processesAnalyticsBean}" />
+        <h:panelGroup id="process-analytic-viewer-panel" layout="block">
+          <iframe id="process-analytic-viewer"
+            src="#{processesAnalyticsBean.bpmnIframeSourceUrl}"
+            width="100%" height="400" />
+        </h:panelGroup>
         <br />
         <h:panelGroup id="arrow-statistics" layout="block">
           <p:dataTable var="node" styleClass="grid" id="node"
@@ -142,19 +143,32 @@
           <br />
         </h:panelGroup>
         <h:panelGroup
-          styleClass="col-12 p-0 inline-flex justify-content-end" rendered="#{processesAnalyticsBean.nodes.size() > 0}"
+          id="action-btn-group"
+          styleClass="col-12 p-0 inline-flex justify-content-end"
           layout="block">
           <p:commandButton icon="pi pi-upload" styleClass="action-button mr-3"
+          	rendered="#{processesAnalyticsBean.nodes.size() > 0}"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/ExportJPEG')}"
             onclick="getDiagramData(); return false;" />
           <p:commandButton icon="pi pi-upload" styleClass="action-button"
+          	rendered="#{processesAnalyticsBean.nodes.size() > 0}"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/ExportExcel')}">
             <p:dataExporter type="csv" target="node" fileName="#{processesAnalyticsBean.generateNameOfExcelFile()}" />
           </p:commandButton>
         </h:panelGroup>
       </h:form>
+      <script>
+        function addCustomTextForEmptyDropdown() {
+          if ($('[id$="custom-field-name_panel"]').find('li').length == 0) {
+            $('[id$="custom-field-name_panel"]').html('<div class="empty-checkbox text-center p-2">#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/NoCustomFieldsAvailable')}</div>');
+          } else {
+            $('[id$="custom-field-name_panel"]').find('.empty-checkbox').remove();
+          }
+        };
+        addCustomTextForEmptyDropdown;
+        setInterval(addCustomTextForEmptyDropdown, 500);
+      </script>
     </ui:define>
   </ui:composition>
 </h:body>
-
 </html>
