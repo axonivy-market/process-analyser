@@ -110,10 +110,10 @@ public class ProcessesAnalyticsBean {
 
   public void onProcessSelect() {
     resetStatisticValue();
-    if(StringUtils.isNotBlank(selectedProcess)) {      
+    if (StringUtils.isNotBlank(selectedProcess)) {
       updateDiagramAndStatistic();
+      getCaseAndTaskCustomFields();
     }
-    getCaseAndTaskCustomFields();
   }
 
   public void onKpiTypeSelect() {
