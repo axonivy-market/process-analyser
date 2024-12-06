@@ -105,12 +105,10 @@ public class ProcessesAnalyticsBean {
     PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_DROPDOWN);
     if (StringUtils.isNotBlank(bpmnIframeSourceUrl)) {
       resetStatisticValue();
-      resetCustomFieldFilterValues();
     }
   }
 
   public void onProcessSelect() {
-    resetCustomFieldFilterValues();
     resetStatisticValue();
     if(StringUtils.isNotBlank(selectedProcess)) {      
       updateDiagramAndStatistic();
@@ -123,6 +121,7 @@ public class ProcessesAnalyticsBean {
   }
 
   private void resetStatisticValue() {
+    resetCustomFieldFilterValues();
     processMiningData = null;
     nodes = new ArrayList<>();
     bpmnIframeSourceUrl = StringUtils.EMPTY;
@@ -208,7 +207,6 @@ public class ProcessesAnalyticsBean {
     timeIntervalFilter.setFrom(DateUtils.parseDateFromString(from));
     timeIntervalFilter.setTo(DateUtils.parseDateFromString(to));
     resetStatisticValue();
-    resetCustomFieldFilterValues();
     getCaseAndTaskCustomFields();
     updateDiagramAndStatistic();
   }
