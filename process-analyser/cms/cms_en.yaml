@@ -13,7 +13,7 @@ Dialogs:
               ExportExcel: Export Excel
               ExportJPEG: Export JPEG
               From: From
-              LargeTimeInterval: The system could run into performance issues, if you set up a very large time interval.
+              LargeTimeInterval: Setting a very large time interval may cause performance issues.
               Title: Process Analytics
               To: To
             ProcessesMonitor:
@@ -24,7 +24,7 @@ Dialogs:
               DownloadJSONFile: Download JSON file
               ElementId: Element Id
               Frequency: Frequency
-              FromToDateValidationMessage: The FromDate must be before the ToDate
+              FromToDateValidationMessage: From date must be before To date.
               Label: Label
               LabelValue: Label Value
               MedianDuration: Median Duration
