@@ -9,9 +9,13 @@ Dialogs:
         process:
           analyser:
             ProcessAnalytics:
+              DateRanges: Date ranges
               ExportExcel: Export Excel
               ExportJPEG: Export JPEG
+              From: From
+              LargeTimeInterval: The system could run into performance issues, if you set up a very large time interval.
               Title: Process Analytics
+              To: To
             ProcessesMonitor:
               AnalysisType: Analysis Type
               AnalysisTypeRequiredMessage: Please select an analysis type
