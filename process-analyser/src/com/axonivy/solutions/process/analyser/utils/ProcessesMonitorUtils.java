@@ -207,9 +207,7 @@ public class ProcessesMonitorUtils {
 
       for (CustomFieldFilter customFieldFilter : validCustomFilters) {
         CaseQuery customFieldQuery = CaseQuery.create();
-        handleQueryForEachFieldType(customFieldFilter, customFieldQuery);
-
-        allCustomFieldsQuery.where().or(customFieldQuery);
+        handleQueryForEachFieldType(customFieldFilter, customFieldQuery, allCustomFieldsQuery);
       }
       query.where().andOverall(allCustomFieldsQuery);
     }
@@ -221,24 +219,46 @@ public class ProcessesMonitorUtils {
         || ObjectUtils.isNotEmpty(filter.getTimestampCustomFieldValues())).collect(Collectors.toList());
   }
 
-  private static void handleQueryForEachFieldType(CustomFieldFilter customFieldFilter, CaseQuery customFieldQuery) {
+  private static void handleQueryForEachFieldType(CustomFieldFilter customFieldFilter, CaseQuery customFieldQuery,
+      CaseQuery allCustomFieldsQuery) {
     CustomFieldType customFieldType = customFieldFilter.getCustomFieldMeta().type();
 
     switch (customFieldType) {
       case TIMESTAMP:
-        addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldFilter.getTimestampCustomFieldValues());
+        addCustomFieldSubQueryForTimestamp(customFieldQuery, customFieldFilter, customFieldFilter.getTimestampCustomFieldValues());
+        allCustomFieldsQuery.where().and(customFieldQuery);
         break;
       case NUMBER:
         addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldFilter.getCustomFieldValues());
+        allCustomFieldsQuery.where().and(customFieldQuery);
         break;
       case STRING:
       case TEXT:
         for (Object customFieldValue : customFieldFilter.getCustomFieldValues()) {
           addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldValue);
         }
+        allCustomFieldsQuery.where().or(customFieldQuery);
         break;
       default:
         break;
+    }
+  }
+
+  private static void addCustomFieldSubQueryForTimestamp(CaseQuery customFieldQuery,
+      CustomFieldFilter customFieldFilter, List<LocalDate> timestampCustomFieldValues) {
+    boolean isCustomFieldFromCase = customFieldFilter.isCustomFieldFromCase();
+    String customFieldName = customFieldFilter.getCustomFieldMeta().name();
+
+    Date startDate = DateUtils.getDateFromLocalDate(timestampCustomFieldValues.get(0), null);
+    Date endDate = DateUtils.getDateFromLocalDate(timestampCustomFieldValues.get(1), LocalTime.MAX);
+
+    if (isCustomFieldFromCase) {
+      customFieldQuery.where().or().customField().timestampField(customFieldName).isGreaterOrEqualThan(startDate).and()
+          .customField().timestampField(customFieldName).isLowerOrEqualThan(endDate);
+    } else {
+      customFieldQuery.where().or().tasks(
+          TaskQuery.create().where().customField().timestampField(customFieldName).isGreaterOrEqualThan(startDate).and()
+              .customField().timestampField(customFieldName).isLowerOrEqualThan(endDate));
     }
   }
 
@@ -292,21 +312,6 @@ public class ProcessesMonitorUtils {
               .tasks(TaskQuery.create().where().customField().numberField(customFieldName)
                   .isGreaterOrEqualThan(startNumber).and().customField().numberField(customFieldName)
                   .isLowerOrEqualThan(endNumber));
-        }
-        break;
-      case TIMESTAMP:
-        List<LocalDate> dateRange = (List<LocalDate>) customFieldValue;
-        Date startDate = DateUtils.getDateFromLocalDate(dateRange.get(0), null);
-        Date endDate = DateUtils.getDateFromLocalDate(dateRange.get(1), LocalTime.MAX);
-
-        if (isCustomFieldFromCase) {
-          customFieldQuery.where().or().customField().timestampField(customFieldName).isGreaterOrEqualThan(startDate)
-              .and().customField().timestampField(customFieldName).isLowerOrEqualThan(endDate);
-        } else {
-          customFieldQuery.where().or()
-              .tasks(TaskQuery.create().where().customField().timestampField(customFieldName)
-                  .isGreaterOrEqualThan(startDate).and().customField().timestampField(customFieldName)
-                  .isLowerOrEqualThan(endDate));
         }
         break;
       default:

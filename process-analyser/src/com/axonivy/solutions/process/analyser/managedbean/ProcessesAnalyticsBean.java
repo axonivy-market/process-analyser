@@ -158,6 +158,7 @@ public class ProcessesAnalyticsBean {
         selectedCustomFilters.add(customField);
       } else if (!isSelectedCustomField) {
         customField.setCustomFieldValues(new ArrayList<>());
+        customField.setTimestampCustomFieldValues(new ArrayList<>());
         selectedCustomFilters.removeIf(selectedFilter -> selectedFilter.getCustomFieldMeta().name()
             .equals(customField.getCustomFieldMeta().name()));
       }
