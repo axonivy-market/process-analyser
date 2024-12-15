@@ -212,7 +212,6 @@ public class ProcessesMonitorUtils {
         allCustomFieldsQuery.where().and(customFieldQuery);
       }
       query.where().andOverall(allCustomFieldsQuery);
-      Ivy.log().warn(query);
     }
     return Ivy.wf().getCaseQueryExecutor().getResults(query);
   }
