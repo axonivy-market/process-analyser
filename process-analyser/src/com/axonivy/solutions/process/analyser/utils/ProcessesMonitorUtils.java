@@ -207,9 +207,12 @@ public class ProcessesMonitorUtils {
 
       for (CustomFieldFilter customFieldFilter : validCustomFilters) {
         CaseQuery customFieldQuery = CaseQuery.create();
-        handleQueryForEachFieldType(customFieldFilter, customFieldQuery, allCustomFieldsQuery);
+        handleQueryForEachFieldType(customFieldFilter, customFieldQuery);
+
+        allCustomFieldsQuery.where().and(customFieldQuery);
       }
       query.where().andOverall(allCustomFieldsQuery);
+      Ivy.log().warn(query);
     }
     return Ivy.wf().getCaseQueryExecutor().getResults(query);
   }
@@ -219,25 +222,21 @@ public class ProcessesMonitorUtils {
         || ObjectUtils.isNotEmpty(filter.getTimestampCustomFieldValues())).collect(Collectors.toList());
   }
 
-  private static void handleQueryForEachFieldType(CustomFieldFilter customFieldFilter, CaseQuery customFieldQuery,
-      CaseQuery allCustomFieldsQuery) {
+  private static void handleQueryForEachFieldType(CustomFieldFilter customFieldFilter, CaseQuery customFieldQuery) {
     CustomFieldType customFieldType = customFieldFilter.getCustomFieldMeta().type();
 
     switch (customFieldType) {
       case TIMESTAMP:
         addCustomFieldSubQueryForTimestamp(customFieldQuery, customFieldFilter, customFieldFilter.getTimestampCustomFieldValues());
-        allCustomFieldsQuery.where().and(customFieldQuery);
         break;
       case NUMBER:
         addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldFilter.getCustomFieldValues());
-        allCustomFieldsQuery.where().and(customFieldQuery);
         break;
       case STRING:
       case TEXT:
         for (Object customFieldValue : customFieldFilter.getCustomFieldValues()) {
           addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldValue);
         }
-        allCustomFieldsQuery.where().or(customFieldQuery);
         break;
       default:
         break;
