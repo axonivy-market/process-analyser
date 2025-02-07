@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>process-analyser</name>
+	<name>process-analyser-core</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -63,7 +63,7 @@
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>1738903968113</id>
+			<id>1738917880013</id>
 			<name></name>
 			<type>30</type>
 			<matcher>

@@ -1,4 +1,6 @@
-package com.axonivy.solutions.process.analyser.constants;
+package com.axonivy.solutions.process.analyser.core.constants;
+
+import ch.ivyteam.ivy.process.rdm.IProcess;
 
 public class ProcessAnalyticsConstants {
   public static final int DEFAULT_INITIAL_STATISTIC_NUMBER = 0;
@@ -20,4 +22,5 @@ public class ProcessAnalyticsConstants {
   public static final String ANALYSIS_EXCEL_FILE_PATTERN = "Analysis_Of_%s";
   public static final String LIKE_TEXT_SEARCH = "%%%s%%";
   public static final String UPDATE_IFRAME_SOURCE_METHOD_CALL = "updateUrlForIframe()";
+  public static final String PROCESSFILE_EXTENSION = IProcess.PROCESSFILE_EXTENSION;
 }

@@ -25,9 +25,9 @@ import com.axonivy.solutions.process.analyser.bo.ProcessMiningData;
 import com.axonivy.solutions.process.analyser.bo.TimeFrame;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
-import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants;
+import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
-import com.axonivy.solutions.process.analyser.internal.ProcessUtils;
+import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.utils.DateUtils;
 import com.axonivy.solutions.process.analyser.utils.JacksonUtils;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
@@ -39,7 +39,6 @@ import ch.ivyteam.ivy.cm.ContentObject;
 import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.location.IParser.ParseException;
-import ch.ivyteam.ivy.process.rdm.IProcess;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
@@ -232,7 +231,7 @@ public class ProcessesAnalyticsBean {
     int lastSlashIndex = processFilePath.lastIndexOf(ProcessAnalyticsConstants.SLASH);
 
     if (lastSlashIndex != StringUtils.INDEX_NOT_FOUND) {
-      processFilePath = processFilePath.substring(0, lastSlashIndex) + IProcess.PROCESSFILE_EXTENSION;
+      processFilePath = processFilePath.substring(0, lastSlashIndex) + ProcessAnalyticsConstants.PROCESSFILE_EXTENSION;
     }
     bpmnIframeSourceUrl = String.format(ProcessAnalyticsConstants.PROCESS_ANALYSER_SOURCE_URL_PATTERN, applicationName,
         targetHost, targetApplicationName, selectedModule, processFilePath);
