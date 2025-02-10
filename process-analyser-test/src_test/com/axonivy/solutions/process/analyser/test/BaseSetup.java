@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.axonivy.solutions.process.analyser.internal.ProcessUtils;
+import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 
 import ch.ivyteam.ivy.process.model.NodeElement;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
