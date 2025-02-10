@@ -1,4 +1,4 @@
-package com.axonivy.solutions.process.analyser.internal;
+package com.axonivy.solutions.process.analyser.core.internal;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,7 +10,7 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants;
+import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
 
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.model.BaseElement;

@@ -18,10 +18,10 @@ import com.axonivy.solutions.process.analyser.bo.AlternativePath;
 import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
-import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants;
+import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
-import com.axonivy.solutions.process.analyser.internal.ProcessUtils;
+import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-    <wb-module deploy-name="process-analyser">
+    <wb-module deploy-name="process-analyser-core">
         <wb-resource deploy-path="/" source-path="/webContent" tag="defaultRootSource"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src_dataClasses"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src_wsproc"/>
-        <property name="java-output-path" value="/process-analyser/target/classes"/>
-        <property name="context-root" value="process-analyser"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src_dataClasses"/>
+        <property name="context-root" value="process-analyser-core"/>
+        <property name="java-output-path" value="/process-analyser-core/target/classes"/>
     </wb-module>
 </project-modules>
