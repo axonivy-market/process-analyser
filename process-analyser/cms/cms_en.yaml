@@ -31,7 +31,7 @@ Dialogs:
               NumberRange: '{0} - {1}'
               PageHeader: Process Monitor Page
               PleaseSelectKPI: Please select a KPI
-              PleaseSelectModule: Please select a module
+              SelectProject: Project
               PleaseSelectProcess: Please select a process
               Process: Process
               ProcessInformation: Process Information

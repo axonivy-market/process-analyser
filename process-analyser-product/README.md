@@ -17,6 +17,7 @@ Key features:
 
 ## Demo
 
+- Before running the Process Analyzer, you should run and complete one of three demo process
 - Select the PMV that matches the desired process and KPI type, then click the **"Show Statistic"** button. This will display a raw data visualized process diagram alongside an analyzed statistics table. *(In this version, the data is limited to **"DONE"** cases with fewer than **TWO** alternative elements in their process.)*
 
 ![show statistic demo](images/show-statistic.gif)
@@ -27,7 +28,7 @@ Key features:
 
 ![filter data demo](images/filter-data.gif)
 
-- For reporting purposes, users can export a Excel file containing analyzed data or a FullHD diagram with KPI values directly from the two buttons located at the bottom-right corner of the UI.
+- For reporting purposes, users can export an Excel file containing analyzed data or a FullHD diagram with KPI values directly via the two buttons located at the bottom-right corner of the UIFor reporting purposes, users can export an Excel file containing analyzed data or a FullHD diagram with KPI values directly via the two buttons located at the bottom-right corner of the UI.
 
 ![downoad and export demo](images/download-and-export.png)
 

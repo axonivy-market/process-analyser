@@ -1,0 +1,130 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/process/12.0.0/process.json",
+  "id" : "194F9ACA622B4E38",
+  "config" : {
+    "data" : "com.axonivy.solutions.process.analyser.demo.data.AutomicHotelBookingData"
+  },
+  "elements" : [ {
+      "id" : "f0",
+      "type" : "RequestStart",
+      "name" : "Hotel Booking (Automatic)",
+      "config" : {
+        "signature" : "HotelBooking",
+        "case" : {
+          "attachToBusinessCase" : false
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 24, "y" : 32 }
+      },
+      "connect" : [
+        { "id" : "f2", "to" : "f14" }
+      ]
+    }, {
+      "id" : "f1",
+      "type" : "TaskEnd",
+      "visual" : {
+        "at" : { "x" : 672, "y" : 32 },
+        "labelOffset" : { "x" : 13, "y" : 33 }
+      }
+    }, {
+      "id" : "f5",
+      "type" : "Alternative",
+      "name" : "Room Available?",
+      "config" : {
+        "conditions" : {
+          "f6" : "Math.random()>0.5"
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 208, "y" : 32 },
+        "labelOffset" : { "x" : 14, "y" : 34 }
+      },
+      "connect" : [
+        { "id" : "f6", "to" : "f10", "color" : "default" },
+        { "id" : "f9", "to" : "f12", "via" : [ { "x" : 208, "y" : 152 } ] }
+      ]
+    }, {
+      "id" : "f3",
+      "type" : "Script",
+      "name" : "Record Booking",
+      "visual" : {
+        "at" : { "x" : 440, "y" : 32 }
+      },
+      "connect" : [
+        { "id" : "f4", "to" : "f7" }
+      ]
+    }, {
+      "id" : "f10",
+      "type" : "TaskSwitchEvent",
+      "name" : "Process Checkin",
+      "config" : {
+        "task" : {
+          "responsible" : {
+            "activator" : "SYSTEM"
+          }
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 304, "y" : 32 },
+        "labelOffset" : { "x" : 14, "y" : 34 }
+      },
+      "connect" : [
+        { "id" : "f11", "to" : "f3", "color" : "default" }
+      ]
+    }, {
+      "id" : "f12",
+      "type" : "TaskSwitchEvent",
+      "name" : "Notify Booking Fail",
+      "config" : {
+        "task" : {
+          "responsible" : {
+            "activator" : "SYSTEM"
+          }
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 304, "y" : 152 },
+        "labelOffset" : { "x" : 14, "y" : 34 }
+      },
+      "connect" : [
+        { "id" : "f13", "to" : "f1", "via" : [ { "x" : 672, "y" : 152 } ], "color" : "default" }
+      ]
+    }, {
+      "id" : "f14",
+      "type" : "TaskSwitchEvent",
+      "name" : "Book",
+      "config" : {
+        "task" : {
+          "responsible" : {
+            "activator" : "SYSTEM"
+          }
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 120, "y" : 32 },
+        "labelOffset" : { "x" : 14, "y" : 34 }
+      },
+      "connect" : [
+        { "id" : "f15", "to" : "f5", "color" : "default" }
+      ]
+    }, {
+      "id" : "f7",
+      "type" : "TaskSwitchEvent",
+      "name" : "Notify Booking Success",
+      "config" : {
+        "task" : {
+          "responsible" : {
+            "activator" : "SYSTEM"
+          }
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 576, "y" : 32 },
+        "labelOffset" : { "x" : 14, "y" : 34 }
+      },
+      "connect" : [
+        { "id" : "f8", "to" : "f1", "color" : "default" }
+      ]
+    } ]
+}
