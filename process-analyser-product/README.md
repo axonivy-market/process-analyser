@@ -17,8 +17,9 @@ Key features:
 
 ## Demo
 
-- Before running the Process Analyzer, you should run and complete one of three demo process
-- Select the PMV that matches the desired process and KPI type, then click the **"Show Statistic"** button. This will display a raw data visualized process diagram alongside an analyzed statistics table. *(In this version, the data is limited to **"DONE"** cases with fewer than **TWO** alternative elements in their process.)*
+- In the first step, to allow the Process Analyzer to collect data, you need to run and complete at least one of the demo processes.
+![demo processes](images/demo-processes.png)
+- To view the result, start the Process Analyzer and select the PMV that matches the desired process and KPI type, then click the **"Show Statistic"** button. This will display a raw data visualized process diagram alongside an analyzed statistics table. *(In this version, the data is limited to **"DONE"** cases with fewer than **TWO** alternative elements in their process.)*
 
 ![show statistic demo](images/show-statistic.gif)
 
@@ -33,6 +34,13 @@ Key features:
 ![downoad and export demo](images/download-and-export.png)
 
 ## Setup
+To collect data and analyze your processes, please follow these steps:
+1. Prepare your own project and processes.
+2. Install Process Analyzer from Marketplace.
+3. Run your desired process to collect data.
+4. Launch the Process Analyzer and follow the Demo tab to view the results.
+![analyze process](images/analyze-process.png)
+
 The Process Analyser tool relies on task and case data from the AxonIvy System database for its analysis. Please adhere to the following practices to ensure data accuracy and precision:
 
 - **Deployment of Process Models**

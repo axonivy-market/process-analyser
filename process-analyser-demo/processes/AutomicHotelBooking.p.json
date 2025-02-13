@@ -15,7 +15,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 24, "y" : 32 }
+        "at" : { "x" : 16, "y" : 32 }
       },
       "connect" : [
         { "id" : "f2", "to" : "f14" }
@@ -24,7 +24,7 @@
       "id" : "f1",
       "type" : "TaskEnd",
       "visual" : {
-        "at" : { "x" : 672, "y" : 32 },
+        "at" : { "x" : 912, "y" : 32 },
         "labelOffset" : { "x" : 13, "y" : 33 }
       }
     }, {
@@ -37,19 +37,19 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 208, "y" : 32 },
+        "at" : { "x" : 280, "y" : 32 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
         { "id" : "f6", "to" : "f10", "color" : "default" },
-        { "id" : "f9", "to" : "f12", "via" : [ { "x" : 208, "y" : 152 } ] }
+        { "id" : "f9", "to" : "f12", "via" : [ { "x" : 280, "y" : 152 } ] }
       ]
     }, {
       "id" : "f3",
       "type" : "Script",
       "name" : "Record Booking",
       "visual" : {
-        "at" : { "x" : 440, "y" : 32 }
+        "at" : { "x" : 616, "y" : 32 }
       },
       "connect" : [
         { "id" : "f4", "to" : "f7" }
@@ -57,7 +57,7 @@
     }, {
       "id" : "f10",
       "type" : "TaskSwitchEvent",
-      "name" : "Process Checkin",
+      "name" : "Process Booking",
       "config" : {
         "task" : {
           "responsible" : {
@@ -66,7 +66,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 304, "y" : 32 },
+        "at" : { "x" : 456, "y" : 32 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
@@ -84,16 +84,16 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 304, "y" : 152 },
+        "at" : { "x" : 456, "y" : 152 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
-        { "id" : "f13", "to" : "f1", "via" : [ { "x" : 672, "y" : 152 } ], "color" : "default" }
+        { "id" : "f13", "to" : "f1", "via" : [ { "x" : 912, "y" : 152 } ], "color" : "default" }
       ]
     }, {
       "id" : "f14",
       "type" : "TaskSwitchEvent",
-      "name" : "Book",
+      "name" : "Request Booking",
       "config" : {
         "task" : {
           "responsible" : {
@@ -102,7 +102,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 120, "y" : 32 },
+        "at" : { "x" : 168, "y" : 32 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
@@ -120,7 +120,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 576, "y" : 32 },
+        "at" : { "x" : 792, "y" : 32 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
