@@ -47,6 +47,7 @@ To collect data and analyze your processes, please follow these steps:
 ![project structure](images/project-structure.png)
 
 - For engine deployment, ensure that both process models are deployed within the same security context
+
 ![engine deploy](images/engine-deployment.png)
 
 4. Run your desired process to collect data.
