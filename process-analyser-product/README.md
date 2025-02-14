@@ -17,7 +17,7 @@ Key features:
 
 ## Demo
 
-- In the first step, to allow the Process Analyzer to collect data, you need to run and complete at least one of the demo processes.
+- In the first step, to enable the Process Analyzer to collect data, you need to run and complete at least one of the demo processes.
 ![demo processes](images/demo-processes.png)
 - To view the result, start the Process Analyzer and select the PMV that matches the desired process and KPI type, then click the **"Show Statistic"** button. This will display a raw data visualized process diagram alongside an analyzed statistics table. *(In this version, the data is limited to **"DONE"** cases with fewer than **TWO** alternative elements in their process.)*
 
@@ -29,27 +29,29 @@ Key features:
 
 ![filter data demo](images/filter-data.gif)
 
-- For reporting purposes, users can export an Excel file containing analyzed data or a FullHD diagram with KPI values directly via the two buttons located at the bottom-right corner of the UIFor reporting purposes, users can export an Excel file containing analyzed data or a FullHD diagram with KPI values directly via the two buttons located at the bottom-right corner of the UI.
+- For reporting purposes, users can export an Excel file containing analyzed data or a FullHD diagram with KPI values directly via the two buttons located at the bottom-right corner of the UI.
 
 ![downoad and export demo](images/download-and-export.png)
 
 ## Setup
 To collect data and analyze your processes, please follow these steps:
 1. Prepare your own project and processes.
-2. Install Process Analyzer from Marketplace.
-3. Run your desired process to collect data.
-4. Launch the Process Analyzer and follow the Demo tab to view the results.
-![analyze process](images/analyze-process.png)
-
-The Process Analyser tool relies on task and case data from the AxonIvy System database for its analysis. Please adhere to the following practices to ensure data accuracy and precision:
-
-- **Deployment of Process Models**
-: To enable the Process Analyser to access and analyze the desired process data, ensure that both process models are deployed within the same security context.
-
-- **Validation of Alternative Flows**
-: For any process alternative with multiple outgoing flows, ensure that each flow contains at least one task element along its path. *(It's still acceptable if there is only 1 out going path is mising task elements in its flow, as illustrated in the example process provided in the images.)*
+2. Modify your processes for accurate data analysis 
+- For any process alternative with multiple outgoing flows, ensure that each flow contains at least one task element along its path. *(It's still acceptable if there is only 1 out going path is mising task elements in its flow, as illustrated in the example process provided in the images.)*
 
 ![setup guideline](images/setup-guideline.png)
+
+3. Install Process Analyzer from Marketplace.
+- After install Process Analyzer, the project structure should look like this
+
+![project structure](images/project-structure.png)
+
+- For engine deployment, ensure that both process models are deployed within the same security context
+![engine deploy](images/engine-deployment.png)
+
+4. Run your desired process to collect data.
+5. Launch the Process Analyzer and follow the Demo tab to view the results.
+![analyze process](images/analyze-process.png)
 
 ```
 @variables.yaml@
