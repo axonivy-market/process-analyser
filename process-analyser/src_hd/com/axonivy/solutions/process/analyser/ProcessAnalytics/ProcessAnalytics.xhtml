@@ -37,7 +37,7 @@
           columnClasses="ui-g-4, ui-g-4, ui-g-4">
           <h:panelGroup styleClass="ui-g">
             <p:outputLabel for="moduleDropdown"
-              value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectModule')}" />
+              value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectProject')}" />
             <p:selectOneMenu id="moduleDropdown"
               value="#{processesAnalyticsBean.selectedModule}">
               <f:selectItem itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectModule')}" itemValue="#{null}"
@@ -52,7 +52,7 @@
 
           <h:panelGroup styleClass="ui-g">
             <p:outputLabel for="processDropdown"
-              value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectModule')}" />
+              value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectProcess')}" />
             <p:selectOneMenu id="processDropdown"
               value="#{processesAnalyticsBean.selectedProcess}">
               <f:selectItem itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectProcess')}"
