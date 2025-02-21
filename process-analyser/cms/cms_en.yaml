@@ -9,43 +9,37 @@ Dialogs:
         process:
           analyser:
             ProcessAnalytics:
-              DateRanges: Date ranges
               ExportExcel: Export Excel
               ExportJPEG: Export JPEG
               From: From
               LargeTimeInterval: Setting a very large time interval may cause performance issues.
               Title: Process Analytics
               To: To
-              Title: Process Analytics
             ProcessesMonitor:
               AnalysisType: Analysis Type
-              AnalysisTypeRequiredMessage: Please select an analysis type
               CustomFilters: Custom filters
-              DateErrorMessage: Both FromDate and ToDate must be selected.
-              DownloadJSONFile: Download JSON file
               ElementId: Element Id
               Frequency: Frequency
               FromToDateValidationMessage: From date must be before To date.
               Label: Label
               LabelValue: Label Value
               MedianDuration: Median Duration
-              Module: Module
               NoCustomFieldsAvailable: No custom fields available.
               NoRecordsFound: No records found.
               None: None
               NumberRange: '{0} - {1}'
               PageHeader: Process Monitor Page
               PleaseSelectKPI: Please select a KPI
-              PleaseSelectProject: Please select a project
               PleaseSelectProcess: Please select a process
+              PleaseSelectProject: Please select a project
               Process: Process
               ProcessInformation: Process Information
               ProcessViewer: Process Viewer
               RelativeValue: Relative Value
               RequireMessage: Please select a process
               SelectKPI: Select KPI
-              SelectModule: Select Module
               SelectProcess: Select Process
+              SelectProject: Select Project
               ShowStatistic: Show Statistic
               TimeInterval: Please select a time interval
               Title: Process Analyser
@@ -69,8 +63,6 @@ Enums:
     ELEMENT:
       name: Element
   TimeIntervalType:
-    BETWEEN:
-      name: Between
     CUSTOM:
       name: Custom
     TODAY:
