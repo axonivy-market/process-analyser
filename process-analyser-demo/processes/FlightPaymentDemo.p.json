@@ -36,7 +36,10 @@
       "name" : "Check payment method",
       "config" : {
         "task" : {
-          "name" : "Check payment method"
+          "name" : "Check payment method",
+          "responsible" : {
+            "activator" : "SYSTEM"
+          }
         }
       },
       "visual" : {
@@ -82,6 +85,9 @@
       "config" : {
         "task" : {
           "name" : "Confirm payment information",
+          "responsible" : {
+            "activator" : "SYSTEM"
+          },
           "customFields" : [
             { "name" : "EWalletPayment", "type" : "STRING", "value" : "\"No\"" }
           ]
@@ -158,6 +164,9 @@
       "config" : {
         "task" : {
           "name" : "Confirm payment with e-wallet",
+          "responsible" : {
+            "activator" : "SYSTEM"
+          },
           "customFields" : [
             { "name" : "EWalletPayment", "type" : "STRING", "value" : "\"Yes\"" }
           ]

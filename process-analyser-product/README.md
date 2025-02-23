@@ -37,7 +37,7 @@ Key features:
 To collect data and analyze your processes, please follow these steps:
 1. Prepare your own project and processes.
 2. Modify your processes for accurate data analysis 
-- For any process alternative with multiple outgoing flows, ensure that each flow contains at least one task element along its path. *(It's still acceptable if there is only 1 out going path is mising task elements in its flow, as illustrated in the example process provided in the images.)*
+- For any process alternative with multiple outgoing flows, ensure that each flow contains at least one task element along its path.
 
 ![setup guideline](images/setup-guideline.png)
 
