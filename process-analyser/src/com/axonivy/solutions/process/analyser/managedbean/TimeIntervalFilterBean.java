@@ -4,7 +4,6 @@ import static com.axonivy.solutions.process.analyser.enums.TimeIntervalType.POIN
 import static com.axonivy.solutions.process.analyser.enums.TimeIntervalType.TODAY;
 import static com.axonivy.solutions.process.analyser.enums.TimeIntervalType.YESTERDAY;
 import static com.axonivy.solutions.process.analyser.enums.TimeIntervalType.CUSTOM;
-import static com.axonivy.solutions.process.analyser.enums.TimeIntervalType.BETWEEN;
 import static com.axonivy.solutions.process.analyser.utils.DateUtils.DATE_PATTERN;
 import static com.axonivy.solutions.process.analyser.utils.DateUtils.DATE_TIME_PATTERN;
 import static com.axonivy.solutions.process.analyser.utils.DateUtils.getDateAsString;
@@ -141,10 +140,6 @@ public class TimeIntervalFilterBean implements Serializable {
 
   public boolean isCustomSelection() {
     return CUSTOM == selectedType;
-  }
-
-  public boolean isBetweenSelection() {
-    return BETWEEN == selectedType;
   }
 
   public TimeIntervalFilter getFilter() {

@@ -39,6 +39,7 @@ import ch.ivyteam.ivy.cm.ContentObject;
 import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.location.IParser.ParseException;
+import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
@@ -157,6 +158,7 @@ public class ProcessesAnalyticsBean {
         selectedCustomFilters.add(customField);
       } else if (!isSelectedCustomField) {
         customField.setCustomFieldValues(new ArrayList<>());
+        customField.setTimestampCustomFieldValues(new ArrayList<>());
         selectedCustomFilters.removeIf(selectedFilter -> selectedFilter.getCustomFieldMeta().name()
             .equals(customField.getCustomFieldMeta().name()));
       }
@@ -240,21 +242,19 @@ public class ProcessesAnalyticsBean {
   private void loadNodes() {
     if (StringUtils.isNotBlank(selectedProcess) && StringUtils.isNotBlank(selectedModule) && selectedKpiType != null) {
       Optional.ofNullable(getSelectedIProcessWebStartable()).ifPresent(process -> {
-        int totalFrequency = 0;
         processMiningData = new ProcessMiningData();
-        selectedPid = process.pid().getParent().toString();
-        processMiningData.setProcessId(selectedPid);
+        selectedPid = process.pid().toString();
+        processMiningData.setProcessId(process.pid().getParent().toString());
         processMiningData.setProcessName(selectedProcess);
         processMiningData.setKpiType(selectedKpiType);
         TimeFrame timeFrame = new TimeFrame(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo());
         processMiningData.setTimeFrame(timeFrame);
-        nodes = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(getSelectedIProcessWebStartable(),
-            timeIntervalFilter, selectedKpiType, selectedCustomFilters);
-        for (Node node : nodes) {
-          totalFrequency += node.getFrequency();
-        }
+        Long taskStartId = ProcessUtils.getTaskStartIdFromPID(selectedPid);
+		List<ICase> cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId,
+          timeIntervalFilter, selectedCustomFilters);
+	    nodes = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(process, selectedKpiType, cases);
         processMiningData.setNodes(nodes);
-        processMiningData.setNumberOfInstances(totalFrequency);
+        processMiningData.setNumberOfInstances(CollectionUtils.size(cases));
       });
     } else {
       nodes = new ArrayList<>();

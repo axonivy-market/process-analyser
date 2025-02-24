@@ -13,6 +13,7 @@ import com.axonivy.solutions.process.analyser.bo.AlternativePath;
 import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
+import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
@@ -77,8 +78,10 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
 
   @Test
   void test_filterInitialStatisticByIntervalTime() {
-    List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(testProcessStart,
-        new TimeIntervalFilter(new Date(), new Date()), KpiType.FREQUENCY, new ArrayList<>());
+    String selectedPid = testProcessStart.pid().getParent().toString();
+    List<ICase> cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(
+      ProcessUtils.getTaskStartIdFromPID(selectedPid), new TimeIntervalFilter(new Date(), new Date()), new ArrayList<>());
+    List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(testProcessStart, KpiType.FREQUENCY, cases);
     assertThat(results.size()).isEqualTo(10);
     assertThat(results.get(0).getLabelValue()).isZero();
   }
