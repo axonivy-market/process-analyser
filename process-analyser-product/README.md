@@ -18,7 +18,9 @@ Key features:
 ## Demo
 
 - In the first step, to enable the Process Analyzer to collect data, you need to run and complete at least one of the demo processes.
+
 ![demo processes](images/demo-processes.png)
+
 - To view the result, start the Process Analyzer and select the PMV that matches the desired process and KPI type, then click the **"Show Statistic"** button. This will display a raw data visualized process diagram alongside an analyzed statistics table. *(In this version, the data is limited to **"DONE"** cases with fewer than **TWO** alternative elements in their process.)*
 
 ![show statistic demo](images/show-statistic.gif)
@@ -37,7 +39,7 @@ Key features:
 To collect data and analyze your processes, please follow these steps:
 1. Prepare your own project and processes.
 2. Modify your processes for accurate data analysis 
-- For any process alternative with multiple outgoing flows, ensure that each flow contains at least one task element along its path. *(It's still acceptable if there is only 1 out going path is mising task elements in its flow, as illustrated in the example process provided in the images.)*
+- For any process alternative with multiple outgoing flows, ensure that each flow contains at least one task element along its path.
 
 ![setup guideline](images/setup-guideline.png)
 
@@ -52,6 +54,7 @@ To collect data and analyze your processes, please follow these steps:
 
 4. Run your desired process to collect data.
 5. Launch the Process Analyzer and follow the Demo tab to view the results.
+
 ![analyze process](images/analyze-process.png)
 
 ```

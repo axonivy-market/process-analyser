@@ -110,14 +110,12 @@ public class ProcessesMonitorUtils {
    * AxonIvy system db.
    **/
   public static List<Node> filterInitialStatisticByIntervalTime(IProcessWebStartable processStart,
-      TimeIntervalFilter timeIntervalFilter, KpiType analysisType, List<CustomFieldFilter> customFilterMap) {
+      KpiType analysisType, List<ICase> cases) {
     if (Objects.isNull(processStart)) {
       return Collections.emptyList();
     }
     
     List<Node> results = new ArrayList<>();
-    Long taskStartId = ProcessUtils.getTaskStartIdFromPID(processStart.pid().toString());
-    List<ICase> cases = getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter, customFilterMap);
     List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
     extractNodesFromProcessElements(processElements, results);
     updateFrequencyForNodes(results, processElements, cases);
