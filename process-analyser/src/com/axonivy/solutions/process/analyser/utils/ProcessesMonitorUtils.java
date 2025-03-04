@@ -38,14 +38,6 @@ public class ProcessesMonitorUtils {
   private ProcessesMonitorUtils() {
   }
 
-  /**
-   * Get more additional insight from process viewer (task count, number of
-   * instances with interval time range,...) when user click "show statistic
-   * data".
-   * 
-   * @param pid rawPid of selected process
-   */
-
   public static List<Node> convertProcessElementInfoToNode(ProcessElement element) {
     return element.getOutgoing().stream().map(flow -> convertSequenceFlowToNode(flow)).collect(Collectors.toList());
   }
