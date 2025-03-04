@@ -2,11 +2,8 @@ package com.axonivy.solutions.process.analyser.bo;
 
 import java.util.List;
 
-import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
-
-@SuppressWarnings("restriction")
 public class AlternativePath {
-  private SequenceFlow originFlow;
+  private String originFlowId;
   private List<String> nodeIdsInPath;
   private String taskSwitchEventIdOnPath;
 
@@ -18,12 +15,12 @@ public class AlternativePath {
     this.taskSwitchEventIdOnPath = taskSwitchEventIdOnPath;
   }
 
-  public SequenceFlow getOriginFlow() {
-    return originFlow;
+  public String getOriginFlowId() {
+    return originFlowId;
   }
 
-  public void setOriginFlow(SequenceFlow originFlow) {
-    this.originFlow = originFlow;
+  public void setOriginFlowId(String originFlowId) {
+    this.originFlowId = originFlowId;
   }
 
   public List<String> getNodeIdsInPath() {

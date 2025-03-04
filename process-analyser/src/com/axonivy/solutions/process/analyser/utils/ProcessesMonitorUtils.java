@@ -71,14 +71,16 @@ public class ProcessesMonitorUtils {
    *                        workflow
    * @param results         list of existing arrow from previous step
    */
-  public static void extractNodesFromProcessElements(List<ProcessElement> processElements, List<Node> results) {
+  public static List<Node> extractNodesFromProcessElements(List<ProcessElement> processElements) {
+    List<Node> results = new ArrayList<>();
     processElements.forEach(element -> {
       results.add(convertProcessElementToNode(element));
       results.addAll(convertProcessElementInfoToNode(element));
       if (ProcessUtils.isEmbeddedElementInstance(element)) {
-        extractNodesFromProcessElements(ProcessUtils.getNestedProcessElementsFromSub(element), results);
+        results.addAll(extractNodesFromProcessElements(ProcessUtils.getNestedProcessElementsFromSub(element)));
       }
     });
+    return results;
   }
 
   public static Node convertProcessElementToNode(ProcessElement element) {
@@ -91,7 +93,6 @@ public class ProcessesMonitorUtils {
     elementNode.setType(NodeType.ELEMENT);
     return elementNode;
   }
-
 
   public static void updateNodeByAnalysisType(Node node, KpiType analysisType) {
     if (KpiType.FREQUENCY == analysisType) {
@@ -114,18 +115,18 @@ public class ProcessesMonitorUtils {
     if (Objects.isNull(processStart)) {
       return Collections.emptyList();
     }
-    
-    List<Node> results = new ArrayList<>();
+  
     List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
-    extractNodesFromProcessElements(processElements, results);
+    List<Node> results = extractNodesFromProcessElements(processElements);
     updateFrequencyForNodes(results, processElements, cases);
     results.stream().forEach(node -> updateNodeByAnalysisType(node, analysisType));
     return results;
   }
 
   /**
-   * For this version, we cover 2 simple cases: + Process without alternative. +
-   * Process with 1 alternative.
+   * If current process have no alternative -> frequency = totals cases size. If
+   * not, we need to check which path from alternative is running to update
+   * frequency for element belong to its.
    **/
   public static List<Node> updateFrequencyForNodes(List<Node> results, List<ProcessElement> processElements,
       List<ICase> cases) {
@@ -140,47 +141,50 @@ public class ProcessesMonitorUtils {
 
   public static void handleFrequencyForAlternativePath(Alternative alternative, List<Node> results,
       List<ICase> cases) {
-    List<AlternativePath> paths = new ArrayList<>();
+    if (ObjectUtils.anyNull(alternative, results, cases)) {
+      return;
+    }
     List<SequenceFlow> mainFlowFromAlternative = alternative.getOutgoing();
-    mainFlowFromAlternative.forEach(path -> {
-      AlternativePath currentPath = new AlternativePath();
-      currentPath.setOriginFlow(path);
-      currentPath.setNodeIdsInPath(new ArrayList<>());
-      followPath(currentPath, path);
-      paths.add(currentPath);
-    });
-    updateFrequencyForCaseWithSimpleAlternative(paths, results, cases);
+    List<AlternativePath> paths = mainFlowFromAlternative.stream()
+        .map(ProcessesMonitorUtils::convertSequenceFlowToAlternativePath).toList();
+    updateFrequencyForCaseWithAlternative(paths, results, cases);
     results.stream().forEach(node -> node.setRelativeValue((float) node.getFrequency()/cases.size()));
   }
 
-  public static void updateFrequencyForCaseWithSimpleAlternative(List<AlternativePath> paths, List<Node> results,
+  public static AlternativePath convertSequenceFlowToAlternativePath(SequenceFlow flow) {
+    AlternativePath path = new AlternativePath();
+    path.setOriginFlowId(ProcessUtils.getElementPid(flow));
+    path.setNodeIdsInPath(new ArrayList<>());
+    followPath(path, flow);
+    return path;
+  }
+
+  public static void updateFrequencyForCaseWithAlternative(List<AlternativePath> paths, List<Node> results,
       List<ICase> cases) {
     cases.stream().forEach(currentCase -> {
       List<String> taskIdDoneInCase = currentCase.tasks().all().stream()
           .map(iTask -> ProcessUtils.getTaskElementIdFromRequestPath(iTask.getRequestPath())).toList();
-
-      Optional<AlternativePath> runningPathOpt = paths.stream()
-          .filter(path -> taskIdDoneInCase.contains(path.getTaskSwitchEventIdOnPath())).findFirst()
-          .or(() -> paths.stream().filter(path -> StringUtils.isBlank(path.getTaskSwitchEventIdOnPath())).findFirst());
-
-      List<String> nonRunningElements = new ArrayList<>();
-      paths.stream().filter(path -> !runningPathOpt.equals(Optional.of(path))).forEach(path -> {
-        nonRunningElements.addAll(path.getNodeIdsInPath());
-        nonRunningElements.add(ProcessUtils.getElementPid(path.getOriginFlow()));
-      });
-
+      List<String> nonRunningElements = paths.stream()
+          .filter(path -> taskIdDoneInCase.contains(path.getTaskSwitchEventIdOnPath()))
+          .flatMap(path -> path.getNodeIdsInPath().stream()).toList();
       results.stream().filter(node -> !nonRunningElements.contains(node.getId()))
           .forEach(node -> node.setFrequency(node.getFrequency() + 1));
     });
   }
 
+  /**
+   * Collect all of elements in current flow. When the flow reach other
+   * alternative, element that is also an end element of other flow or the last
+   * element in that flow
+   **/
   public static void followPath(AlternativePath path, SequenceFlow currentFlow) {
     ProcessElement destinationElement = (ProcessElement) currentFlow.getTarget();
     path.getNodeIdsInPath().add(ProcessUtils.getElementPid(currentFlow));
-    if (ProcessUtils.isTaskSwitchEvent(destinationElement)) {
+    if (ProcessUtils.isTaskSwitchEvent(destinationElement)
+        || StringUtils.isNotBlank(path.getTaskSwitchEventIdOnPath())) {
       path.setTaskSwitchEventIdOnPath(ProcessUtils.getElementPid(destinationElement));
     }
-    if (destinationElement.getIncoming().size() > 1) {
+    if (ProcessUtils.isEndElementOfAlternativePath(destinationElement)) {
       return;
     }
     path.getNodeIdsInPath().add(ProcessUtils.getElementPid(destinationElement));

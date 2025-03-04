@@ -24,6 +24,7 @@ import ch.ivyteam.ivy.process.rdm.IProcessManager;
 import ch.ivyteam.ivy.workflow.IProcessStart;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
+import ch.ivyteam.ivy.process.model.element.gateway.Join;
 
 @SuppressWarnings("restriction")
 public class ProcessUtils {
@@ -106,5 +107,23 @@ public class ProcessUtils {
     // So we have get the node before /{NAME OF TASK}
     // Ignore case {PROCESS ID}/{NAME OF TASK}
     return arr.length > 2 ? arr[arr.length - 2] : StringUtils.EMPTY;
+  }
+  
+  public static boolean isElementWithSingleIncomingAndOutgoingFlow(ProcessElement processElement) {
+    return Optional.ofNullable(processElement)
+        .map(element -> element.getIncoming().size() == 1 && element.getOutgoing().size() == 1).orElse(false);
+  }
+
+  public static boolean isEndElementOfProcessPath(ProcessElement processElement) {
+    return Optional.ofNullable(processElement).map(element -> element.getOutgoing().size() == 0).orElse(false);
+  }
+
+  public static boolean isTaskJoinElement(Object element) {
+    return element instanceof Join;
+  }
+
+  public static boolean isEndElementOfAlternativePath(ProcessElement processElement) {
+    return isEndElementOfProcessPath(processElement) || isAlternativeInstance(processElement)
+        || isTaskJoinElement(processElement);
   }
 }

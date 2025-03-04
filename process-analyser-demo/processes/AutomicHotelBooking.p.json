@@ -24,7 +24,7 @@
       "id" : "f1",
       "type" : "TaskEnd",
       "visual" : {
-        "at" : { "x" : 912, "y" : 32 },
+        "at" : { "x" : 1048, "y" : 32 },
         "labelOffset" : { "x" : 13, "y" : 33 }
       }
     }, {
@@ -38,11 +38,18 @@
       },
       "visual" : {
         "at" : { "x" : 280, "y" : 32 },
-        "labelOffset" : { "x" : 14, "y" : 34 }
+        "labelOffset" : { "y" : -16 }
       },
       "connect" : [
-        { "id" : "f6", "to" : "f10", "color" : "default" },
-        { "id" : "f9", "to" : "f12", "via" : [ { "x" : 280, "y" : 152 } ] }
+        { "id" : "f6", "to" : "f10", "label" : {
+            "name" : "yes",
+            "offset" : { "x" : 9, "y" : -26 }
+          }, "color" : "default" },
+        { "id" : "f9", "to" : "f12", "via" : [ { "x" : 280, "y" : 152 } ], "label" : {
+            "name" : "no",
+            "segment" : 1.16,
+            "offset" : { "x" : 11, "y" : -58 }
+          } }
       ]
     }, {
       "id" : "f3",
@@ -84,11 +91,11 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 456, "y" : 152 },
+        "at" : { "x" : 336, "y" : 152 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
-        { "id" : "f13", "to" : "f1", "via" : [ { "x" : 912, "y" : 152 } ], "color" : "default" }
+        { "id" : "f13", "to" : "f18", "color" : "default" }
       ]
     }, {
       "id" : "f14",
@@ -121,10 +128,80 @@
       },
       "visual" : {
         "at" : { "x" : 792, "y" : 32 },
-        "labelOffset" : { "x" : 14, "y" : 34 }
+        "labelOffset" : { "x" : 1, "y" : -15 }
       },
       "connect" : [
-        { "id" : "f8", "to" : "f1", "color" : "default" }
+        { "id" : "f8", "to" : "f24", "color" : "default" }
+      ]
+    }, {
+      "id" : "f16",
+      "type" : "Alternative",
+      "name" : "No option match requirement?",
+      "config" : {
+        "conditions" : {
+          "f17" : "Math.random()>0.5",
+          "f20" : ""
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 616, "y" : 152 },
+        "labelOffset" : { "x" : 40, "y" : 48 }
+      },
+      "connect" : [
+        { "id" : "f20", "to" : "f3", "label" : {
+            "name" : "yes",
+            "offset" : { "x" : 17, "y" : 3 }
+          } },
+        { "id" : "f17", "to" : "f21", "label" : {
+            "name" : "no",
+            "segment" : 0.56,
+            "offset" : { "x" : -15, "y" : -10 }
+          }, "color" : "default" }
+      ]
+    }, {
+      "id" : "f18",
+      "type" : "Script",
+      "name" : "Refer other available option",
+      "visual" : {
+        "at" : { "x" : 480, "y" : 152 }
+      },
+      "connect" : [
+        { "id" : "f19", "to" : "f16", "color" : "default" }
+      ]
+    }, {
+      "id" : "f21",
+      "type" : "TaskSwitchEvent",
+      "name" : "Cancel Booking",
+      "config" : {
+        "task" : {
+          "responsible" : {
+            "activator" : "SYSTEM"
+          }
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 792, "y" : 152 },
+        "labelOffset" : { "x" : 17, "y" : 49 }
+      },
+      "connect" : [
+        { "id" : "f22", "to" : "f23", "color" : "default" }
+      ]
+    }, {
+      "id" : "f23",
+      "type" : "TaskEnd",
+      "visual" : {
+        "at" : { "x" : 912, "y" : 152 },
+        "labelOffset" : { "x" : 13, "y" : 33 }
+      }
+    }, {
+      "id" : "f24",
+      "type" : "Script",
+      "name" : "Send confirmation email",
+      "visual" : {
+        "at" : { "x" : 920, "y" : 32 }
+      },
+      "connect" : [
+        { "id" : "f25", "to" : "f1", "color" : "default" }
       ]
     } ]
 }
