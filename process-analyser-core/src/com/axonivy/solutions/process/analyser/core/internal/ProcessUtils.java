@@ -109,9 +109,8 @@ public class ProcessUtils {
     return arr.length > 2 ? arr[arr.length - 2] : StringUtils.EMPTY;
   }
   
-  public static boolean isElementWithSingleIncomingAndOutgoingFlow(ProcessElement processElement) {
-    return Optional.ofNullable(processElement)
-        .map(element -> element.getIncoming().size() == 1 && element.getOutgoing().size() == 1).orElse(false);
+  public static boolean isElementWithMultipleIncomingFlow(ProcessElement processElement) {
+    return Optional.ofNullable(processElement).map(element -> element.getIncoming().size() > 1).orElse(false);
   }
 
   public static boolean isEndElementOfProcessPath(ProcessElement processElement) {
@@ -124,6 +123,6 @@ public class ProcessUtils {
 
   public static boolean isEndElementOfAlternativePath(ProcessElement processElement) {
     return isEndElementOfProcessPath(processElement) || isAlternativeInstance(processElement)
-        || isTaskJoinElement(processElement);
+        || isElementWithMultipleIncomingFlow(processElement);
   }
 }

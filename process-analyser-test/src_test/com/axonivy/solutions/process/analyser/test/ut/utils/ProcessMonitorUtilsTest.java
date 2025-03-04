@@ -48,8 +48,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
 
   @Test
   void test_extractNodesFromProcessElements() {
-    List<Node> results = new ArrayList<>();
-    ProcessesMonitorUtils.extractNodesFromProcessElements(List.of(startProcessElement), results);
+    List<Node> results = ProcessesMonitorUtils.extractNodesFromProcessElements(List.of(startProcessElement));
     assertThat(results.size()).isNotZero();
     assertThat(results.get(0).getId()).isEqualTo(TEST_PROCESS_ELEMENT_START_PID);
   }
@@ -101,7 +100,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
   void test_followPath() {
     AlternativePath testPath = new AlternativePath();
     var flowFromAlternative = getFirstFlowFromAlternative();
-    testPath.setOriginFlow(flowFromAlternative);
+    testPath.setOriginFlowId(ProcessUtils.getElementPid(flowFromAlternative));
     testPath.setNodeIdsInPath(new ArrayList<>());
     ProcessesMonitorUtils.followPath(testPath, flowFromAlternative);
     assertThat(testPath.getNodeIdsInPath().size()).isEqualTo(1);
