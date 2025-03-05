@@ -240,25 +240,26 @@ public class ProcessesAnalyticsBean {
   }
 
   private void loadNodes() {
-    if (StringUtils.isNotBlank(selectedProcess) && StringUtils.isNotBlank(selectedModule) && selectedKpiType != null) {
-      Optional.ofNullable(getSelectedIProcessWebStartable()).ifPresent(process -> {
+    List<Node> analyzedNode = new ArrayList<>();
+    var process = getSelectedIProcessWebStartable();
+    if (StringUtils.isNoneBlank(selectedProcess, selectedModule) && ObjectUtils.allNotNull(selectedKpiType, process)) {
+      selectedPid = process.pid().toString();
+      Long taskStartId = ProcessUtils.getTaskStartIdFromPID(selectedPid);
+      List<ICase> cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId,
+          timeIntervalFilter, selectedCustomFilters);
+      if (CollectionUtils.isNotEmpty(cases)) {
         processMiningData = new ProcessMiningData();
-        selectedPid = process.pid().toString();
         processMiningData.setProcessId(process.pid().getParent().toString());
         processMiningData.setProcessName(selectedProcess);
         processMiningData.setKpiType(selectedKpiType);
         TimeFrame timeFrame = new TimeFrame(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo());
         processMiningData.setTimeFrame(timeFrame);
-        Long taskStartId = ProcessUtils.getTaskStartIdFromPID(selectedPid);
-		List<ICase> cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId,
-          timeIntervalFilter, selectedCustomFilters);
-	    nodes = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(process, selectedKpiType, cases);
-        processMiningData.setNodes(nodes);
-        processMiningData.setNumberOfInstances(CollectionUtils.size(cases));
-      });
-    } else {
-      nodes = new ArrayList<>();
+        analyzedNode = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(process, selectedKpiType, cases);
+        processMiningData.setNodes(analyzedNode);
+        processMiningData.setNumberOfInstances(cases.size());
+      }
     }
+    nodes = analyzedNode;
   }
 
   private void updateProcessMiningDataJson() {

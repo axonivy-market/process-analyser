@@ -38,17 +38,17 @@
       },
       "visual" : {
         "at" : { "x" : 280, "y" : 32 },
-        "labelOffset" : { "y" : -16 }
+        "labelOffset" : { "x" : 8, "y" : -24 }
       },
       "connect" : [
         { "id" : "f6", "to" : "f10", "label" : {
             "name" : "yes",
-            "offset" : { "x" : 9, "y" : -26 }
+            "offset" : { "x" : 1, "y" : -34 }
           }, "color" : "default" },
         { "id" : "f9", "to" : "f12", "via" : [ { "x" : 280, "y" : 152 } ], "label" : {
             "name" : "no",
             "segment" : 1.16,
-            "offset" : { "x" : 11, "y" : -58 }
+            "offset" : { "x" : 9, "y" : -89 }
           } }
       ]
     }, {
@@ -144,17 +144,17 @@
       },
       "visual" : {
         "at" : { "x" : 616, "y" : 152 },
-        "labelOffset" : { "x" : 40, "y" : 48 }
+        "labelOffset" : { "y" : 56 }
       },
       "connect" : [
         { "id" : "f17", "to" : "f21", "label" : {
             "name" : "no",
             "segment" : 0.56,
-            "offset" : { "x" : -15, "y" : -10 }
+            "offset" : { "x" : 16, "y" : -26 }
           }, "color" : "default" },
         { "id" : "f20", "to" : "f26", "label" : {
             "name" : "yes",
-            "offset" : { "x" : 18, "y" : 3 }
+            "offset" : { "x" : -31, "y" : 2 }
           } }
       ]
     }, {
@@ -180,7 +180,7 @@
       },
       "visual" : {
         "at" : { "x" : 792, "y" : 152 },
-        "labelOffset" : { "x" : 17, "y" : 49 }
+        "labelOffset" : { "x" : 33, "y" : -47 }
       },
       "connect" : [
         { "id" : "f22", "to" : "f23", "color" : "default" }
@@ -216,7 +216,7 @@
       },
       "visual" : {
         "at" : { "x" : 616, "y" : 96 },
-        "labelOffset" : { "x" : 89, "y" : 9 }
+        "labelOffset" : { "x" : -55, "y" : 9 }
       },
       "connect" : [
         { "id" : "f27", "to" : "f3" }

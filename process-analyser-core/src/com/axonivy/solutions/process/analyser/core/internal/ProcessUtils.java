@@ -47,9 +47,14 @@ public class ProcessUtils {
     return element instanceof Alternative;
   }
 
-  public static boolean isTaskSwitchEvent(Object element) {
+  public static boolean isTaskSwitchInstance(Object element) {
     return element instanceof TaskSwitchEvent;
   }
+  
+  public static boolean isTaskJoinInstance(Object element) {
+    return element instanceof Join;
+  }
+
 
   public static List<ProcessElement> getNestedProcessElementsFromSub(Object element) {
     if (isEmbeddedElementInstance(element)) {
@@ -88,10 +93,14 @@ public class ProcessUtils {
         && process instanceof IProcessWebStartable;
   }
 
-  public static List<Alternative> extractAlterNativeElementsWithMultiOutGoing(List<ProcessElement> processElements) {
+  public static List<ProcessElement> extractAlterNativeElementsWithMultiOutGoing(List<ProcessElement> processElements) {
     return Optional.ofNullable(processElements).orElse(Collections.emptyList()).stream()
-        .filter(ProcessUtils::isAlternativeInstance).map(element -> (Alternative) element)
-        .filter(alternative -> alternative.getOutgoing().size() > 1).toList();
+        .filter(element -> isAlternativeInstance(element) && element.getOutgoing().size() > 1).toList();
+  }
+
+  public static List<ProcessElement> extractElementsWithMultiInGoing(List<ProcessElement> processElements) {
+    return Optional.ofNullable(processElements).orElse(Collections.emptyList()).stream()
+        .filter(element -> !(isAlternativeInstance(element) && isTaskJoinInstance(processElements)) && element.getIncoming().size() > 1).toList();
   }
 
   @SuppressWarnings("removal")
@@ -117,12 +126,8 @@ public class ProcessUtils {
     return Optional.ofNullable(processElement).map(element -> element.getOutgoing().size() == 0).orElse(false);
   }
 
-  public static boolean isTaskJoinElement(Object element) {
-    return element instanceof Join;
-  }
-
   public static boolean isEndElementOfAlternativePath(ProcessElement processElement) {
     return isEndElementOfProcessPath(processElement) || isAlternativeInstance(processElement)
-        || isElementWithMultipleIncomingFlow(processElement);
+        || (isElementWithMultipleIncomingFlow(processElement) && !isTaskJoinInstance(processElement));
   }
 }
