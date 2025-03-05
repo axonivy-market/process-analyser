@@ -202,10 +202,10 @@ public class ProcessesMonitorUtils {
     List<String> nonRunningElementIdsFromAlternative = pathsFromAlternatives.stream()
         .filter(path -> !taskIdsDoneInCase.contains(path.getTaskSwitchEventIdOnPath()))
         .flatMap(path -> path.getNodeIdsInPath().stream()).toList();
-    List<String> nonRunningElementsFromEndElements = getNonRunningElementIdsFromEndElements(alternativeEnds,
+    List<String> nonRunningElementIdsFromEndElements = getNonRunningElementIdsFromEndElements(alternativeEnds,
         nonRunningElementIdsFromAlternative);
     results.addAll(nonRunningElementIdsFromAlternative);
-    results.addAll(nonRunningElementsFromEndElements);
+    results.addAll(nonRunningElementIdsFromEndElements);
     return results;
   }
 
