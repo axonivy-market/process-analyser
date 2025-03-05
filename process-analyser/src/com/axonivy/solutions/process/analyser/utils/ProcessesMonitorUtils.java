@@ -194,6 +194,35 @@ public class ProcessesMonitorUtils {
         .flatMap(path -> path.getNodeIdsInPath().stream()).toList();
   }
 
+  public static List<String> getNonRunningElementIdsFromCase(ICase currentCase,
+      List<AlternativePath> pathsFromAlternatives, List<ProcessElement> alternativeEnds) {
+    List<String> results = new ArrayList<String>();
+    List<String> taskIdsDoneInCase = currentCase.tasks().all().stream()
+        .map(iTask -> ProcessUtils.getTaskElementIdFromRequestPath(iTask.getRequestPath())).toList();
+    List<String> nonRunningElementIdsFromAlternative = pathsFromAlternatives.stream()
+        .filter(path -> !taskIdsDoneInCase.contains(path.getTaskSwitchEventIdOnPath()))
+        .flatMap(path -> path.getNodeIdsInPath().stream()).toList();
+    List<String> nonRunningElementsFromEndElements = getNonRunningElementIdsFromEndElements(alternativeEnds,
+        nonRunningElementIdsFromAlternative);
+    results.addAll(nonRunningElementIdsFromAlternative);
+    results.addAll(nonRunningElementsFromEndElements);
+    return results;
+  }
+
+  public static List<String> getNonRunningElementIdsFromEndElements(List<ProcessElement> alternativeEnds,
+      List<String> nonRunningElementIdsFromAlternative) {
+    List<SequenceFlow> nonRunningFlows = alternativeEnds.stream()
+        .filter(element -> isNonRunningAlternativeEndElement(element, nonRunningElementIdsFromAlternative))
+        .flatMap(element -> element.getOutgoing().stream()).toList();
+    return nonRunningFlows.stream().map(ProcessesMonitorUtils::convertSequenceFlowToAlternativePath)
+        .flatMap(path -> path.getNodeIdsInPath().stream()).toList();
+  }
+
+  public static boolean isNonRunningAlternativeEndElement(ProcessElement processElement, List<String> nonRunningElementsIds) {
+    List<String> incommingFlowId = processElement.getIncoming().stream().map(ProcessUtils::getElementPid).toList();
+    return CollectionUtils.containsAll(nonRunningElementsIds, incommingFlowId);
+  }
+
   /**
    * Collect all of elements in current flow. When the flow reach other
    * alternative, element that is also an end element of other flow or the last
