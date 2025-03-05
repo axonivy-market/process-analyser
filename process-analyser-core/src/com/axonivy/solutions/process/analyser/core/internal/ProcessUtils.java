@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
@@ -50,11 +51,10 @@ public class ProcessUtils {
   public static boolean isTaskSwitchInstance(Object element) {
     return element instanceof TaskSwitchEvent;
   }
-  
+
   public static boolean isTaskJoinInstance(Object element) {
     return element instanceof Join;
   }
-
 
   public static List<ProcessElement> getNestedProcessElementsFromSub(Object element) {
     if (isEmbeddedElementInstance(element)) {
@@ -93,14 +93,16 @@ public class ProcessUtils {
         && process instanceof IProcessWebStartable;
   }
 
-  public static List<ProcessElement> extractAlterNativeElementsWithMultiOutGoing(List<ProcessElement> processElements) {
+  public static List<ProcessElement> getAlterNativesWithMultiOutGoings(List<ProcessElement> processElements) {
     return Optional.ofNullable(processElements).orElse(Collections.emptyList()).stream()
         .filter(element -> isAlternativeInstance(element) && element.getOutgoing().size() > 1).toList();
   }
 
-  public static List<ProcessElement> extractElementsWithMultiInGoing(List<ProcessElement> processElements) {
+  public static List<ProcessElement> getElementsWithMultiInComings(List<ProcessElement> processElements) {
     return Optional.ofNullable(processElements).orElse(Collections.emptyList()).stream()
-        .filter(element -> !(isAlternativeInstance(element) && isTaskJoinInstance(processElements)) && element.getIncoming().size() > 1).toList();
+        .filter(element -> !(isAlternativeInstance(element) && isTaskJoinInstance(processElements))
+            && element.getIncoming().size() > 1)
+        .toList();
   }
 
   @SuppressWarnings("removal")
@@ -117,17 +119,18 @@ public class ProcessUtils {
     // Ignore case {PROCESS ID}/{NAME OF TASK}
     return arr.length > 2 ? arr[arr.length - 2] : StringUtils.EMPTY;
   }
-  
+
   public static boolean isElementWithMultipleIncomingFlow(ProcessElement processElement) {
     return Optional.ofNullable(processElement).map(element -> element.getIncoming().size() > 1).orElse(false);
   }
 
-  public static boolean isEndElementOfProcessPath(ProcessElement processElement) {
-    return Optional.ofNullable(processElement).map(element -> element.getOutgoing().size() == 0).orElse(false);
+  public static boolean isProcessPathEndElement(ProcessElement processElement) {
+    return Optional.ofNullable(processElement).map(element -> CollectionUtils.isEmpty(element.getOutgoing()))
+        .orElse(false);
   }
 
-  public static boolean isEndElementOfAlternativePath(ProcessElement processElement) {
-    return isEndElementOfProcessPath(processElement) || isAlternativeInstance(processElement)
+  public static boolean isAlternativePathEndElement(ProcessElement processElement) {
+    return isProcessPathEndElement(processElement) || isAlternativeInstance(processElement)
         || (isElementWithMultipleIncomingFlow(processElement) && !isTaskJoinInstance(processElement));
   }
 }

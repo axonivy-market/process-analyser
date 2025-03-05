@@ -120,11 +120,11 @@ public class ProcessesMonitorUtils {
    **/
   public static List<Node> updateFrequencyForNodes(List<Node> results, List<ProcessElement> processElements,
       List<ICase> cases) {
-    List<ProcessElement> alternatives = ProcessUtils.extractAlterNativeElementsWithMultiOutGoing(processElements);
+    List<ProcessElement> alternatives = ProcessUtils.getAlterNativesWithMultiOutGoings(processElements);
     if (CollectionUtils.isEmpty(alternatives)) {
       results.stream().forEach(node -> updateNodeWiwthDefinedFrequency(cases.size(), node));
     } else {
-      List<ProcessElement> alternativeEnds = ProcessUtils.extractElementsWithMultiInGoing(processElements);
+      List<ProcessElement> alternativeEnds = ProcessUtils.getElementsWithMultiInComings(processElements);
       handleFrequencyForCasesWithAlternativePaths(alternatives, alternativeEnds, results, cases);
     }
     return results;
@@ -135,8 +135,14 @@ public class ProcessesMonitorUtils {
     if (ObjectUtils.anyNull(alternatives, results, cases)) {
       return;
     }
-    List<AlternativePath> pathsFromAlternative = extractAlternativePathFromElement(alternatives);
-    updateFrequencyForCaseWithAlternative(pathsFromAlternative, alternativeEnds, results, cases);
+    List<AlternativePath> alternativePaths = extractAlternativePathFromElement(alternatives);
+    cases.stream().forEach(
+        currentCase -> {
+          List<String> nonRunningElementsId = getNonRunningElementIdsFromCase(currentCase, alternativePaths,
+              alternativeEnds);
+          results.stream().filter(node -> !nonRunningElementsId.contains(node.getId()))
+          .forEach(node -> node.setFrequency(node.getFrequency() + 1));
+        });
     results.stream().forEach(node -> node.setRelativeValue((float) node.getFrequency() / cases.size()));
   }
   
@@ -155,16 +161,6 @@ public class ProcessesMonitorUtils {
     return path;
   }
 
-  public static void updateFrequencyForCaseWithAlternative(List<AlternativePath> pathsFromAlternatives,
-      List<ProcessElement> alternativeEnds, List<Node> results, List<ICase> cases) {
-    cases.stream().forEach(currentCase -> {
-      List<String> nonRunningElementsId = getNonRunningElementIdsFromCase(currentCase, pathsFromAlternatives,
-          alternativeEnds);
-      results.stream().filter(node -> !nonRunningElementsId.contains(node.getId()))
-          .forEach(node -> node.setFrequency(node.getFrequency() + 1));
-    });
-  }
-
   public static List<String> getNonRunningElementIdsFromCase(ICase currentCase,
       List<AlternativePath> pathsFromAlternatives, List<ProcessElement> alternativeEnds) {
     List<String> results = new ArrayList<String>();
@@ -173,10 +169,10 @@ public class ProcessesMonitorUtils {
     List<String> nonRunningElementIdsFromAlternative = pathsFromAlternatives.stream()
         .filter(path -> !taskIdsDoneInCase.contains(path.getTaskSwitchEventIdOnPath()))
         .flatMap(path -> path.getNodeIdsInPath().stream()).toList();
-    List<String> nonRunningElementsFromEndElements = getNonRunningElementIdsFromEndElements(alternativeEnds,
+    List<String> nonRunningElementIdsFromEndElements = getNonRunningElementIdsFromEndElements(alternativeEnds,
         nonRunningElementIdsFromAlternative);
     results.addAll(nonRunningElementIdsFromAlternative);
-    results.addAll(nonRunningElementsFromEndElements);
+    results.addAll(nonRunningElementIdsFromEndElements);
     return results;
   }
 
@@ -206,7 +202,7 @@ public class ProcessesMonitorUtils {
         && StringUtils.isBlank(path.getTaskSwitchEventIdOnPath())) {
       path.setTaskSwitchEventIdOnPath(ProcessUtils.getElementPid(destinationElement));
     }
-    if (ProcessUtils.isEndElementOfAlternativePath(destinationElement)) {
+    if (ProcessUtils.isAlternativePathEndElement(destinationElement)) {
       return;
     }
     path.getNodeIdsInPath().add(ProcessUtils.getElementPid(destinationElement));
