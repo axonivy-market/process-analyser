@@ -100,7 +100,6 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
   void test_followPath() {
     AlternativePath testPath = new AlternativePath();
     var flowFromAlternative = getFirstFlowFromAlternative();
-    testPath.setOriginFlowId(ProcessUtils.getElementPid(flowFromAlternative));
     testPath.setNodeIdsInPath(new ArrayList<>());
     ProcessesMonitorUtils.followPath(testPath, flowFromAlternative);
     assertThat(testPath.getNodeIdsInPath().size()).isEqualTo(1);

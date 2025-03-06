@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -94,15 +95,16 @@ public class ProcessUtils {
   }
 
   public static List<ProcessElement> getAlterNativesWithMultiOutGoings(List<ProcessElement> processElements) {
-    return Optional.ofNullable(processElements).orElse(Collections.emptyList()).stream()
-        .filter(element -> isAlternativeInstance(element) && element.getOutgoing().size() > 1).toList();
+    return Optional.ofNullable(processElements).orElse(new ArrayList<>()).stream()
+        .filter(element -> isAlternativeInstance(element) && element.getOutgoing().size() > 1)
+        .collect(Collectors.toList());
   }
 
   public static List<ProcessElement> getElementsWithMultiInComings(List<ProcessElement> processElements) {
-    return Optional.ofNullable(processElements).orElse(Collections.emptyList()).stream()
+    return Optional.ofNullable(processElements).orElse(new ArrayList<>()).stream()
         .filter(element -> !(isAlternativeInstance(element) && isTaskJoinInstance(processElements))
-            && element.getIncoming().size() > 1)
-        .toList();
+            && isElementWithMultipleIncomingFlow(element))
+        .collect(Collectors.toList());
   }
 
   @SuppressWarnings("removal")
