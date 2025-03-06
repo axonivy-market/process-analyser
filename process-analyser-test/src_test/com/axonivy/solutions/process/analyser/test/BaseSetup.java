@@ -39,11 +39,6 @@ public class BaseSetup {
     return ((Alternative) flowFromStartElement.getTarget()).getOutgoing().stream()
         .filter(flow -> ProcessUtils.getElementPid(flow).contains("f8")).findAny().orElse(null);
   }
-  
-  protected SequenceFlow getNonScriptFlowFromAlternative() {
-    return ((Alternative) flowFromStartElement.getTarget()).getOutgoing().stream()
-        .filter(flow -> ProcessUtils.getElementPid(flow).contains("f9")).findAny().orElse(null);
-  }
 
   protected NodeElement getElementNextToTestStart() {
     return flowFromStartElement.getTarget();

@@ -81,7 +81,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     List<ICase> cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(
       ProcessUtils.getTaskStartIdFromPID(selectedPid), new TimeIntervalFilter(new Date(), new Date()), new ArrayList<>());
     List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(testProcessStart, KpiType.FREQUENCY, cases);
-    assertThat(results.size()).isEqualTo(10);
+    assertThat(results.size()).isEqualTo(16);
     assertThat(results.get(0).getLabelValue()).isZero();
   }
 
@@ -104,8 +104,6 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     ProcessesMonitorUtils.followPath(testPath, flowFromAlternative);
     assertThat(testPath.getNodeIdsInPath().size()).isEqualTo(1);
     assertThat(testPath.getTaskSwitchEventIdOnPath()).isNullOrEmpty();
-    testPath = new AlternativePath();
-    flowFromAlternative = getNonScriptFlowFromAlternative();
   }
 
   @Test
