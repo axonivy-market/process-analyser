@@ -14,6 +14,8 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
+import javax.faces.model.SelectItemGroup;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -40,6 +42,7 @@ import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.location.IParser.ParseException;
 import ch.ivyteam.ivy.workflow.ICase;
+import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
@@ -67,6 +70,7 @@ public class ProcessesAnalyticsBean {
   private boolean isFilterDropdownVisible;
   private double minValue;
   private double maxValue;
+  private List<SelectItem> kpiTypes;
 
   @PostConstruct
   private void init() {
@@ -83,6 +87,25 @@ public class ProcessesAnalyticsBean {
     customFieldsByType = new ArrayList<>();
     selectedCustomFilters = new ArrayList<>();
     selectedCustomFieldNames = new ArrayList<>();
+    initKpiTypes();
+  }
+
+  private void initKpiTypes() {
+    kpiTypes = new ArrayList<>();
+    for (KpiType type : KpiType.getTopLevelOptions()) {
+      List<KpiType> subOptions = KpiType.getSubOptions(type);
+
+      if (subOptions.isEmpty()) {
+        kpiTypes.add(new SelectItem(type, type.getCmsName()));
+      } else {
+        SelectItemGroup group = new SelectItemGroup(type.getCmsName());
+        group.setValue(type);
+        SelectItem[] subItems = subOptions.stream().map(sub -> new SelectItem(sub, sub.getCmsName()))
+            .toArray(SelectItem[]::new);
+        group.setSelectItems(subItems);
+        kpiTypes.add(group);
+      }
+    }
   }
 
   public List<String> getAvailableProcesses() {
@@ -273,10 +296,6 @@ public class ProcessesAnalyticsBean {
         : StringUtils.EMPTY;
   }
 
-  public KpiType[] getKpiTypes() {
-    return KpiType.values();
-  }
-
   public String getSelectedProcess() {
     return selectedProcess;
   }
@@ -383,5 +402,9 @@ public class ProcessesAnalyticsBean {
 
   public void setMaxValue(double maxValue) {
     this.maxValue = maxValue;
+  }
+
+  public List<SelectItem> getKpiTypes() {
+    return kpiTypes;
   }
 }

@@ -50,6 +50,14 @@ Enums:
   KpiType:
     DURATION:
       name: Duration
+    DURATION_DAY:
+      name: Day
+    DURATION_HOUR:
+      name: Hour
+    DURATION_MINUTE:
+      name: Minute
+    DURATION_SECOND:
+      name: Second
     FREQUENCY:
       name: Frequency
   MonitorVersion:

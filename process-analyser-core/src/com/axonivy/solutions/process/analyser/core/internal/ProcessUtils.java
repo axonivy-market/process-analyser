@@ -106,6 +106,11 @@ public class ProcessUtils {
             && isElementWithMultipleIncomingFlow(element))
         .collect(Collectors.toList());
   }
+  
+  public static List<ProcessElement> getTaskSwitchEvents(List<ProcessElement> processElements) {
+    return Optional.ofNullable(processElements).orElse(Collections.emptyList()).stream()
+        .filter(element -> isTaskSwitchInstance(element)).toList();
+  }
 
   @SuppressWarnings("removal")
   public static Long getTaskStartIdFromPID(String rawPid) {

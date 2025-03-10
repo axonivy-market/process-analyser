@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -27,6 +29,7 @@ import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.workflow.CaseState;
 import ch.ivyteam.ivy.workflow.ICase;
+import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 import ch.ivyteam.ivy.workflow.query.CaseQuery;
 import ch.ivyteam.ivy.workflow.query.TaskQuery;
@@ -88,7 +91,7 @@ public class ProcessesMonitorUtils {
     if (KpiType.FREQUENCY == analysisType) {
       node.setLabelValue(node.getFrequency());
     } else {
-      node.setLabelValue((int) Math.round(node.getMedianDuration()));
+      node.setLabelValue(convertDuration(node.getMedianDuration(), analysisType));
     }
     if (Double.isNaN(node.getRelativeValue())) {
       node.setRelativeValue(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
@@ -107,17 +110,59 @@ public class ProcessesMonitorUtils {
     }
     List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
     List<Node> results = extractNodesFromProcessElements(processElements);
-    updateFrequencyForNodes(results, processElements, cases);
+    if (analysisType == KpiType.FREQUENCY) {
+      updateFrequencyForNodes(results, processElements, cases);
+    }
+    else if (KpiType.getSubOptions(KpiType.DURATION).contains(analysisType)) {
+      updateDurationForNodes(results, processElements, cases);
+    }
     results.stream().forEach(node -> updateNodeByAnalysisType(node, analysisType));
     return results;
   }
+
+  public static void updateDurationForNodes(List<Node> results, List<ProcessElement> processElements,
+      List<ICase> cases) {
+    List<String> taskSwitchPids = Optional.ofNullable(ProcessUtils.getTaskSwitchEvents(processElements))
+        .orElse(Collections.emptyList()).stream()
+        .map(element -> Optional.ofNullable(element.getPid()).map(Object::toString).orElse(""))
+        .collect(Collectors.toList());
+
+    Map<String, List<Long>> nodeDurations = cases.stream().flatMap(currentCase -> currentCase.tasks().all().stream())
+        .filter(task -> taskSwitchPids.contains(ProcessUtils.getTaskElementIdFromRequestPath(task.getRequestPath())))
+        .collect(Collectors.groupingBy(task -> ProcessUtils.getTaskElementIdFromRequestPath(task.getRequestPath()),
+            Collectors.mapping(task -> task.getEndTimestamp().getTime() - task.getStartTimestamp().getTime(),
+                Collectors.toList())));
+
+    results.forEach(node -> {
+      List<Long> durations = nodeDurations.getOrDefault(node.getId(), Collections.emptyList());
+      node.setMedianDuration(durations.isEmpty() ? 0 : calculateMedian(durations));
+    });
+  }
+
+  private static double calculateMedian(List<Long> durations) {
+    if (durations.isEmpty())
+      return 0;
+    List<Long> sorted = durations.stream().sorted().toList();
+    int middle = sorted.size() / 2;
+    return sorted.size() % 2 == 0 ? (sorted.get(middle - 1) + sorted.get(middle)) / 2.0 : sorted.get(middle);
+  }
+
+  private static float convertDuration(double durationMillis, KpiType analysisType) {
+    return switch (analysisType) {
+        case DURATION_DAY -> (float) (durationMillis / (1000 * 60 * 60 * 24));
+        case DURATION_HOUR -> (float) (durationMillis / (1000 * 60 * 60));
+        case DURATION_MINUTE -> (float) (durationMillis / (1000 * 60));
+        case DURATION_SECOND -> (float) (durationMillis / 1000);
+        default -> (float) durationMillis;
+    };
+}
 
   /**
    * If current process have no alternative -> frequency = totals cases size. If
    * not, we need to check which path from alternative is running to update
    * frequency for elements belong to its.
    **/
-  public static List<Node> updateFrequencyForNodes(List<Node> results, List<ProcessElement> processElements,
+  public static void updateFrequencyForNodes(List<Node> results, List<ProcessElement> processElements,
       List<ICase> cases) {
     List<ProcessElement> branchSwitchingElement = ProcessUtils.getAlterNativesWithMultiOutgoings(processElements);
     if (CollectionUtils.isEmpty(branchSwitchingElement)) {
@@ -128,7 +173,6 @@ public class ProcessesMonitorUtils {
       List<AlternativePath> paths = convertToAternativePaths(branchSwitchingElement);
       handleFrequencyForCasesWithAlternativePaths(paths, results, cases);
     }
-    return results;
   }
 
   /**

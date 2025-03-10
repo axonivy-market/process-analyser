@@ -65,17 +65,15 @@
           </h:panelGroup>
 
           <h:panelGroup styleClass="ui-g field" layout="block">
-            <p:outputLabel for="kpiDropdown" value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectKPI')}" />
-            <p:selectOneMenu id="kpiDropdown"
-              value="#{processesAnalyticsBean.selectedKpiType}">
-              <f:selectItem itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectKPI')}" itemValue="#{null}"
-                noSelectionOption="true" />
-              <f:selectItems value="#{processesAnalyticsBean.kpiTypes}"
-                var="kpi" itemLabel="#{kpi.getCmsName()}"
-                itemValue="#{kpi}" />
+            <p:outputLabel for="kpiDropdown"
+              value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectKPI')}" />
+            <p:cascadeSelect id="kpiDropdown" style="width: 100%"
+              placeholder="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectKPI')}"
+              value="#{processesAnalyticsBean.selectedKpiType}" converter="kpiTypeConverter">
+              <f:selectItems value="#{processesAnalyticsBean.kpiTypes}" />
               <p:ajax event="itemSelect"
                 listener="#{processesAnalyticsBean.onKpiTypeSelect}" />
-            </p:selectOneMenu>
+            </p:cascadeSelect>
           </h:panelGroup>
         </p:panelGrid>
 
