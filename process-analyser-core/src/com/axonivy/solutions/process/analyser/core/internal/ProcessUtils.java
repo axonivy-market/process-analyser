@@ -94,13 +94,13 @@ public class ProcessUtils {
         && process instanceof IProcessWebStartable;
   }
 
-  public static List<ProcessElement> getAlterNativesWithMultiOutGoings(List<ProcessElement> processElements) {
+  public static List<ProcessElement> getAlterNativesWithMultiOutgoings(List<ProcessElement> processElements) {
     return Optional.ofNullable(processElements).orElse(new ArrayList<>()).stream()
         .filter(element -> isAlternativeInstance(element) && element.getOutgoing().size() > 1)
         .collect(Collectors.toList());
   }
 
-  public static List<ProcessElement> getElementsWithMultiInComings(List<ProcessElement> processElements) {
+  public static List<ProcessElement> getElementsWithMultiIncomings(List<ProcessElement> processElements) {
     return Optional.ofNullable(processElements).orElse(new ArrayList<>()).stream()
         .filter(element -> !(isAlternativeInstance(element) && isTaskJoinInstance(processElements))
             && isElementWithMultipleIncomingFlow(element))

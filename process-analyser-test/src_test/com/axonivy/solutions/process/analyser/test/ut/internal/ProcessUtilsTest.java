@@ -27,8 +27,8 @@ public class ProcessUtilsTest extends BaseSetup {
   }
 
   @Test
-  void test_extractAlterNativeElementsWithMultiOutGoing() {
-    var results = ProcessUtils.getAlterNativesWithMultiOutGoings(testProcessElements);
+  void test_extractAlterNativeElementsWithMultiOutgoings() {
+    var results = ProcessUtils.getAlterNativesWithMultiOutgoings(testProcessElements);
     assertThat(results).isNotEmpty();
     assertThat(results.size()).isEqualTo(1);
   }

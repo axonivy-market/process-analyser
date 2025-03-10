@@ -119,11 +119,11 @@ public class ProcessesMonitorUtils {
    **/
   public static List<Node> updateFrequencyForNodes(List<Node> results, List<ProcessElement> processElements,
       List<ICase> cases) {
-    List<ProcessElement> branchSwitchingElement = ProcessUtils.getAlterNativesWithMultiOutGoings(processElements);
+    List<ProcessElement> branchSwitchingElement = ProcessUtils.getAlterNativesWithMultiOutgoings(processElements);
     if (CollectionUtils.isEmpty(branchSwitchingElement)) {
       results.stream().forEach(node -> updateNodeWiwthDefinedFrequency(cases.size(), node));
     } else {
-      List<ProcessElement> alternativeEnds = ProcessUtils.getElementsWithMultiInComings(processElements);
+      List<ProcessElement> alternativeEnds = ProcessUtils.getElementsWithMultiIncomings(processElements);
       branchSwitchingElement.addAll(alternativeEnds);
       List<AlternativePath> paths = convertToAternativePaths(branchSwitchingElement);
       handleFrequencyForCasesWithAlternativePaths(paths, results, cases);
@@ -210,7 +210,7 @@ public class ProcessesMonitorUtils {
       return;
     }
     path.getNodeIdsInPath().add(ProcessUtils.getElementPid(destinationElement));
-    destinationElement.getOutgoing().forEach(outGoingPath -> followPath(path, outGoingPath));
+    destinationElement.getOutgoing().forEach(outgoingPath -> followPath(path, outgoingPath));
   }
 
   /**
