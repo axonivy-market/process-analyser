@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
@@ -24,6 +26,7 @@ import ch.ivyteam.ivy.process.rdm.IProcessManager;
 import ch.ivyteam.ivy.workflow.IProcessStart;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
+import ch.ivyteam.ivy.process.model.element.gateway.Join;
 
 @SuppressWarnings("restriction")
 public class ProcessUtils {
@@ -46,8 +49,12 @@ public class ProcessUtils {
     return element instanceof Alternative;
   }
 
-  public static boolean isTaskSwitchEvent(Object element) {
+  public static boolean isTaskSwitchInstance(Object element) {
     return element instanceof TaskSwitchEvent;
+  }
+
+  public static boolean isTaskJoinInstance(Object element) {
+    return element instanceof Join;
   }
 
   public static List<ProcessElement> getNestedProcessElementsFromSub(Object element) {
@@ -87,10 +94,17 @@ public class ProcessUtils {
         && process instanceof IProcessWebStartable;
   }
 
-  public static List<Alternative> extractAlterNativeElementsWithMultiOutGoing(List<ProcessElement> processElements) {
-    return Optional.ofNullable(processElements).orElse(Collections.emptyList()).stream()
-        .filter(ProcessUtils::isAlternativeInstance).map(element -> (Alternative) element)
-        .filter(alternative -> alternative.getOutgoing().size() > 1).toList();
+  public static List<ProcessElement> getAlterNativesWithMultiOutgoings(List<ProcessElement> processElements) {
+    return Optional.ofNullable(processElements).orElse(new ArrayList<>()).stream()
+        .filter(element -> isAlternativeInstance(element) && element.getOutgoing().size() > 1)
+        .collect(Collectors.toList());
+  }
+
+  public static List<ProcessElement> getElementsWithMultiIncomings(List<ProcessElement> processElements) {
+    return Optional.ofNullable(processElements).orElse(new ArrayList<>()).stream()
+        .filter(element -> !(isAlternativeInstance(element) && isTaskJoinInstance(processElements))
+            && isElementWithMultipleIncomingFlow(element))
+        .collect(Collectors.toList());
   }
 
   @SuppressWarnings("removal")
@@ -106,5 +120,19 @@ public class ProcessUtils {
     // So we have get the node before /{NAME OF TASK}
     // Ignore case {PROCESS ID}/{NAME OF TASK}
     return arr.length > 2 ? arr[arr.length - 2] : StringUtils.EMPTY;
+  }
+
+  public static boolean isElementWithMultipleIncomingFlow(ProcessElement processElement) {
+    return Optional.ofNullable(processElement).map(element -> element.getIncoming().size() > 1).orElse(false);
+  }
+
+  public static boolean isProcessPathEndElement(ProcessElement processElement) {
+    return Optional.ofNullable(processElement).map(element -> CollectionUtils.isEmpty(element.getOutgoing()))
+        .orElse(false);
+  }
+
+  public static boolean isAlternativePathEndElement(ProcessElement processElement) {
+    return isProcessPathEndElement(processElement) || isAlternativeInstance(processElement)
+        || (isElementWithMultipleIncomingFlow(processElement) && !isTaskJoinInstance(processElement));
   }
 }

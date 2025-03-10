@@ -48,8 +48,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
 
   @Test
   void test_extractNodesFromProcessElements() {
-    List<Node> results = new ArrayList<>();
-    ProcessesMonitorUtils.extractNodesFromProcessElements(List.of(startProcessElement), results);
+    List<Node> results = ProcessesMonitorUtils.extractNodesFromProcessElements(List.of(startProcessElement));
     assertThat(results.size()).isNotZero();
     assertThat(results.get(0).getId()).isEqualTo(TEST_PROCESS_ELEMENT_START_PID);
   }
@@ -82,7 +81,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     List<ICase> cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(
       ProcessUtils.getTaskStartIdFromPID(selectedPid), new TimeIntervalFilter(new Date(), new Date()), new ArrayList<>());
     List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(testProcessStart, KpiType.FREQUENCY, cases);
-    assertThat(results.size()).isEqualTo(10);
+    assertThat(results.size()).isEqualTo(16);
     assertThat(results.get(0).getLabelValue()).isZero();
   }
 
@@ -100,8 +99,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
   @Test
   void test_followPath() {
     AlternativePath testPath = new AlternativePath();
-    var flowFromAlternative = getFirstFlowFromAlternative();
-    testPath.setOriginFlow(flowFromAlternative);
+    var flowFromAlternative = getEndFlowFromAlternative();
     testPath.setNodeIdsInPath(new ArrayList<>());
     ProcessesMonitorUtils.followPath(testPath, flowFromAlternative);
     assertThat(testPath.getNodeIdsInPath().size()).isEqualTo(1);
@@ -123,5 +121,19 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     assertThat(mockNode.getLabelValue()).isEqualTo(mockValue);
     assertThat(mockNode.getFrequency()).isEqualTo(mockValue);
     assertThat(mockNode.getRelativeValue()).isEqualTo(1);
+  }
+  
+  @Test
+  void test_getNonRunningElementIdsFromAlternativeEnds() {
+    AlternativePath testPath = new AlternativePath();
+    String mockPrecedingFlowId = "f1";
+    List<String> mockNodeIds = List.of("f2", "f3");
+    List<String> mockNonRunningElementIds = List.of(mockPrecedingFlowId);
+    testPath.setPathFromAlternativeEnd(true);
+    testPath.setNodeIdsInPath(mockNodeIds);
+    testPath.setPrecedingFlowIds(mockNonRunningElementIds);
+    List<String> results = ProcessesMonitorUtils.getNonRunningElementIdsFromAlternativeEnds(List.of(testPath),
+        mockNonRunningElementIds);
+    assertThat(results.size()).isEqualTo(2);
   }
 }

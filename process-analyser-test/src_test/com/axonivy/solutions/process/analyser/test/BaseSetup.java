@@ -35,8 +35,9 @@ public class BaseSetup {
     flowFromStartElement = startProcessElement.getOutgoing().get(0);
   }
 
-  protected SequenceFlow getFirstFlowFromAlternative() {
-    return ((Alternative) flowFromStartElement.getTarget()).getOutgoing().get(0);
+  protected SequenceFlow getEndFlowFromAlternative() {
+    return ((Alternative) flowFromStartElement.getTarget()).getOutgoing().stream()
+        .filter(flow -> ProcessUtils.getElementPid(flow).contains("f8")).findAny().orElse(null);
   }
 
   protected NodeElement getElementNextToTestStart() {

@@ -27,8 +27,8 @@ public class ProcessUtilsTest extends BaseSetup {
   }
 
   @Test
-  void test_extractAlterNativeElementsWithMultiOutGoing() {
-    var results = ProcessUtils.extractAlterNativeElementsWithMultiOutGoing(testProcessElements);
+  void test_extractAlterNativeElementsWithMultiOutgoings() {
+    var results = ProcessUtils.getAlterNativesWithMultiOutgoings(testProcessElements);
     assertThat(results).isNotEmpty();
     assertThat(results.size()).isEqualTo(1);
   }
@@ -55,7 +55,7 @@ public class ProcessUtilsTest extends BaseSetup {
 
   @Test
   void test_getProcessElementsFromIProcessWebStartable() {
-    assertThat(ProcessUtils.getProcessElementsFromIProcessWebStartable(testProcessStart).size()).isEqualTo(5);
+    assertThat(ProcessUtils.getProcessElementsFromIProcessWebStartable(testProcessStart).size()).isEqualTo(8);
   }
 
   @Test
