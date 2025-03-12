@@ -17,6 +17,8 @@ public class Node {
   private double medianDuration;
   @JsonIgnore
   private int frequency;
+  @JsonIgnore
+  private boolean isTask;
 
   public Node() {}
 
@@ -74,5 +76,13 @@ public class Node {
 
   public void setFrequency(int frequency) {
     this.frequency = frequency;
+  }
+
+  public boolean isTask() {
+    return isTask;
+  }
+
+  public void setTask(boolean isTask) {
+    this.isTask = isTask;
   }
 }

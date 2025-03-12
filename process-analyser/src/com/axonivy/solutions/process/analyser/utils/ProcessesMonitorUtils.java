@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -49,7 +48,7 @@ public class ProcessesMonitorUtils {
     arrowNode.setLabel(flow.getName());
     arrowNode.setFrequency(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     arrowNode.setRelativeValue(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
-    arrowNode.setMedianDuration(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
+    arrowNode.setMedianDuration(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_DURATION_NUMBER);
     arrowNode.setType(NodeType.ARROW);
     return arrowNode;
   }
@@ -81,8 +80,11 @@ public class ProcessesMonitorUtils {
     elementNode.setLabel(element.getName());
     elementNode.setRelativeValue(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     elementNode.setFrequency(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
-    elementNode.setMedianDuration(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
+    elementNode.setMedianDuration(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_DURATION_NUMBER);
     elementNode.setType(NodeType.ELEMENT);
+    if (ProcessUtils.isTaskSwitchInstance(element)) {
+      elementNode.setTask(true);
+    }
     return elementNode;
   }
 
@@ -113,18 +115,14 @@ public class ProcessesMonitorUtils {
       updateFrequencyForNodes(results, processElements, cases);
     }
     else if (KpiType.getSubOptions(KpiType.DURATION).contains(analysisType)) {
-      updateDurationForNodes(results, processElements, cases);
+      updateDurationForNodes(results, cases);
     }
     results.stream().forEach(node -> updateNodeByAnalysisType(node, analysisType));
     return results;
   }
 
-  public static void updateDurationForNodes(List<Node> results, List<ProcessElement> processElements,
-      List<ICase> cases) {
-    List<String> taskSwitchPids = Optional.ofNullable(ProcessUtils.getTaskSwitchEvents(processElements))
-        .orElse(Collections.emptyList()).stream()
-        .map(element -> Optional.ofNullable(element.getPid()).map(Object::toString).orElse(""))
-        .collect(Collectors.toList());
+  public static void updateDurationForNodes(List<Node> results, List<ICase> cases) {
+    List<String> taskSwitchPids = getListTaskPids(results);
 
     Map<String, List<Long>> nodeDurations = cases.stream().flatMap(currentCase -> currentCase.tasks().all().stream())
         .filter(task -> taskSwitchPids.contains(ProcessUtils.getTaskElementIdFromRequestPath(task.getRequestPath())))
@@ -134,8 +132,15 @@ public class ProcessesMonitorUtils {
 
     results.forEach(node -> {
       List<Long> durations = nodeDurations.getOrDefault(node.getId(), Collections.emptyList());
-      node.setMedianDuration(durations.isEmpty() ? 0 : calculateMedian(durations));
+      node.setMedianDuration(durations.isEmpty() ? ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_DURATION_NUMBER : calculateMedian(durations));
     });
+  }
+
+  private static List<String> getListTaskPids(List<Node> results) {
+    return (results != null)
+        ? results.stream().filter(Objects::nonNull).filter(Node::isTask).map(Node::getId).filter(Objects::nonNull)
+            .collect(Collectors.toList())
+        : Collections.emptyList();
   }
 
   private static double calculateMedian(List<Long> durations) {
@@ -147,6 +152,9 @@ public class ProcessesMonitorUtils {
   }
 
   private static float convertDuration(double durationMillis, KpiType analysisType) {
+    if (durationMillis < 0) {
+      return ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_DURATION_NUMBER;
+    }
     return switch (analysisType) {
         case DURATION_DAY -> (float) (durationMillis / (1000 * 60 * 60 * 24));
         case DURATION_HOUR -> (float) (durationMillis / (1000 * 60 * 60));

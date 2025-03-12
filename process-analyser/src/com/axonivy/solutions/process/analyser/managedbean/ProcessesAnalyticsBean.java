@@ -42,7 +42,6 @@ import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.location.IParser.ParseException;
 import ch.ivyteam.ivy.workflow.ICase;
-import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
@@ -282,7 +281,11 @@ public class ProcessesAnalyticsBean {
         processMiningData.setNumberOfInstances(cases.size());
       }
     }
-    nodes = analyzedNode;
+    if (KpiType.getSubOptions(KpiType.DURATION).contains(selectedKpiType)) {
+      nodes = analyzedNode.stream().filter(Node::isTask).collect(Collectors.toList());
+    } else {
+      nodes = analyzedNode;
+    }
   }
 
   private void updateProcessMiningDataJson() {

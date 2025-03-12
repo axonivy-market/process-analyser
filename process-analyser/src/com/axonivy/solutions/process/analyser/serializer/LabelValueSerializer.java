@@ -15,6 +15,8 @@ public class LabelValueSerializer extends JsonSerializer<Float> {
   public void serialize(Float value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
       if (value == null) {
           gen.writeNull();
+      } else if (value < 0) {
+        gen.writeString("");
       } else {
           gen.writeString(DECIMAL_FORMAT.format(value));
       }

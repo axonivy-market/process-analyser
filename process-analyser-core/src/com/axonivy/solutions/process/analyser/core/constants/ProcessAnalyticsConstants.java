@@ -4,6 +4,7 @@ import ch.ivyteam.ivy.process.rdm.IProcess;
 
 public class ProcessAnalyticsConstants {
   public static final int DEFAULT_INITIAL_STATISTIC_NUMBER = 0;
+  public static final int DEFAULT_INITIAL_STATISTIC_DURATION_NUMBER = -1;
   public static final String HYPHEN_SIGN = "-";
   public static final String PROCESS_ANALYSER_PMV_NAME = "process-analyser";
   public static final String PORTAL_PMV_SUFFIX = "portal";
