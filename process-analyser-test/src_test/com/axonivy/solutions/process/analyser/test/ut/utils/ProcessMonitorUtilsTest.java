@@ -66,13 +66,13 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
   void test_updateNodeByAnalysisType() {
     Node result = new Node();
     result.setFrequency(10);
-    result.setMedianDuration(11.5);
+    result.setMedianDuration(1000);
     assertThat(result.getLabel()).isNull();
     ProcessesMonitorUtils.updateNodeByAnalysisType(result, KpiType.FREQUENCY);
     assertThat(result.getLabelValue()).isEqualTo(10);
     assertThat(result.getRelativeValue()).isZero();
-    ProcessesMonitorUtils.updateNodeByAnalysisType(result, KpiType.DURATION);
-    assertThat(result.getLabelValue()).isEqualTo(12);
+    ProcessesMonitorUtils.updateNodeByAnalysisType(result, KpiType.DURATION_SECOND);
+    assertThat(result.getLabelValue()).isEqualTo(1);
   }
 
   @Test

@@ -29,7 +29,6 @@ import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.workflow.CaseState;
 import ch.ivyteam.ivy.workflow.ICase;
-import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 import ch.ivyteam.ivy.workflow.query.CaseQuery;
 import ch.ivyteam.ivy.workflow.query.TaskQuery;
