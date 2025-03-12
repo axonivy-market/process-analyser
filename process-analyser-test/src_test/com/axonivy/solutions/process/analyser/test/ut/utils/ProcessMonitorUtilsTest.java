@@ -90,7 +90,8 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     ICase mockCase = ICase.current();
     Node mockNode = new Node();
     assertThat(mockNode.getLabel()).isNull();
-    List<Node> results = ProcessesMonitorUtils.updateFrequencyForNodes(List.of(mockNode), new ArrayList<>(),
+    List<Node> results = List.of(mockNode);
+    ProcessesMonitorUtils.updateFrequencyForNodes(results, new ArrayList<>(),
         List.of(mockCase));
     assertThat(results.size()).isNotZero();
     assertThat(results.get(0).getLabelValue()).isEqualTo(1);
