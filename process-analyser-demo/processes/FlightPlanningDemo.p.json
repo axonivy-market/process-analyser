@@ -267,7 +267,7 @@
         { "id" : "f14", "to" : "f33", "label" : {
             "name" : "Yes",
             "segment" : 0.45,
-            "offset" : { "x" : 17, "y" : -1 }
+            "offset" : { "x" : 17, "y" : 4 }
           }, "var" : "in1" }
       ]
     }, {
@@ -318,7 +318,7 @@
           },
           "parentConnector" : "f15",
           "connect" : [
-            { "id" : "S30-f2", "to" : "S30-f1" }
+            { "id" : "S30-f0", "to" : "S30-g1" }
           ]
         }, {
           "id" : "S30-g1",
@@ -327,26 +327,6 @@
             "at" : { "x" : 464, "y" : 256 }
           },
           "parentConnector" : "f20"
-        }, {
-          "id" : "S30-f1",
-          "type" : "EMail",
-          "name" : "Send emails to pilots",
-          "config" : {
-            "headers" : {
-              "subject" : "Here's your job",
-              "from" : "manager@axonivy.com",
-              "to" : "pilot@axonivy.com"
-            },
-            "message" : {
-              "body" : "Send emails to pilots"
-            }
-          },
-          "visual" : {
-            "at" : { "x" : 304, "y" : 256 }
-          },
-          "connect" : [
-            { "id" : "S30-f0", "to" : "S30-g1" }
-          ]
         } ],
       "visual" : {
         "at" : { "x" : 1008, "y" : 1208 }
@@ -366,7 +346,7 @@
           },
           "parentConnector" : "f16",
           "connect" : [
-            { "id" : "S40-f1", "to" : "S40-f3" }
+            { "id" : "S40-f0", "to" : "S40-g1" }
           ]
         }, {
           "id" : "S40-g1",
@@ -375,26 +355,6 @@
             "at" : { "x" : 512, "y" : 256 }
           },
           "parentConnector" : "f21"
-        }, {
-          "id" : "S40-f3",
-          "type" : "EMail",
-          "name" : "Send emails to cabin crews",
-          "config" : {
-            "headers" : {
-              "subject" : "Here's your job",
-              "from" : "manager@axonivy.com",
-              "to" : "cabincrew@axonivy.com"
-            },
-            "message" : {
-              "body" : "Send emails to cabin crews"
-            }
-          },
-          "visual" : {
-            "at" : { "x" : 336, "y" : 256 }
-          },
-          "connect" : [
-            { "id" : "S40-f0", "to" : "S40-g1" }
-          ]
         } ],
       "visual" : {
         "at" : { "x" : 1008, "y" : 1336 }
