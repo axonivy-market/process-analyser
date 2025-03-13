@@ -244,7 +244,7 @@
         { "id" : "f20", "to" : "f21", "via" : [ { "x" : 600, "y" : 328 } ], "label" : {
             "name" : "Yes",
             "segment" : 0.31,
-            "offset" : { "x" : 5, "y" : -55 }
+            "offset" : { "x" : 9, "y" : -36 }
           } },
         { "id" : "f6", "to" : "f25", "label" : {
             "name" : "No",
@@ -273,7 +273,7 @@
         { "id" : "f10", "to" : "f37", "label" : {
             "name" : "No",
             "segment" : 0.17,
-            "offset" : { "x" : 13, "y" : 9 }
+            "offset" : { "x" : 29, "y" : -20 }
           } }
       ]
     }, {
@@ -374,7 +374,7 @@
           "id" : "S22-g1",
           "type" : "EmbeddedEnd",
           "visual" : {
-            "at" : { "x" : 512, "y" : 256 }
+            "at" : { "x" : 344, "y" : 256 }
           },
           "parentConnector" : "f11"
         }, {
@@ -395,32 +395,9 @@
             "labelOffset" : { "x" : 14, "y" : 34 }
           },
           "connect" : [
-            { "id" : "S22-f4", "to" : "S22-f3", "label" : {
-                "name" : "S22-f4",
-                "offset" : { "x" : 2, "y" : -10 }
-              } }
-          ]
-        }, {
-          "id" : "S22-f3",
-          "type" : "EMail",
-          "name" : "Send email about Ticket Information",
-          "config" : {
-            "headers" : {
-              "subject" : "Thanks",
-              "from" : "thanks@axonivy.com",
-              "to" : "customer@gamil.com"
-            },
-            "message" : {
-              "body" : "Thanks!"
-            }
-          },
-          "visual" : {
-            "at" : { "x" : 368, "y" : 256 }
-          },
-          "connect" : [
             { "id" : "S22-f0", "to" : "S22-g1", "label" : {
                 "name" : "S22-f0",
-                "offset" : { "x" : 4, "y" : -10 }
+                "offset" : { "y" : -10 }
               } }
           ]
         } ],
@@ -777,37 +754,13 @@
             }
           },
           "visual" : {
-            "at" : { "x" : 184, "y" : 256 },
+            "at" : { "x" : 256, "y" : 256 },
             "labelOffset" : { "x" : 17, "y" : 33 }
-          },
-          "connect" : [
-            { "id" : "S40-f4", "to" : "S40-f3", "label" : {
-                "name" : "S40-f4",
-                "offset" : { "y" : -10 }
-              } }
-          ]
-        }, {
-          "id" : "S40-f3",
-          "type" : "EMail",
-          "name" : "Send Email to reminder user about their Flight",
-          "config" : {
-            "headers" : {
-              "subject" : "Thanks",
-              "from" : "thanks@axonivy.com",
-              "to" : "customer@gamil.com"
-            },
-            "message" : {
-              "body" : "Thanks!"
-            }
-          },
-          "visual" : {
-            "at" : { "x" : 408, "y" : 255 },
-            "size" : { "width" : 152, "height" : 63 }
           },
           "connect" : [
             { "id" : "S40-f0", "to" : "S40-g1", "label" : {
                 "name" : "S40-f0",
-                "offset" : { "x" : 10, "y" : -25 }
+                "offset" : { "x" : 4, "y" : -10 }
               } }
           ]
         } ],
@@ -833,11 +786,15 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 376, "y" : 328 },
+        "at" : { "x" : 440, "y" : 328 },
         "labelOffset" : { "x" : 33, "y" : -15 }
       },
       "connect" : [
-        { "id" : "f22", "to" : "S10", "via" : [ { "x" : 272, "y" : 328 } ], "color" : "default" }
+        { "id" : "f22", "to" : "S10", "via" : [ { "x" : 272, "y" : 328 } ], "label" : {
+            "name" : "f22",
+            "segment" : 0.81,
+            "offset" : { "x" : 28, "y" : -10 }
+          }, "color" : "default" }
       ]
     }, {
       "id" : "f25",
@@ -869,7 +826,11 @@
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
-        { "id" : "f28", "to" : "S20", "via" : [ { "x" : 448, "y" : 464 } ], "color" : "default" }
+        { "id" : "f28", "to" : "S20", "via" : [ { "x" : 448, "y" : 464 } ], "label" : {
+            "name" : "f28",
+            "segment" : 0.67,
+            "offset" : { "x" : 53, "y" : -9 }
+          }, "color" : "default" }
       ]
     }, {
       "id" : "f29",
@@ -887,7 +848,10 @@
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
-        { "id" : "f30", "to" : "S25", "color" : "default" }
+        { "id" : "f30", "to" : "S25", "label" : {
+            "name" : "f30",
+            "offset" : { "x" : -2, "y" : -10 }
+          }, "color" : "default" }
       ]
     }, {
       "id" : "f31",
@@ -905,7 +869,10 @@
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
-        { "id" : "f32", "to" : "f1", "color" : "default" }
+        { "id" : "f32", "to" : "f1", "label" : {
+            "name" : "f32",
+            "offset" : { "x" : 1, "y" : -10 }
+          }, "color" : "default" }
       ]
     }, {
       "id" : "f33",
@@ -923,7 +890,10 @@
         "labelOffset" : { "x" : 89, "y" : 9 }
       },
       "connect" : [
-        { "id" : "f34", "to" : "S23", "color" : "default" }
+        { "id" : "f34", "to" : "S23", "label" : {
+            "name" : "f34",
+            "offset" : { "x" : 17, "y" : -6 }
+          }, "color" : "default" }
       ]
     }, {
       "id" : "f35",
@@ -941,7 +911,10 @@
         "labelOffset" : { "x" : 33, "y" : 33 }
       },
       "connect" : [
-        { "id" : "f36", "to" : "S23", "color" : "default" }
+        { "id" : "f36", "to" : "S23", "label" : {
+            "name" : "f36",
+            "offset" : { "x" : -4, "y" : -10 }
+          }, "color" : "default" }
       ]
     }, {
       "id" : "f37",
@@ -959,7 +932,10 @@
         "labelOffset" : { "x" : 121, "y" : 9 }
       },
       "connect" : [
-        { "id" : "f38", "to" : "f12", "color" : "default" }
+        { "id" : "f38", "to" : "f12", "label" : {
+            "name" : "f38",
+            "segment" : 0.45
+          }, "color" : "default" }
       ]
     } ],
   "layout" : {
