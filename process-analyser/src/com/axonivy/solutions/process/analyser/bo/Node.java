@@ -1,20 +1,17 @@
 package com.axonivy.solutions.process.analyser.bo;
 
 import com.axonivy.solutions.process.analyser.enums.NodeType;
-import com.axonivy.solutions.process.analyser.serializer.LabelValueSerializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 public class Node {
   private NodeType type;
   private String id;
   @JsonIgnore
   private String label;
-  @JsonSerialize(using = LabelValueSerializer.class)
-  private float labelValue;
-  private double relativeValue;
+  private String labelValue;
+  private float relativeValue;
   @JsonIgnore
-  private double medianDuration;
+  private float medianDuration;
   @JsonIgnore
   private int frequency;
   @JsonIgnore
@@ -46,27 +43,27 @@ public class Node {
     this.label = label;
   }
 
-  public float getLabelValue() {
+  public String getLabelValue() {
     return labelValue;
   }
 
-  public void setLabelValue(float labelValue) {
+  public void setLabelValue(String labelValue) {
     this.labelValue = labelValue;
   }
 
-  public double getRelativeValue() {
+  public float getRelativeValue() {
     return relativeValue;
   }
 
-  public void setRelativeValue(double relativeValue) {
+  public void setRelativeValue(float relativeValue) {
     this.relativeValue = relativeValue;
   }
 
-  public double getMedianDuration() {
+  public float getMedianDuration() {
     return medianDuration;
   }
 
-  public void setMedianDuration(double medianDuration) {
+  public void setMedianDuration(float medianDuration) {
     this.medianDuration = medianDuration;
   }
 

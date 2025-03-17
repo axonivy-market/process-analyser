@@ -143,12 +143,13 @@ public class ProcessesMonitorUtils {
         : Collections.emptyList();
   }
 
-  private static double calculateMedian(List<Long> durations) {
+  private static float calculateMedian(List<Long> durations) {
     if (durations.isEmpty())
-      return 0;
+      return 0f;
     List<Long> sorted = durations.stream().sorted().toList();
     int middle = sorted.size() / 2;
-    return sorted.size() % 2 == 0 ? (sorted.get(middle - 1) + sorted.get(middle)) / 2.0 : sorted.get(middle);
+
+    return sorted.size() % 2 == 0 ? (sorted.get(middle - 1) + sorted.get(middle)) / 2.0f : sorted.get(middle);
   }
 
   private static float convertDuration(double durationMillis, KpiType analysisType) {
