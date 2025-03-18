@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -16,17 +16,17 @@ import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsCon
 
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.model.BaseElement;
-import ch.ivyteam.ivy.process.model.Process;
+import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.EmbeddedProcessElement;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.element.event.intermediate.TaskSwitchEvent;
 import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
+import ch.ivyteam.ivy.process.model.element.gateway.Join;
 import ch.ivyteam.ivy.process.model.value.PID;
 import ch.ivyteam.ivy.process.rdm.IProcessManager;
 import ch.ivyteam.ivy.workflow.IProcessStart;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
-import ch.ivyteam.ivy.process.model.element.gateway.Join;
 
 @SuppressWarnings("restriction")
 public class ProcessUtils {
@@ -64,14 +64,25 @@ public class ProcessUtils {
     return Collections.emptyList();
   }
 
-  public static List<ProcessElement> getProcessElementsFromIProcessWebStartable(IProcessWebStartable startElement) {
-    if (Objects.nonNull(startElement)) {
-      String processRawPid = getProcessPidFromElement(startElement.pid().toString());
-      var manager = IProcessManager.instance().getProjectDataModelFor(startElement.pmv());
-      Process process = manager.findProcess(processRawPid, true).getModel();
-      return process.getProcessElements();
+  public static List<ProcessElement> getProcessElementsFrom(IProcessWebStartable startElement) {
+    if (startElement == null || startElement.pid() == null) {
+      return Collections.emptyList();
     }
-    return Collections.emptyList();
+
+    String processRawPid = getProcessPidFromElement(startElement.pid().toString());
+    var manager = IProcessManager.instance().getProjectDataModelFor(startElement.pmv());
+
+    return Optional.ofNullable(manager.findProcess(processRawPid, true))
+        .map(foundProcess -> foundProcess.getModel().getProcessElements().stream()
+            .flatMap(element -> Stream.concat(Stream.of(element),
+                ProcessUtils.getNestedProcessElementsFromSub(element).stream()))
+            .collect(Collectors.toList()))
+        .orElseGet(Collections::emptyList);
+  }
+
+  public static List<SequenceFlow> getSequenceFlowsFrom(List<ProcessElement> elements) {
+    return elements.stream().flatMap(element -> element.getOutgoing().stream())
+        .collect(Collectors.toList());
   }
 
   public static List<IWebStartable> getAllProcesses() {

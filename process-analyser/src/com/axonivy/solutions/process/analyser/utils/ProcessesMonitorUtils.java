@@ -1,5 +1,6 @@
 package com.axonivy.solutions.process.analyser.utils;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -8,7 +9,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -28,6 +32,7 @@ import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.workflow.CaseState;
 import ch.ivyteam.ivy.workflow.ICase;
+import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 import ch.ivyteam.ivy.workflow.query.CaseQuery;
 import ch.ivyteam.ivy.workflow.query.TaskQuery;
@@ -38,17 +43,12 @@ public class ProcessesMonitorUtils {
   private ProcessesMonitorUtils() {
   }
 
-  public static List<Node> convertProcessElementInfoToNode(ProcessElement element) {
-    return element.getOutgoing().stream().map(flow -> convertSequenceFlowToNode(flow)).collect(Collectors.toList());
-  }
-
   public static Node convertSequenceFlowToNode(SequenceFlow flow) {
     Node arrowNode = new Node();
     arrowNode.setId(ProcessUtils.getElementPid(flow));
     arrowNode.setLabel(flow.getName());
     arrowNode.setFrequency(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     arrowNode.setRelativeValue(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
-    arrowNode.setMedianDuration(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_DURATION_NUMBER);
     arrowNode.setType(NodeType.ARROW);
     return arrowNode;
   }
@@ -62,16 +62,9 @@ public class ProcessesMonitorUtils {
    *                        workflow
    * @param results         list of existing arrow from previous step
    */
-  public static List<Node> extractNodesFromProcessElements(List<ProcessElement> processElements) {
-    List<Node> results = new ArrayList<>();
-    processElements.forEach(element -> {
-      results.add(convertProcessElementToNode(element));
-      results.addAll(convertProcessElementInfoToNode(element));
-      if (ProcessUtils.isEmbeddedElementInstance(element)) {
-        results.addAll(extractNodesFromProcessElements(ProcessUtils.getNestedProcessElementsFromSub(element)));
-      }
-    });
-    return results;
+  public static List<Node> convertToNodes(List<ProcessElement> processElements, List<SequenceFlow> sequenceFlows) {
+    return Stream.concat(processElements.stream().map(ProcessesMonitorUtils::convertProcessElementToNode),
+        sequenceFlows.stream().map(ProcessesMonitorUtils::convertSequenceFlowToNode)).collect(Collectors.toList());
   }
 
   public static Node convertProcessElementToNode(ProcessElement element) {
@@ -82,21 +75,23 @@ public class ProcessesMonitorUtils {
     elementNode.setFrequency(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     elementNode.setMedianDuration(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_DURATION_NUMBER);
     elementNode.setType(NodeType.ELEMENT);
-    if (ProcessUtils.isTaskSwitchInstance(element)) {
-      elementNode.setTask(true);
-    }
     return elementNode;
   }
 
   public static void updateNodeByAnalysisType(Node node, KpiType analysisType) {
     if (KpiType.FREQUENCY == analysisType) {
-      node.setLabelValue(node.getFrequency());
+      node.setLabelValue(String.valueOf(node.getFrequency()));
     } else {
-      node.setLabelValue(convertDuration(node.getMedianDuration(), analysisType));
+      node.setLabelValue(formatDuration(convertDuration(node.getMedianDuration(), analysisType)));
     }
     if (Double.isNaN(node.getRelativeValue())) {
       node.setRelativeValue(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     }
+  }
+
+  private static String formatDuration(float value) {
+    DecimalFormat df = new DecimalFormat("#.##");
+    return df.format(value);
   }
 
   /**
@@ -109,38 +104,68 @@ public class ProcessesMonitorUtils {
     if (Objects.isNull(processStart)) {
       return Collections.emptyList();
     }
-    List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
-    List<Node> results = extractNodesFromProcessElements(processElements);
-    if (analysisType == KpiType.FREQUENCY) {
-      updateFrequencyForNodes(results, processElements, cases);
+    List<ProcessElement> processElements = ProcessUtils.getProcessElementsFrom(processStart);
+    List<SequenceFlow> sequenceFlows = getSequenceFlowsIfNeeded(processElements, analysisType);
+    List<Node> nodes = convertToNodes(processElements, sequenceFlows);
+    if (isFrequency(analysisType)) {
+      updateFrequencyForNodes(nodes, processElements, cases);
+    } else if (isDescendantOfDuration(analysisType)) {
+      updateDurationForNodes(nodes, cases, analysisType);
     }
-    else if (KpiType.getSubOptions(KpiType.DURATION).contains(analysisType)) {
-      updateDurationForNodes(results, cases);
-    }
-    results.stream().forEach(node -> updateNodeByAnalysisType(node, analysisType));
-    return results;
+    nodes.forEach(node -> updateNodeByAnalysisType(node, analysisType));
+    return nodes;
   }
 
-  public static void updateDurationForNodes(List<Node> results, List<ICase> cases) {
-    List<String> taskSwitchPids = getListTaskPids(results);
+  private static boolean isFrequency(KpiType kpiType) {
+    return KpiType.FREQUENCY.equals(kpiType);
+  }
+
+  public static boolean isDescendantOfDuration(KpiType kpiType) {
+    return kpiType != null && kpiType.isDescendantOf(KpiType.DURATION);
+  }
+
+  private static List<SequenceFlow> getSequenceFlowsIfNeeded(List<ProcessElement> processElements, KpiType kpiType) {
+    return (isFrequency(kpiType)) ? ProcessUtils.getSequenceFlowsFrom(processElements) : List.of();
+  }
+
+  public static void updateDurationForNodes(List<Node> nodes, List<ICase> cases, KpiType durationKpiType) {
+    if (Optional.ofNullable(nodes).orElse(List.of()).isEmpty()
+        || Optional.ofNullable(cases).orElse(List.of()).isEmpty()) {
+      return;
+    }
+    List<String> taskSwitchPids = nodes.stream().filter(Objects::nonNull).map(Node::getId).filter(Objects::nonNull)
+        .collect(Collectors.toList());
+
+    Function<ITask, Long> durationExtractor = getDurationExtractor(durationKpiType);
 
     Map<String, List<Long>> nodeDurations = cases.stream().flatMap(currentCase -> currentCase.tasks().all().stream())
         .filter(task -> taskSwitchPids.contains(ProcessUtils.getTaskElementIdFromRequestPath(task.getRequestPath())))
         .collect(Collectors.groupingBy(task -> ProcessUtils.getTaskElementIdFromRequestPath(task.getRequestPath()),
-            Collectors.mapping(task -> task.getEndTimestamp().getTime() - task.getStartTimestamp().getTime(),
-                Collectors.toList())));
+            Collectors.mapping(durationExtractor, Collectors.toList())));
 
-    results.forEach(node -> {
-      List<Long> durations = nodeDurations.getOrDefault(node.getId(), Collections.emptyList());
-      node.setMedianDuration(durations.isEmpty() ? ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_DURATION_NUMBER : calculateMedian(durations));
+    nodes.removeIf(node -> {
+      List<Long> durations = nodeDurations.get(node.getId());
+      if (durations == null || durations.isEmpty()) {
+        return true;
+      }
+      node.setMedianDuration(calculateMedian(durations));
+      return false;
     });
   }
 
-  private static List<String> getListTaskPids(List<Node> results) {
-    return (results != null)
-        ? results.stream().filter(Objects::nonNull).filter(Node::isTask).map(Node::getId).filter(Objects::nonNull)
-            .collect(Collectors.toList())
-        : Collections.emptyList();
+  private static Function<ITask, Long> getDurationExtractor(KpiType durationKpiType) {
+    if (durationKpiType.isDescendantOf(KpiType.DURATION_IDLE)) {
+      return task -> getOverallDuration(task) - task.getWorkingTime().toNumber();
+    } else if (durationKpiType.isDescendantOf(KpiType.DURATION_OVERALL)) {
+      return task -> getOverallDuration(task);
+    } else if (durationKpiType.isDescendantOf(KpiType.DURATION_WORKING)) {
+      return task -> task.getWorkingTime().toNumber();
+    }
+    return task -> 0L;
+  }
+  
+  private static long getOverallDuration(ITask task) {
+    return (task.getEndTimestamp().getTime() - task.getStartTimestamp().getTime()) / 1000;
   }
 
   private static float calculateMedian(List<Long> durations) {
@@ -152,18 +177,17 @@ public class ProcessesMonitorUtils {
     return sorted.size() % 2 == 0 ? (sorted.get(middle - 1) + sorted.get(middle)) / 2.0f : sorted.get(middle);
   }
 
-  private static float convertDuration(double durationMillis, KpiType analysisType) {
-    if (durationMillis < 0) {
-      return ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_DURATION_NUMBER;
-    }
-    return switch (analysisType) {
-        case DURATION_DAY -> (float) (durationMillis / (1000 * 60 * 60 * 24));
-        case DURATION_HOUR -> (float) (durationMillis / (1000 * 60 * 60));
-        case DURATION_MINUTE -> (float) (durationMillis / (1000 * 60));
-        case DURATION_SECOND -> (float) (durationMillis / 1000);
-        default -> (float) durationMillis;
+  private static float convertDuration(float durationSeconds, KpiType kpiType) {
+    return switch (kpiType) {
+    case DURATION_IDLE_DAY, DURATION_WORKING_DAY, DURATION_OVERALL_DAY ->
+      (float) (durationSeconds / (60 * 60 * 24));
+    case DURATION_IDLE_HOUR, DURATION_WORKING_HOUR, DURATION_OVERALL_HOUR ->
+      (float) (durationSeconds / (60 * 60));
+    case DURATION_IDLE_MINUTE, DURATION_WORKING_MINUTE, DURATION_OVERALL_MINUTE ->
+      (float) (durationSeconds / (60));
+    default -> durationSeconds;
     };
-}
+  }
 
   /**
    * If current process have no alternative -> frequency = totals cases size. If
@@ -397,7 +421,7 @@ public class ProcessesMonitorUtils {
   public static void updateNodeWiwthDefinedFrequency(int value, Node node) {
     Long releativeValue = (long) (value == 0 ? 0 : 1);
     node.setRelativeValue(releativeValue);
-    node.setLabelValue(Objects.requireNonNullElse(value, 0));
+    node.setLabelValue(Objects.requireNonNullElse(value, 0).toString());
     node.setFrequency(value);
   }
 }

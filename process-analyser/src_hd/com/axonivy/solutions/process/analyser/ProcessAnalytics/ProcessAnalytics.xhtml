@@ -127,7 +127,7 @@
               <h:outputText value="#{node.frequency}" />
             </p:column>
             <p:column
-              rendered="#{'DURATION' == processesAnalyticsBean.selectedKpiType}"
+              rendered="#{processesAnalyticsBean.isMedianDurationColumnVisible()}"
               styleClass="col-2" sortBy="#{node.medianDuration}"
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/MedianDuration')}">
               <h:outputText value="#{node.medianDuration}" />

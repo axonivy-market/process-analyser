@@ -24,11 +24,13 @@ public class BaseSetup {
   protected static ProcessElement startProcessElement;
   protected static List<ProcessElement> testProcessElements;
   protected static SequenceFlow flowFromStartElement;
+  protected static List<SequenceFlow> testSequenceFlows;
 
   protected static void prepareData() {
     testProcessStart = (IProcessWebStartable) ProcessUtils.getAllProcesses().stream()
         .filter(start -> StringUtils.contains(start.getName(), TEST_PROCESS_NAME)).findAny().orElse(null);
-    testProcessElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(testProcessStart);
+    testProcessElements = ProcessUtils.getProcessElementsFrom(testProcessStart);
+    testSequenceFlows = ProcessUtils.getSequenceFlowsFrom(testProcessElements);
     startProcessElement = testProcessElements.stream()
         .filter(element -> StringUtils.contains(element.getPid().toString(), TEST_PROCESS_ELEMENT_START_PID)).findAny()
         .orElse(null);

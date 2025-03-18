@@ -91,20 +91,21 @@ public class ProcessesAnalyticsBean {
 
   private void initKpiTypes() {
     kpiTypes = new ArrayList<>();
-    for (KpiType type : KpiType.getTopLevelOptions()) {
-      List<KpiType> subOptions = KpiType.getSubOptions(type);
 
-      if (subOptions.isEmpty()) {
-        kpiTypes.add(new SelectItem(type, type.getCmsName()));
-      } else {
-        SelectItemGroup group = new SelectItemGroup(type.getCmsName());
-        group.setValue(type);
-        SelectItem[] subItems = subOptions.stream().map(sub -> new SelectItem(sub, sub.getCmsName()))
-            .toArray(SelectItem[]::new);
-        group.setSelectItems(subItems);
-        kpiTypes.add(group);
-      }
+    for (KpiType type : KpiType.getTopLevelOptions()) {
+      kpiTypes.add(createSelectItem(type));
     }
+  }
+
+  private SelectItem createSelectItem(KpiType type) {
+    List<KpiType> subOptions = type.getSubOptions();
+    if (subOptions.isEmpty()) {
+      return new SelectItem(type, type.getCmsName());
+    }
+    SelectItemGroup group = new SelectItemGroup(type.getCmsName());
+    group.setValue(type);
+    group.setSelectItems(subOptions.stream().map(this::createSelectItem).toArray(SelectItem[]::new));
+    return group;
   }
 
   public List<String> getAvailableProcesses() {
@@ -281,11 +282,7 @@ public class ProcessesAnalyticsBean {
         processMiningData.setNumberOfInstances(cases.size());
       }
     }
-    if (KpiType.getSubOptions(KpiType.DURATION).contains(selectedKpiType)) {
-      nodes = analyzedNode.stream().filter(Node::isTask).collect(Collectors.toList());
-    } else {
-      nodes = analyzedNode;
-    }
+    nodes = analyzedNode;
   }
 
   private void updateProcessMiningDataJson() {
@@ -297,6 +294,10 @@ public class ProcessesAnalyticsBean {
     return StringUtils.isNotBlank(selectedProcess)
         ? String.format(ProcessAnalyticsConstants.ANALYSIS_EXCEL_FILE_PATTERN, selectedProcess)
         : StringUtils.EMPTY;
+  }
+  
+  public boolean isMedianDurationColumnVisible() {
+    return ProcessesMonitorUtils.isDescendantOfDuration(selectedKpiType);
   }
 
   public String getSelectedProcess() {
