@@ -9,3 +9,5 @@
 Variables:
   # Maximum query results per query task
   maxQueryResults: "10000"
+  # Maximum rework time in a case
+  maxReworkTimeInACase: "10"

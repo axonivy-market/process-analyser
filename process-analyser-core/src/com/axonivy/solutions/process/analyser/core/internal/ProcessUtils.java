@@ -27,6 +27,7 @@ import ch.ivyteam.ivy.workflow.IProcessStart;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
 import ch.ivyteam.ivy.process.model.element.gateway.Join;
+import ch.ivyteam.ivy.process.model.element.gateway.TaskSwitchGateway;
 
 @SuppressWarnings("restriction")
 public class ProcessUtils {
@@ -51,6 +52,10 @@ public class ProcessUtils {
 
   public static boolean isTaskSwitchInstance(Object element) {
     return element instanceof TaskSwitchEvent;
+  }
+
+  public static boolean isTaskSwitchGatewayInstance(Object element) {
+    return element instanceof TaskSwitchGateway;
   }
 
   public static boolean isTaskJoinInstance(Object element) {

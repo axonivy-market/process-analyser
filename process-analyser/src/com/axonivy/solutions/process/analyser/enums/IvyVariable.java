@@ -1,7 +1,7 @@
 package com.axonivy.solutions.process.analyser.enums;
 
 public enum IvyVariable {
-  MAX_QUERY_RESULTS("maxQueryResults");
+  MAX_QUERY_RESULTS("maxQueryResults"), MAX_REWORK_TIME_IN_A_CASE("maxReworkTimeInACase");
 
   private String variableName;
 

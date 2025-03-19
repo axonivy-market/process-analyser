@@ -33,7 +33,7 @@
       "id" : "f1",
       "type" : "TaskEnd",
       "visual" : {
-        "at" : { "x" : 1792, "y" : 688 }
+        "at" : { "x" : 1952, "y" : 688 }
       }
     }, {
       "id" : "S10",
@@ -113,9 +113,9 @@
         "size" : { "width" : 128 }
       },
       "connect" : [
-        { "id" : "f3", "to" : "S20", "label" : {
+        { "id" : "f3", "to" : "f39", "label" : {
             "name" : "f3",
-            "offset" : { "x" : -3, "y" : -10 }
+            "offset" : { "x" : -11, "y" : -10 }
           } }
       ]
     }, {
@@ -128,7 +128,7 @@
           "visual" : {
             "at" : { "x" : 64, "y" : 256 }
           },
-          "parentConnector" : "f3",
+          "parentConnector" : "f40",
           "connect" : [
             { "id" : "S20-f2", "to" : "S20-f1", "label" : {
                 "name" : "S20-f2",
@@ -218,7 +218,7 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 448, "y" : 392 },
+        "at" : { "x" : 568, "y" : 392 },
         "size" : { "width" : 144 }
       },
       "connect" : [
@@ -237,14 +237,14 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 600, "y" : 392 },
+        "at" : { "x" : 744, "y" : 392 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
-        { "id" : "f20", "to" : "f21", "via" : [ { "x" : 600, "y" : 328 } ], "label" : {
+        { "id" : "f20", "to" : "f21", "via" : [ { "x" : 744, "y" : 328 } ], "label" : {
             "name" : "Yes",
             "segment" : 0.31,
-            "offset" : { "x" : 9, "y" : -36 }
+            "offset" : { "x" : -8, "y" : -50 }
           } },
         { "id" : "f6", "to" : "f25", "label" : {
             "name" : "No",
@@ -261,11 +261,11 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1024, "y" : 392 },
+        "at" : { "x" : 1184, "y" : 392 },
         "labelOffset" : { "x" : 40, "y" : -24 }
       },
       "connect" : [
-        { "id" : "f24", "to" : "f27", "via" : [ { "x" : 1024, "y" : 464 } ], "label" : {
+        { "id" : "f24", "to" : "f27", "via" : [ { "x" : 1184, "y" : 464 } ], "label" : {
             "name" : "Yes",
             "segment" : 0.27,
             "offset" : { "x" : 25, "y" : 7 }
@@ -344,7 +344,7 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 872, "y" : 392 },
+        "at" : { "x" : 1032, "y" : 392 },
         "size" : { "width" : 144 }
       },
       "connect" : [
@@ -402,7 +402,7 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 1120, "y" : 928 },
+        "at" : { "x" : 1280, "y" : 928 },
         "size" : { "width" : 144 }
       },
       "connect" : [
@@ -421,7 +421,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1120, "y" : 584 },
+        "at" : { "x" : 1280, "y" : 584 },
         "labelOffset" : { "x" : -40, "y" : 8 }
       },
       "connect" : [
@@ -533,7 +533,7 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 1120, "y" : 808 },
+        "at" : { "x" : 1280, "y" : 808 },
         "size" : { "width" : 144 }
       },
       "connect" : [
@@ -604,7 +604,7 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 1472, "y" : 584 },
+        "at" : { "x" : 1632, "y" : 584 },
         "size" : { "width" : 144 }
       },
       "connect" : [
@@ -624,8 +624,8 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1600, "y" : 688 },
-        "labelOffset" : { "x" : -16, "y" : 8 }
+        "at" : { "x" : 1760, "y" : 688 },
+        "labelOffset" : { "x" : -24, "y" : 8 }
       },
       "connect" : [
         { "id" : "f19", "to" : "f31", "label" : {
@@ -633,7 +633,7 @@
             "segment" : 0.27,
             "offset" : { "x" : 8, "y" : -10 }
           } },
-        { "id" : "f13", "to" : "f35", "via" : [ { "x" : 1600, "y" : 808 } ], "label" : {
+        { "id" : "f13", "to" : "f35", "via" : [ { "x" : 1760, "y" : 808 } ], "label" : {
             "name" : "Yes",
             "segment" : 1.31,
             "offset" : { "x" : 36, "y" : -65 }
@@ -706,11 +706,11 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 1471, "y" : 392 },
+        "at" : { "x" : 1631, "y" : 392 },
         "size" : { "width" : 161, "height" : 62 }
       },
       "connect" : [
-        { "id" : "f18", "to" : "f17", "via" : [ { "x" : 1600, "y" : 392 } ], "label" : {
+        { "id" : "f18", "to" : "f17", "via" : [ { "x" : 1760, "y" : 392 } ], "label" : {
             "name" : "f18",
             "segment" : 1.23,
             "offset" : { "x" : 20, "y" : 78 }
@@ -765,7 +765,7 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 1792, "y" : 928 },
+        "at" : { "x" : 1952, "y" : 928 },
         "size" : { "width" : 144 }
       },
       "connect" : [
@@ -786,14 +786,14 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 440, "y" : 328 },
+        "at" : { "x" : 504, "y" : 328 },
         "labelOffset" : { "x" : 33, "y" : -15 }
       },
       "connect" : [
         { "id" : "f22", "to" : "S10", "via" : [ { "x" : 272, "y" : 328 } ], "label" : {
             "name" : "f22",
             "segment" : 0.81,
-            "offset" : { "x" : 28, "y" : -10 }
+            "offset" : { "x" : 28, "y" : -11 }
           }, "color" : "default" }
       ]
     }, {
@@ -811,7 +811,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 728, "y" : 392 },
+        "at" : { "x" : 872, "y" : 392 },
         "labelOffset" : { "x" : 17, "y" : 33 }
       },
       "connect" : [
@@ -821,15 +821,22 @@
       "id" : "f27",
       "type" : "TaskSwitchEvent",
       "name" : "Process to submit personal details",
+      "config" : {
+        "task" : {
+          "responsible" : {
+            "activator" : "SYSTEM"
+          }
+        }
+      },
       "visual" : {
-        "at" : { "x" : 760, "y" : 464 },
+        "at" : { "x" : 920, "y" : 464 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
-        { "id" : "f28", "to" : "S20", "via" : [ { "x" : 448, "y" : 464 } ], "label" : {
+        { "id" : "f28", "to" : "S20", "via" : [ { "x" : 568, "y" : 464 } ], "label" : {
             "name" : "f28",
             "segment" : 0.67,
-            "offset" : { "x" : 53, "y" : -9 }
+            "offset" : { "x" : 53, "y" : -8 }
           }, "color" : "default" }
       ]
     }, {
@@ -844,7 +851,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1312, "y" : 584 },
+        "at" : { "x" : 1472, "y" : 584 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
@@ -865,7 +872,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1696, "y" : 688 },
+        "at" : { "x" : 1856, "y" : 688 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
@@ -886,7 +893,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1120, "y" : 688 },
+        "at" : { "x" : 1280, "y" : 688 },
         "labelOffset" : { "x" : 89, "y" : 9 }
       },
       "connect" : [
@@ -907,7 +914,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1424, "y" : 808 },
+        "at" : { "x" : 1584, "y" : 808 },
         "labelOffset" : { "x" : 33, "y" : 33 }
       },
       "connect" : [
@@ -928,13 +935,38 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1120, "y" : 392 },
+        "at" : { "x" : 1280, "y" : 392 },
         "labelOffset" : { "x" : 121, "y" : 9 }
       },
       "connect" : [
         { "id" : "f38", "to" : "f12", "label" : {
             "name" : "f38",
-            "segment" : 0.45
+            "segment" : 0.45,
+            "offset" : { "x" : 17, "y" : -1 }
+          }, "color" : "default" }
+      ]
+    }, {
+      "id" : "f39",
+      "type" : "TaskSwitchEvent",
+      "name" : [
+        "Process to",
+        "submit information"
+      ],
+      "config" : {
+        "task" : {
+          "responsible" : {
+            "activator" : "SYSTEM"
+          }
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 408, "y" : 392 },
+        "labelOffset" : { "x" : 17, "y" : 41 }
+      },
+      "connect" : [
+        { "id" : "f40", "to" : "S20", "label" : {
+            "name" : "f40",
+            "offset" : { "x" : -2, "y" : -10 }
           }, "color" : "default" }
       ]
     } ],

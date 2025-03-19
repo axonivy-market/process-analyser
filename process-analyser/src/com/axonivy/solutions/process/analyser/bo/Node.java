@@ -1,5 +1,8 @@
 package com.axonivy.solutions.process.analyser.bo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.axonivy.solutions.process.analyser.enums.NodeType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -14,6 +17,14 @@ public class Node {
   private double medianDuration;
   @JsonIgnore
   private int frequency;
+  @JsonIgnore
+  private boolean isAlternativeElement;
+  @JsonIgnore
+  private List<String> outGoingPathIds = new ArrayList<>();
+  @JsonIgnore
+  private List<String> inCommingPathIds = new ArrayList<>();
+  @JsonIgnore
+  private String targetNodeId;
 
   public Node() {}
 
@@ -71,5 +82,37 @@ public class Node {
 
   public void setFrequency(int frequency) {
     this.frequency = frequency;
+  }
+
+  public boolean isAlternativeElement() {
+    return isAlternativeElement;
+  }
+
+  public void setAlternativeElement(boolean isAlternativeElement) {
+    this.isAlternativeElement = isAlternativeElement;
+  }
+
+  public List<String> getOutGoingPathIds() {
+    return outGoingPathIds;
+  }
+
+  public void setOutGoingPathIds(List<String> outGoingPathIds) {
+    this.outGoingPathIds = outGoingPathIds;
+  }
+
+  public List<String> getInCommingPathIds() {
+    return inCommingPathIds;
+  }
+
+  public void setInCommingPathIds(List<String> inCommingPathIds) {
+    this.inCommingPathIds = inCommingPathIds;
+  }
+
+  public String getTargetNodeId() {
+    return targetNodeId;
+  }
+
+  public void setTargetNodeId(String targetNodeId) {
+    this.targetNodeId = targetNodeId;
   }
 }

@@ -5,7 +5,9 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -18,6 +20,7 @@ import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
+import com.axonivy.solutions.process.analyser.enums.IvyVariable;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
@@ -38,17 +41,21 @@ public class ProcessesMonitorUtils {
   }
 
   public static List<Node> convertProcessElementInfoToNode(ProcessElement element) {
-    return element.getOutgoing().stream().map(flow -> convertSequenceFlowToNode(flow)).collect(Collectors.toList());
+    return element.getOutgoing().stream().map(flow -> {
+      return convertSequenceFlowToNode(flow);
+    }).collect(Collectors.toList());
   }
 
   public static Node convertSequenceFlowToNode(SequenceFlow flow) {
+    String elementId = ProcessUtils.getElementPid(flow);
     Node arrowNode = new Node();
-    arrowNode.setId(ProcessUtils.getElementPid(flow));
+    arrowNode.setId(elementId);
     arrowNode.setLabel(flow.getName());
     arrowNode.setFrequency(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     arrowNode.setRelativeValue(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     arrowNode.setMedianDuration(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     arrowNode.setType(NodeType.ARROW);
+    arrowNode.setTargetNodeId(flow.getTarget().getPid().toString());
     return arrowNode;
   }
 
@@ -81,6 +88,8 @@ public class ProcessesMonitorUtils {
     elementNode.setFrequency(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     elementNode.setMedianDuration(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     elementNode.setType(NodeType.ELEMENT);
+    elementNode.setOutGoingPathIds(element.getOutgoing().stream().map(ProcessUtils::getElementPid).toList());
+    elementNode.setInCommingPathIds(element.getIncoming().stream().map(ProcessUtils::getElementPid).toList());
     return elementNode;
   }
 
@@ -106,6 +115,7 @@ public class ProcessesMonitorUtils {
       return Collections.emptyList();
     }
     List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
+    
     List<Node> results = extractNodesFromProcessElements(processElements);
     updateFrequencyForNodes(results, processElements, cases);
     results.stream().forEach(node -> updateNodeByAnalysisType(node, analysisType));
@@ -127,10 +137,49 @@ public class ProcessesMonitorUtils {
       branchSwitchingElement.addAll(alternativeEnds);
       List<AlternativePath> paths = convertToAternativePaths(branchSwitchingElement);
       handleFrequencyForCasesWithAlternativePaths(paths, results, cases);
+
+      List<ProcessElement> taskSwitchElements = processElements.stream()
+          .filter(element -> ProcessUtils.isTaskSwitchGatewayInstance(element)).collect(Collectors.toList());
+      List<ProcessElement> complexElements = new ArrayList<>();
+      complexElements.addAll(taskSwitchElements);
+      complexElements.addAll(branchSwitchingElement);
+      updateFrequencyForComplexElements(complexElements, results, cases.size());
+
     }
+
     return results;
   }
 
+  private static void updateFrequencyForComplexElements(List<ProcessElement> complexElements, List<Node> nodes,
+      int caseSize) {
+    complexElements.stream().forEach(processElement -> {
+      Node node = findNodeById(processElement.getPid().toString(), nodes);
+      int frequency = 0;
+      for (String inCommingPathId : node.getInCommingPathIds()) {
+        frequency += getFrequencyById(inCommingPathId, nodes);
+      }
+      node.setFrequency(frequency);
+      node.setRelativeValue((float) (frequency / caseSize)
+          / Integer.valueOf(Ivy.var().get(IvyVariable.MAX_REWORK_TIME_IN_A_CASE.getVariableName())));
+      for (String outGoingPathId : node.getOutGoingPathIds()) {
+        Node outGoingPath = findNodeById(outGoingPathId, nodes);
+        Node targetNodeOfOutGoingPath = findNodeById(outGoingPath.getTargetNodeId(), nodes);
+        outGoingPath.setFrequency(targetNodeOfOutGoingPath.getFrequency());
+        outGoingPath.setRelativeValue((float) (targetNodeOfOutGoingPath.getFrequency() / caseSize)
+            / Integer.valueOf(Ivy.var().get(IvyVariable.MAX_REWORK_TIME_IN_A_CASE.getVariableName())));
+      }
+    });
+  }
+
+  private static int getFrequencyById(String id, List<Node> nodes) {
+    return nodes.stream().filter(node -> node.getId().equals(id)).map(Node::getFrequency).findFirst().orElseGet(() -> 0);
+  }
+
+  private static Node findNodeById(String id, List<Node> nodes) {
+    return nodes.stream().filter(node -> node.getId().equals(id)).findFirst().orElseGet(() -> null);
+  }
+  
+  
   /**
    * If current process have no alternative -> frequency = totals cases size. If
    * not, we need to check which path from alternative is running to update
@@ -142,11 +191,47 @@ public class ProcessesMonitorUtils {
       return;
     }
     cases.stream().forEach(currentCase -> {
-      List<String> nonRunningElementIdsInCase = getNonRunningElementIdsInCase(currentCase, paths);
+      List<String> taskIdsDoneInCase = getTaskIdDoneInCase(currentCase);
+      List<String> nonRunningElementIdsInCase = getNonRunningElementIdsInCase(taskIdsDoneInCase, paths);
+
+      Map<String, Integer> hashMap = countFrequencyOfTask(taskIdsDoneInCase);
+      for (Node node : results) {
+        if (hashMap.containsKey(node.getId()) && CollectionUtils.isNotEmpty(node.getOutGoingPathIds())) {
+          for (String pathId : node.getOutGoingPathIds()) {
+            hashMap.put(pathId, hashMap.get(node.getId()));
+          }
+        }
+      }
+
       results.stream().filter(node -> !nonRunningElementIdsInCase.contains(node.getId()))
-          .forEach(node -> node.setFrequency(node.getFrequency() + 1));
+          .forEach(node -> node.setFrequency(node.getFrequency() + hashMap.getOrDefault(node.getId(), 1)));
     });
-    results.stream().forEach(node -> node.setRelativeValue((float) node.getFrequency() / cases.size()));
+    results.stream().forEach(node -> node.setRelativeValue((float) (node.getFrequency() / cases.size())
+        / Integer.valueOf(Ivy.var().get(IvyVariable.MAX_REWORK_TIME_IN_A_CASE.getVariableName()))));
+  }
+
+  private static List<String> getTaskIdDoneInCase(ICase currentCase) {
+    return currentCase.tasks().all().stream()
+        .map(iTask -> ProcessUtils.getTaskElementIdFromRequestPath(iTask.getRequestPath())).toList();
+  }
+
+  private static Map<String, Integer> countFrequencyOfTask(List<String> taskIdsDoneInCase) {
+    // Create HashMap to store the count
+    Map<String, Integer> idCountMap = new HashMap<>();
+
+    // Count occurrences
+    for (String id : taskIdsDoneInCase) {
+      idCountMap.put(id, idCountMap.getOrDefault(id, 0) + 1);
+      // count task in the sub element and use this frequency for the sub element
+      // Not support for multi-tasks in the sub yet
+      if (id.split(ProcessAnalyticsConstants.HYPHEN_SIGN).length == 3) {
+        String subId = id.split(ProcessAnalyticsConstants.HYPHEN_SIGN)[0] + ProcessAnalyticsConstants.HYPHEN_SIGN
+            + id.split(ProcessAnalyticsConstants.HYPHEN_SIGN)[1];
+        idCountMap.put(subId, idCountMap.getOrDefault(subId, 0) + 1);
+      }
+    }
+
+    return idCountMap;
   }
 
   public static List<AlternativePath> convertToAternativePaths(List<ProcessElement> elements) {
@@ -171,10 +256,8 @@ public class ProcessesMonitorUtils {
     return path;
   }
 
-  public static List<String> getNonRunningElementIdsInCase(ICase currentCase, List<AlternativePath> paths) {
+  public static List<String> getNonRunningElementIdsInCase(List<String> taskIdsDoneInCase, List<AlternativePath> paths) {
     List<String> results = new ArrayList<String>();
-    List<String> taskIdsDoneInCase = currentCase.tasks().all().stream()
-        .map(iTask -> ProcessUtils.getTaskElementIdFromRequestPath(iTask.getRequestPath())).toList();
     List<String> nonRunningElementIdsFromAlternative = paths.stream()
         .filter(
             path -> !path.isPathFromAlternativeEnd() && !taskIdsDoneInCase.contains(path.getTaskSwitchEventIdOnPath()))
