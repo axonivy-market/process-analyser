@@ -14,6 +14,8 @@ public class Node {
   private float medianDuration;
   @JsonIgnore
   private int frequency;
+  @JsonIgnore
+  private boolean isTaskSwitchGateway;
 
   public Node() {}
 
@@ -71,5 +73,13 @@ public class Node {
 
   public void setFrequency(int frequency) {
     this.frequency = frequency;
+  }
+
+  public boolean isTaskSwitchGateway() {
+    return isTaskSwitchGateway;
+  }
+
+  public void setTaskSwitchGateway(boolean isTaskSwitchGateway) {
+    this.isTaskSwitchGateway = isTaskSwitchGateway;
   }
 }

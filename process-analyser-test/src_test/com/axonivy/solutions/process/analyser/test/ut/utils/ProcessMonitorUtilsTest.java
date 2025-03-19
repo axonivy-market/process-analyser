@@ -48,7 +48,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
 
   @Test
   void test_convertProcessElementToNode() {
-    Node result = ProcessesMonitorUtils.convertProcessElementToNode(startProcessElement);
+    Node result = ProcessesMonitorUtils.convertProcessElementToNode(startProcessElement).getFirst();
     assertThat(result.getId()).isEqualTo(TEST_PROCESS_ELEMENT_START_PID);
     assertThat(result.getLabel()).isEqualTo("test");
     assertThat(result.getType()).isEqualTo(NodeType.ELEMENT);

@@ -29,6 +29,7 @@ import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
+import ch.ivyteam.ivy.process.model.element.gateway.TaskSwitchGateway;
 import ch.ivyteam.ivy.workflow.CaseState;
 import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.ITask;
@@ -42,16 +43,6 @@ public class ProcessesMonitorUtils {
   private ProcessesMonitorUtils() {
   }
 
-  public static Node convertSequenceFlowToNode(SequenceFlow flow) {
-    Node arrowNode = new Node();
-    arrowNode.setId(ProcessUtils.getElementPid(flow));
-    arrowNode.setLabel(flow.getName());
-    arrowNode.setFrequency(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
-    arrowNode.setRelativeValue(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
-    arrowNode.setType(NodeType.ARROW);
-    return arrowNode;
-  }
-
   /**
    * Get outgoing arrows from each element. If the current element is sub
    * (Embedded element), it will get all of nested element and execute the same
@@ -62,19 +53,41 @@ public class ProcessesMonitorUtils {
    * @param results         list of existing arrow from previous step
    */
   public static List<Node> convertToNodes(List<ProcessElement> processElements, List<SequenceFlow> sequenceFlows) {
-    return Stream.concat(processElements.stream().map(ProcessesMonitorUtils::convertProcessElementToNode),
-        sequenceFlows.stream().map(ProcessesMonitorUtils::convertSequenceFlowToNode)).collect(Collectors.toList());
+    return Stream
+        .concat(processElements.stream().flatMap(pe -> ProcessesMonitorUtils.convertProcessElementToNode(pe).stream()),
+            sequenceFlows.stream().map(ProcessesMonitorUtils::convertSequenceFlowToNode))
+        .collect(Collectors.toList());
   }
 
-  public static Node convertProcessElementToNode(ProcessElement element) {
-    Node elementNode = new Node();
-    elementNode.setId(element.getPid().toString());
-    elementNode.setLabel(element.getName());
-    elementNode.setRelativeValue(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
-    elementNode.setFrequency(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
-    elementNode.setMedianDuration(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_DURATION_NUMBER);
-    elementNode.setType(NodeType.ELEMENT);
-    return elementNode;
+  public static List<Node> convertProcessElementToNode(ProcessElement element) {
+    if (element instanceof TaskSwitchGateway taskSwitchGateway) {
+      Node baseNode = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT, true);
+      String elementId = element.getPid().toString();
+      List<Node> taskNodes = taskSwitchGateway.getAllTaskConfigs().stream()
+          .map(task -> createNode(
+              elementId + ProcessAnalyticsConstants.SLASH + task.getTaskIdentifier().getRawIdentifier(),
+              task.getName().getRawMacro(), NodeType.ELEMENT, false))
+          .collect(Collectors.toList());
+
+      taskNodes.add(0, baseNode);
+      return taskNodes;
+    }
+    else {
+      return List.of(createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT, false));
+    }
+  }
+
+  public static Node convertSequenceFlowToNode(SequenceFlow flow) {
+    return createNode(ProcessUtils.getElementPid(flow), flow.getName(), NodeType.ARROW, false);
+  }
+
+  private static Node createNode(String id, String label, NodeType type, boolean isTaskSwitchGateway) {
+    Node node = new Node();
+    node.setId(id);
+    node.setLabel(label);
+    node.setType(type);
+    node.setTaskSwitchGateway(isTaskSwitchGateway);
+    return node;
   }
 
   public static void updateNodeByAnalysisType(Node node, KpiType analysisType) {
@@ -104,6 +117,11 @@ public class ProcessesMonitorUtils {
       return Collections.emptyList();
     }
     List<ProcessElement> processElements = ProcessUtils.getProcessElementsFrom(processStart);
+    if (isDuration(analysisType)) {
+      processElements = processElements.stream().filter(
+          element -> ProcessUtils.isTaskSwitchGatewayInstance(element) || ProcessUtils.isTaskSwitchInstance(element))
+          .collect(Collectors.toList());
+    }
     List<SequenceFlow> sequenceFlows = getSequenceFlowsIfNeeded(processElements, analysisType);
     List<Node> nodes = convertToNodes(processElements, sequenceFlows);
     if (isFrequency(analysisType)) {
@@ -145,13 +163,17 @@ public class ProcessesMonitorUtils {
         .filter(task -> taskSwitchPids.contains(ProcessUtils.getTaskElementIdFromRequestPath(task.getRequestPath())))
 
         // Group tasks by their extracted task ID
-        .collect(Collectors.groupingBy(task -> ProcessUtils.getTaskElementIdFromRequestPath(task.getRequestPath()),
+        .collect(Collectors.groupingBy(task -> ProcessUtils.getTaskElementIdFromRequestPath(task.getRequestPath(), true),
 
             // Extract the duration of each task and collect into a list
             Collectors.mapping(durationExtractor, Collectors.toList())));
 
     nodes.removeIf(node -> {
-      List<Long> durations = nodeDurations.get(node.getId());
+      if (node.isTaskSwitchGateway()) {
+        return true;
+      }
+      List<Long> durations = nodeDurations.entrySet().stream().filter(entry -> entry.getKey().contains(node.getId()))
+          .flatMap(entry -> entry.getValue().stream()).collect(Collectors.toList());
       if (durations == null || durations.isEmpty()) {
         return true;
       }

@@ -22,6 +22,7 @@ import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.element.event.intermediate.TaskSwitchEvent;
 import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
 import ch.ivyteam.ivy.process.model.element.gateway.Join;
+import ch.ivyteam.ivy.process.model.element.gateway.TaskSwitchGateway;
 import ch.ivyteam.ivy.process.model.value.PID;
 import ch.ivyteam.ivy.process.rdm.IProcess;
 import ch.ivyteam.ivy.process.rdm.IProcessManager;
@@ -54,7 +55,11 @@ public class ProcessUtils {
     return element instanceof TaskSwitchEvent;
   }
 
-  public static boolean isTaskJoinInstance(Object element) {
+  public static boolean isTaskSwitchGatewayInstance(Object element) {
+    return element instanceof TaskSwitchGateway;
+  }
+
+  public static boolean isJoinInstance(Object element) {
     return element instanceof Join;
   }
 
@@ -117,7 +122,7 @@ public class ProcessUtils {
 
   public static List<ProcessElement> getElementsWithMultiIncomings(List<ProcessElement> processElements) {
     return Optional.ofNullable(processElements).orElse(new ArrayList<>()).stream()
-        .filter(element -> !(isAlternativeInstance(element) && isTaskJoinInstance(processElements))
+        .filter(element -> !(isAlternativeInstance(element) && isJoinInstance(processElements))
             && isElementWithMultipleIncomingFlow(element))
         .collect(Collectors.toList());
   }
@@ -142,6 +147,15 @@ public class ProcessUtils {
     return arr.length > 2 ? arr[arr.length - 2] : StringUtils.EMPTY;
   }
 
+  public static String getTaskElementIdFromRequestPath(String requestPath, boolean isTaskInTaskSwitchGateway) {
+    if (!isTaskInTaskSwitchGateway) {
+      return getTaskElementIdFromRequestPath(requestPath);
+    }
+    String[] arr = requestPath.split(ProcessAnalyticsConstants.SLASH);
+    return arr.length > 2 ? arr[arr.length - 2] + ProcessAnalyticsConstants.SLASH + arr[arr.length - 1]
+        : StringUtils.EMPTY;
+  }
+
   public static boolean isElementWithMultipleIncomingFlow(ProcessElement processElement) {
     return Optional.ofNullable(processElement).map(element -> element.getIncoming().size() > 1).orElse(false);
   }
@@ -153,6 +167,6 @@ public class ProcessUtils {
 
   public static boolean isAlternativePathEndElement(ProcessElement processElement) {
     return isProcessPathEndElement(processElement) || isAlternativeInstance(processElement)
-        || (isElementWithMultipleIncomingFlow(processElement) && !isTaskJoinInstance(processElement));
+        || (isElementWithMultipleIncomingFlow(processElement) && !isJoinInstance(processElement));
   }
 }
