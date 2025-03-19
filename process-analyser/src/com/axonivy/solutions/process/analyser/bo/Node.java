@@ -18,8 +18,6 @@ public class Node {
   @JsonIgnore
   private int frequency;
   @JsonIgnore
-  private boolean isAlternativeElement;
-  @JsonIgnore
   private List<String> outGoingPathIds = new ArrayList<>();
   @JsonIgnore
   private List<String> inCommingPathIds = new ArrayList<>();
@@ -82,14 +80,6 @@ public class Node {
 
   public void setFrequency(int frequency) {
     this.frequency = frequency;
-  }
-
-  public boolean isAlternativeElement() {
-    return isAlternativeElement;
-  }
-
-  public void setAlternativeElement(boolean isAlternativeElement) {
-    this.isAlternativeElement = isAlternativeElement;
   }
 
   public List<String> getOutGoingPathIds() {
