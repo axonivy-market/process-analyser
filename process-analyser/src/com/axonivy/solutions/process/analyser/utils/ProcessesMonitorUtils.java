@@ -20,10 +20,9 @@ import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
-import com.axonivy.solutions.process.analyser.enums.IvyVariable;
+import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
-import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
@@ -144,12 +143,13 @@ public class ProcessesMonitorUtils {
       complexElements.addAll(taskSwitchElements);
       complexElements.addAll(branchSwitchingElement);
       updateFrequencyForComplexElements(complexElements, results, cases);
+      updateRelativeValueForNodes(results);
     }
 
     return results;
   }
 
-  private static void updateFrequencyForComplexElements(List<ProcessElement> complexElements, List<Node> nodes,
+  public static void updateFrequencyForComplexElements(List<ProcessElement> complexElements, List<Node> nodes,
       List<ICase> cases) {
     if (ObjectUtils.anyNull(complexElements, nodes) || CollectionUtils.isEmpty(cases)) {
       return;
@@ -162,24 +162,37 @@ public class ProcessesMonitorUtils {
         frequency += getFrequencyById(inCommingPathId, nodes);
       }
       node.setFrequency(frequency);
-      node.setRelativeValue((float) (frequency / cases.size())
-          / Integer.valueOf(Ivy.var().get(IvyVariable.MAX_REWORK_TIME_IN_A_CASE.getVariableName())));
       for (String outGoingPathId : node.getOutGoingPathIds()) {
         Node outGoingPath = findNodeById(outGoingPathId, nodes);
         Node targetNodeOfOutGoingPath = findNodeById(outGoingPath.getTargetNodeId(), nodes);
         outGoingPath.setFrequency(targetNodeOfOutGoingPath.getFrequency());
-        outGoingPath.setRelativeValue((float) (targetNodeOfOutGoingPath.getFrequency() / cases.size())
-            / Integer.valueOf(Ivy.var().get(IvyVariable.MAX_REWORK_TIME_IN_A_CASE.getVariableName())));
       }
     });
   }
 
-  private static int getFrequencyById(String id, List<Node> nodes) {
+  public static int getFrequencyById(String id, List<Node> nodes) {
     return nodes.stream().filter(node -> node.getId().equals(id)).map(Node::getFrequency).findFirst().orElseGet(() -> 0);
   }
 
-  private static Node findNodeById(String id, List<Node> nodes) {
+  public static Node findNodeById(String id, List<Node> nodes) {
     return nodes.stream().filter(node -> node.getId().equals(id)).findFirst().orElseGet(() -> null);
+  }
+
+  public static void updateRelativeValueForNodes(List<Node> nodes) {
+    if (CollectionUtils.isEmpty(nodes)) {
+      return;
+    }
+
+    int maxFrequency = 1;
+    for (Node node : nodes) {
+      if (node.getFrequency() > maxFrequency) {
+        maxFrequency = node.getFrequency();
+      }
+    }
+
+    for (Node node : nodes) {
+      node.setRelativeValue((float) node.getFrequency() / maxFrequency);
+    }
   }
 
   /**
@@ -208,23 +221,21 @@ public class ProcessesMonitorUtils {
       results.stream().filter(node -> !nonRunningElementIdsInCase.contains(node.getId()))
           .forEach(node -> node.setFrequency(node.getFrequency() + hashMap.getOrDefault(node.getId(), 1)));
     });
-    results.stream().forEach(node -> node.setRelativeValue((float) (node.getFrequency() / cases.size())
-        / Integer.valueOf(Ivy.var().get(IvyVariable.MAX_REWORK_TIME_IN_A_CASE.getVariableName()))));
   }
 
-  private static List<String> getTaskIdDoneInCase(ICase currentCase) {
+  public static List<String> getTaskIdDoneInCase(ICase currentCase) {
     return currentCase.tasks().all().stream()
         .map(iTask -> ProcessUtils.getTaskElementIdFromRequestPath(iTask.getRequestPath())).toList();
   }
 
-  private static Map<String, Integer> countFrequencyOfTask(List<String> taskIdsDoneInCase) {
+  public static Map<String, Integer> countFrequencyOfTask(List<String> taskIdsDoneInCase) {
     // Create HashMap to store the count
     Map<String, Integer> idCountMap = new HashMap<>();
 
     // Count occurrences
     for (String id : taskIdsDoneInCase) {
       idCountMap.put(id, idCountMap.getOrDefault(id, 0) + 1);
-      // count task in the sub element and use this frequency for the sub element
+      // Count task in the sub element and use this frequency for the sub element
       // Not support for multi-tasks in the sub yet
       if (id.split(ProcessAnalyticsConstants.HYPHEN_SIGN).length == 3) {
         String subId = id.split(ProcessAnalyticsConstants.HYPHEN_SIGN)[0] + ProcessAnalyticsConstants.HYPHEN_SIGN
