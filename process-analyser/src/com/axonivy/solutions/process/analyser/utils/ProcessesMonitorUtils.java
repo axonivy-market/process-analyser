@@ -181,8 +181,7 @@ public class ProcessesMonitorUtils {
   private static Node findNodeById(String id, List<Node> nodes) {
     return nodes.stream().filter(node -> node.getId().equals(id)).findFirst().orElseGet(() -> null);
   }
-  
-  
+
   /**
    * If current process have no alternative -> frequency = totals cases size. If
    * not, we need to check which path from alternative is running to update
