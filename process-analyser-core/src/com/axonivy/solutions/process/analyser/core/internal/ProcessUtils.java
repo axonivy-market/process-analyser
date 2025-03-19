@@ -23,6 +23,7 @@ import ch.ivyteam.ivy.process.model.element.event.intermediate.TaskSwitchEvent;
 import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
 import ch.ivyteam.ivy.process.model.element.gateway.Join;
 import ch.ivyteam.ivy.process.model.value.PID;
+import ch.ivyteam.ivy.process.rdm.IProcess;
 import ch.ivyteam.ivy.process.rdm.IProcessManager;
 import ch.ivyteam.ivy.workflow.IProcessStart;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
@@ -72,12 +73,15 @@ public class ProcessUtils {
     String processRawPid = getProcessPidFromElement(startElement.pid().toString());
     var manager = IProcessManager.instance().getProjectDataModelFor(startElement.pmv());
 
-    return Optional.ofNullable(manager.findProcess(processRawPid, true))
-        .map(foundProcess -> foundProcess.getModel().getProcessElements().stream()
-            .flatMap(element -> Stream.concat(Stream.of(element),
-                ProcessUtils.getNestedProcessElementsFromSub(element).stream()))
-            .collect(Collectors.toList()))
-        .orElseGet(Collections::emptyList);
+    IProcess foundProcess = manager.findProcess(processRawPid, true);
+    if (foundProcess == null) {
+      return Collections.emptyList();
+    }
+
+    // Get all process elements, including nested ones
+    return foundProcess.getModel().getProcessElements().stream().flatMap(
+        element -> Stream.concat(Stream.of(element), ProcessUtils.getNestedProcessElementsFromSub(element).stream()))
+        .collect(Collectors.toList());
   }
 
   public static List<SequenceFlow> getSequenceFlowsFrom(List<ProcessElement> elements) {

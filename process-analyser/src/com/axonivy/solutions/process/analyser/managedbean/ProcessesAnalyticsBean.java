@@ -291,13 +291,16 @@ public class ProcessesAnalyticsBean {
   }
 
   public String generateNameOfExcelFile() {
+    String formattedKpiTypeName = selectedKpiType.getCmsName()
+        .replaceAll(ProcessAnalyticsConstants.SPACE_DASH_REGEX, ProcessAnalyticsConstants.UNDERSCORE)
+        .replaceAll(ProcessAnalyticsConstants.MULTIPLE_UNDERSCORES_REGEX, ProcessAnalyticsConstants.UNDERSCORE);
     return StringUtils.isNotBlank(selectedProcess)
-        ? String.format(ProcessAnalyticsConstants.ANALYSIS_EXCEL_FILE_PATTERN, selectedProcess)
+        ? String.format(ProcessAnalyticsConstants.ANALYSIS_EXCEL_FILE_PATTERN, formattedKpiTypeName, selectedProcess)
         : StringUtils.EMPTY;
   }
-  
+
   public boolean isMedianDurationColumnVisible() {
-    return ProcessesMonitorUtils.isDescendantOfDuration(selectedKpiType);
+    return ProcessesMonitorUtils.isDuration(selectedKpiType);
   }
 
   public String getSelectedProcess() {

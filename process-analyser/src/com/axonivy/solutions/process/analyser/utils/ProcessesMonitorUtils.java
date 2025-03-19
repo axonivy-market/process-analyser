@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -109,7 +108,7 @@ public class ProcessesMonitorUtils {
     List<Node> nodes = convertToNodes(processElements, sequenceFlows);
     if (isFrequency(analysisType)) {
       updateFrequencyForNodes(nodes, processElements, cases);
-    } else if (isDescendantOfDuration(analysisType)) {
+    } else if (isDuration(analysisType)) {
       updateDurationForNodes(nodes, cases, analysisType);
     }
     nodes.forEach(node -> updateNodeByAnalysisType(node, analysisType));
@@ -120,7 +119,7 @@ public class ProcessesMonitorUtils {
     return KpiType.FREQUENCY.equals(kpiType);
   }
 
-  public static boolean isDescendantOfDuration(KpiType kpiType) {
+  public static boolean isDuration(KpiType kpiType) {
     return kpiType != null && kpiType.isDescendantOf(KpiType.DURATION);
   }
 
@@ -129,18 +128,26 @@ public class ProcessesMonitorUtils {
   }
 
   public static void updateDurationForNodes(List<Node> nodes, List<ICase> cases, KpiType durationKpiType) {
-    if (Optional.ofNullable(nodes).orElse(List.of()).isEmpty()
-        || Optional.ofNullable(cases).orElse(List.of()).isEmpty()) {
+    if (CollectionUtils.isEmpty(nodes) || CollectionUtils.isEmpty(cases)) {
       return;
     }
-    List<String> taskSwitchPids = nodes.stream().filter(Objects::nonNull).map(Node::getId).filter(Objects::nonNull)
+
+    List<String> taskSwitchPids = nodes.stream().filter(node -> node != null && node.getId() != null).map(Node::getId)
         .collect(Collectors.toList());
 
     Function<ITask, Long> durationExtractor = getDurationExtractor(durationKpiType);
 
-    Map<String, List<Long>> nodeDurations = cases.stream().flatMap(currentCase -> currentCase.tasks().all().stream())
+    Map<String, List<Long>> nodeDurations = cases.stream()
+        // Extract all tasks from all cases into a single stream
+        .flatMap(currentCase -> currentCase.tasks().all().stream())
+
+        // Filter tasks based on their ID (extracted from request path)
         .filter(task -> taskSwitchPids.contains(ProcessUtils.getTaskElementIdFromRequestPath(task.getRequestPath())))
+
+        // Group tasks by their extracted task ID
         .collect(Collectors.groupingBy(task -> ProcessUtils.getTaskElementIdFromRequestPath(task.getRequestPath()),
+
+            // Extract the duration of each task and collect into a list
             Collectors.mapping(durationExtractor, Collectors.toList())));
 
     nodes.removeIf(node -> {

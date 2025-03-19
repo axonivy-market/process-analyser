@@ -23,7 +23,7 @@ Dialogs:
               FromToDateValidationMessage: From date must be before To date.
               Label: Label
               LabelValue: Label Value
-              MedianDuration: Median Duration
+              MedianDuration: Median Duration (s)
               NoCustomFieldsAvailable: No custom fields available.
               NoRecordsFound: No records found.
               None: None
@@ -53,33 +53,33 @@ Enums:
     DURATION_IDLE:
       name: Idle time
     DURATION_IDLE_DAY:
-      name: Day
+      name: Idle time - Day
     DURATION_IDLE_HOUR:
-      name: Hour
+      name: Idle time - Hour
     DURATION_IDLE_MINUTE:
-      name: Minute
+      name: Idle time - Minute
     DURATION_IDLE_SECOND:
-      name: Second
+      name: Idle time - Second
     DURATION_OVERALL:
-      name: Overall
+      name: Overall time
     DURATION_OVERALL_DAY:
-      name: Day
+      name: Overall time - Day
     DURATION_OVERALL_HOUR:
-      name: Hour
+      name: Overall time - Hour
     DURATION_OVERALL_MINUTE:
-      name: Minute
+      name: Overall time - Minute
     DURATION_OVERALL_SECOND:
-      name: Second
+      name: Overall time - Second
     DURATION_WORKING:
       name: Working time
     DURATION_WORKING_DAY:
-      name: Day
+      name: Working time - Day
     DURATION_WORKING_HOUR:
-      name: Hour
+      name: Working time - Hour
     DURATION_WORKING_MINUTE:
-      name: Minute
+      name: Working time - Minute
     DURATION_WORKING_SECOND:
-      name: Second
+      name: Working time - Second
     FREQUENCY:
       name: Frequency
   MonitorVersion:
