@@ -143,15 +143,18 @@ public class ProcessesMonitorUtils {
       List<ProcessElement> complexElements = new ArrayList<>();
       complexElements.addAll(taskSwitchElements);
       complexElements.addAll(branchSwitchingElement);
-      updateFrequencyForComplexElements(complexElements, results, cases.size());
-
+      updateFrequencyForComplexElements(complexElements, results, cases);
     }
 
     return results;
   }
 
   private static void updateFrequencyForComplexElements(List<ProcessElement> complexElements, List<Node> nodes,
-      int caseSize) {
+      List<ICase> cases) {
+    if (ObjectUtils.anyNull(complexElements, nodes) || CollectionUtils.isEmpty(cases)) {
+      return;
+    }
+
     complexElements.stream().forEach(processElement -> {
       Node node = findNodeById(processElement.getPid().toString(), nodes);
       int frequency = 0;
@@ -159,13 +162,13 @@ public class ProcessesMonitorUtils {
         frequency += getFrequencyById(inCommingPathId, nodes);
       }
       node.setFrequency(frequency);
-      node.setRelativeValue((float) (frequency / caseSize)
+      node.setRelativeValue((float) (frequency / cases.size())
           / Integer.valueOf(Ivy.var().get(IvyVariable.MAX_REWORK_TIME_IN_A_CASE.getVariableName())));
       for (String outGoingPathId : node.getOutGoingPathIds()) {
         Node outGoingPath = findNodeById(outGoingPathId, nodes);
         Node targetNodeOfOutGoingPath = findNodeById(outGoingPath.getTargetNodeId(), nodes);
         outGoingPath.setFrequency(targetNodeOfOutGoingPath.getFrequency());
-        outGoingPath.setRelativeValue((float) (targetNodeOfOutGoingPath.getFrequency() / caseSize)
+        outGoingPath.setRelativeValue((float) (targetNodeOfOutGoingPath.getFrequency() / cases.size())
             / Integer.valueOf(Ivy.var().get(IvyVariable.MAX_REWORK_TIME_IN_A_CASE.getVariableName())));
       }
     });
@@ -187,7 +190,7 @@ public class ProcessesMonitorUtils {
    **/
   public static void handleFrequencyForCasesWithAlternativePaths(List<AlternativePath> paths, List<Node> results,
       List<ICase> cases) {
-    if (ObjectUtils.anyNull(paths, results, cases)) {
+    if (ObjectUtils.anyNull(paths, results) || CollectionUtils.isEmpty(cases)) {
       return;
     }
     cases.stream().forEach(currentCase -> {
