@@ -5,13 +5,16 @@
   "isBusinessCaseData" : false,
   "fields" : [ {
     "name" : "isBackToSearchPage",
-    "type" : "Boolean"
+    "type" : "Boolean",
+    "modifiers" : [ "PERSISTENT" ]
   }, {
     "name" : "isBackToSubmitInformationPage",
-    "type" : "Boolean"
+    "type" : "Boolean",
+    "modifiers" : [ "PERSISTENT" ]
   }, {
     "name" : "isPaid",
-    "type" : "Boolean"
+    "type" : "Boolean",
+    "modifiers" : [ "PERSISTENT" ]
   }, {
     "name" : "isChargeLater",
     "type" : "Boolean",

@@ -142,6 +142,10 @@ public class ProcessesMonitorUtils {
       List<ProcessElement> complexElements = new ArrayList<>();
       complexElements.addAll(taskSwitchElements);
       complexElements.addAll(branchSwitchingElement);
+      List<ProcessElement> subWithOneIncommingElements =
+          processElements.stream().filter(element -> ProcessUtils.isEmbeddedElementInstance(element)
+              && !ProcessUtils.isElementWithMultipleIncomingFlow(element)).collect(Collectors.toList());
+      complexElements.addAll(subWithOneIncommingElements);
       updateFrequencyForComplexElements(complexElements, results, cases);
       updateRelativeValueForNodes(results);
     }
@@ -162,6 +166,13 @@ public class ProcessesMonitorUtils {
         frequency += getFrequencyById(inCommingPathId, nodes);
       }
       node.setFrequency(frequency);
+
+      if (node.getOutGoingPathIds().size() == 1) {
+        Node outGoingPath = findNodeById(node.getOutGoingPathIds().getFirst(), nodes);
+        outGoingPath.setFrequency(frequency);
+        return;
+      }
+
       for (String outGoingPathId : node.getOutGoingPathIds()) {
         Node outGoingPath = findNodeById(outGoingPathId, nodes);
         Node targetNodeOfOutGoingPath = findNodeById(outGoingPath.getTargetNodeId(), nodes);
@@ -235,13 +246,6 @@ public class ProcessesMonitorUtils {
     // Count occurrences
     for (String id : taskIdsDoneInCase) {
       idCountMap.put(id, idCountMap.getOrDefault(id, 0) + 1);
-      // Count task in the sub element and use this frequency for the sub element
-      // Not support for multi-tasks in the sub yet
-      if (id.split(ProcessAnalyticsConstants.HYPHEN_SIGN).length == 3) {
-        String subId = id.split(ProcessAnalyticsConstants.HYPHEN_SIGN)[0] + ProcessAnalyticsConstants.HYPHEN_SIGN
-            + id.split(ProcessAnalyticsConstants.HYPHEN_SIGN)[1];
-        idCountMap.put(subId, idCountMap.getOrDefault(subId, 0) + 1);
-      }
     }
 
     return idCountMap;

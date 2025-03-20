@@ -33,7 +33,7 @@
       "id" : "f1",
       "type" : "TaskEnd",
       "visual" : {
-        "at" : { "x" : 1952, "y" : 688 }
+        "at" : { "x" : 2200, "y" : 880 }
       }
     }, {
       "id" : "S10",
@@ -222,9 +222,9 @@
         "size" : { "width" : 144 }
       },
       "connect" : [
-        { "id" : "f5", "to" : "f4", "label" : {
+        { "id" : "f5", "to" : "f50", "label" : {
             "name" : "f5",
-            "offset" : { "x" : 1, "y" : -10 }
+            "offset" : { "x" : 5, "y" : -10 }
           } }
       ]
     }, {
@@ -237,14 +237,14 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 744, "y" : 392 },
+        "at" : { "x" : 848, "y" : 392 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
-        { "id" : "f20", "to" : "f21", "via" : [ { "x" : 744, "y" : 328 } ], "label" : {
+        { "id" : "f20", "to" : "f21", "via" : [ { "x" : 848, "y" : 328 } ], "label" : {
             "name" : "Yes",
-            "segment" : 0.31,
-            "offset" : { "x" : -8, "y" : -50 }
+            "segment" : 0.83,
+            "offset" : { "x" : -14, "y" : -23 }
           } },
         { "id" : "f6", "to" : "f25", "label" : {
             "name" : "No",
@@ -261,19 +261,19 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1184, "y" : 392 },
+        "at" : { "x" : 1392, "y" : 392 },
         "labelOffset" : { "x" : 40, "y" : -24 }
       },
       "connect" : [
-        { "id" : "f24", "to" : "f27", "via" : [ { "x" : 1184, "y" : 464 } ], "label" : {
+        { "id" : "f24", "to" : "f27", "via" : [ { "x" : 1392, "y" : 464 }, { "x" : 1288, "y" : 464 } ], "label" : {
             "name" : "Yes",
-            "segment" : 0.27,
-            "offset" : { "x" : 25, "y" : 7 }
+            "segment" : 0.7,
+            "offset" : { "x" : 20, "y" : 19 }
           } },
         { "id" : "f10", "to" : "f37", "label" : {
             "name" : "No",
             "segment" : 0.17,
-            "offset" : { "x" : 29, "y" : -20 }
+            "offset" : { "x" : 22, "y" : 14 }
           } }
       ]
     }, {
@@ -344,13 +344,13 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 1032, "y" : 392 },
+        "at" : { "x" : 1136, "y" : 392 },
         "size" : { "width" : 144 }
       },
       "connect" : [
-        { "id" : "f8", "to" : "f7", "label" : {
+        { "id" : "f8", "to" : "f52", "label" : {
             "name" : "f8",
-            "offset" : { "x" : 1, "y" : 14 }
+            "offset" : { "x" : -59, "y" : 14 }
           } }
       ]
     }, {
@@ -363,7 +363,7 @@
           "visual" : {
             "at" : { "x" : 64, "y" : 256 }
           },
-          "parentConnector" : "f14",
+          "parentConnector" : "f9",
           "connect" : [
             { "id" : "S22-f2", "to" : "S22-f1", "label" : {
                 "name" : "S22-f2",
@@ -402,14 +402,11 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 1280, "y" : 928 },
+        "at" : { "x" : 1824, "y" : 880 },
         "size" : { "width" : 144 }
       },
       "connect" : [
-        { "id" : "f11", "to" : "S40", "label" : {
-            "name" : "f11",
-            "offset" : { "x" : 5, "y" : 14 }
-          } }
+        { "id" : "f11", "to" : "f1" }
       ]
     }, {
       "id" : "f12",
@@ -421,8 +418,8 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1280, "y" : 584 },
-        "labelOffset" : { "x" : -40, "y" : 8 }
+        "at" : { "x" : 1488, "y" : 584 },
+        "labelOffset" : { "y" : 40 }
       },
       "connect" : [
         { "id" : "f23", "to" : "f29", "label" : {
@@ -432,7 +429,7 @@
           } },
         { "id" : "f15", "to" : "f33", "label" : {
             "name" : "No",
-            "offset" : { "x" : -15, "y" : -14 }
+            "offset" : { "x" : -7, "y" : -10 }
           } }
       ]
     }, {
@@ -452,13 +449,6 @@
                 "offset" : { "x" : 33, "y" : -5 }
               } }
           ]
-        }, {
-          "id" : "S23-g1",
-          "type" : "EmbeddedEnd",
-          "visual" : {
-            "at" : { "x" : 176, "y" : 440 }
-          },
-          "parentConnector" : "f14"
         }, {
           "id" : "S23-g2",
           "type" : "EmbeddedStart",
@@ -505,7 +495,7 @@
           "connect" : [
             { "id" : "S23-f0", "to" : "S23-g1", "label" : {
                 "name" : "S23-f0",
-                "offset" : { "x" : 25, "y" : 2 }
+                "offset" : { "x" : 25, "y" : -6 }
               } }
           ]
         }, {
@@ -531,16 +521,21 @@
                 "offset" : { "x" : -4, "y" : -18 }
               } }
           ]
+        }, {
+          "id" : "S23-g1",
+          "type" : "EmbeddedEnd",
+          "visual" : {
+            "at" : { "x" : 176, "y" : 448 },
+            "labelOffset" : { "x" : 3, "y" : 23 }
+          },
+          "parentConnector" : "f9"
         } ],
       "visual" : {
-        "at" : { "x" : 1280, "y" : 808 },
+        "at" : { "x" : 1488, "y" : 880 },
         "size" : { "width" : 144 }
       },
       "connect" : [
-        { "id" : "f14", "to" : "S22", "label" : {
-            "name" : "f14",
-            "offset" : { "x" : 17, "y" : 2 }
-          } }
+        { "id" : "f9", "to" : "S22" }
       ]
     }, {
       "id" : "S25",
@@ -604,7 +599,7 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 1632, "y" : 584 },
+        "at" : { "x" : 1816, "y" : 584 },
         "size" : { "width" : 144 }
       },
       "connect" : [
@@ -624,8 +619,8 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1760, "y" : 688 },
-        "labelOffset" : { "x" : -24, "y" : 8 }
+        "at" : { "x" : 1944, "y" : 736 },
+        "labelOffset" : { "y" : 40 }
       },
       "connect" : [
         { "id" : "f19", "to" : "f31", "label" : {
@@ -633,10 +628,10 @@
             "segment" : 0.27,
             "offset" : { "x" : 8, "y" : -10 }
           } },
-        { "id" : "f13", "to" : "f35", "via" : [ { "x" : 1760, "y" : 808 } ], "label" : {
+        { "id" : "f13", "to" : "f35", "label" : {
             "name" : "Yes",
-            "segment" : 1.31,
-            "offset" : { "x" : 36, "y" : -65 }
+            "segment" : 0.9,
+            "offset" : { "x" : 311, "y" : -10 }
           } }
       ]
     }, {
@@ -706,72 +701,14 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 1631, "y" : 392 },
+        "at" : { "x" : 1815, "y" : 392 },
         "size" : { "width" : 161, "height" : 62 }
       },
       "connect" : [
-        { "id" : "f18", "to" : "f17", "via" : [ { "x" : 1760, "y" : 392 } ], "label" : {
+        { "id" : "f18", "to" : "f17", "via" : [ { "x" : 1944, "y" : 392 } ], "label" : {
             "name" : "f18",
             "segment" : 1.23,
-            "offset" : { "x" : 20, "y" : 78 }
-          } }
-      ]
-    }, {
-      "id" : "S40",
-      "type" : "EmbeddedProcess",
-      "name" : "Send Email to reminder user about their Flight",
-      "elements" : [ {
-          "id" : "S40-g0",
-          "type" : "EmbeddedStart",
-          "visual" : {
-            "at" : { "x" : 40, "y" : 256 }
-          },
-          "parentConnector" : "f11",
-          "connect" : [
-            { "id" : "S40-f2", "to" : "S40-f1", "label" : {
-                "name" : "S40-f2",
-                "offset" : { "x" : 2, "y" : -10 }
-              } }
-          ]
-        }, {
-          "id" : "S40-g1",
-          "type" : "EmbeddedEnd",
-          "visual" : {
-            "at" : { "x" : 536, "y" : 256 }
-          },
-          "parentConnector" : "f9"
-        }, {
-          "id" : "S40-f1",
-          "type" : "TaskSwitchEvent",
-          "name" : "Send Email to reminder user about their Flight",
-          "config" : {
-            "task" : {
-              "name" : "Send Email to reminder user about their Flight",
-              "responsible" : {
-                "activator" : "SYSTEM"
-              },
-              "skipTasklist" : true
-            }
-          },
-          "visual" : {
-            "at" : { "x" : 256, "y" : 256 },
-            "labelOffset" : { "x" : 17, "y" : 33 }
-          },
-          "connect" : [
-            { "id" : "S40-f0", "to" : "S40-g1", "label" : {
-                "name" : "S40-f0",
-                "offset" : { "x" : 4, "y" : -10 }
-              } }
-          ]
-        } ],
-      "visual" : {
-        "at" : { "x" : 1952, "y" : 928 },
-        "size" : { "width" : 144 }
-      },
-      "connect" : [
-        { "id" : "f9", "to" : "f1", "label" : {
-            "name" : "f9",
-            "offset" : { "x" : 17, "y" : 1 }
+            "offset" : { "x" : 21, "y" : 78 }
           } }
       ]
     }, {
@@ -811,7 +748,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 872, "y" : 392 },
+        "at" : { "x" : 976, "y" : 392 },
         "labelOffset" : { "x" : 17, "y" : 33 }
       },
       "connect" : [
@@ -829,7 +766,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 920, "y" : 464 },
+        "at" : { "x" : 1000, "y" : 464 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
@@ -851,7 +788,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1472, "y" : 584 },
+        "at" : { "x" : 1640, "y" : 584 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
@@ -872,13 +809,14 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1856, "y" : 688 },
+        "at" : { "x" : 2080, "y" : 736 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
-        { "id" : "f32", "to" : "f1", "label" : {
+        { "id" : "f32", "to" : "f1", "via" : [ { "x" : 2200, "y" : 736 } ], "label" : {
             "name" : "f32",
-            "offset" : { "x" : 1, "y" : -10 }
+            "segment" : 1.24,
+            "offset" : { "x" : 17, "y" : 32 }
           }, "color" : "default" }
       ]
     }, {
@@ -893,13 +831,14 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1280, "y" : 688 },
-        "labelOffset" : { "x" : 89, "y" : 9 }
+        "at" : { "x" : 1312, "y" : 584 },
+        "labelOffset" : { "x" : -7, "y" : -23 }
       },
       "connect" : [
-        { "id" : "f34", "to" : "S23", "label" : {
+        { "id" : "f34", "to" : "S23", "via" : [ { "x" : 1312, "y" : 880 } ], "label" : {
             "name" : "f34",
-            "offset" : { "x" : 17, "y" : -6 }
+            "segment" : 0.76,
+            "offset" : { "x" : 13, "y" : -61 }
           }, "color" : "default" }
       ]
     }, {
@@ -914,13 +853,13 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1584, "y" : 808 },
-        "labelOffset" : { "x" : 33, "y" : 33 }
+        "at" : { "x" : 1488, "y" : 736 },
+        "labelOffset" : { "x" : 25, "y" : -23 }
       },
       "connect" : [
         { "id" : "f36", "to" : "S23", "label" : {
             "name" : "f36",
-            "offset" : { "x" : -4, "y" : -10 }
+            "offset" : { "x" : -18, "y" : -14 }
           }, "color" : "default" }
       ]
     }, {
@@ -935,7 +874,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1280, "y" : 392 },
+        "at" : { "x" : 1488, "y" : 392 },
         "labelOffset" : { "x" : 121, "y" : 9 }
       },
       "connect" : [
@@ -968,6 +907,43 @@
             "name" : "f40",
             "offset" : { "x" : -2, "y" : -10 }
           }, "color" : "default" }
+      ]
+    }, {
+      "id" : "f50",
+      "type" : "TaskSwitchEvent",
+      "config" : {
+        "task" : {
+          "responsible" : {
+            "activator" : "SYSTEM"
+          }
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 728, "y" : 392 },
+        "labelOffset" : { "x" : 1, "y" : 33 }
+      },
+      "connect" : [
+        { "id" : "f51", "to" : "f4", "label" : {
+            "name" : "f51",
+            "offset" : { "x" : -2, "y" : -10 }
+          }, "color" : "default" }
+      ]
+    }, {
+      "id" : "f52",
+      "type" : "TaskSwitchEvent",
+      "config" : {
+        "task" : {
+          "responsible" : {
+            "activator" : "SYSTEM"
+          }
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 1296, "y" : 392 },
+        "labelOffset" : { "x" : 14, "y" : 34 }
+      },
+      "connect" : [
+        { "id" : "f53", "to" : "f7", "color" : "default" }
       ]
     } ],
   "layout" : {
