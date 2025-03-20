@@ -1,13 +1,18 @@
 package com.axonivy.solutions.process.analyser.utils;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -25,8 +30,11 @@ import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
+import ch.ivyteam.ivy.process.model.element.event.start.RequestStart;
+import ch.ivyteam.ivy.process.model.element.gateway.TaskSwitchGateway;
 import ch.ivyteam.ivy.workflow.CaseState;
 import ch.ivyteam.ivy.workflow.ICase;
+import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 import ch.ivyteam.ivy.workflow.query.CaseQuery;
 import ch.ivyteam.ivy.workflow.query.TaskQuery;
@@ -35,21 +43,6 @@ import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 @SuppressWarnings("restriction")
 public class ProcessesMonitorUtils {
   private ProcessesMonitorUtils() {
-  }
-
-  public static List<Node> convertProcessElementInfoToNode(ProcessElement element) {
-    return element.getOutgoing().stream().map(flow -> convertSequenceFlowToNode(flow)).collect(Collectors.toList());
-  }
-
-  public static Node convertSequenceFlowToNode(SequenceFlow flow) {
-    Node arrowNode = new Node();
-    arrowNode.setId(ProcessUtils.getElementPid(flow));
-    arrowNode.setLabel(flow.getName());
-    arrowNode.setFrequency(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
-    arrowNode.setRelativeValue(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
-    arrowNode.setMedianDuration(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
-    arrowNode.setType(NodeType.ARROW);
-    return arrowNode;
   }
 
   /**
@@ -61,38 +54,64 @@ public class ProcessesMonitorUtils {
    *                        workflow
    * @param results         list of existing arrow from previous step
    */
-  public static List<Node> extractNodesFromProcessElements(List<ProcessElement> processElements) {
-    List<Node> results = new ArrayList<>();
-    processElements.forEach(element -> {
-      results.add(convertProcessElementToNode(element));
-      results.addAll(convertProcessElementInfoToNode(element));
-      if (ProcessUtils.isEmbeddedElementInstance(element)) {
-        results.addAll(extractNodesFromProcessElements(ProcessUtils.getNestedProcessElementsFromSub(element)));
-      }
-    });
-    return results;
+  public static List<Node> convertToNodes(List<ProcessElement> processElements, List<SequenceFlow> sequenceFlows) {
+    return Stream
+        .concat(processElements.stream().flatMap(pe -> ProcessesMonitorUtils.convertProcessElementToNode(pe).stream()),
+            sequenceFlows.stream().map(ProcessesMonitorUtils::convertSequenceFlowToNode))
+        .collect(Collectors.toList());
   }
 
-  public static Node convertProcessElementToNode(ProcessElement element) {
-    Node elementNode = new Node();
-    elementNode.setId(element.getPid().toString());
-    elementNode.setLabel(element.getName());
-    elementNode.setRelativeValue(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
-    elementNode.setFrequency(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
-    elementNode.setMedianDuration(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
-    elementNode.setType(NodeType.ELEMENT);
-    return elementNode;
+  public static List<Node> convertProcessElementToNode(ProcessElement element) {
+    if (element instanceof TaskSwitchGateway taskSwitchGateway) {
+      Node baseNode = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT);
+      baseNode.setTaskSwitchGateway(true);
+      String elementId = element.getPid().toString();
+      List<Node> taskNodes = taskSwitchGateway.getAllTaskConfigs().stream()
+          .map(task -> createNode(
+              elementId + ProcessAnalyticsConstants.SLASH + task.getTaskIdentifier().getTaskIvpLinkName(),
+              task.getName().getRawMacro(), NodeType.ELEMENT))
+          .collect(Collectors.toList());
+
+      taskNodes.add(0, baseNode);
+      return taskNodes;
+    } else if (element instanceof RequestStart) {
+      RequestStart requestStart = RequestStart.class.cast(element);
+      Node node = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT);
+      node.setRequestPath(requestStart.getRequestPath().getLinkPath());
+      return List.of(node);
+    } else {
+      return List.of(createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT));
+    }
+  }
+
+  public static Node convertSequenceFlowToNode(SequenceFlow flow) {
+    return createNode(ProcessUtils.getElementPid(flow), flow.getName(), NodeType.ARROW);
+  }
+
+  private static Node createNode(String id, String label, NodeType type) {
+    Node node = new Node();
+    node.setId(id);
+    node.setLabel(label);
+    node.setType(type);
+    return node;
   }
 
   public static void updateNodeByAnalysisType(Node node, KpiType analysisType) {
     if (KpiType.FREQUENCY == analysisType) {
-      node.setLabelValue(node.getFrequency());
+      node.setLabelValue(String.valueOf(node.getFrequency()));
     } else {
-      node.setLabelValue((int) Math.round(node.getMedianDuration()));
+      float medianDurationValue = convertDuration(node.getMedianDuration(), analysisType);
+      node.setLabelValue(formatDuration(medianDurationValue));
+      node.setMedianDuration(medianDurationValue);
     }
     if (Double.isNaN(node.getRelativeValue())) {
       node.setRelativeValue(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     }
+  }
+
+  private static String formatDuration(float value) {
+    DecimalFormat df = new DecimalFormat("#.##");
+    return df.format(value);
   }
 
   /**
@@ -105,11 +124,128 @@ public class ProcessesMonitorUtils {
     if (Objects.isNull(processStart)) {
       return Collections.emptyList();
     }
-    List<ProcessElement> processElements = ProcessUtils.getProcessElementsFromIProcessWebStartable(processStart);
-    List<Node> results = extractNodesFromProcessElements(processElements);
-    updateFrequencyForNodes(results, processElements, cases);
-    results.stream().forEach(node -> updateNodeByAnalysisType(node, analysisType));
-    return results;
+    List<ProcessElement> processElements = ProcessUtils.getProcessElementsFrom(processStart);
+    if (isDuration(analysisType)) {
+      processElements = processElements.stream()
+          .filter(element -> ProcessUtils.isTaskSwitchGatewayInstance(element)
+              || ProcessUtils.isTaskSwitchInstance(element) || ProcessUtils.isRequestStartInstance(element))
+          .collect(Collectors.toList());
+    }
+    List<SequenceFlow> sequenceFlows = getSequenceFlowsIfNeeded(processElements, analysisType);
+    List<Node> nodes = convertToNodes(processElements, sequenceFlows);
+    if (isFrequency(analysisType)) {
+      updateFrequencyForNodes(nodes, processElements, cases);
+    } else if (isDuration(analysisType)) {
+      updateDurationForNodes(nodes, cases, analysisType);
+    }
+    nodes.forEach(node -> updateNodeByAnalysisType(node, analysisType));
+    return nodes;
+  }
+
+  private static boolean isFrequency(KpiType kpiType) {
+    return KpiType.FREQUENCY.equals(kpiType);
+  }
+
+  public static boolean isDuration(KpiType kpiType) {
+    return kpiType != null && kpiType.isDescendantOf(KpiType.DURATION);
+  }
+
+  private static List<SequenceFlow> getSequenceFlowsIfNeeded(List<ProcessElement> processElements, KpiType kpiType) {
+    return (isFrequency(kpiType)) ? ProcessUtils.getSequenceFlowsFrom(processElements) : List.of();
+  }
+
+  public static void updateDurationForNodes(List<Node> nodes, List<ICase> cases, KpiType durationKpiType) {
+    if (CollectionUtils.isEmpty(nodes) || CollectionUtils.isEmpty(cases)) {
+      return;
+    }
+
+    // Extract node IDs and request paths
+    Set<String> taskSwitchPids = extractNodeAttributes(nodes, Node::getId);
+    Set<String> requestPaths = extractNodeAttributes(nodes, Node::getRequestPath);
+    Set<String> taskSwitchGatewayPids = nodes.stream()
+        .filter(node -> node != null && node.getId() != null && node.isTaskSwitchGateway()).map(Node::getId)
+        .collect(Collectors.toSet());
+
+    Function<ITask, Long> durationExtractor = getDurationExtractor(durationKpiType);
+
+    // Group task durations based on their extracted task ID
+    Map<String, List<Long>> nodeDurations = cases.stream().flatMap(currentCase -> currentCase.tasks().all().stream())
+        .filter(task -> isValidTask(task, taskSwitchPids, requestPaths))
+        .collect(Collectors.groupingBy(task -> determineTaskKey(task, taskSwitchGatewayPids, requestPaths),
+            Collectors.mapping(durationExtractor, Collectors.toList())));
+
+    // Remove nodes that are TaskSwitchGateways or have no valid durations
+    nodes.removeIf(node -> shouldRemoveNode(node, nodeDurations));
+  }
+
+  private static Set<String> extractNodeAttributes(List<Node> nodes, Function<Node, String> attributeExtractor) {
+    return nodes.stream().map(attributeExtractor).filter(Objects::nonNull).collect(Collectors.toSet());
+  }
+
+  private static boolean isValidTask(ITask task, Set<String> taskSwitchPids, Set<String> requestPaths) {
+    String taskId = ProcessUtils.getTaskElementIdFromRequestPath(task.getRequestPath());
+    return taskSwitchPids.contains(taskId)
+        || (!task.getRequestPath().isBlank() && requestPaths.contains(task.getRequestPath()));
+  }
+
+  private static String determineTaskKey(ITask task, Set<String> taskSwitchGatewayPids, Set<String> requestPaths) {
+    String taskId = ProcessUtils.getTaskElementIdFromRequestPath(task.getRequestPath());
+    if (taskSwitchGatewayPids.contains(taskId)) {
+      return ProcessUtils.getTaskElementIdFromRequestPath(task.getRequestPath(), true);
+    }
+    if (!task.getRequestPath().isBlank() && requestPaths.contains(task.getRequestPath())) {
+      return task.getRequestPath();
+    }
+    return taskId;
+  }
+
+  private static boolean shouldRemoveNode(Node node, Map<String, List<Long>> nodeDurations) {
+    if (node.isTaskSwitchGateway()) {
+      return true;
+    }
+    String key = StringUtils.isBlank(node.getRequestPath()) ? node.getId() : node.getRequestPath();
+    List<Long> durations = nodeDurations.get(key);
+    if (CollectionUtils.isEmpty(durations)) {
+      return true;
+    }
+    node.setMedianDuration(calculateMedian(durations));
+    return false;
+  }
+
+  private static Function<ITask, Long> getDurationExtractor(KpiType durationKpiType) {
+    if (durationKpiType.isDescendantOf(KpiType.DURATION_IDLE)) {
+      return task -> getOverallDuration(task) - task.getWorkingTime().toNumber();
+    } else if (durationKpiType.isDescendantOf(KpiType.DURATION_OVERALL)) {
+      return task -> getOverallDuration(task);
+    } else if (durationKpiType.isDescendantOf(KpiType.DURATION_WORKING)) {
+      return task -> task.getWorkingTime().toNumber();
+    }
+    return task -> 0L;
+  }
+
+  private static long getOverallDuration(ITask task) {
+    return (long) Math.ceil((task.getEndTimestamp().getTime() - task.getStartTimestamp().getTime()) / 1000.0);
+  }
+
+  private static float calculateMedian(List<Long> durations) {
+    if (durations.isEmpty())
+      return 0f;
+    List<Long> sorted = durations.stream().sorted().toList();
+    int middle = sorted.size() / 2;
+
+    return sorted.size() % 2 == 0 ? (sorted.get(middle - 1) + sorted.get(middle)) / 2.0f : sorted.get(middle);
+  }
+
+  private static float convertDuration(float durationSeconds, KpiType kpiType) {
+    return switch (kpiType) {
+    case DURATION_IDLE_DAY, DURATION_WORKING_DAY, DURATION_OVERALL_DAY ->
+      (float) (durationSeconds / (60 * 60 * 24));
+    case DURATION_IDLE_HOUR, DURATION_WORKING_HOUR, DURATION_OVERALL_HOUR ->
+      (float) (durationSeconds / (60 * 60));
+    case DURATION_IDLE_MINUTE, DURATION_WORKING_MINUTE, DURATION_OVERALL_MINUTE ->
+      (float) (durationSeconds / (60));
+    default -> durationSeconds;
+    };
   }
 
   /**
@@ -117,7 +253,7 @@ public class ProcessesMonitorUtils {
    * not, we need to check which path from alternative is running to update
    * frequency for elements belong to its.
    **/
-  public static List<Node> updateFrequencyForNodes(List<Node> results, List<ProcessElement> processElements,
+  public static void updateFrequencyForNodes(List<Node> results, List<ProcessElement> processElements,
       List<ICase> cases) {
     List<ProcessElement> branchSwitchingElement = ProcessUtils.getAlterNativesWithMultiOutgoings(processElements);
     if (CollectionUtils.isEmpty(branchSwitchingElement)) {
@@ -128,7 +264,6 @@ public class ProcessesMonitorUtils {
       List<AlternativePath> paths = convertToAternativePaths(branchSwitchingElement);
       handleFrequencyForCasesWithAlternativePaths(paths, results, cases);
     }
-    return results;
   }
 
   /**
@@ -345,7 +480,7 @@ public class ProcessesMonitorUtils {
   public static void updateNodeWiwthDefinedFrequency(int value, Node node) {
     Long releativeValue = (long) (value == 0 ? 0 : 1);
     node.setRelativeValue(releativeValue);
-    node.setLabelValue(Objects.requireNonNullElse(value, 0));
+    node.setLabelValue(Objects.requireNonNullElse(value, 0).toString());
     node.setFrequency(value);
   }
 }

@@ -14,6 +14,8 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
+import javax.faces.model.SelectItemGroup;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -67,6 +69,7 @@ public class ProcessesAnalyticsBean {
   private boolean isFilterDropdownVisible;
   private double minValue;
   private double maxValue;
+  private List<SelectItem> kpiTypes;
 
   @PostConstruct
   private void init() {
@@ -83,6 +86,26 @@ public class ProcessesAnalyticsBean {
     customFieldsByType = new ArrayList<>();
     selectedCustomFilters = new ArrayList<>();
     selectedCustomFieldNames = new ArrayList<>();
+    initKpiTypes();
+  }
+
+  private void initKpiTypes() {
+    kpiTypes = new ArrayList<>();
+
+    for (KpiType type : KpiType.getTopLevelOptions()) {
+      kpiTypes.add(createSelectItem(type));
+    }
+  }
+
+  private SelectItem createSelectItem(KpiType type) {
+    List<KpiType> subOptions = type.getSubOptions();
+    if (subOptions.isEmpty()) {
+      return new SelectItem(type, type.getCmsName());
+    }
+    SelectItemGroup group = new SelectItemGroup(type.getCmsName());
+    group.setValue(type);
+    group.setSelectItems(subOptions.stream().map(this::createSelectItem).toArray(SelectItem[]::new));
+    return group;
   }
 
   public List<String> getAvailableProcesses() {
@@ -268,13 +291,16 @@ public class ProcessesAnalyticsBean {
   }
 
   public String generateNameOfExcelFile() {
+    String formattedKpiTypeName = selectedKpiType.getCmsName()
+        .replaceAll(ProcessAnalyticsConstants.SPACE_DASH_REGEX, ProcessAnalyticsConstants.UNDERSCORE)
+        .replaceAll(ProcessAnalyticsConstants.MULTIPLE_UNDERSCORES_REGEX, ProcessAnalyticsConstants.UNDERSCORE);
     return StringUtils.isNotBlank(selectedProcess)
-        ? String.format(ProcessAnalyticsConstants.ANALYSIS_EXCEL_FILE_PATTERN, selectedProcess)
+        ? String.format(ProcessAnalyticsConstants.ANALYSIS_EXCEL_FILE_PATTERN, formattedKpiTypeName, selectedProcess)
         : StringUtils.EMPTY;
   }
 
-  public KpiType[] getKpiTypes() {
-    return KpiType.values();
+  public boolean isMedianDurationColumnVisible() {
+    return ProcessesMonitorUtils.isDuration(selectedKpiType);
   }
 
   public String getSelectedProcess() {
@@ -383,5 +409,9 @@ public class ProcessesAnalyticsBean {
 
   public void setMaxValue(double maxValue) {
     this.maxValue = maxValue;
+  }
+
+  public List<SelectItem> getKpiTypes() {
+    return kpiTypes;
   }
 }

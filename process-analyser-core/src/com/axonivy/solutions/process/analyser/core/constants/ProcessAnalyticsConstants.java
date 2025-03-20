@@ -19,8 +19,11 @@ public class ProcessAnalyticsConstants {
   public static final String EN_CMS_LOCALE = "en";
   public static final String SLASH = "/";
   public static final String MODULE_PATH = "%s/%s/";
-  public static final String ANALYSIS_EXCEL_FILE_PATTERN = "Analysis_Of_%s";
+  public static final String ANALYSIS_EXCEL_FILE_PATTERN = "Analysis_%s_Of_%s";
   public static final String LIKE_TEXT_SEARCH = "%%%s%%";
   public static final String UPDATE_IFRAME_SOURCE_METHOD_CALL = "updateUrlForIframe()";
   public static final String PROCESSFILE_EXTENSION = IProcess.PROCESSFILE_EXTENSION;
+  public static final String UNDERSCORE = "_";
+  public static final String SPACE_DASH_REGEX = "[\\s-]+";
+  public static final String MULTIPLE_UNDERSCORES_REGEX = "_+";
 }
