@@ -20,6 +20,7 @@ import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.EmbeddedProcessElement;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.element.event.intermediate.TaskSwitchEvent;
+import ch.ivyteam.ivy.process.model.element.event.start.RequestStart;
 import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
 import ch.ivyteam.ivy.process.model.element.gateway.Join;
 import ch.ivyteam.ivy.process.model.element.gateway.TaskSwitchGateway;
@@ -57,6 +58,10 @@ public class ProcessUtils {
 
   public static boolean isTaskSwitchGatewayInstance(Object element) {
     return element instanceof TaskSwitchGateway;
+  }
+
+  public static boolean isRequestStartInstance(Object element) {
+    return element instanceof RequestStart;
   }
 
   public static boolean isJoinInstance(Object element) {

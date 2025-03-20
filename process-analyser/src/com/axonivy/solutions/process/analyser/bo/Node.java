@@ -16,6 +16,8 @@ public class Node {
   private int frequency;
   @JsonIgnore
   private boolean isTaskSwitchGateway;
+  @JsonIgnore
+  private String requestPath;
 
   public Node() {}
 
@@ -81,5 +83,13 @@ public class Node {
 
   public void setTaskSwitchGateway(boolean isTaskSwitchGateway) {
     this.isTaskSwitchGateway = isTaskSwitchGateway;
+  }
+
+  public String getRequestPath() {
+    return requestPath;
+  }
+
+  public void setRequestPath(String requestPath) {
+    this.requestPath = requestPath;
   }
 }

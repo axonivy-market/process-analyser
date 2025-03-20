@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,6 +30,7 @@ import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
+import ch.ivyteam.ivy.process.model.element.event.start.RequestStart;
 import ch.ivyteam.ivy.process.model.element.gateway.TaskSwitchGateway;
 import ch.ivyteam.ivy.workflow.CaseState;
 import ch.ivyteam.ivy.workflow.ICase;
@@ -61,32 +63,36 @@ public class ProcessesMonitorUtils {
 
   public static List<Node> convertProcessElementToNode(ProcessElement element) {
     if (element instanceof TaskSwitchGateway taskSwitchGateway) {
-      Node baseNode = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT, true);
+      Node baseNode = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT);
+      baseNode.setTaskSwitchGateway(true);
       String elementId = element.getPid().toString();
       List<Node> taskNodes = taskSwitchGateway.getAllTaskConfigs().stream()
           .map(task -> createNode(
-              elementId + ProcessAnalyticsConstants.SLASH + task.getTaskIdentifier().getRawIdentifier(),
-              task.getName().getRawMacro(), NodeType.ELEMENT, false))
+              elementId + ProcessAnalyticsConstants.SLASH + task.getTaskIdentifier().getTaskIvpLinkName(),
+              task.getName().getRawMacro(), NodeType.ELEMENT))
           .collect(Collectors.toList());
 
       taskNodes.add(0, baseNode);
       return taskNodes;
-    }
-    else {
-      return List.of(createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT, false));
+    } else if (element instanceof RequestStart) {
+      RequestStart requestStart = RequestStart.class.cast(element);
+      Node node = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT);
+      node.setRequestPath(requestStart.getRequestPath().getLinkPath());
+      return List.of(node);
+    } else {
+      return List.of(createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT));
     }
   }
 
   public static Node convertSequenceFlowToNode(SequenceFlow flow) {
-    return createNode(ProcessUtils.getElementPid(flow), flow.getName(), NodeType.ARROW, false);
+    return createNode(ProcessUtils.getElementPid(flow), flow.getName(), NodeType.ARROW);
   }
 
-  private static Node createNode(String id, String label, NodeType type, boolean isTaskSwitchGateway) {
+  private static Node createNode(String id, String label, NodeType type) {
     Node node = new Node();
     node.setId(id);
     node.setLabel(label);
     node.setType(type);
-    node.setTaskSwitchGateway(isTaskSwitchGateway);
     return node;
   }
 
@@ -94,7 +100,9 @@ public class ProcessesMonitorUtils {
     if (KpiType.FREQUENCY == analysisType) {
       node.setLabelValue(String.valueOf(node.getFrequency()));
     } else {
-      node.setLabelValue(formatDuration(convertDuration(node.getMedianDuration(), analysisType)));
+      float medianDurationValue = convertDuration(node.getMedianDuration(), analysisType);
+      node.setLabelValue(formatDuration(medianDurationValue));
+      node.setMedianDuration(medianDurationValue);
     }
     if (Double.isNaN(node.getRelativeValue())) {
       node.setRelativeValue(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
@@ -118,8 +126,9 @@ public class ProcessesMonitorUtils {
     }
     List<ProcessElement> processElements = ProcessUtils.getProcessElementsFrom(processStart);
     if (isDuration(analysisType)) {
-      processElements = processElements.stream().filter(
-          element -> ProcessUtils.isTaskSwitchGatewayInstance(element) || ProcessUtils.isTaskSwitchInstance(element))
+      processElements = processElements.stream()
+          .filter(element -> ProcessUtils.isTaskSwitchGatewayInstance(element)
+              || ProcessUtils.isTaskSwitchInstance(element) || ProcessUtils.isRequestStartInstance(element))
           .collect(Collectors.toList());
     }
     List<SequenceFlow> sequenceFlows = getSequenceFlowsIfNeeded(processElements, analysisType);
@@ -150,36 +159,57 @@ public class ProcessesMonitorUtils {
       return;
     }
 
-    List<String> taskSwitchPids = nodes.stream().filter(node -> node != null && node.getId() != null).map(Node::getId)
-        .collect(Collectors.toList());
+    // Extract node IDs and request paths
+    Set<String> taskSwitchPids = extractNodeAttributes(nodes, Node::getId);
+    Set<String> requestPaths = extractNodeAttributes(nodes, Node::getRequestPath);
+    Set<String> taskSwitchGatewayPids = nodes.stream()
+        .filter(node -> node != null && node.getId() != null && node.isTaskSwitchGateway()).map(Node::getId)
+        .collect(Collectors.toSet());
 
     Function<ITask, Long> durationExtractor = getDurationExtractor(durationKpiType);
 
-    Map<String, List<Long>> nodeDurations = cases.stream()
-        // Extract all tasks from all cases into a single stream
-        .flatMap(currentCase -> currentCase.tasks().all().stream())
-
-        // Filter tasks based on their ID (extracted from request path)
-        .filter(task -> taskSwitchPids.contains(ProcessUtils.getTaskElementIdFromRequestPath(task.getRequestPath())))
-
-        // Group tasks by their extracted task ID
-        .collect(Collectors.groupingBy(task -> ProcessUtils.getTaskElementIdFromRequestPath(task.getRequestPath(), true),
-
-            // Extract the duration of each task and collect into a list
+    // Group task durations based on their extracted task ID
+    Map<String, List<Long>> nodeDurations = cases.stream().flatMap(currentCase -> currentCase.tasks().all().stream())
+        .filter(task -> isValidTask(task, taskSwitchPids, requestPaths))
+        .collect(Collectors.groupingBy(task -> determineTaskKey(task, taskSwitchGatewayPids, requestPaths),
             Collectors.mapping(durationExtractor, Collectors.toList())));
 
-    nodes.removeIf(node -> {
-      if (node.isTaskSwitchGateway()) {
-        return true;
-      }
-      List<Long> durations = nodeDurations.entrySet().stream().filter(entry -> entry.getKey().contains(node.getId()))
-          .flatMap(entry -> entry.getValue().stream()).collect(Collectors.toList());
-      if (durations == null || durations.isEmpty()) {
-        return true;
-      }
-      node.setMedianDuration(calculateMedian(durations));
-      return false;
-    });
+    // Remove nodes that are TaskSwitchGateways or have no valid durations
+    nodes.removeIf(node -> shouldRemoveNode(node, nodeDurations));
+  }
+
+  private static Set<String> extractNodeAttributes(List<Node> nodes, Function<Node, String> attributeExtractor) {
+    return nodes.stream().map(attributeExtractor).filter(Objects::nonNull).collect(Collectors.toSet());
+  }
+
+  private static boolean isValidTask(ITask task, Set<String> taskSwitchPids, Set<String> requestPaths) {
+    String taskId = ProcessUtils.getTaskElementIdFromRequestPath(task.getRequestPath());
+    return taskSwitchPids.contains(taskId)
+        || (!task.getRequestPath().isBlank() && requestPaths.contains(task.getRequestPath()));
+  }
+
+  private static String determineTaskKey(ITask task, Set<String> taskSwitchGatewayPids, Set<String> requestPaths) {
+    String taskId = ProcessUtils.getTaskElementIdFromRequestPath(task.getRequestPath());
+    if (taskSwitchGatewayPids.contains(taskId)) {
+      return ProcessUtils.getTaskElementIdFromRequestPath(task.getRequestPath(), true);
+    }
+    if (!task.getRequestPath().isBlank() && requestPaths.contains(task.getRequestPath())) {
+      return task.getRequestPath();
+    }
+    return taskId;
+  }
+
+  private static boolean shouldRemoveNode(Node node, Map<String, List<Long>> nodeDurations) {
+    if (node.isTaskSwitchGateway()) {
+      return true;
+    }
+    String key = StringUtils.isBlank(node.getRequestPath()) ? node.getId() : node.getRequestPath();
+    List<Long> durations = nodeDurations.get(key);
+    if (CollectionUtils.isEmpty(durations)) {
+      return true;
+    }
+    node.setMedianDuration(calculateMedian(durations));
+    return false;
   }
 
   private static Function<ITask, Long> getDurationExtractor(KpiType durationKpiType) {
@@ -192,9 +222,9 @@ public class ProcessesMonitorUtils {
     }
     return task -> 0L;
   }
-  
+
   private static long getOverallDuration(ITask task) {
-    return (task.getEndTimestamp().getTime() - task.getStartTimestamp().getTime()) / 1000;
+    return (long) Math.ceil((task.getEndTimestamp().getTime() - task.getStartTimestamp().getTime()) / 1000.0);
   }
 
   private static float calculateMedian(List<Long> durations) {

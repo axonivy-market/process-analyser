@@ -23,7 +23,7 @@ Dialogs:
               FromToDateValidationMessage: From date must be before To date.
               Label: Label
               LabelValue: Label Value
-              MedianDuration: Median Duration (s)
+              MedianDuration: Median Duration
               NoCustomFieldsAvailable: No custom fields available.
               NoRecordsFound: No records found.
               None: None

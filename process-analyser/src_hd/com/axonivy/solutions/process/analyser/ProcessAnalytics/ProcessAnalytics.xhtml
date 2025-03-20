@@ -116,10 +116,6 @@
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Label')}">
               <h:outputText value="#{node.label}" />
             </p:column>
-            <p:column styleClass="col-2" sortBy="#{node.labelValue}"
-              headerText="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/LabelValue')}">
-              <h:outputText value="#{node.labelValue}" />
-            </p:column>
             <p:column
               rendered="#{'FREQUENCY' == processesAnalyticsBean.selectedKpiType}"
               styleClass="col-2" sortBy="#{node.frequency}"
