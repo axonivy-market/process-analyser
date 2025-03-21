@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -23,9 +24,9 @@ import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
+import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
-import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
@@ -64,6 +65,8 @@ public class ProcessesMonitorUtils {
   public static List<Node> convertProcessElementToNode(ProcessElement element) {
     if (element instanceof TaskSwitchGateway taskSwitchGateway) {
       Node baseNode = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT);
+      baseNode.setOutGoingPathIds(element.getOutgoing().stream().map(ProcessUtils::getElementPid).toList());
+      baseNode.setInCommingPathIds(element.getIncoming().stream().map(ProcessUtils::getElementPid).toList());
       baseNode.setTaskSwitchGateway(true);
       String elementId = element.getPid().toString();
       List<Node> taskNodes = taskSwitchGateway.getAllTaskConfigs().stream()
@@ -71,21 +74,26 @@ public class ProcessesMonitorUtils {
               elementId + ProcessAnalyticsConstants.SLASH + task.getTaskIdentifier().getTaskIvpLinkName(),
               task.getName().getRawMacro(), NodeType.ELEMENT))
           .collect(Collectors.toList());
-
       taskNodes.add(0, baseNode);
       return taskNodes;
     } else if (element instanceof RequestStart) {
       RequestStart requestStart = RequestStart.class.cast(element);
       Node node = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT);
+      node.setOutGoingPathIds(element.getOutgoing().stream().map(ProcessUtils::getElementPid).toList());
       node.setRequestPath(requestStart.getRequestPath().getLinkPath());
       return List.of(node);
     } else {
-      return List.of(createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT));
+      Node node = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT);
+      node.setOutGoingPathIds(element.getOutgoing().stream().map(ProcessUtils::getElementPid).toList());
+      node.setInCommingPathIds(element.getIncoming().stream().map(ProcessUtils::getElementPid).toList());
+      return List.of(node);
     }
   }
 
   public static Node convertSequenceFlowToNode(SequenceFlow flow) {
-    return createNode(ProcessUtils.getElementPid(flow), flow.getName(), NodeType.ARROW);
+    Node node = createNode(ProcessUtils.getElementPid(flow), flow.getName(), NodeType.ARROW);
+    node.setTargetNodeId(flow.getTarget().getPid().toString());
+    return node;
   }
 
   private static Node createNode(String id, String label, NodeType type) {
@@ -263,6 +271,70 @@ public class ProcessesMonitorUtils {
       branchSwitchingElement.addAll(alternativeEnds);
       List<AlternativePath> paths = convertToAternativePaths(branchSwitchingElement);
       handleFrequencyForCasesWithAlternativePaths(paths, results, cases);
+      List<ProcessElement> taskSwitchElements = processElements.stream()
+          .filter(element -> ProcessUtils.isTaskSwitchGatewayInstance(element)).collect(Collectors.toList());
+      List<ProcessElement> complexElements = new ArrayList<>();
+      complexElements.addAll(taskSwitchElements);
+      complexElements.addAll(branchSwitchingElement);
+      List<ProcessElement> subWithOneIncommingElements =
+          processElements.stream().filter(element -> ProcessUtils.isEmbeddedElementInstance(element)
+              && !ProcessUtils.isElementWithMultipleIncomingFlow(element)).collect(Collectors.toList());
+      complexElements.addAll(subWithOneIncommingElements);
+      updateFrequencyForComplexElements(complexElements, results);
+      updateRelativeValueForNodes(results);
+    }
+  }
+
+  public static void updateFrequencyForComplexElements(List<ProcessElement> complexElements, List<Node> nodes) {
+    if (ObjectUtils.anyNull(complexElements, nodes)) {
+      return;
+    }
+
+    complexElements.stream().forEach(processElement -> {
+      Node node = findNodeById(processElement.getPid().toString(), nodes);
+      int frequency = 0;
+      for (String inCommingPathId : node.getInCommingPathIds()) {
+        frequency += getFrequencyById(inCommingPathId, nodes);
+      }
+      node.setFrequency(frequency);
+
+      if (node.getOutGoingPathIds().size() == 1) {
+        Node outGoingPath = findNodeById(node.getOutGoingPathIds().getFirst(), nodes);
+        outGoingPath.setFrequency(frequency);
+        return;
+      }
+
+      for (String outGoingPathId : node.getOutGoingPathIds()) {
+        Node outGoingPath = findNodeById(outGoingPathId, nodes);
+        Node targetNodeOfOutGoingPath = findNodeById(outGoingPath.getTargetNodeId(), nodes);
+        outGoingPath.setFrequency(targetNodeOfOutGoingPath.getFrequency());
+      }
+    });
+  }
+
+  public static int getFrequencyById(String id, List<Node> nodes) {
+    return nodes.stream().filter(node -> node.getId().equals(id)).map(Node::getFrequency).findFirst()
+        .orElseGet(() -> 0);
+  }
+
+  public static Node findNodeById(String id, List<Node> nodes) {
+    return nodes.stream().filter(node -> node.getId().equals(id)).findFirst().orElseGet(() -> null);
+  }
+
+  public static void updateRelativeValueForNodes(List<Node> nodes) {
+    if (CollectionUtils.isEmpty(nodes)) {
+      return;
+    }
+
+    int maxFrequency = 1;
+    for (Node node : nodes) {
+      if (node.getFrequency() > maxFrequency) {
+        maxFrequency = node.getFrequency();
+      }
+    }
+
+    for (Node node : nodes) {
+      node.setRelativeValue((float) node.getFrequency() / maxFrequency);
     }
   }
 
@@ -277,11 +349,38 @@ public class ProcessesMonitorUtils {
       return;
     }
     cases.stream().forEach(currentCase -> {
-      List<String> nonRunningElementIdsInCase = getNonRunningElementIdsInCase(currentCase, paths);
+      List<String> taskIdsDoneInCase = getTaskIdDoneInCase(currentCase);
+      List<String> nonRunningElementIdsInCase = getNonRunningElementIdsInCase(taskIdsDoneInCase, paths);
+
+      Map<String, Integer> hashMap = countFrequencyOfTask(taskIdsDoneInCase);
+      for (Node node : results) {
+        if (hashMap.containsKey(node.getId()) && CollectionUtils.isNotEmpty(node.getOutGoingPathIds())) {
+          for (String pathId : node.getOutGoingPathIds()) {
+            hashMap.put(pathId, hashMap.get(node.getId()));
+          }
+        }
+      }
+
       results.stream().filter(node -> !nonRunningElementIdsInCase.contains(node.getId()))
-          .forEach(node -> node.setFrequency(node.getFrequency() + 1));
+          .forEach(node -> node.setFrequency(node.getFrequency() + hashMap.getOrDefault(node.getId(), 1)));
     });
-    results.stream().forEach(node -> node.setRelativeValue((float) node.getFrequency() / cases.size()));
+  }
+
+  public static List<String> getTaskIdDoneInCase(ICase currentCase) {
+    return currentCase.tasks().all().stream()
+        .map(iTask -> ProcessUtils.getTaskElementIdFromRequestPath(iTask.getRequestPath())).toList();
+  }
+
+  public static Map<String, Integer> countFrequencyOfTask(List<String> taskIdsDoneInCase) {
+    // Create HashMap to store the count
+    Map<String, Integer> idCountMap = new HashMap<>();
+
+    // Count occurrences
+    for (String id : taskIdsDoneInCase) {
+      idCountMap.put(id, idCountMap.getOrDefault(id, 0) + 1);
+    }
+
+    return idCountMap;
   }
 
   public static List<AlternativePath> convertToAternativePaths(List<ProcessElement> elements) {
@@ -306,10 +405,8 @@ public class ProcessesMonitorUtils {
     return path;
   }
 
-  public static List<String> getNonRunningElementIdsInCase(ICase currentCase, List<AlternativePath> paths) {
+  public static List<String> getNonRunningElementIdsInCase(List<String> taskIdsDoneInCase, List<AlternativePath> paths) {
     List<String> results = new ArrayList<String>();
-    List<String> taskIdsDoneInCase = currentCase.tasks().all().stream()
-        .map(iTask -> ProcessUtils.getTaskElementIdFromRequestPath(iTask.getRequestPath())).toList();
     List<String> nonRunningElementIdsFromAlternative = paths.stream()
         .filter(
             path -> !path.isPathFromAlternativeEnd() && !taskIdsDoneInCase.contains(path.getTaskSwitchEventIdOnPath()))

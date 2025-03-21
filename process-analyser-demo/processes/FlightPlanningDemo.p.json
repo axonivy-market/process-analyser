@@ -304,7 +304,7 @@
       },
       "connect" : [
         { "id" : "f15", "to" : "S30", "via" : [ { "x" : 824, "y" : 1208 } ], "condition" : "ivp==\"TaskA.ivp\"" },
-        { "id" : "f16", "to" : "S40", "via" : [ { "x" : 824, "y" : 1336 } ], "condition" : "ivp==\"TaskB.ivp\"" }
+        { "id" : "f16", "to" : "S40", "via" : [ { "x" : 824, "y" : 1328 } ], "condition" : "ivp==\"TaskB.ivp\"" }
       ]
     }, {
       "id" : "S30",
@@ -329,53 +329,16 @@
           "parentConnector" : "f20"
         } ],
       "visual" : {
-        "at" : { "x" : 1008, "y" : 1208 }
+        "at" : { "x" : 1016, "y" : 1208 }
       },
       "connect" : [
-        { "id" : "f20", "to" : "f19", "via" : [ { "x" : 1192, "y" : 1208 } ] }
-      ]
-    }, {
-      "id" : "S40",
-      "type" : "EmbeddedProcess",
-      "name" : "Send Email to Cabin Crews",
-      "elements" : [ {
-          "id" : "S40-g0",
-          "type" : "EmbeddedStart",
-          "visual" : {
-            "at" : { "x" : 64, "y" : 256 }
-          },
-          "parentConnector" : "f16",
-          "connect" : [
-            { "id" : "S40-f0", "to" : "S40-g1" }
-          ]
-        }, {
-          "id" : "S40-g1",
-          "type" : "EmbeddedEnd",
-          "visual" : {
-            "at" : { "x" : 512, "y" : 256 }
-          },
-          "parentConnector" : "f21"
-        } ],
-      "visual" : {
-        "at" : { "x" : 1008, "y" : 1336 }
-      },
-      "connect" : [
-        { "id" : "f21", "to" : "f19", "via" : [ { "x" : 1192, "y" : 1336 } ] }
-      ]
-    }, {
-      "id" : "f19",
-      "type" : "Alternative",
-      "visual" : {
-        "at" : { "x" : 1192, "y" : 1272 }
-      },
-      "connect" : [
-        { "id" : "f23", "to" : "f35" }
+        { "id" : "f20", "to" : "f22", "via" : [ { "x" : 1200, "y" : 1208 } ] }
       ]
     }, {
       "id" : "f22",
       "type" : "TaskEnd",
       "visual" : {
-        "at" : { "x" : 1384, "y" : 1272 }
+        "at" : { "x" : 1200, "y" : 1272 }
       }
     }, {
       "id" : "f1",
@@ -539,22 +502,33 @@
         { "id" : "f34", "to" : "f13", "via" : [ { "x" : 752, "y" : 1272 } ], "color" : "default", "var" : "in1" }
       ]
     }, {
-      "id" : "f35",
-      "type" : "TaskSwitchEvent",
-      "name" : "Process to finish the flight plan",
-      "config" : {
-        "task" : {
-          "responsible" : {
-            "activator" : "SYSTEM"
-          }
-        }
-      },
+      "id" : "S40",
+      "type" : "EmbeddedProcess",
+      "name" : "Send Email to Cabin Crews",
+      "elements" : [ {
+          "id" : "S40-g0",
+          "type" : "EmbeddedStart",
+          "visual" : {
+            "at" : { "x" : 64, "y" : 256 }
+          },
+          "parentConnector" : "f16",
+          "connect" : [
+            { "id" : "S40-f0", "to" : "S40-g1" }
+          ]
+        }, {
+          "id" : "S40-g1",
+          "type" : "EmbeddedEnd",
+          "visual" : {
+            "at" : { "x" : 352, "y" : 256 },
+            "labelOffset" : { "x" : 3, "y" : 23 }
+          },
+          "parentConnector" : "f21"
+        } ],
       "visual" : {
-        "at" : { "x" : 1288, "y" : 1272 },
-        "labelOffset" : { "x" : 14, "y" : 34 }
+        "at" : { "x" : 1016, "y" : 1328 }
       },
       "connect" : [
-        { "id" : "f36", "to" : "f22", "color" : "default" }
+        { "id" : "f21", "to" : "f22", "via" : [ { "x" : 1200, "y" : 1328 } ], "color" : "default" }
       ]
     } ],
   "layout" : {
