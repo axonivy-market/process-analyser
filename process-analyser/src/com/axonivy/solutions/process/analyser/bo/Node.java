@@ -11,10 +11,10 @@ public class Node {
   private String id;
   @JsonIgnore
   private String label;
-  private int labelValue;
-  private double relativeValue;
+  private String labelValue;
+  private float relativeValue;
   @JsonIgnore
-  private double medianDuration;
+  private float medianDuration;
   @JsonIgnore
   private int frequency;
   @JsonIgnore
@@ -23,6 +23,10 @@ public class Node {
   private List<String> inCommingPathIds = new ArrayList<>();
   @JsonIgnore
   private String targetNodeId;
+  @JsonIgnore
+  private boolean isTaskSwitchGateway;
+  @JsonIgnore
+  private String requestPath;
 
   public Node() {}
 
@@ -50,27 +54,27 @@ public class Node {
     this.label = label;
   }
 
-  public int getLabelValue() {
+  public String getLabelValue() {
     return labelValue;
   }
 
-  public void setLabelValue(int labelValue) {
+  public void setLabelValue(String labelValue) {
     this.labelValue = labelValue;
   }
 
-  public double getRelativeValue() {
+  public float getRelativeValue() {
     return relativeValue;
   }
 
-  public void setRelativeValue(double relativeValue) {
+  public void setRelativeValue(float relativeValue) {
     this.relativeValue = relativeValue;
   }
 
-  public double getMedianDuration() {
+  public float getMedianDuration() {
     return medianDuration;
   }
 
-  public void setMedianDuration(double medianDuration) {
+  public void setMedianDuration(float medianDuration) {
     this.medianDuration = medianDuration;
   }
 
@@ -104,5 +108,21 @@ public class Node {
 
   public void setTargetNodeId(String targetNodeId) {
     this.targetNodeId = targetNodeId;
+  }
+
+  public boolean isTaskSwitchGateway() {
+    return isTaskSwitchGateway;
+  }
+
+  public void setTaskSwitchGateway(boolean isTaskSwitchGateway) {
+    this.isTaskSwitchGateway = isTaskSwitchGateway;
+  }
+
+  public String getRequestPath() {
+    return requestPath;
+  }
+
+  public void setRequestPath(String requestPath) {
+    this.requestPath = requestPath;
   }
 }

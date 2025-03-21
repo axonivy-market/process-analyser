@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -34,13 +35,6 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
   }
 
   @Test
-  void test_convertProcessElementInfoToNode() {
-    List<Node> results = ProcessesMonitorUtils.convertProcessElementInfoToNode(startProcessElement);
-    assertThat(results.size()).isEqualTo(1);
-    assertThat(results.get(0).getId()).isEqualTo(TEST_FLOW_PID_FROM_START_ELEMENT);
-  }
-
-  @Test
   void test_convertSequenceFlowToNode() {
     Node result = ProcessesMonitorUtils.convertSequenceFlowToNode(flowFromStartElement);
     assertThat(result.getId()).isEqualTo(TEST_FLOW_PID_FROM_START_ELEMENT);
@@ -51,14 +45,14 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
 
   @Test
   void test_extractNodesFromProcessElements() {
-    List<Node> results = ProcessesMonitorUtils.extractNodesFromProcessElements(List.of(startProcessElement));
+    List<Node> results = ProcessesMonitorUtils.convertToNodes(List.of(startProcessElement), testSequenceFlows);
     assertThat(results.size()).isNotZero();
     assertThat(results.get(0).getId()).isEqualTo(TEST_PROCESS_ELEMENT_START_PID);
   }
 
   @Test
   void test_convertProcessElementToNode() {
-    Node result = ProcessesMonitorUtils.convertProcessElementToNode(startProcessElement);
+    Node result = ProcessesMonitorUtils.convertProcessElementToNode(startProcessElement).getFirst();
     assertThat(result.getId()).isEqualTo(TEST_PROCESS_ELEMENT_START_PID);
     assertThat(result.getLabel()).isEqualTo("test");
     assertThat(result.getType()).isEqualTo(NodeType.ELEMENT);
@@ -69,13 +63,13 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
   void test_updateNodeByAnalysisType() {
     Node result = new Node();
     result.setFrequency(10);
-    result.setMedianDuration(11.5);
+    result.setMedianDuration(2);
     assertThat(result.getLabel()).isNull();
     ProcessesMonitorUtils.updateNodeByAnalysisType(result, KpiType.FREQUENCY);
-    assertThat(result.getLabelValue()).isEqualTo(10);
+    assertThat(result.getLabelValue()).isEqualTo("10");
     assertThat(result.getRelativeValue()).isZero();
-    ProcessesMonitorUtils.updateNodeByAnalysisType(result, KpiType.DURATION);
-    assertThat(result.getLabelValue()).isEqualTo(12);
+    ProcessesMonitorUtils.updateNodeByAnalysisType(result, KpiType.DURATION_OVERALL_SECOND);
+    assertThat(result.getLabelValue()).isEqualTo("2");
   }
 
   @Test
@@ -85,7 +79,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
       ProcessUtils.getTaskStartIdFromPID(selectedPid), new TimeIntervalFilter(new Date(), new Date()), new ArrayList<>());
     List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(testProcessStart, KpiType.FREQUENCY, cases);
     assertThat(results.size()).isEqualTo(16);
-    assertThat(results.get(0).getLabelValue()).isZero();
+    assertThat(results.get(0).getLabelValue()).isEqualTo("0");
   }
 
   @Test
@@ -93,10 +87,11 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     ICase mockCase = ICase.current();
     Node mockNode = new Node();
     assertThat(mockNode.getLabel()).isNull();
-    List<Node> results = ProcessesMonitorUtils.updateFrequencyForNodes(List.of(mockNode), new ArrayList<>(),
+    List<Node> results = List.of(mockNode);
+    ProcessesMonitorUtils.updateFrequencyForNodes(results, new ArrayList<>(),
         List.of(mockCase));
     assertThat(results.size()).isNotZero();
-    assertThat(results.get(0).getLabelValue()).isEqualTo(1);
+    assertThat(results.get(0).getLabelValue()).isEqualTo("1");
   }
 
   @Test
@@ -121,7 +116,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     Node mockNode = new Node();
     int mockValue = 9;
     ProcessesMonitorUtils.updateNodeWiwthDefinedFrequency(mockValue, mockNode);
-    assertThat(mockNode.getLabelValue()).isEqualTo(mockValue);
+    assertThat(mockNode.getLabelValue()).isEqualTo(String.valueOf(mockValue));
     assertThat(mockNode.getFrequency()).isEqualTo(mockValue);
     assertThat(mockNode.getRelativeValue()).isEqualTo(1);
   }
@@ -144,7 +139,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
   void test_updateRelativeValueForNodes() {
     List<Node> nodes = prepareMockNodeList();
     ProcessesMonitorUtils.updateRelativeValueForNodes(nodes);
-    assertThat(nodes.getFirst().getRelativeValue()).isEqualTo(0.5);
+    assertThat(nodes.getFirst().getRelativeValue()).isEqualTo(0.5f);
   }
 
   @Test
@@ -171,5 +166,11 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     return List.of(nodeA, nodeB);
   }
 
-
+  @Test
+  void test_countFrequencyOfTask() {
+    List<String> taskIdsDoneInCase = List.of(NODE_A_ID, NODE_B_ID, NODE_A_ID, NODE_A_ID, NODE_B_ID);
+    Map<String, Integer> idCountMap = ProcessesMonitorUtils.countFrequencyOfTask(taskIdsDoneInCase);
+    assertThat(idCountMap.get(NODE_A_ID).intValue()).isEqualTo(3);
+    assertThat(idCountMap.get(NODE_B_ID).intValue()).isEqualTo(2);
+  }
 }

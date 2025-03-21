@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -16,18 +16,20 @@ import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsCon
 
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.model.BaseElement;
-import ch.ivyteam.ivy.process.model.Process;
+import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.EmbeddedProcessElement;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.element.event.intermediate.TaskSwitchEvent;
+import ch.ivyteam.ivy.process.model.element.event.start.RequestStart;
 import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
+import ch.ivyteam.ivy.process.model.element.gateway.Join;
+import ch.ivyteam.ivy.process.model.element.gateway.TaskSwitchGateway;
 import ch.ivyteam.ivy.process.model.value.PID;
+import ch.ivyteam.ivy.process.rdm.IProcess;
 import ch.ivyteam.ivy.process.rdm.IProcessManager;
 import ch.ivyteam.ivy.workflow.IProcessStart;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
-import ch.ivyteam.ivy.process.model.element.gateway.Join;
-import ch.ivyteam.ivy.process.model.element.gateway.TaskSwitchGateway;
 
 @SuppressWarnings("restriction")
 public class ProcessUtils {
@@ -58,7 +60,11 @@ public class ProcessUtils {
     return element instanceof TaskSwitchGateway;
   }
 
-  public static boolean isTaskJoinInstance(Object element) {
+  public static boolean isRequestStartInstance(Object element) {
+    return element instanceof RequestStart;
+  }
+
+  public static boolean isJoinInstance(Object element) {
     return element instanceof Join;
   }
 
@@ -69,14 +75,28 @@ public class ProcessUtils {
     return Collections.emptyList();
   }
 
-  public static List<ProcessElement> getProcessElementsFromIProcessWebStartable(IProcessWebStartable startElement) {
-    if (Objects.nonNull(startElement)) {
-      String processRawPid = getProcessPidFromElement(startElement.pid().toString());
-      var manager = IProcessManager.instance().getProjectDataModelFor(startElement.pmv());
-      Process process = manager.findProcess(processRawPid, true).getModel();
-      return process.getProcessElements();
+  public static List<ProcessElement> getProcessElementsFrom(IProcessWebStartable startElement) {
+    if (startElement == null || startElement.pid() == null) {
+      return Collections.emptyList();
     }
-    return Collections.emptyList();
+
+    String processRawPid = getProcessPidFromElement(startElement.pid().toString());
+    var manager = IProcessManager.instance().getProjectDataModelFor(startElement.pmv());
+
+    IProcess foundProcess = manager.findProcess(processRawPid, true);
+    if (foundProcess == null) {
+      return Collections.emptyList();
+    }
+
+    // Get all process elements, including nested ones
+    return foundProcess.getModel().getProcessElements().stream().flatMap(
+        element -> Stream.concat(Stream.of(element), ProcessUtils.getNestedProcessElementsFromSub(element).stream()))
+        .collect(Collectors.toList());
+  }
+
+  public static List<SequenceFlow> getSequenceFlowsFrom(List<ProcessElement> elements) {
+    return elements.stream().flatMap(element -> element.getOutgoing().stream())
+        .collect(Collectors.toList());
   }
 
   public static List<IWebStartable> getAllProcesses() {
@@ -107,9 +127,14 @@ public class ProcessUtils {
 
   public static List<ProcessElement> getElementsWithMultiIncomings(List<ProcessElement> processElements) {
     return Optional.ofNullable(processElements).orElse(new ArrayList<>()).stream()
-        .filter(element -> !(isAlternativeInstance(element) && isTaskJoinInstance(processElements))
+        .filter(element -> !(isAlternativeInstance(element) && isJoinInstance(processElements))
             && isElementWithMultipleIncomingFlow(element))
         .collect(Collectors.toList());
+  }
+  
+  public static List<ProcessElement> getTaskSwitchEvents(List<ProcessElement> processElements) {
+    return Optional.ofNullable(processElements).orElse(Collections.emptyList()).stream()
+        .filter(element -> isTaskSwitchInstance(element)).toList();
   }
 
   @SuppressWarnings("removal")
@@ -127,6 +152,15 @@ public class ProcessUtils {
     return arr.length > 2 ? arr[arr.length - 2] : StringUtils.EMPTY;
   }
 
+  public static String getTaskElementIdFromRequestPath(String requestPath, boolean isTaskInTaskSwitchGateway) {
+    if (!isTaskInTaskSwitchGateway) {
+      return getTaskElementIdFromRequestPath(requestPath);
+    }
+    String[] arr = requestPath.split(ProcessAnalyticsConstants.SLASH);
+    return arr.length > 2 ? arr[arr.length - 2] + ProcessAnalyticsConstants.SLASH + arr[arr.length - 1]
+        : StringUtils.EMPTY;
+  }
+
   public static boolean isElementWithMultipleIncomingFlow(ProcessElement processElement) {
     return Optional.ofNullable(processElement).map(element -> element.getIncoming().size() > 1).orElse(false);
   }
@@ -138,6 +172,6 @@ public class ProcessUtils {
 
   public static boolean isAlternativePathEndElement(ProcessElement processElement) {
     return isProcessPathEndElement(processElement) || isAlternativeInstance(processElement)
-        || (isElementWithMultipleIncomingFlow(processElement) && !isTaskJoinInstance(processElement));
+        || (isElementWithMultipleIncomingFlow(processElement) && !isJoinInstance(processElement));
   }
 }
