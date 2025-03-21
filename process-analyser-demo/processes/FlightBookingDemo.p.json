@@ -244,7 +244,7 @@
         { "id" : "f20", "to" : "f21", "via" : [ { "x" : 848, "y" : 328 } ], "label" : {
             "name" : "Yes",
             "segment" : 0.83,
-            "offset" : { "x" : -14, "y" : -23 }
+            "offset" : { "x" : -18, "y" : -20 }
           } },
         { "id" : "f6", "to" : "f25", "label" : {
             "name" : "No",
@@ -723,7 +723,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 504, "y" : 328 },
+        "at" : { "x" : 568, "y" : 328 },
         "labelOffset" : { "x" : 33, "y" : -15 }
       },
       "connect" : [
@@ -752,7 +752,10 @@
         "labelOffset" : { "x" : 17, "y" : 33 }
       },
       "connect" : [
-        { "id" : "f26", "to" : "S21", "color" : "default" }
+        { "id" : "f26", "to" : "S21", "label" : {
+            "name" : "f26",
+            "offset" : { "x" : -2, "y" : -10 }
+          }, "color" : "default" }
       ]
     }, {
       "id" : "f27",
@@ -911,6 +914,7 @@
     }, {
       "id" : "f50",
       "type" : "TaskSwitchEvent",
+      "name" : "Process",
       "config" : {
         "task" : {
           "responsible" : {
@@ -920,7 +924,7 @@
       },
       "visual" : {
         "at" : { "x" : 728, "y" : 392 },
-        "labelOffset" : { "x" : 1, "y" : 33 }
+        "labelOffset" : { "x" : 17, "y" : 33 }
       },
       "connect" : [
         { "id" : "f51", "to" : "f4", "label" : {
@@ -931,6 +935,7 @@
     }, {
       "id" : "f52",
       "type" : "TaskSwitchEvent",
+      "name" : "Process",
       "config" : {
         "task" : {
           "responsible" : {
