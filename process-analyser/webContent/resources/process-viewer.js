@@ -16,6 +16,10 @@ const FULL_HD_RESOLUTION_WIDTH = "1920px";
 const FULL_HD_RESOLUTION_HEIGHT = "1080px";
 const DEFAULT_IFRAME_WIDTH = "100%";
 const DEFAULT_IFRAME_HEIGHT = "400px";
+const EXECUTED_CLASS = "executed";
+const EXECUTED_CLASS_CSS_SELECTOR = "." + EXECUTED_CLASS;
+const EXECUTION_BADGE_CSS_SELECTOR = ".execution-badge";
+const COMPLETE = "complete";
 
 function getCenterizeButton() {
   return queryObjectById(DIAGRAM_IFRAME_ID)
@@ -145,4 +149,41 @@ function getJumpOutBtn() {
   return queryObjectById(DIAGRAM_IFRAME_ID)
     .contents()
     .find(buildClassRef(JUMP_OUT_BTN_CLASS))[0];
+}
+
+function removeExecutedClass() {
+  getProcessDiagramIframe().find(EXECUTED_CLASS_CSS_SELECTOR)
+    .removeClass(EXECUTED_CLASS);
+}
+
+function removeDefaultFrequency() {
+  getProcessDiagramIframe()
+    .find(EXECUTION_BADGE_CSS_SELECTOR)
+    .each(function () {
+      $(this).parent().remove();
+    });
+}
+
+function santizeDiagram() {
+  removeDefaultFrequency();
+  removeExecutedClass();
+}
+
+function getProcessDiagramIframe() {
+  return queryObjectById(DIAGRAM_IFRAME_ID).contents();
+}
+
+function loadIframe(recheckIndicator) {
+  if (recheckIndicator) {
+    var iframe = document.getElementById(DIAGRAM_IFRAME_ID);
+    const iframeDoc = iframe.contentDocument;
+    if (iframeDoc.readyState == COMPLETE) {
+      santizeDiagram();
+      clearTimeout(recheckFrameTimer);
+      return;
+    }
+  }
+  recheckFrameTimer = setTimeout(function () {
+    loadIframe(true);
+  }, 500);
 }
