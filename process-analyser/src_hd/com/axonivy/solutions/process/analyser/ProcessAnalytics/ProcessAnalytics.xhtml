@@ -95,7 +95,7 @@
         <h:panelGroup id="process-analytic-viewer-panel" layout="block">
           <iframe id="process-analytic-viewer"
             src="#{processesAnalyticsBean.bpmnIframeSourceUrl}"
-            width="100%" height="400" />
+            width="100%" height="400" onload="loadIframe(false)"/>
         </h:panelGroup>
         <br />
         <h:panelGroup id="arrow-statistics" layout="block">
