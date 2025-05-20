@@ -174,8 +174,8 @@ function getProcessDiagramIframe() {
 }
 
 function loadIframe(recheckIndicator) {
-  var iframe = document.getElementById(DIAGRAM_IFRAME_ID);
   if (recheckIndicator) {
+    var iframe = document.getElementById(DIAGRAM_IFRAME_ID);
     const iframeDoc = iframe.contentDocument;
     if (iframeDoc.readyState == COMPLETE) {
       santizeDiagram();
