@@ -180,7 +180,6 @@ function loadIframe(recheckIndicator) {
     if (iframeDoc.readyState == COMPLETE) {
       santizeDiagram();
       clearTimeout(recheckFrameTimer);
-  console.log(123);
       return;
     }
   }
