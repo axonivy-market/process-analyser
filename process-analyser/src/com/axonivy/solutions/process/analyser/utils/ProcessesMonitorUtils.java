@@ -147,7 +147,16 @@ public class ProcessesMonitorUtils {
       updateDurationForNodes(nodes, cases, analysisType);
     }
     nodes.forEach(node -> updateNodeByAnalysisType(node, analysisType));
+    nodes = filterArrowIfTargetNodeIdIsTask(processElements,nodes);
     return nodes;
+  }
+
+  private static List<Node> filterArrowIfTargetNodeIdIsTask(List<ProcessElement> processElements, List<Node> allNodes) {
+    List<String> taskIds = processElements.stream()
+        .filter(ProcessUtils::isTaskSwitchGatewayInstance)
+        .map(p -> p.getPid().toString())
+        .toList();
+    return allNodes.stream().filter(node -> !taskIds.contains(node.getTargetNodeId())).toList();
   }
 
   private static boolean isFrequency(KpiType kpiType) {
