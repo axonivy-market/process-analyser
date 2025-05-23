@@ -16,6 +16,8 @@ public class Node {
   @JsonIgnore
   private float medianDuration;
   @JsonIgnore
+  private String duration;
+  @JsonIgnore
   private int frequency;
   @JsonIgnore
   private List<String> outGoingPathIds = new ArrayList<>();
@@ -27,6 +29,15 @@ public class Node {
   private boolean isTaskSwitchGateway;
   @JsonIgnore
   private String requestPath;
+  
+
+  public String getDuration() {
+    return duration;
+  }
+
+  public void setDuration(String duration) {
+    this.duration = duration;
+  }
 
   public Node() {}
 

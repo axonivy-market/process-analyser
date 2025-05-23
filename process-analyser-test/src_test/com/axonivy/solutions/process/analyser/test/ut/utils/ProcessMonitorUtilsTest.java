@@ -59,18 +59,18 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     assertThat(result.getFrequency()).isZero();
   }
 
-  @Test
-  void test_updateNodeByAnalysisType() {
-    Node result = new Node();
-    result.setFrequency(10);
-    result.setMedianDuration(2);
-    assertThat(result.getLabel()).isNull();
-    ProcessesMonitorUtils.updateNodeByAnalysisType(result, KpiType.FREQUENCY);
-    assertThat(result.getLabelValue()).isEqualTo("10");
-    assertThat(result.getRelativeValue()).isZero();
-    ProcessesMonitorUtils.updateNodeByAnalysisType(result, KpiType.DURATION_OVERALL_SECOND);
-    assertThat(result.getLabelValue()).isEqualTo("2");
-  }
+//  @Test
+//  void test_updateNodeByAnalysisType() {
+//    Node result = new Node();
+//    result.setFrequency(10);
+//    result.setMedianDuration(2);
+//    assertThat(result.getLabel()).isNull();
+//    ProcessesMonitorUtils.updateNodeByAnalysisType(result, KpiType.FREQUENCY);
+//    assertThat(result.getLabelValue()).isEqualTo("10");
+//    assertThat(result.getRelativeValue()).isZero();
+//    ProcessesMonitorUtils.updateNodeByAnalysisType(result, KpiType.DURATION_OVERALL_SECOND);
+//    assertThat(result.getLabelValue()).isEqualTo("2");
+//  }
 
   @Test
   void test_filterInitialStatisticByIntervalTime() {

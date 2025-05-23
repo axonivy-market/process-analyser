@@ -1,6 +1,5 @@
 package com.axonivy.solutions.process.analyser.utils;
 
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -108,18 +107,13 @@ public class ProcessesMonitorUtils {
     if (KpiType.FREQUENCY == analysisType) {
       node.setLabelValue(String.valueOf(node.getFrequency()));
     } else {
-      float medianDurationValue = convertDuration(node.getMedianDuration(), analysisType);
-      node.setLabelValue(formatDuration(medianDurationValue));
-      node.setMedianDuration(medianDurationValue);
+      String medianDurationValue = convertDuration(node.getMedianDuration());
+      node.setLabelValue(medianDurationValue);
+      node.setDuration(medianDurationValue);
     }
     if (Double.isNaN(node.getRelativeValue())) {
       node.setRelativeValue(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     }
-  }
-
-  private static String formatDuration(float value) {
-    DecimalFormat df = new DecimalFormat("#.##");
-    return df.format(value);
   }
 
   /**
@@ -153,7 +147,7 @@ public class ProcessesMonitorUtils {
 
   private static List<Node> filterArrowIfTargetNodeIdIsTask(List<ProcessElement> processElements, List<Node> allNodes) {
     List<String> taskIds = processElements.stream()
-        .filter(ProcessUtils::isTaskSwitchGatewayInstance)
+        .filter(ProcessUtils::isTaskSwitchInstance)
         .map(p -> p.getPid().toString())
         .toList();
     return allNodes.stream().filter(node -> !taskIds.contains(node.getTargetNodeId())).toList();
@@ -253,16 +247,26 @@ public class ProcessesMonitorUtils {
     return sorted.size() % 2 == 0 ? (sorted.get(middle - 1) + sorted.get(middle)) / 2.0f : sorted.get(middle);
   }
 
-  private static float convertDuration(float durationSeconds, KpiType kpiType) {
-    return switch (kpiType) {
-    case DURATION_IDLE_DAY, DURATION_WORKING_DAY, DURATION_OVERALL_DAY ->
-      (float) (durationSeconds / (60 * 60 * 24));
-    case DURATION_IDLE_HOUR, DURATION_WORKING_HOUR, DURATION_OVERALL_HOUR ->
-      (float) (durationSeconds / (60 * 60));
-    case DURATION_IDLE_MINUTE, DURATION_WORKING_MINUTE, DURATION_OVERALL_MINUTE ->
-      (float) (durationSeconds / (60));
-    default -> durationSeconds;
-    };
+  private static String convertDuration(float durationSeconds) {
+    if (durationSeconds > 23 * 3600) {
+      float days = durationSeconds / (24 * 3600);
+      return formatFloat(days) + "d";
+    } else if (durationSeconds > 59 * 60) {
+      float hours = durationSeconds / 3600;
+      return formatFloat(hours) + "h";
+    } else if (durationSeconds > 59) {
+      float minutes = durationSeconds / 60;
+      return formatFloat(minutes) + "m";
+    } else {
+      return formatFloat(durationSeconds) + "s";
+    }
+  }
+
+  private static String formatFloat(float value) {
+    if (value == (long) value) {
+      return String.format("%d", (long) value);
+    }
+    return String.valueOf(Math.round(value));
   }
 
   /**
