@@ -90,10 +90,22 @@ public class ProcessesMonitorUtils {
   }
 
   public static Node convertSequenceFlowToNode(SequenceFlow flow) {
+    Ivy.log().warn(flow.getPid().toString());
     Node node = createNode(ProcessUtils.getElementPid(flow), flow.getName(), NodeType.ARROW);
     node.setTargetNodeId(flow.getTarget().getPid().toString());
     return node;
   }
+  
+//  public static Node convertSequenceFlowToNode(SequenceFlow flow, List<ProcessElement> processElements) {
+//    List<ProcessElement> taskSwitches = processElements.stream().filter(ProcessUtils::isTaskSwitchInstance).toList();
+//    for(ProcessElement element: taskSwitches) {
+//      if (element.getOutgoing().getFirst().equals(flow)) {
+//        Node node = createNode(ProcessUtils.getElementPid(flow), flow.getName(), NodeType.ARROW);
+//        node.setTargetNodeId(flow.getTarget().getPid().toString());
+//        return node;
+//      }
+//    }
+//}
 
   private static Node createNode(String id, String label, NodeType type) {
     Node node = new Node();
@@ -132,9 +144,12 @@ public class ProcessesMonitorUtils {
           .filter(element -> ProcessUtils.isTaskSwitchGatewayInstance(element)
               || ProcessUtils.isTaskSwitchInstance(element) || ProcessUtils.isRequestStartInstance(element))
           .collect(Collectors.toList());
+//      Ivy.log().warn(processElements.get(1).getOutgoing().getFirst().getPid());
     }
-    List<SequenceFlow> sequenceFlows = getSequenceFlowsIfNeeded(processElements, analysisType);
+//    List<SequenceFlow> sequenceFlows = getSequenceFlowsIfNeeded(processElements, analysisType);
+    List<SequenceFlow> sequenceFlows = ProcessUtils.getSequenceFlowsFrom(processElements);
     List<Node> nodes = convertToNodes(processElements, sequenceFlows);
+    Ivy.log().warn(nodes.size());
     if (isFrequency(analysisType)) {
       updateFrequencyForNodes(nodes, processElements, cases);
     } else if (isDuration(analysisType)) {
@@ -220,7 +235,7 @@ public class ProcessesMonitorUtils {
       return true;
     }
     node.setMedianDuration(calculateMedian(durations));
-    return false;
+    return false;    
   }
 
   private static Function<ITask, Long> getDurationExtractor(KpiType durationKpiType) {
