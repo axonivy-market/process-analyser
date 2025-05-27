@@ -133,9 +133,7 @@ public class ProcessesMonitorUtils {
           .filter(element -> ProcessUtils.isTaskSwitchGatewayInstance(element)
               || ProcessUtils.isTaskSwitchInstance(element) || ProcessUtils.isRequestStartInstance(element))
           .collect(Collectors.toList());
-//      Ivy.log().warn(processElements.get(1).getOutgoing().getFirst().getPid());
     }
-//    List<SequenceFlow> sequenceFlows = getSequenceFlowsIfNeeded(processElements, analysisType);
     List<SequenceFlow> sequenceFlows = ProcessUtils.getSequenceFlowsFrom(processElements);
     List<Node> nodes = convertToNodes(processElements, sequenceFlows);
     if (isFrequency(analysisType)) {
@@ -144,17 +142,8 @@ public class ProcessesMonitorUtils {
       updateDurationForNodes(nodes, cases, analysisType);
     }
     nodes.forEach(node -> updateNodeByAnalysisType(node, analysisType));
-//    nodes = filterArrowIfTargetNodeIdIsTask(processElements,nodes);
     return nodes;
   }
-//
-//  private static List<Node> filterArrowIfTargetNodeIdIsTask(List<ProcessElement> processElements, List<Node> allNodes) {
-//    List<String> taskIds = processElements.stream()
-//        .filter(ProcessUtils::isTaskSwitchInstance)
-//        .map(p -> p.getPid().toString())
-//        .toList();
-//    return allNodes.stream().filter(node -> !taskIds.contains(node.getTargetNodeId())).toList();
-//  }
 
   private static boolean isFrequency(KpiType kpiType) {
     return KpiType.FREQUENCY.equals(kpiType);
@@ -162,10 +151,6 @@ public class ProcessesMonitorUtils {
 
   public static boolean isDuration(KpiType kpiType) {
     return kpiType != null && kpiType.isDescendantOf(KpiType.DURATION);
-  }
-
-  private static List<SequenceFlow> getSequenceFlowsIfNeeded(List<ProcessElement> processElements, KpiType kpiType) {
-    return (isFrequency(kpiType)) ? ProcessUtils.getSequenceFlowsFrom(processElements) : List.of();
   }
 
   public static void updateDurationForNodes(List<Node> nodes, List<ICase> cases, KpiType durationKpiType) {
