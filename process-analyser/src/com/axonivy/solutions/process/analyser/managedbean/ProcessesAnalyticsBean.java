@@ -29,6 +29,7 @@ import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
+import com.axonivy.solutions.process.analyser.enums.NodeType;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.utils.DateUtils;
 import com.axonivy.solutions.process.analyser.utils.JacksonUtils;
@@ -297,6 +298,13 @@ public class ProcessesAnalyticsBean {
     return StringUtils.isNotBlank(selectedProcess)
         ? String.format(ProcessAnalyticsConstants.ANALYSIS_EXCEL_FILE_PATTERN, formattedKpiTypeName, selectedProcess)
         : StringUtils.EMPTY;
+  }
+  
+  public List<Node> renderNodesForKpiType(List<Node> nodes) {
+    if (this.selectedKpiType != KpiType.FREQUENCY) {
+      return nodes.stream().filter(node -> node.getType() != NodeType.ARROW).toList();
+    }
+    return nodes;
   }
 
   public boolean isMedianDurationColumnVisible() {

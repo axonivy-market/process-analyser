@@ -100,7 +100,7 @@
         <br />
         <h:panelGroup id="arrow-statistics" layout="block">
           <p:dataTable var="node" styleClass="grid" id="node"
-            value="#{processesAnalyticsBean.nodes}" scrollable="true"
+            value="#{processesAnalyticsBean.renderNodesForKpiType(processesAnalyticsBean.nodes)}" scrollable="true"
             scrollHeight="300"
             emptyMessage="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/NoRecordsFound')}">
             <p:column styleClass="col-2" sortBy="#{node.id}"

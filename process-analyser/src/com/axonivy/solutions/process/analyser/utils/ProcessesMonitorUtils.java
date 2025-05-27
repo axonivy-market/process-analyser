@@ -90,23 +90,12 @@ public class ProcessesMonitorUtils {
   }
 
   public static Node convertSequenceFlowToNode(SequenceFlow flow) {
-    Ivy.log().warn(flow.getPid().toString());
     Node node = createNode(ProcessUtils.getElementPid(flow), flow.getName(), NodeType.ARROW);
     node.setTargetNodeId(flow.getTarget().getPid().toString());
+    node.setSourceNodeId(flow.getSource().getPid().toString());
     return node;
   }
   
-//  public static Node convertSequenceFlowToNode(SequenceFlow flow, List<ProcessElement> processElements) {
-//    List<ProcessElement> taskSwitches = processElements.stream().filter(ProcessUtils::isTaskSwitchInstance).toList();
-//    for(ProcessElement element: taskSwitches) {
-//      if (element.getOutgoing().getFirst().equals(flow)) {
-//        Node node = createNode(ProcessUtils.getElementPid(flow), flow.getName(), NodeType.ARROW);
-//        node.setTargetNodeId(flow.getTarget().getPid().toString());
-//        return node;
-//      }
-//    }
-//}
-
   private static Node createNode(String id, String label, NodeType type) {
     Node node = new Node();
     node.setId(id);
@@ -149,24 +138,23 @@ public class ProcessesMonitorUtils {
 //    List<SequenceFlow> sequenceFlows = getSequenceFlowsIfNeeded(processElements, analysisType);
     List<SequenceFlow> sequenceFlows = ProcessUtils.getSequenceFlowsFrom(processElements);
     List<Node> nodes = convertToNodes(processElements, sequenceFlows);
-    Ivy.log().warn(nodes.size());
     if (isFrequency(analysisType)) {
       updateFrequencyForNodes(nodes, processElements, cases);
     } else if (isDuration(analysisType)) {
       updateDurationForNodes(nodes, cases, analysisType);
     }
     nodes.forEach(node -> updateNodeByAnalysisType(node, analysisType));
-    nodes = filterArrowIfTargetNodeIdIsTask(processElements,nodes);
+//    nodes = filterArrowIfTargetNodeIdIsTask(processElements,nodes);
     return nodes;
   }
-
-  private static List<Node> filterArrowIfTargetNodeIdIsTask(List<ProcessElement> processElements, List<Node> allNodes) {
-    List<String> taskIds = processElements.stream()
-        .filter(ProcessUtils::isTaskSwitchInstance)
-        .map(p -> p.getPid().toString())
-        .toList();
-    return allNodes.stream().filter(node -> !taskIds.contains(node.getTargetNodeId())).toList();
-  }
+//
+//  private static List<Node> filterArrowIfTargetNodeIdIsTask(List<ProcessElement> processElements, List<Node> allNodes) {
+//    List<String> taskIds = processElements.stream()
+//        .filter(ProcessUtils::isTaskSwitchInstance)
+//        .map(p -> p.getPid().toString())
+//        .toList();
+//    return allNodes.stream().filter(node -> !taskIds.contains(node.getTargetNodeId())).toList();
+//  }
 
   private static boolean isFrequency(KpiType kpiType) {
     return KpiType.FREQUENCY.equals(kpiType);
@@ -230,13 +218,15 @@ public class ProcessesMonitorUtils {
       return true;
     }
     String key = StringUtils.isBlank(node.getRequestPath()) ? node.getId() : node.getRequestPath();
-    List<Long> durations = nodeDurations.get(key);
+    String lookupKey = node.getType() == NodeType.ARROW ? node.getSourceNodeId() : key;
+    List<Long> durations = nodeDurations.get(lookupKey);
     if (CollectionUtils.isEmpty(durations)) {
       return true;
     }
     node.setMedianDuration(calculateMedian(durations));
-    return false;    
+    return false;
   }
+
 
   private static Function<ITask, Long> getDurationExtractor(KpiType durationKpiType) {
     if (durationKpiType.isDescendantOf(KpiType.DURATION_IDLE)) {
