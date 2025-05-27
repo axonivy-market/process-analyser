@@ -253,7 +253,7 @@ public class ProcessesAnalyticsBean {
 		String targetHost = Ivy.html().applicationHomeLink().toAbsoluteUri().getAuthority();
 		bpmnIframeSourceUrl = String.format(ProcessAnalyticsConstants.PROCESS_ANALYSER_SOURCE_URL_PATTERN,
 				applicationContextPath, Ivy.request().getProcessModel().getName(), targetHost, applicationName,
-				applicationContextPath, selectedModule, processFilePath);
+				selectedModule, processFilePath);
 	}
 	
 	private String getSelectedProcessFilePath() {
