@@ -80,7 +80,7 @@ public class ProcessUtilsTest extends BaseSetup {
 
   @Test
   void test_buildBpmnIFrameSourceUrl() {
-    assertThat(ProcessUtils.buildBpmnIFrameSourceUrl("12","test")).equals("asd");
+    assertThat(ProcessUtils.buildBpmnIFrameSourceUrl("12","test")).isEqualTo("asd");
   }
 
 }
