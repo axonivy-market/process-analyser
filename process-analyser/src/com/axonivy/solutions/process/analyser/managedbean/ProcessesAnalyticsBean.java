@@ -246,27 +246,9 @@ public class ProcessesAnalyticsBean {
         .filter(process -> process.getDisplayName().equalsIgnoreCase(selectedProcess)).findAny().orElse(null);
   }
 
-	private void updateBpmnIframeSourceUrl() {
-		String applicationName = Ivy.request().getApplication().getName();
-		String applicationContextPath = Ivy.request().getApplication().getContextPath();
-		String processFilePath = getSelectedProcessFilePath();
-		String targetHost = Ivy.html().applicationHomeLink().toAbsoluteUri().getAuthority();
-		bpmnIframeSourceUrl = String.format(ProcessAnalyticsConstants.PROCESS_ANALYSER_SOURCE_URL_PATTERN,
-				applicationContextPath, Ivy.request().getProcessModel().getName(), targetHost, applicationName,
-				selectedModule, processFilePath);
-	}
-	
-	private String getSelectedProcessFilePath() {
-		String processFilePath = getSelectedIProcessWebStartable().getId().replace(
-				String.format(ProcessAnalyticsConstants.MODULE_PATH, Ivy.request().getApplication().getName(), selectedModule),
-				StringUtils.EMPTY);
-		int lastSlashIndex = processFilePath.lastIndexOf(ProcessAnalyticsConstants.SLASH);
-
-		if (lastSlashIndex != StringUtils.INDEX_NOT_FOUND) {
-			processFilePath = processFilePath.substring(0, lastSlashIndex) + ProcessAnalyticsConstants.PROCESSFILE_EXTENSION;
-		}
-		return processFilePath;
-	}
+  private void updateBpmnIframeSourceUrl() {
+    bpmnIframeSourceUrl = ProcessUtils.buildBpmnIFrameSourceUrl(getSelectedIProcessWebStartable().getId(), selectedModule);
+  }
 
   private void loadNodes() {
     List<Node> analyzedNode = new ArrayList<>();

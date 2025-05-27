@@ -174,4 +174,26 @@ public class ProcessUtils {
     return isProcessPathEndElement(processElement) || isAlternativeInstance(processElement)
         || (isElementWithMultipleIncomingFlow(processElement) && !isJoinInstance(processElement));
   }
+  
+
+  public static String getSelectedProcessFilePath(String selectedStartableId, String selectedModule) {
+    String processFilePath = selectedStartableId.replace(
+        String.format(ProcessAnalyticsConstants.MODULE_PATH, Ivy.request().getApplication().getName(), selectedModule),
+        StringUtils.EMPTY);
+    int lastSlashIndex = processFilePath.lastIndexOf(ProcessAnalyticsConstants.SLASH);
+
+    if (lastSlashIndex != StringUtils.INDEX_NOT_FOUND) {
+      processFilePath = processFilePath.substring(0, lastSlashIndex) + ProcessAnalyticsConstants.PROCESSFILE_EXTENSION;
+    }
+    return processFilePath;
+  }
+  
+  public static String buildBpmnIFrameSourceUrl(String selectedStartableId, String selectedModule) {
+    String applicationName = Ivy.request().getApplication().getName();
+    String applicationContextPath = Ivy.request().getApplication().getContextPath();
+    String processFilePath = getSelectedProcessFilePath(selectedStartableId, selectedModule);
+    String targetHost = Ivy.html().applicationHomeLink().toAbsoluteUri().getAuthority();
+    return String.format(ProcessAnalyticsConstants.PROCESS_ANALYSER_SOURCE_URL_PATTERN, applicationContextPath,
+        Ivy.request().getProcessModel().getName(), targetHost, applicationName, selectedModule, processFilePath);
+  }
 }
