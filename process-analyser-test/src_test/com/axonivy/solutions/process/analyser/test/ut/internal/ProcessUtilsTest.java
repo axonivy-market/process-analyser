@@ -80,8 +80,8 @@ public class ProcessUtilsTest extends BaseSetup {
 
   @Test
   void test_buildBpmnIFrameSourceUrl() {
-    assertThat(ProcessUtils.buildBpmnIFrameSourceUrl("SupportHR.p.json", "Hr-Connect")).isEqualTo(
-        "/Hr-Connect/faces/view/process-analyser-test/process-miner.xhtml?server=localhost:8080&app=test&pmv=test&file=/processes/SupportHR.p.json");
+    assertThat(ProcessUtils.buildBpmnIFrameSourceUrl(SELECTED_STARTABLE_ID, SELECTED_MODULE_URL))
+        .isEqualTo(TEST_IFRAME_SOURCE_URL);
   }
 
 }
