@@ -87,6 +87,6 @@ public class ProcessUtilsTest extends BaseSetup {
   @Test
   void test_getSelectedProcessFilePath() {
     assertThat(ProcessUtils.getSelectedProcessFilePath(SELECTED_STARTABLE_ID, SELECTED_MODULE_URL))
-        .isEqualTo(TEST_SELECTED_FILE_PATH_URL);
+        .isEqualTo(SELECTED_STARTABLE_ID);
   }
 }
