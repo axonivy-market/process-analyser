@@ -20,7 +20,9 @@ public class BaseSetup {
   protected static final String TEST_PROCESS_RAW_PID = "193485C5ABDFEA93";
   protected static final String TEST_PROCESS_NAME = "test.ivp";
   protected static final String TEST_MODULE_NAME = "process-analyser-test";
-  protected static final String TEST_IFRAME_SOURCE_URL = "/Hr-Connect/faces/view/process-analyser-test/process-miner.xhtml?server=localhost:8080&app=test&pmv=test&file=/processes/SupportHR.p.json";
+  protected static final String TEST_SELECTED_FILE_PATH_URL = "/processes/SupportHR.p.json";
+  protected static final String TEST_IFRAME_SOURCE_URL = "/test/faces/view/process-analyser-test/process-miner.xhtml?server=localhost:8080&app=test&pmv=HRTest&file="
+      + TEST_SELECTED_FILE_PATH_URL;
   protected static final String SELECTED_STARTABLE_ID = "SupportHR.p.json";
   protected static final String SELECTED_MODULE_URL = "HRTest";
 
