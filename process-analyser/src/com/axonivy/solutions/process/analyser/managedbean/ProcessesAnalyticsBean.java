@@ -53,9 +53,7 @@ public class ProcessesAnalyticsBean {
   private String selectedProcess;
   private String selectedModule;
   private KpiType selectedKpiType;
-  private String applicationName;
-  private String targetHost;
-  private String targetApplicationName;
+//  private String targetHost;
   private List<Node> nodes;
   private TimeIntervalFilter timeIntervalFilter;
   private ProcessMiningData processMiningData;
@@ -74,9 +72,7 @@ public class ProcessesAnalyticsBean {
   @PostConstruct
   private void init() {
     processesMap = ProcessUtils.getProcessesWithPmv();
-    applicationName = Ivy.request().getApplication().getName();
-    targetHost = Ivy.html().applicationHomeLink().toAbsoluteUri().getAuthority();
-    targetApplicationName = applicationName;
+    
     setNodes(new ArrayList<>());
     processMiningDataJsonFile = ContentManagement.cms(IApplication.current()).root().child()
         .folder(ProcessAnalyticsConstants.PROCESS_ANALYSER_CMS_PATH).child()
@@ -250,17 +246,27 @@ public class ProcessesAnalyticsBean {
         .filter(process -> process.getDisplayName().equalsIgnoreCase(selectedProcess)).findAny().orElse(null);
   }
 
-  private void updateBpmnIframeSourceUrl() {
-    String processFilePath = getSelectedIProcessWebStartable().getId().replace(
-        String.format(ProcessAnalyticsConstants.MODULE_PATH, targetApplicationName, selectedModule), StringUtils.EMPTY);
-    int lastSlashIndex = processFilePath.lastIndexOf(ProcessAnalyticsConstants.SLASH);
+	private void updateBpmnIframeSourceUrl() {
+		String applicationName = Ivy.request().getApplication().getName();
+		String applicationContextPath = Ivy.request().getApplication().getContextPath();
+		String processFilePath = getSelectedProcessFilePath();
+		String targetHost = Ivy.html().applicationHomeLink().toAbsoluteUri().getAuthority();
+		bpmnIframeSourceUrl = String.format(ProcessAnalyticsConstants.PROCESS_ANALYSER_SOURCE_URL_PATTERN,
+				applicationContextPath, Ivy.request().getProcessModel().getName(), targetHost, applicationName,
+				applicationContextPath, selectedModule, processFilePath);
+	}
+	
+	private String getSelectedProcessFilePath() {
+		String processFilePath = getSelectedIProcessWebStartable().getId().replace(
+				String.format(ProcessAnalyticsConstants.MODULE_PATH, Ivy.request().getApplication().getName(), selectedModule),
+				StringUtils.EMPTY);
+		int lastSlashIndex = processFilePath.lastIndexOf(ProcessAnalyticsConstants.SLASH);
 
-    if (lastSlashIndex != StringUtils.INDEX_NOT_FOUND) {
-      processFilePath = processFilePath.substring(0, lastSlashIndex) + ProcessAnalyticsConstants.PROCESSFILE_EXTENSION;
-    }
-    bpmnIframeSourceUrl = String.format(ProcessAnalyticsConstants.PROCESS_ANALYSER_SOURCE_URL_PATTERN, applicationName,
-        targetHost, targetApplicationName, selectedModule, processFilePath);
-  }
+		if (lastSlashIndex != StringUtils.INDEX_NOT_FOUND) {
+			processFilePath = processFilePath.substring(0, lastSlashIndex) + ProcessAnalyticsConstants.PROCESSFILE_EXTENSION;
+		}
+		return processFilePath;
+	}
 
   private void loadNodes() {
     List<Node> analyzedNode = new ArrayList<>();
