@@ -53,7 +53,6 @@ public class ProcessesAnalyticsBean {
   private String selectedProcess;
   private String selectedModule;
   private KpiType selectedKpiType;
-//  private String targetHost;
   private List<Node> nodes;
   private TimeIntervalFilter timeIntervalFilter;
   private ProcessMiningData processMiningData;
@@ -72,7 +71,6 @@ public class ProcessesAnalyticsBean {
   @PostConstruct
   private void init() {
     processesMap = ProcessUtils.getProcessesWithPmv();
-    
     setNodes(new ArrayList<>());
     processMiningDataJsonFile = ContentManagement.cms(IApplication.current()).root().child()
         .folder(ProcessAnalyticsConstants.PROCESS_ANALYSER_CMS_PATH).child()

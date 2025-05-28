@@ -193,7 +193,7 @@ public class ProcessUtils {
     String applicationContextPath = Ivy.request().getApplication().getContextPath();
     String processFilePath = getSelectedProcessFilePath(selectedStartableId, selectedModule);
     String targetHost = Ivy.html().applicationHomeLink().toAbsoluteUri().getAuthority();
-    if (ProcessAnalyticsConstants.DEFAULT_SECURITY_CONTEXT.equals(Ivy.request().getSecurityContext().getName())) {
+    if (!ProcessAnalyticsConstants.DEFAULT_SECURITY_CONTEXT.equals(Ivy.request().getSecurityContext().getName())) {
       targetHost = StringUtils.join(targetHost, ProcessAnalyticsConstants.SLASH, Ivy.request().getSecurityContext().getName());
     }
     return String.format(ProcessAnalyticsConstants.PROCESS_ANALYSER_SOURCE_URL_PATTERN, applicationContextPath,
