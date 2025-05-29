@@ -108,9 +108,9 @@ public class ProcessesMonitorUtils {
     if (KpiType.FREQUENCY == analysisType) {
       node.setLabelValue(String.valueOf(node.getFrequency()));
     } else {
-      String medianDurationValue = convertDuration(node.getMedianDuration());
+      String medianDurationValue = DateUtils.convertDuration(node.getMedianDuration());
       node.setLabelValue(medianDurationValue);
-      node.setDuration(medianDurationValue);
+      node.setFormattedMedianDuration(medianDurationValue);
     }
     if (Double.isNaN(node.getRelativeValue())) {
       node.setRelativeValue(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
@@ -237,32 +237,11 @@ public class ProcessesMonitorUtils {
     return sorted.size() % 2 == 0 ? (sorted.get(middle - 1) + sorted.get(middle)) / 2.0f : sorted.get(middle);
   }
 
-  private static String convertDuration(float durationSeconds) {
-    if (durationSeconds > 23 * 3600) {
-      float days = durationSeconds / (24 * 3600);
-      return formatFloat(days) + "d";
-    } else if (durationSeconds > 59 * 60) {
-      float hours = durationSeconds / 3600;
-      return formatFloat(hours) + "h";
-    } else if (durationSeconds > 59) {
-      float minutes = durationSeconds / 60;
-      return formatFloat(minutes) + "m";
-    } else {
-      return formatFloat(durationSeconds) + "s";
-    }
-  }
 
-  private static String formatFloat(float value) {
-    if (value == (long) value) {
-      return String.format("%d", (long) value);
-    }
-    return String.valueOf(Math.round(value));
-  }
 
   /**
-   * If current process have no alternative -> frequency = totals cases size. If
-   * not, we need to check which path from alternative is running to update
-   * frequency for elements belong to its.
+   * If current process have no alternative -> frequency = totals cases size. If not, we need to check which path from
+   * alternative is running to update frequency for elements belong to its.
    **/
   public static void updateFrequencyForNodes(List<Node> results, List<ProcessElement> processElements,
       List<ICase> cases) {

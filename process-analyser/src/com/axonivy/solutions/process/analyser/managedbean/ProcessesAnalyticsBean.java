@@ -300,11 +300,16 @@ public class ProcessesAnalyticsBean {
         : StringUtils.EMPTY;
   }
   
-  public List<Node> renderNodesForKpiType(List<Node> nodes) {
-    if (this.selectedKpiType != KpiType.FREQUENCY) {
-      return nodes.stream().filter(node -> node.getType() != NodeType.ARROW).toList();
+  public List<Node> renderNodesForKPIType(List<Node> nodes) {
+    if (this.selectedKpiType == KpiType.FREQUENCY) {
+      return nodes;
     }
-    return nodes;
+
+    List<String> avaibleTaskIds =
+        nodes.stream().filter(node -> node.getType() == NodeType.ARROW).map(node -> node.getSourceNodeId()).toList();
+
+    return nodes.stream().filter(node -> node.getType() != NodeType.ARROW && avaibleTaskIds.contains(node.getId()))
+        .toList();
   }
 
   public boolean isMedianDurationColumnVisible() {

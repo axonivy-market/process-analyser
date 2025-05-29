@@ -43,4 +43,23 @@ public class DateUtils {
     }
     return null;
   }
+  
+  public static String convertDuration(float durationSeconds) {
+    if (durationSeconds > 23 * 3600) {
+      float days = durationSeconds / (24 * 3600);
+      return formatFloat(days) + "d";
+    } else if (durationSeconds > 59 * 60) {
+      float hours = durationSeconds / 3600;
+      return formatFloat(hours) + "h";
+    } else if (durationSeconds > 59) {
+      float minutes = durationSeconds / 60;
+      return formatFloat(minutes) + "m";
+    } else {
+      return formatFloat(durationSeconds) + "s";
+    }
+  }
+
+  private static String formatFloat(float value) {
+    return String.valueOf((long) Math.ceil(value));
+  }
 }

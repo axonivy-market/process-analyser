@@ -16,7 +16,7 @@ public class Node {
   @JsonIgnore
   private float medianDuration;
   @JsonIgnore
-  private String duration;
+  private String formattedMedianDuration;
   @JsonIgnore
   private int frequency;
   @JsonIgnore
@@ -40,12 +40,12 @@ public class Node {
     this.sourceNodeId = sourceNodeId;
   }
 
-  public String getDuration() {
-    return duration;
+  public String getFormattedMedianDuration() {
+    return formattedMedianDuration;
   }
 
-  public void setDuration(String duration) {
-    this.duration = duration;
+  public void setFormattedMedianDuration(String formattedMedianDuration) {
+    this.formattedMedianDuration = formattedMedianDuration;
   }
 
   public Node() {}
