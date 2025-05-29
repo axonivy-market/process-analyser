@@ -301,7 +301,7 @@ public class ProcessesAnalyticsBean {
   }
   
   public List<Node> renderNodesForKPIType(List<Node> nodes) {
-    if (this.selectedKpiType == KpiType.DURATION) {
+    if (this.selectedKpiType.isDescendantOf(KpiType.DURATION)) {
       List<String> avaibleTaskIds =
           nodes.stream().filter(node -> node.getType() == NodeType.ARROW).map(node -> node.getSourceNodeId()).toList();
 
