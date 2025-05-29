@@ -301,15 +301,14 @@ public class ProcessesAnalyticsBean {
   }
   
   public List<Node> renderNodesForKPIType(List<Node> nodes) {
-    if (this.selectedKpiType == KpiType.FREQUENCY) {
-      return nodes;
+    if (this.selectedKpiType == KpiType.DURATION) {
+      List<String> avaibleTaskIds =
+          nodes.stream().filter(node -> node.getType() == NodeType.ARROW).map(node -> node.getSourceNodeId()).toList();
+
+      return nodes.stream().filter(node -> node.getType() != NodeType.ARROW && avaibleTaskIds.contains(node.getId()))
+          .toList();
     }
-
-    List<String> avaibleTaskIds =
-        nodes.stream().filter(node -> node.getType() == NodeType.ARROW).map(node -> node.getSourceNodeId()).toList();
-
-    return nodes.stream().filter(node -> node.getType() != NodeType.ARROW && avaibleTaskIds.contains(node.getId()))
-        .toList();
+    return nodes;
   }
 
   public boolean isMedianDurationColumnVisible() {

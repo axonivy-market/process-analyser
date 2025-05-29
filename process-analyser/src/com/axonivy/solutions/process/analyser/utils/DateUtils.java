@@ -43,20 +43,22 @@ public class DateUtils {
     }
     return null;
   }
-  
+
   public static String convertDuration(float durationSeconds) {
+    String result = StringUtils.EMPTY;
     if (durationSeconds > 23 * 3600) {
       float days = durationSeconds / (24 * 3600);
-      return formatFloat(days) + "d";
+      result = formatFloat(days) + "d";
     } else if (durationSeconds > 59 * 60) {
       float hours = durationSeconds / 3600;
-      return formatFloat(hours) + "h";
+      result = formatFloat(hours) + "h";
     } else if (durationSeconds > 59) {
       float minutes = durationSeconds / 60;
-      return formatFloat(minutes) + "m";
+      result = formatFloat(minutes) + "m";
     } else {
-      return formatFloat(durationSeconds) + "s";
+      result = formatFloat(durationSeconds) + "s";
     }
+    return result;
   }
 
   private static String formatFloat(float value) {

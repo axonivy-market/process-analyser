@@ -95,7 +95,7 @@ public class ProcessesMonitorUtils {
     node.setSourceNodeId(flow.getSource().getPid().toString());
     return node;
   }
-  
+
   private static Node createNode(String id, String label, NodeType type) {
     Node node = new Node();
     node.setId(id);
