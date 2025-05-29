@@ -53,9 +53,6 @@ public class ProcessesAnalyticsBean {
   private String selectedProcess;
   private String selectedModule;
   private KpiType selectedKpiType;
-  private String applicationName;
-  private String targetHost;
-  private String targetApplicationName;
   private List<Node> nodes;
   private TimeIntervalFilter timeIntervalFilter;
   private ProcessMiningData processMiningData;
@@ -74,9 +71,6 @@ public class ProcessesAnalyticsBean {
   @PostConstruct
   private void init() {
     processesMap = ProcessUtils.getProcessesWithPmv();
-    applicationName = Ivy.request().getApplication().getName();
-    targetHost = Ivy.html().applicationHomeLink().toAbsoluteUri().getAuthority();
-    targetApplicationName = applicationName;
     setNodes(new ArrayList<>());
     processMiningDataJsonFile = ContentManagement.cms(IApplication.current()).root().child()
         .folder(ProcessAnalyticsConstants.PROCESS_ANALYSER_CMS_PATH).child()
@@ -251,15 +245,7 @@ public class ProcessesAnalyticsBean {
   }
 
   private void updateBpmnIframeSourceUrl() {
-    String processFilePath = getSelectedIProcessWebStartable().getId().replace(
-        String.format(ProcessAnalyticsConstants.MODULE_PATH, targetApplicationName, selectedModule), StringUtils.EMPTY);
-    int lastSlashIndex = processFilePath.lastIndexOf(ProcessAnalyticsConstants.SLASH);
-
-    if (lastSlashIndex != StringUtils.INDEX_NOT_FOUND) {
-      processFilePath = processFilePath.substring(0, lastSlashIndex) + ProcessAnalyticsConstants.PROCESSFILE_EXTENSION;
-    }
-    bpmnIframeSourceUrl = String.format(ProcessAnalyticsConstants.PROCESS_ANALYSER_SOURCE_URL_PATTERN, applicationName,
-        targetHost, targetApplicationName, selectedModule, processFilePath);
+    bpmnIframeSourceUrl = ProcessUtils.buildBpmnIFrameSourceUrl(getSelectedIProcessWebStartable().getId(), selectedModule);
   }
 
   private void loadNodes() {

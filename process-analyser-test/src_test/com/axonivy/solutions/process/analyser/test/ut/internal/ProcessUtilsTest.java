@@ -78,4 +78,15 @@ public class ProcessUtilsTest extends BaseSetup {
     assertThat(ProcessUtils.isAlternativeInstance(getElementNextToTestStart())).isTrue();
   }
 
+  @Test
+  void test_buildBpmnIFrameSourceUrl() {
+    assertThat(ProcessUtils.buildBpmnIFrameSourceUrl(SELECTED_STARTABLE_ID, SELECTED_MODULE_URL))
+        .isEqualTo(TEST_IFRAME_SOURCE_URL);
+  }
+
+  @Test
+  void test_getSelectedProcessFilePath() {
+    assertThat(ProcessUtils.getSelectedProcessFilePath(SELECTED_STARTABLE_ID, SELECTED_MODULE_URL, TEST_APPLICATION_NAME))
+        .isEqualTo(SELECTED_STARTABLE_ID);
+  }
 }

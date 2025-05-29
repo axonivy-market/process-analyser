@@ -14,7 +14,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
 
+import ch.ivyteam.ivy.application.IApplication;
+import ch.ivyteam.ivy.application.IProcessModel;
 import ch.ivyteam.ivy.environment.Ivy;
+import ch.ivyteam.ivy.htmldialog.IHtmlDialogContext;
 import ch.ivyteam.ivy.process.model.BaseElement;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.EmbeddedProcessElement;
@@ -27,6 +30,7 @@ import ch.ivyteam.ivy.process.model.element.gateway.TaskSwitchGateway;
 import ch.ivyteam.ivy.process.model.value.PID;
 import ch.ivyteam.ivy.process.rdm.IProcess;
 import ch.ivyteam.ivy.process.rdm.IProcessManager;
+import ch.ivyteam.ivy.security.ISecurityContext;
 import ch.ivyteam.ivy.workflow.IProcessStart;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
@@ -173,5 +177,28 @@ public class ProcessUtils {
   public static boolean isAlternativePathEndElement(ProcessElement processElement) {
     return isProcessPathEndElement(processElement) || isAlternativeInstance(processElement)
         || (isElementWithMultipleIncomingFlow(processElement) && !isJoinInstance(processElement));
+  }
+  
+
+  public static String getSelectedProcessFilePath(String selectedStartableId, String selectedModule, String applicationName) {
+    String processFilePath = selectedStartableId.replace(
+        String.format(ProcessAnalyticsConstants.MODULE_PATH, applicationName, selectedModule), StringUtils.EMPTY);
+    int lastSlashIndex = processFilePath.lastIndexOf(ProcessAnalyticsConstants.SLASH);
+    if (lastSlashIndex != StringUtils.INDEX_NOT_FOUND) {
+      processFilePath = processFilePath.substring(0, lastSlashIndex) + ProcessAnalyticsConstants.PROCESSFILE_EXTENSION;
+    }
+    return processFilePath;
+  }
+
+  public static String buildBpmnIFrameSourceUrl(String selectedStartableId, String selectedModule) {
+    IApplication application = IApplication.current();
+    String processFilePath = getSelectedProcessFilePath(selectedStartableId, selectedModule, application.getName());
+    String targetHost = IHtmlDialogContext.current().applicationHomeLink().toAbsoluteUri().getAuthority();
+    String securityContextName = ISecurityContext.current().getName();
+    if (!ISecurityContext.DEFAULT.equals(securityContextName)) {
+      targetHost = StringUtils.join(targetHost, ProcessAnalyticsConstants.SLASH, securityContextName);
+    }
+    return String.format(ProcessAnalyticsConstants.PROCESS_ANALYSER_SOURCE_URL_PATTERN, application.getContextPath(),
+        IProcessModel.current().getName(), targetHost, application.getName(), selectedModule, processFilePath);
   }
 }

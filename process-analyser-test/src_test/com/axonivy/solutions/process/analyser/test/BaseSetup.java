@@ -19,7 +19,13 @@ public class BaseSetup {
   protected static final String TEST_FLOW_PID_FROM_START_ELEMENT = "193485C5ABDFEA93-f2";
   protected static final String TEST_PROCESS_RAW_PID = "193485C5ABDFEA93";
   protected static final String TEST_PROCESS_NAME = "test.ivp";
+  protected static final String TEST_APPLICATION_NAME = "test";
   protected static final String TEST_MODULE_NAME = "process-analyser-test";
+  protected static final String SELECTED_STARTABLE_ID = "SupportHR.p.json";
+  protected static final String TEST_IFRAME_SOURCE_URL = "/test/faces/view/process-analyser-test/process-miner.xhtml?server=localhost:8080&app=test&pmv=HRTest&file=/processes/"
+      + SELECTED_STARTABLE_ID;
+  protected static final String SELECTED_MODULE_URL = "HRTest";
+
   protected static IProcessWebStartable testProcessStart;
   protected static ProcessElement startProcessElement;
   protected static List<ProcessElement> testProcessElements;
