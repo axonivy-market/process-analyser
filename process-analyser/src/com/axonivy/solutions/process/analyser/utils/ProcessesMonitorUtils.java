@@ -180,7 +180,6 @@ public class ProcessesMonitorUtils {
   }
 
   private static void updateRelativeValueForDution(List<Node> nodes) {
-    nodes.forEach(node -> Ivy.log().warn(node.getMedianDuration()));
     List<Node> arrows = nodes.stream().filter(node -> node.getType() == NodeType.ARROW)
         .sorted(Comparator.comparingDouble(Node::getMedianDuration)).toList();
 
