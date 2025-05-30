@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -175,6 +176,16 @@ public class ProcessesMonitorUtils {
 
     // Remove nodes that are TaskSwitchGateways or have no valid durations
     nodes.removeIf(node -> shouldRemoveNode(node, nodeDurations));
+    updateRelativeValueForDution(nodes);
+  }
+
+  private static void updateRelativeValueForDution(List<Node> nodes) {
+    nodes.forEach(node -> Ivy.log().warn(node.getMedianDuration()));
+    List<Node> arrows = nodes.stream().filter(node -> node.getType() == NodeType.ARROW)
+        .sorted(Comparator.comparingDouble(Node::getMedianDuration)).toList();
+
+    arrows.forEach(arrNode -> arrNode
+        .setRelativeValue(arrNode.getMedianDuration() / arrows.get(arrows.size() - 1).getMedianDuration()));
   }
 
   private static Set<String> extractNodeAttributes(List<Node> nodes, Function<Node, String> attributeExtractor) {
