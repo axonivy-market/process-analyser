@@ -69,7 +69,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     assertThat(result.getLabelValue()).isEqualTo("10");
     assertThat(result.getRelativeValue()).isZero();
     ProcessesMonitorUtils.updateNodeByAnalysisType(result, KpiType.DURATION_OVERALL);
-    assertThat(result.getLabelValue()).isEqualTo("2");
+    assertThat(result.getLabelValue()).isEqualTo("2s");
   }
 
   @Test
