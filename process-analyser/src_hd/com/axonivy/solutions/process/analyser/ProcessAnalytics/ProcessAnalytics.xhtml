@@ -100,7 +100,7 @@
         <br />
         <h:panelGroup id="arrow-statistics" layout="block">
           <p:dataTable var="node" styleClass="grid" id="node"
-            value="#{processesAnalyticsBean.nodes}" scrollable="true"
+            value="#{processesAnalyticsBean.renderNodesForKPIType(processesAnalyticsBean.nodes)}" scrollable="true"
             scrollHeight="300"
             emptyMessage="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/NoRecordsFound')}">
             <p:column styleClass="col-2" sortBy="#{node.id}"
@@ -126,7 +126,7 @@
               rendered="#{processesAnalyticsBean.isMedianDurationColumnVisible()}"
               styleClass="col-2" sortBy="#{node.medianDuration}"
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/MedianDuration')}">
-              <h:outputText value="#{node.medianDuration}" />
+              <h:outputText value="#{node.formattedMedianDuration}" />
             </p:column>
             <f:facet name="footer">
               <h:outputText

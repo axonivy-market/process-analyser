@@ -52,34 +52,10 @@ Enums:
       name: Duration
     DURATION_IDLE:
       name: Idle time
-    DURATION_IDLE_DAY:
-      name: Idle time - Day
-    DURATION_IDLE_HOUR:
-      name: Idle time - Hour
-    DURATION_IDLE_MINUTE:
-      name: Idle time - Minute
-    DURATION_IDLE_SECOND:
-      name: Idle time - Second
     DURATION_OVERALL:
       name: Overall time
-    DURATION_OVERALL_DAY:
-      name: Overall time - Day
-    DURATION_OVERALL_HOUR:
-      name: Overall time - Hour
-    DURATION_OVERALL_MINUTE:
-      name: Overall time - Minute
-    DURATION_OVERALL_SECOND:
-      name: Overall time - Second
     DURATION_WORKING:
       name: Working time
-    DURATION_WORKING_DAY:
-      name: Working time - Day
-    DURATION_WORKING_HOUR:
-      name: Working time - Hour
-    DURATION_WORKING_MINUTE:
-      name: Working time - Minute
-    DURATION_WORKING_SECOND:
-      name: Working time - Second
     FREQUENCY:
       name: Frequency
   MonitorVersion:

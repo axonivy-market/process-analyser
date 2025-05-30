@@ -16,6 +16,8 @@ public class Node {
   @JsonIgnore
   private float medianDuration;
   @JsonIgnore
+  private String formattedMedianDuration;
+  @JsonIgnore
   private int frequency;
   @JsonIgnore
   private List<String> outGoingPathIds = new ArrayList<>();
@@ -24,9 +26,27 @@ public class Node {
   @JsonIgnore
   private String targetNodeId;
   @JsonIgnore
+  private String sourceNodeId;
+  @JsonIgnore
   private boolean isTaskSwitchGateway;
   @JsonIgnore
   private String requestPath;
+
+  public String getSourceNodeId() {
+    return sourceNodeId;
+  }
+
+  public void setSourceNodeId(String sourceNodeId) {
+    this.sourceNodeId = sourceNodeId;
+  }
+
+  public String getFormattedMedianDuration() {
+    return formattedMedianDuration;
+  }
+
+  public void setFormattedMedianDuration(String formattedMedianDuration) {
+    this.formattedMedianDuration = formattedMedianDuration;
+  }
 
   public Node() {}
 

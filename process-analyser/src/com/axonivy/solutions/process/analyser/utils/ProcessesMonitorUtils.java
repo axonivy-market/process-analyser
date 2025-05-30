@@ -1,6 +1,5 @@
 package com.axonivy.solutions.process.analyser.utils;
 
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -93,6 +92,7 @@ public class ProcessesMonitorUtils {
   public static Node convertSequenceFlowToNode(SequenceFlow flow) {
     Node node = createNode(ProcessUtils.getElementPid(flow), flow.getName(), NodeType.ARROW);
     node.setTargetNodeId(flow.getTarget().getPid().toString());
+    node.setSourceNodeId(flow.getSource().getPid().toString());
     return node;
   }
 
@@ -108,18 +108,13 @@ public class ProcessesMonitorUtils {
     if (KpiType.FREQUENCY == analysisType) {
       node.setLabelValue(String.valueOf(node.getFrequency()));
     } else {
-      float medianDurationValue = convertDuration(node.getMedianDuration(), analysisType);
-      node.setLabelValue(formatDuration(medianDurationValue));
-      node.setMedianDuration(medianDurationValue);
+      String medianDurationValue = DateUtils.convertDuration(node.getMedianDuration());
+      node.setLabelValue(medianDurationValue);
+      node.setFormattedMedianDuration(medianDurationValue);
     }
     if (Double.isNaN(node.getRelativeValue())) {
       node.setRelativeValue(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     }
-  }
-
-  private static String formatDuration(float value) {
-    DecimalFormat df = new DecimalFormat("#.##");
-    return df.format(value);
   }
 
   /**
@@ -139,7 +134,7 @@ public class ProcessesMonitorUtils {
               || ProcessUtils.isTaskSwitchInstance(element) || ProcessUtils.isRequestStartInstance(element))
           .collect(Collectors.toList());
     }
-    List<SequenceFlow> sequenceFlows = getSequenceFlowsIfNeeded(processElements, analysisType);
+    List<SequenceFlow> sequenceFlows = ProcessUtils.getSequenceFlowsFrom(processElements);
     List<Node> nodes = convertToNodes(processElements, sequenceFlows);
     if (isFrequency(analysisType)) {
       updateFrequencyForNodes(nodes, processElements, cases);
@@ -156,10 +151,6 @@ public class ProcessesMonitorUtils {
 
   public static boolean isDuration(KpiType kpiType) {
     return kpiType != null && kpiType.isDescendantOf(KpiType.DURATION);
-  }
-
-  private static List<SequenceFlow> getSequenceFlowsIfNeeded(List<ProcessElement> processElements, KpiType kpiType) {
-    return (isFrequency(kpiType)) ? ProcessUtils.getSequenceFlowsFrom(processElements) : List.of();
   }
 
   public static void updateDurationForNodes(List<Node> nodes, List<ICase> cases, KpiType durationKpiType) {
@@ -212,13 +203,15 @@ public class ProcessesMonitorUtils {
       return true;
     }
     String key = StringUtils.isBlank(node.getRequestPath()) ? node.getId() : node.getRequestPath();
-    List<Long> durations = nodeDurations.get(key);
+    String lookupKey = node.getType() == NodeType.ARROW ? node.getSourceNodeId() : key;
+    List<Long> durations = nodeDurations.get(lookupKey);
     if (CollectionUtils.isEmpty(durations)) {
       return true;
     }
     node.setMedianDuration(calculateMedian(durations));
     return false;
   }
+
 
   private static Function<ITask, Long> getDurationExtractor(KpiType durationKpiType) {
     if (durationKpiType.isDescendantOf(KpiType.DURATION_IDLE)) {
@@ -244,22 +237,11 @@ public class ProcessesMonitorUtils {
     return sorted.size() % 2 == 0 ? (sorted.get(middle - 1) + sorted.get(middle)) / 2.0f : sorted.get(middle);
   }
 
-  private static float convertDuration(float durationSeconds, KpiType kpiType) {
-    return switch (kpiType) {
-    case DURATION_IDLE_DAY, DURATION_WORKING_DAY, DURATION_OVERALL_DAY ->
-      (float) (durationSeconds / (60 * 60 * 24));
-    case DURATION_IDLE_HOUR, DURATION_WORKING_HOUR, DURATION_OVERALL_HOUR ->
-      (float) (durationSeconds / (60 * 60));
-    case DURATION_IDLE_MINUTE, DURATION_WORKING_MINUTE, DURATION_OVERALL_MINUTE ->
-      (float) (durationSeconds / (60));
-    default -> durationSeconds;
-    };
-  }
+
 
   /**
-   * If current process have no alternative -> frequency = totals cases size. If
-   * not, we need to check which path from alternative is running to update
-   * frequency for elements belong to its.
+   * If current process have no alternative -> frequency = totals cases size. If not, we need to check which path from
+   * alternative is running to update frequency for elements belong to its.
    **/
   public static void updateFrequencyForNodes(List<Node> results, List<ProcessElement> processElements,
       List<ICase> cases) {
