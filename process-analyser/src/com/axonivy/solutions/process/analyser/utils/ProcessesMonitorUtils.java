@@ -176,10 +176,10 @@ public class ProcessesMonitorUtils {
 
     // Remove nodes that are TaskSwitchGateways or have no valid durations
     nodes.removeIf(node -> shouldRemoveNode(node, nodeDurations));
-    updateRelativeValueForDution(nodes);
+    updateRelativeValueForDuration(nodes);
   }
 
-  private static void updateRelativeValueForDution(List<Node> nodes) {
+  private static void updateRelativeValueForDuration(List<Node> nodes) {
     List<Node> arrows = nodes.stream().filter(node -> node.getType() == NodeType.ARROW)
         .sorted(Comparator.comparingDouble(Node::getMedianDuration)).toList();
 
