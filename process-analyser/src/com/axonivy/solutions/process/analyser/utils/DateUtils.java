@@ -18,9 +18,13 @@ public class DateUtils {
   public static final String DATE_PATTERN = "dd/MM/yyyy";
   public static final String DATE_TIME_PATTERN = DATE_PATTERN + StringUtils.SPACE + TIME_PATTERN;
   private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_TIME_PATTERN);
+  private static final int SIXTY_MINUTES = 3600;
+  private static final int SIXTY_SECONDS = 60;
+  private static final int FIFTY_NINE_MINUTES = 59;
+  private static final int TWENTY_THREE_HOURS = 23;
+  private static final int TWENTY_FOUR_HOURS = 24;
 
-  private DateUtils() {
-  }
+  private DateUtils() {}
 
   public static Date getDateFromLocalDate(LocalDate localDate, LocalTime localTime) {
     if (localTime == null) {
@@ -46,14 +50,14 @@ public class DateUtils {
 
   public static String convertDuration(float durationSeconds) {
     String result = StringUtils.EMPTY;
-    if (durationSeconds > 23 * 3600) {
-      float days = durationSeconds / (24 * 3600);
+    if (durationSeconds > TWENTY_THREE_HOURS * SIXTY_MINUTES) {
+      float days = durationSeconds / (TWENTY_FOUR_HOURS * SIXTY_MINUTES);
       result = formatFloat(days) + "d";
-    } else if (durationSeconds > 59 * 60) {
-      float hours = durationSeconds / 3600;
+    } else if (durationSeconds > FIFTY_NINE_MINUTES * SIXTY_SECONDS) {
+      float hours = durationSeconds / SIXTY_MINUTES;
       result = formatFloat(hours) + "h";
-    } else if (durationSeconds > 59) {
-      float minutes = durationSeconds / 60;
+    } else if (durationSeconds > FIFTY_NINE_MINUTES) {
+      float minutes = durationSeconds / SIXTY_SECONDS;
       result = formatFloat(minutes) + "m";
     } else {
       result = formatFloat(durationSeconds) + "s";
