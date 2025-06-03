@@ -69,7 +69,8 @@
         "task" : {
           "responsible" : {
             "activator" : "SYSTEM"
-          }
+          },
+          "delay" : "new Duration(0, 0, 0, 0, 0, 2)"
         }
       },
       "visual" : {
@@ -87,7 +88,8 @@
         "task" : {
           "responsible" : {
             "activator" : "SYSTEM"
-          }
+          },
+          "delay" : "new Duration(0, 0, 0, 0, 0, 3)"
         }
       },
       "visual" : {
@@ -211,7 +213,8 @@
           "name" : "Process Booking",
           "responsible" : {
             "activator" : "SYSTEM"
-          }
+          },
+          "delay" : "new Duration(0, 0, 0, 0, 0, 4)"
         }
       },
       "visual" : {
