@@ -28,7 +28,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private final String DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX = "_label";
   private final String CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX = " .ui-cascadeselect-label";
   private final String DISABLE_PROPERTY = "disabled";
-  private final String LANGUAGE_LOCALE_CSS_SELECTOR = "profileForm:contentLanguage_editableInput";
+  private final String LANGUAGE_LOCALE_CSS_SELECTOR = "#profileForm\\:contentLanguage_editableInput";
 
   @Test
   void showStatisticButtonShouldEnableWhenChosenFulfiled() {
@@ -54,7 +54,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     dropdown.shouldBe(visible, Duration.ofSeconds(2));
     dropdown.click();
     dropdown.sendKeys("de");
-    var saveBtn = $("profileForm:saveBtn");
+    var saveBtn = $("#profileForm\\:saveBtn");
     saveBtn.click();
     startAnalyzingProcess();
     clickFirstOptionFromTheDropdown(MODULE_DROPDOWN_CSS_SELECTOR);
