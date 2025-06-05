@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import com.axonivy.ivy.webtest.IvyWebTest;
 
-import ch.ivyteam.ivy.environment.Ivy;
-
 @IvyWebTest
 public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
