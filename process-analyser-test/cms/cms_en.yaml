@@ -1,0 +1,5 @@
+Processes:
+  Process:
+    TestProcess:
+      description: Process for testing
+      name: Test process

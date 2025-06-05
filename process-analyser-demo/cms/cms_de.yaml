@@ -1,0 +1,14 @@
+Processes:
+  Process:
+    AutomicHotelBooking:
+      description: Automatisches Demoprojekt für Prozessanalysator
+      name: Automatische Hotelbuchung
+    FlightBookingDemo:
+      description: Demoprojekt für Prozessanalysator
+      name: Demo zur Flugbuchung
+    FlightPaymentDemo:
+      description: Automatisches Demoprojekt für Prozessanalysator
+      name: Demo zur Flugzahlung
+    FlightPlanningDemo:
+      description: Demoprojekt für Prozessanalysator
+      name: Flugplanungsdemo

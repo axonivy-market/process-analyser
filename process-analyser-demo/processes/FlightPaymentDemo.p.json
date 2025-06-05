@@ -9,7 +9,11 @@
       "type" : "RequestStart",
       "name" : "flightPayment.ivp",
       "config" : {
-        "signature" : "flightPayment"
+        "signature" : "flightPayment",
+        "request" : {
+          "name" : "<%=ivy.cms.co(\"/Processes/Process/FlightPaymentDemo/name\")%>",
+          "description" : "<%=ivy.cms.co(\"/Processes/Process/FlightPaymentDemo/description\")%>"
+        }
       },
       "visual" : {
         "at" : { "x" : 96, "y" : 384 }

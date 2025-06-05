@@ -10,6 +10,10 @@
       "name" : "Plan a Flight",
       "config" : {
         "signature" : "planFlight",
+        "request" : {
+          "name" : "<%=ivy.cms.co(\"/Processes/Process/FlightPlanningDemo/name\")%>",
+          "description" : "<%=ivy.cms.co(\"/Processes/Process/FlightPlanningDemo/description\")%>"
+        },
         "task" : {
           "name" : "Planner plan a flight"
         },

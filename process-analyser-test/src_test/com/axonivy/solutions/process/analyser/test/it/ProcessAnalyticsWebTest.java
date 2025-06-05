@@ -15,6 +15,8 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 
+import ch.ivyteam.ivy.environment.Ivy;
+
 @IvyWebTest
 public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
@@ -29,6 +31,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private final String DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX = "_label";
   private final String CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX = " .ui-cascadeselect-label";
   private final String DISABLE_PROPERTY = "disabled";
+  private final String PROCESS_CMS_NAME = "/Processes/Process/TestProcess/name";
 
   @Test
   void showStatisticButtonShouldEnableWhenChosenFulfiled() {
@@ -56,6 +59,9 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
     // Find 1st option (index = 1 to avoid choosing default initial option of null)
     SelenideElement targetElement = $$(dropdownCssSelector + DROPDOWN_ITEMS_CSS_SELECTOR_SUFFIX).get(1);
+    
+    // Test label of process should be the name from CMS (if exist) rather than process id
+    targetElement.shouldHave(Condition.text(Ivy.cms().co(PROCESS_CMS_NAME)));
     String selectedOptionLabel = targetElement.text();
     targetElement.click();
 
