@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import com.axonivy.ivy.webtest.IvyWebTest;
 
-@IvyWebTest(headless = false)
+@IvyWebTest(headless = false, browser = "chrome")
 public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
   private final String SHOW_STATISTIC_BTN_CSS_SELECTOR = "#process-analytics-form\\:show-statistic-btn";
