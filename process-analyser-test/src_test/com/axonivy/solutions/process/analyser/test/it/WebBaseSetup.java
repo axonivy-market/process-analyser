@@ -75,7 +75,7 @@ public class WebBaseSetup {
     dropdown.shouldBe(visible, Duration.ofSeconds(DEFAULT_TIMEOUT_DURATION));
     dropdown.click();
 
-    String dropdownListCssSelector = dropdownCssSelector + DROPDOWN_LIST_SUFFIX;
+    String dropdownListCssSelector = dropdownCssSelector + dropdownListSuffix;
     $(dropdownListCssSelector).shouldBe(visible, Duration.ofSeconds(DEFAULT_TIMEOUT_DURATION));
 
     // Find 1st option (index = 1 to avoid choosing default initial option of null)
