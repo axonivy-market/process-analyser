@@ -17,15 +17,7 @@ import com.codeborne.selenide.SelenideElement;
 public class WebBaseSetup {
   private final String ANALYZING_PROCESS_PATH = "process-analyser/1910BF871CE43293/startAnalytic.ivp";
   private final String LOGIN_URL = "/process-analyser-test/1973F53724EE655A/login.ivp?username=Developer&password=Developer";
-<<<<<<< HEAD
   private final String CHANGE_LANGUAGE_LOCALE = "/process-analyser-test/1973F53724EE655A/changeLocale.ivp?locale=";
-=======
-  private final String CHANGE_LOCALE_TO_GERMAN = "/process-analyser-test/1973F53724EE655A/cahngeLocale.ivp?locale=de";
-
-  private final String DROPDOWN_LIST_SUFFIX = "_items";
-  private final String DROPDOWN_ITEMS_CSS_SELECTOR_SUFFIX = DROPDOWN_LIST_SUFFIX + " li";
-  protected final String DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX = "_label";
->>>>>>> 3ce67ef (update test)
   private final int DEFAULT_TIMEOUT_DURATION = 2;
 
   protected void startAnalyzingProcess() {
