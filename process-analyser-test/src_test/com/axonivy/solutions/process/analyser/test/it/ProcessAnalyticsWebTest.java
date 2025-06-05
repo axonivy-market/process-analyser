@@ -50,6 +50,8 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     
     // Change locale
     openProfilePage();
+    var form = $("#profileForm");
+    form.shouldBe(Condition.visible, Duration.ofSeconds(1));
     var dropdown = $(LANGUAGE_LOCALE_CSS_SELECTOR);
     dropdown.shouldBe(visible, Duration.ofSeconds(2));
     dropdown.click();
