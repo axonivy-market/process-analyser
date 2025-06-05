@@ -3,7 +3,6 @@ package com.axonivy.solutions.process.analyser.test.it;
 import static com.codeborne.selenide.Condition.attribute;
 import static com.codeborne.selenide.Selenide.$;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import com.axonivy.ivy.webtest.IvyWebTest;
@@ -25,6 +24,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
   private final String TEST_MODULE_NAME = "process-analyser-test";
   private final String DROPDOWN_LIST_SUFFIX = "_items";
+
 
   @Test
   void showStatisticButtonShouldEnableWhenChosenFulfiled() {

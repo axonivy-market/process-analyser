@@ -35,7 +35,11 @@ public class WebBaseSetup {
   }
 
   protected void changeLocaleToGerman() {
-    open(EngineUrl.createProcessUrl(CHANGE_LOCALE_TO_GERMAN));
+    open(EngineUrl.createProcessUrl(CHANGE_LANGUAGE_LOCALE + Locale.GERMAN.getLanguage()));
+  }
+
+  protected void resetLocale() {
+    open(EngineUrl.createProcessUrl(CHANGE_LANGUAGE_LOCALE + Locale.ENGLISH.getLanguage()));
   }
 
   protected void login() {
@@ -57,7 +61,7 @@ public class WebBaseSetup {
     dropdown.shouldBe(visible, Duration.ofSeconds(DEFAULT_TIMEOUT_DURATION));
     dropdown.click();
 
-    String dropdownListCssSelector = dropdownCssSelector + dropdownListSuffix;
+    String dropdownListCssSelector = dropdownCssSelector + DROPDOWN_LIST_SUFFIX;
     $(dropdownListCssSelector).shouldBe(visible, Duration.ofSeconds(DEFAULT_TIMEOUT_DURATION));
 
     // Find 1st option (index = 1 to avoid choosing default initial option of null)
