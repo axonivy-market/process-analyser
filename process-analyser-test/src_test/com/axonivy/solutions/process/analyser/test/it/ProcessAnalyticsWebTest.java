@@ -14,7 +14,7 @@ import com.axonivy.ivy.webtest.IvyWebTest;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 
-@IvyWebTest
+@IvyWebTest(headless = false)
 public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
   private final String SHOW_STATISTIC_BTN_CSS_SELECTOR = "#process-analytics-form\\:show-statistic-btn";
@@ -32,14 +32,18 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
   @Test
   void showStatisticButtonShouldEnableWhenChosenFulfiled() {
-    // Open process analyzer view
+    login();
     startAnalyzingProcess();
 
     // Check the current status of show statistic button
     $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, "true"));
 
+    //Choose 1st PM
     clickFirstOptionFromTheDropdown(MODULE_DROPDOWN_CSS_SELECTOR);
+
+    //Choose 1st process
     clickFirstOptionFromTheDropdown(PROCESS_DROPDOWN_CSS_SELECTOR);
+
     // Test label of process should be the name from CMS (if exist) rather than process id
     $(PROCESS_DROPDOWN_CSS_SELECTOR + DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX).shouldHave(Condition.text("Test process"),
         Duration.ofSeconds(1));
