@@ -51,11 +51,16 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, StringUtils.EMPTY));
 
     // Change locale
-//    changeLocaleToGerman();
-//    // Test label of process should be the name from CMS (if exist) rather than
-//    // process id
-//    $(PROCESS_DROPDOWN_CSS_SELECTOR + DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX).shouldHave(Condition.text("Test process"),
-//        Duration.ofSeconds(1));
+    changeLocaleToGerman();
+    startAnalyzingProcess();
+    // Choose 1st PM
+    clickOptionFromTheDropdownWithIndex(MODULE_DROPDOWN_CSS_SELECTOR, 1);
+
+    // Choose 1st process
+    clickOptionFromTheDropdownWithIndex(PROCESS_DROPDOWN_CSS_SELECTOR, 1);
+
+    $(PROCESS_DROPDOWN_CSS_SELECTOR + DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX).shouldHave(Condition.text("Testprozess"),
+        Duration.ofSeconds(1));
   }
 
   private void clickFirstOptionFromTheCascadeDropdown(String cascadeDropdownCssSelector) {
