@@ -32,7 +32,10 @@ public class WebBaseSetup {
 
   protected void login() {
     open(EngineUrl.createProcessUrl(LOGIN_URL));
+  }
 
+  protected void changeLocaleToGerman() {
+    open(EngineUrl.createProcessUrl(CHANGE_LOCALE_TO_GERMAN));
   }
 
   protected void login() {
