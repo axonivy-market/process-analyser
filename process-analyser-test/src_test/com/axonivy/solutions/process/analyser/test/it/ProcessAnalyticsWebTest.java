@@ -48,10 +48,10 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
         CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX);
 =======
     // Choose 1st PM
-    clickOptionFromTheDropdownWithIndex(MODULE_DROPDOWN_CSS_SELECTOR, 0);
+    clickOptionFromTheDropdownWithIndex(MODULE_DROPDOWN_CSS_SELECTOR, 1);
 
     // Choose 1st process
-    clickOptionFromTheDropdownWithIndex(PROCESS_DROPDOWN_CSS_SELECTOR, 0);
+    clickOptionFromTheDropdownWithIndex(PROCESS_DROPDOWN_CSS_SELECTOR, 1);
 
     // Test label of process should be the name from CMS (if exist) rather than
     // process id
