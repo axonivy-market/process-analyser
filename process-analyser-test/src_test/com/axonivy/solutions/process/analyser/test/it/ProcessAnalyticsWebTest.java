@@ -12,10 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import com.axonivy.ivy.webtest.IvyWebTest;
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
-
-import ch.ivyteam.ivy.environment.Ivy;
 
 @IvyWebTest
 public class ProcessAnalyticsWebTest extends WebBaseSetup {
@@ -43,6 +40,9 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
     clickFirstOptionFromTheDropdown(MODULE_DROPDOWN_CSS_SELECTOR);
     clickFirstOptionFromTheDropdown(PROCESS_DROPDOWN_CSS_SELECTOR);
+    // Test label of process should be the name from CMS (if exist) rather than process id
+    $(PROCESS_DROPDOWN_CSS_SELECTOR + DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX).shouldHave(Condition.text("Test process"),
+        Duration.ofSeconds(1));
     clickFirstOptionFromTheCascadeDropdown(KPI_DROPDOWN_CSS_SELECTOR);
 
     // Check the status of show statistic button after data fulfilled
@@ -58,9 +58,6 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
     // Find 1st option (index = 1 to avoid choosing default initial option of null)
     SelenideElement targetElement = $$(dropdownCssSelector + DROPDOWN_ITEMS_CSS_SELECTOR_SUFFIX).get(1);
-    
-    // Test label of process should be the name from CMS (if exist) rather than process id
-    targetElement.shouldHave(Condition.text("Test process"));
     String selectedOptionLabel = targetElement.text();
     targetElement.click();
 
