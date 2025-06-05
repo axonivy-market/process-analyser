@@ -10,6 +10,8 @@ import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.axonivy.ivy.webtest.engine.EngineUrl;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
