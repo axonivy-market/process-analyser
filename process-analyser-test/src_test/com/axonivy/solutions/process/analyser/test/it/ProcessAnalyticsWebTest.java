@@ -25,7 +25,6 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private final String CASCADE_DROPDOWN_ITEMS_CSS_SELECTOR_SUFFIX = CASCADE_DROPDOWN_LIST_SUFFIX + " li";
   private final String CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX = " .ui-cascadeselect-label";
   private final String DISABLE_PROPERTY = "disabled";
-  private final String LANGUAGE_LOCALE_CSS_SELECTOR = "#profileForm\\:contentLanguage_editableInput";
 
   @Test
   void showStatisticButtonShouldEnableWhenChosenFulfiled() {
@@ -39,7 +38,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     clickOptionFromTheDropdownWithIndex(MODULE_DROPDOWN_CSS_SELECTOR, 0);
 
     // Choose 1st process
-    clickOptionFromTheDropdownWithIndex(PROCESS_DROPDOWN_CSS_SELECTOR, 1);
+    clickOptionFromTheDropdownWithIndex(PROCESS_DROPDOWN_CSS_SELECTOR, 0);
 
     // Test label of process should be the name from CMS (if exist) rather than
     // process id
@@ -51,18 +50,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, StringUtils.EMPTY));
 
     // Change locale
-    openProfilePage();
-    var form = $("#profileForm");
-    form.shouldBe(Condition.visible, Duration.ofSeconds(1));
-    var dropdown = $(LANGUAGE_LOCALE_CSS_SELECTOR);
-    dropdown.shouldBe(visible, Duration.ofSeconds(2));
-    dropdown.click();
-    dropdown.sendKeys("de");
-    var saveBtn = $("#profileForm\\:saveBtn");
-    saveBtn.click();
-    startAnalyzingProcess();
-    clickOptionFromTheDropdownWithIndex(MODULE_DROPDOWN_CSS_SELECTOR, 0);
-    clickOptionFromTheDropdownWithIndex(PROCESS_DROPDOWN_CSS_SELECTOR, 1);
+    changeLocaleToGerman();
     // Test label of process should be the name from CMS (if exist) rather than
     // process id
     $(PROCESS_DROPDOWN_CSS_SELECTOR + DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX).shouldHave(Condition.text("Test process"),

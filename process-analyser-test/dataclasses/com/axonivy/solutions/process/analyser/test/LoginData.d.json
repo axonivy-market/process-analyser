@@ -11,5 +11,9 @@
     "name" : "password",
     "type" : "String",
     "modifiers" : [ "PERSISTENT" ]
+  }, {
+    "name" : "locale",
+    "type" : "String",
+    "modifiers" : [ "PERSISTENT" ]
   } ]
 }

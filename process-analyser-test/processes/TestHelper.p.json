@@ -41,7 +41,8 @@
       "config" : {
         "output" : {
           "code" : "ivy.session.loginSessionUser(in.username, in.password);"
-        }
+        },
+        "sudo" : true
       },
       "visual" : {
         "at" : { "x" : 224, "y" : 64 }
@@ -49,5 +50,49 @@
       "connect" : [
         { "id" : "f4", "to" : "f1", "color" : "default" }
       ]
+    }, {
+      "id" : "f5",
+      "type" : "RequestStart",
+      "name" : "changeLocale",
+      "config" : {
+        "signature" : "changeLocale",
+        "input" : {
+          "params" : [
+            { "name" : "locale", "type" : "String", "desc" : "" }
+          ],
+          "map" : {
+            "out.locale" : "param.locale"
+          }
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 96, "y" : 176 }
+      },
+      "connect" : [
+        { "id" : "f7", "to" : "f6" }
+      ]
+    }, {
+      "id" : "f6",
+      "type" : "Script",
+      "name" : "change locale",
+      "config" : {
+        "output" : {
+          "code" : "ivy.session.setContentLocale(java.util.Locale.of(in.locale));"
+        },
+        "sudo" : true
+      },
+      "visual" : {
+        "at" : { "x" : 232, "y" : 176 }
+      },
+      "connect" : [
+        { "id" : "f9", "to" : "f8" }
+      ]
+    }, {
+      "id" : "f8",
+      "type" : "TaskEnd",
+      "visual" : {
+        "at" : { "x" : 352, "y" : 176 },
+        "labelOffset" : { "x" : 13, "y" : 33 }
+      }
     } ]
 }
