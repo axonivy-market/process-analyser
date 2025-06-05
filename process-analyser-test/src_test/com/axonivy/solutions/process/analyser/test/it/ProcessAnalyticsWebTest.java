@@ -28,7 +28,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private final String DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX = "_label";
   private final String CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX = " .ui-cascadeselect-label";
   private final String DISABLE_PROPERTY = "disabled";
-  private final String PROCESS_CMS_NAME = "/Processes/Process/TestProcess/name";
+  private final String LANGUAGE_LOCALE_CSS_SELECTOR = "profileForm:contentLanguage_editableInput";
 
   @Test
   void showStatisticButtonShouldEnableWhenChosenFulfiled() {
@@ -47,6 +47,21 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
     // Check the status of show statistic button after data fulfilled
     $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, StringUtils.EMPTY));
+    
+    // Change locale
+    openProfilePage();
+    var dropdown = $(LANGUAGE_LOCALE_CSS_SELECTOR);
+    dropdown.shouldBe(visible, Duration.ofSeconds(2));
+    dropdown.click();
+    dropdown.sendKeys("de");
+    var saveBtn = $("profileForm:saveBtn");
+    saveBtn.click();
+    startAnalyzingProcess();
+    clickFirstOptionFromTheDropdown(MODULE_DROPDOWN_CSS_SELECTOR);
+    clickFirstOptionFromTheDropdown(PROCESS_DROPDOWN_CSS_SELECTOR);
+    // Test label of process should be the name from CMS (if exist) rather than process id
+    $(PROCESS_DROPDOWN_CSS_SELECTOR + DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX).shouldHave(Condition.text("Test process"),
+        Duration.ofSeconds(1));
   }
 
   private void clickFirstOptionFromTheDropdown(String dropdownCssSelector) {
