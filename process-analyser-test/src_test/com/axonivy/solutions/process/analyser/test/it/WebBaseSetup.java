@@ -18,8 +18,6 @@ public class WebBaseSetup {
   private final String ANALYZING_PROCESS_PATH = "process-analyser/1910BF871CE43293/startAnalytic.ivp";
   private final String LOGIN_URL = "/process-analyser-test/1973F53724EE655A/login.ivp?username=Developer&password=Developer";
   private final String CHANGE_LANGUAGE_LOCALE = "/process-analyser-test/1973F53724EE655A/changeLocale.ivp?locale=";
-
-  private final String DROPDOWN_LIST_SUFFIX = "_items";
   protected final String DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX = "_label";
   private final int DEFAULT_TIMEOUT_DURATION = 2;
 
@@ -50,7 +48,7 @@ public class WebBaseSetup {
     dropdown.shouldBe(visible, Duration.ofSeconds(DEFAULT_TIMEOUT_DURATION));
     dropdown.click();
 
-    String dropdownListCssSelector = dropdownCssSelector + DROPDOWN_LIST_SUFFIX;
+    String dropdownListCssSelector = dropdownCssSelector + dropdownListSuffix;
     $(dropdownListCssSelector).shouldBe(visible, Duration.ofSeconds(DEFAULT_TIMEOUT_DURATION));
 
     // Find 1st option (index = 1 to avoid choosing default initial option of null)

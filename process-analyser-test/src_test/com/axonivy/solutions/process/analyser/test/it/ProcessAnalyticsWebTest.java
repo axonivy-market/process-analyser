@@ -29,7 +29,6 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private final String TEST_MODULE_NAME = "process-analyser-test";
   private final String DROPDOWN_LIST_SUFFIX = "_items";
 
-
   @Test
   void showStatisticButtonShouldEnableWhenChosenFulfiled() {
     login();
@@ -39,10 +38,11 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, "true"));
 
     // Choose test project PM
-    verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX,"_label");
+    verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX, "_label");
     // Verify EN process name is rendered
-    verifyAndClickItemLabelInDropdown(PROCESS_DROPDOWN_CSS_SELECTOR, PROCESS_NAME_EN, DROPDOWN_LIST_SUFFIX,"_label");
-//    verifyAndClickItemLabelInDropdown(KPI_DROPDOWN_CSS_SELECTOR, PROCESS_NAME_EN, CASCADE_DROPDOWN_LIST_SUFFIX);
+    verifyAndClickItemLabelInDropdown(PROCESS_DROPDOWN_CSS_SELECTOR, PROCESS_NAME_EN, DROPDOWN_LIST_SUFFIX, "_label");
+    verifyAndClickItemLabelInDropdown(KPI_DROPDOWN_CSS_SELECTOR, "Frequency", CASCADE_DROPDOWN_LIST_SUFFIX,
+        CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX);
 //
 //
 //    clickFirstOptionFromTheCascadeDropdown(KPI_DROPDOWN_CSS_SELECTOR);
