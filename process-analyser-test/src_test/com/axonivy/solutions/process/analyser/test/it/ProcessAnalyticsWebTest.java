@@ -50,9 +50,9 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
     startAnalyzingProcess();
     verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX,
-        CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX);
+        DROPDOWN_LABEL_SUFFIX);
     // Verify D process name is rendered
     verifyAndClickItemLabelInDropdown(PROCESS_DROPDOWN_CSS_SELECTOR, PROCESS_NAME_DE, DROPDOWN_LIST_SUFFIX,
-        CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX);
+        DROPDOWN_LABEL_SUFFIX);
   }
 }
