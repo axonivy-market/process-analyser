@@ -27,6 +27,11 @@ public class WebBaseSetup {
   protected void openProfilePage() {
     open(EngineUrl.base() + "/dev-workflow-ui/faces/profile.xhtml");
   }
+  
+  protected void login() {
+    open(EngineUrl.createProcessUrl(LOGIN_URL));
+
+  }
 
   protected void login() {
     open(EngineUrl.createProcessUrl(LOGIN_URL));
