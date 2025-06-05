@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import com.axonivy.ivy.webtest.IvyWebTest;
 
-@IvyWebTest(headless = false)
+@IvyWebTest
 public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
   private final String SHOW_STATISTIC_BTN_CSS_SELECTOR = "#process-analytics-form\\:show-statistic-btn";
@@ -37,7 +37,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     // Choose test project PM
     verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX,
         DROPDOWN_LABEL_SUFFIX);
-    // Verify EN process name is rendered
+    // Verify English process name is rendered
     verifyAndClickItemLabelInDropdown(PROCESS_DROPDOWN_CSS_SELECTOR, PROCESS_NAME_EN, DROPDOWN_LIST_SUFFIX,
         DROPDOWN_LABEL_SUFFIX);
     verifyAndClickItemLabelInDropdown(KPI_DROPDOWN_CSS_SELECTOR, FREQUENCY_OPTION_NAME, CASCADE_DROPDOWN_LIST_SUFFIX,
@@ -51,7 +51,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     startAnalyzingProcess();
     verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX,
         DROPDOWN_LABEL_SUFFIX);
-    // Verify D process name is rendered
+    // Verify German process name is rendered
     verifyAndClickItemLabelInDropdown(PROCESS_DROPDOWN_CSS_SELECTOR, PROCESS_NAME_DE, DROPDOWN_LIST_SUFFIX,
         DROPDOWN_LABEL_SUFFIX);
   }
