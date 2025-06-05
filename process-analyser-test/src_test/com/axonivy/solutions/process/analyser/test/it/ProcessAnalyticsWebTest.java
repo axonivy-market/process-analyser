@@ -26,41 +26,34 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private final String CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX = " .ui-cascadeselect-label";
   private final String DISABLE_PROPERTY = "disabled";
   private final String PROCESS_NAME_EN = "Test process";
+  private final String PROCESS_NAME_DE = "Testprozess";
+  private final String TEST_MODULE_NAME = "process-analyser-test";
+  private final String DROPDOWN_LIST_SUFFIX = "_items";
 
   @Test
   void showStatisticButtonShouldEnableWhenChosenFulfiled() {
     login();
     startAnalyzingProcess();
-
     // Check the current status of show statistic button
     $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, "true"));
 
-    // Choose 1st PM
-    clickOptionFromTheDropdownWithIndex(MODULE_DROPDOWN_CSS_SELECTOR, 1);
+    // Choose test project PM
+    verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX);
+    // Verify EN process name is rendered
+    verifyAndClickItemLabelInDropdown(PROCESS_DROPDOWN_CSS_SELECTOR, PROCESS_NAME_EN, DROPDOWN_LIST_SUFFIX);
+    verifyAndClickItemLabelInDropdown(KPI_DROPDOWN_CSS_SELECTOR, PROCESS_NAME_EN, CASCADE_DROPDOWN_LIST_SUFFIX);
 
-    // Choose 1st process
-    clickOptionFromTheDropdownWithIndex(PROCESS_DROPDOWN_CSS_SELECTOR, 1);
-
-    // Test label of process should be the name from CMS (if exist) rather than
-    // process id
-    $(PROCESS_DROPDOWN_CSS_SELECTOR + DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX).shouldHave(Condition.text(PROCESS_NAME_EN),
-        Duration.ofSeconds(1));
-    clickFirstOptionFromTheCascadeDropdown(KPI_DROPDOWN_CSS_SELECTOR);
-
+    //clickFirstOptionFromTheCascadeDropdown(KPI_DROPDOWN_CSS_SELECTOR);
     // Check the status of show statistic button after data fulfilled
     $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, StringUtils.EMPTY));
 
     // Change locale
     changeLocaleToGerman();
+
     startAnalyzingProcess();
-    // Choose 1st PM
-    clickOptionFromTheDropdownWithIndex(MODULE_DROPDOWN_CSS_SELECTOR, 1);
-
-    // Choose 1st process
-    clickOptionFromTheDropdownWithIndex(PROCESS_DROPDOWN_CSS_SELECTOR, 1);
-
-    $(PROCESS_DROPDOWN_CSS_SELECTOR + DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX).shouldHave(Condition.text("Testprozess"),
-        Duration.ofSeconds(1));
+    verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX);
+    // Verify D process name is rendered
+    verifyAndClickItemLabelInDropdown(PROCESS_DROPDOWN_CSS_SELECTOR, PROCESS_NAME_DE, DROPDOWN_LIST_SUFFIX);
   }
 
   private void clickFirstOptionFromTheCascadeDropdown(String cascadeDropdownCssSelector) {
