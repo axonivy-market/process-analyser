@@ -52,8 +52,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private void clickFirstOptionFromTheDropdown(String dropdownCssSelector) {
     // Click target drop down when it's ready
     var dropdown = $(dropdownCssSelector);
-    dropdown.shouldBe(visible);
-    Selenide.sleep(1000);
+    dropdown.shouldBe(visible, Duration.ofSeconds(2));
     dropdown.click();
     $(dropdownCssSelector + DROPDOWN_LIST_SUFFIX).shouldBe(visible, Duration.ofSeconds(2));
 
@@ -61,7 +60,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     SelenideElement targetElement = $$(dropdownCssSelector + DROPDOWN_ITEMS_CSS_SELECTOR_SUFFIX).get(1);
     
     // Test label of process should be the name from CMS (if exist) rather than process id
-    targetElement.shouldHave(Condition.text(Ivy.cms().co(PROCESS_CMS_NAME)));
+    targetElement.shouldHave(Condition.text("Test process"));
     String selectedOptionLabel = targetElement.text();
     targetElement.click();
 
@@ -73,8 +72,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private void clickFirstOptionFromTheCascadeDropdown(String cascadeDropdownCssSelector) {
     // Click target drop down when it's ready
     var dropdown = $(cascadeDropdownCssSelector);
-    dropdown.shouldBe(visible);
-    Selenide.sleep(1000);
+    dropdown.shouldBe(visible, Duration.ofSeconds(2));
     dropdown.click();
     $(cascadeDropdownCssSelector + CASCADE_DROPDOWN_LIST_SUFFIX).shouldBe(visible, Duration.ofSeconds(2));
 
