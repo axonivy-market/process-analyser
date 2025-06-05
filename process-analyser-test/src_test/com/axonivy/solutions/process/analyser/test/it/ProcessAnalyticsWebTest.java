@@ -25,7 +25,6 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private final String TEST_MODULE_NAME = "process-analyser-test";
   private final String DROPDOWN_LIST_SUFFIX = "_items";
 
-
   @Test
   void showStatisticButtonShouldEnableWhenChosenFulfiled() {
     login();
