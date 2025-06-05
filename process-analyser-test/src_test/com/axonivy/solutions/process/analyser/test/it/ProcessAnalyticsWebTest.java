@@ -35,10 +35,10 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, "true"));
 
     // Choose 1st PM
-    clickOptionFromTheDropdownWithIndex(MODULE_DROPDOWN_CSS_SELECTOR, 0);
+    clickOptionFromTheDropdownWithIndex(MODULE_DROPDOWN_CSS_SELECTOR, 1);
 
     // Choose 1st process
-    clickOptionFromTheDropdownWithIndex(PROCESS_DROPDOWN_CSS_SELECTOR, 0);
+    clickOptionFromTheDropdownWithIndex(PROCESS_DROPDOWN_CSS_SELECTOR, 1);
 
     // Test label of process should be the name from CMS (if exist) rather than
     // process id
