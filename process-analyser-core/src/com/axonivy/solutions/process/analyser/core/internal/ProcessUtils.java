@@ -19,6 +19,7 @@ import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.application.IProcessModel;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.htmldialog.IHtmlDialogContext;
+import ch.ivyteam.ivy.process.call.SubProcessCall;
 import ch.ivyteam.ivy.process.model.BaseElement;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.EmbeddedProcessElement;
@@ -75,7 +76,6 @@ public class ProcessUtils {
   public static boolean isJoinInstance(Object element) {
     return Join.class.isInstance(element);
   }
-
   public static boolean isSubProcessCallInstance(Object element) {
     return SubProcessCall.class.isInstance(element);
   }
