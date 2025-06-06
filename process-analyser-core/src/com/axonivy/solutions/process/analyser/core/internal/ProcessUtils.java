@@ -18,6 +18,7 @@ import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.application.IProcessModel;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.htmldialog.IHtmlDialogContext;
+import ch.ivyteam.ivy.process.call.SubProcessCall;
 import ch.ivyteam.ivy.process.model.BaseElement;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.EmbeddedProcessElement;
@@ -49,38 +50,45 @@ public class ProcessUtils {
   }
 
   public static boolean isEmbeddedElementInstance(Object element) {
-    return element instanceof EmbeddedProcessElement;
+    return EmbeddedProcessElement.class.isInstance(element);
   }
 
   public static boolean isAlternativeInstance(Object element) {
-    return element instanceof Alternative;
+    return Alternative.class.isInstance(element);
   }
 
   public static boolean isTaskSwitchInstance(Object element) {
-    return element instanceof TaskSwitchEvent;
+    return TaskSwitchEvent.class.isInstance(element);
   }
 
   public static boolean isTaskSwitchGatewayInstance(Object element) {
-    return element instanceof TaskSwitchGateway;
+    return TaskSwitchGateway.class.isInstance(element);
   }
 
   public static boolean isRequestStartInstance(Object element) {
-    return element instanceof RequestStart;
+    return RequestStart.class.isInstance(element);
   }
 
   public static boolean isJoinInstance(Object element) {
-    return element instanceof Join;
+    return Join.class.isInstance(element);
+  }
+ 
+  public static boolean isSubProcessCallInstance(Object element) {
+    return SubProcessCall.class.isInstance(element);
   }
 
   public static List<ProcessElement> getNestedProcessElementsFromSub(Object element) {
     if (isEmbeddedElementInstance(element)) {
-      return ((EmbeddedProcessElement) element).getEmbeddedProcess().getProcessElements();
+      return EmbeddedProcessElement.class.cast(element).getEmbeddedProcess().getProcessElements();
+    }
+    if (isSubProcessCallInstance(element)) {
+      
     }
     return Collections.emptyList();
   }
 
   public static List<ProcessElement> getProcessElementsFrom(IProcessWebStartable startElement) {
-    if (startElement == null || startElement.pid() == null) {
+    if (Optional.ofNullable(startElement).map(IProcessWebStartable::pid).isEmpty()) {
       return Collections.emptyList();
     }
 
@@ -94,7 +102,7 @@ public class ProcessUtils {
 
     // Get all process elements, including nested ones
     return foundProcess.getModel().getProcessElements().stream().flatMap(
-        element -> Stream.concat(Stream.of(element), ProcessUtils.getNestedProcessElementsFromSub(element).stream()))
+        element -> Stream.concat(Stream.of(element), getNestedProcessElementsFromSub(element).stream()))
         .collect(Collectors.toList());
   }
 

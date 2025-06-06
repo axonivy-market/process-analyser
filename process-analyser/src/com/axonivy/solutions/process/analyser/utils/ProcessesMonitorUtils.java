@@ -76,8 +76,7 @@ public class ProcessesMonitorUtils {
           .collect(Collectors.toList());
       taskNodes.add(0, baseNode);
       return taskNodes;
-    } else if (element instanceof RequestStart) {
-      RequestStart requestStart = RequestStart.class.cast(element);
+    } else if (element instanceof RequestStart requestStart) {
       Node node = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT);
       node.setOutGoingPathIds(element.getOutgoing().stream().map(ProcessUtils::getElementPid).toList());
       node.setRequestPath(requestStart.getRequestPath().getLinkPath());

@@ -32,7 +32,7 @@
       "type" : "TaskEnd",
       "name" : "End",
       "visual" : {
-        "at" : { "x" : 1072, "y" : 384 }
+        "at" : { "x" : 1136, "y" : 384 }
       }
     }, {
       "id" : "f3",
@@ -106,7 +106,7 @@
               "save record from",
               "e-wallet"
             ],
-            "offset" : { "x" : 50, "y" : -130 }
+            "offset" : { "x" : 142, "y" : -130 }
           } }
       ]
     }, {
@@ -126,7 +126,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 896, "y" : 384 }
+        "at" : { "x" : 960, "y" : 384 }
       },
       "connect" : [
         { "id" : "f2", "to" : "f1", "label" : {
@@ -178,10 +178,23 @@
       },
       "visual" : {
         "at" : { "x" : 672, "y" : 272 },
-        "labelOffset" : { "x" : 14, "y" : 34 }
+        "labelOffset" : { "x" : -15, "y" : 41 }
       },
       "connect" : [
-        { "id" : "f15", "to" : "f9", "via" : [ { "x" : 896, "y" : 272 } ], "color" : "default" }
+        { "id" : "f15", "to" : "f16", "color" : "default" }
+      ]
+    }, {
+      "id" : "f16",
+      "type" : "SubProcessCall",
+      "name" : "validate visa card",
+      "config" : {
+        "processCall" : "VisaValidation:visaValidation()"
+      },
+      "visual" : {
+        "at" : { "x" : 800, "y" : 272 }
+      },
+      "connect" : [
+        { "id" : "f17", "to" : "f9", "via" : [ { "x" : 960, "y" : 272 } ], "color" : "default" }
       ]
     } ],
   "layout" : {

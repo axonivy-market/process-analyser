@@ -210,8 +210,8 @@ public class ProcessesAnalyticsBean {
 
   private DoubleStream getNumberTypeValue(String fieldName) {
     return customFieldsByType.stream().filter(entry -> entry.getCustomFieldMeta().name().equals(fieldName))
-        .flatMap(entry -> entry.getAvailableCustomFieldValues().stream()).filter(value -> value instanceof Number)
-        .mapToDouble(value -> ((Number) value).doubleValue());
+        .flatMap(entry -> entry.getAvailableCustomFieldValues().stream()).filter(Number.class::isInstance)
+        .mapToDouble(value -> Number.class.cast(value).doubleValue());
   }
 
   public String getRangeDisplayForNumberType(List<Double> numberValue) {

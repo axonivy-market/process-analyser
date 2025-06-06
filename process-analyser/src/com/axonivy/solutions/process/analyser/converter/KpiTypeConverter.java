@@ -27,8 +27,8 @@ public class KpiTypeConverter implements Converter {
     if (value == null) {
       return "";
     }
-    if (value instanceof KpiType) {
-      return ((KpiType) value).name();
+    if (KpiType.class.isInstance(value)) {
+      return KpiType.class.cast(value).name();
     }
     throw new ConverterException("Unexpected value type: " + value.getClass().getName());
   }
