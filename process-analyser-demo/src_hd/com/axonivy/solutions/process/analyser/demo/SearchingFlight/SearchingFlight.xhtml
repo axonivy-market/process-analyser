@@ -9,6 +9,7 @@
 	<ui:composition template="/layouts/frame-10.xhtml">
 		<ui:define name="title">SearchingFlight</ui:define>
 		<ui:define name="content">
+			<h:outputStylesheet name="/layouts/styles/booking-info.css" />
 
 			<h1>Search for a flight</h1>
 
@@ -18,43 +19,46 @@
 					styleClass="ui-panelgrid-blank ui-fluid"
 					columnClasses="ui-g-12 ui-md-3 ui-lg-2, ui-g-12 ui-md-9 ui-lg-4, ui-g-12 ui-md-3 ui-lg-2, ui-g-12 ui-md-9 ui-lg-4">
 					<p:outputLabel value="From" for="@next" />
-					<p:inputText value="#{data.selectedFrom}" />
+					<p:inputText value="#{data.searchingFlight.from}" />
 
 					<p:outputLabel value="To" for="@next" />
-					<p:inputText value="#{data.selectedTo}" />
+					<p:inputText value="#{data.searchingFlight.to}" />
 
 					<p:outputLabel value="Date" for="@next" />
-					<p:datePicker value="#{data.selectedTime}" />
+					<p:datePicker value="#{data.searchingFlight.date}" />
 				</p:panelGrid>
 
 				<p:commandButton
-					actionListener="#{searchingFlightBean.searchFlights(data.selectedFrom, data.selectedTo, data.selectedTime)}"
+					actionListener="#{searchingFlightBean.searchFlights(data.searchingFlight)}"
 					value="Search" update="form" />
 				<br />
+
 				<h:panelGroup
 					rendered="#{not searchingFlightBean.flights.isEmpty()}">
 					<h3>Please choose your flight:</h3>
-					<p:selectOneRadio value="#{searchingFlightBean.selectedFlightId}"
+					<p:selectOneRadio value="#{searchingFlightBean.selectedFlight}"
 						layout="pageDirection">
 						<f:selectItems value="#{searchingFlightBean.flights}" var="flight"
 							itemLabel="#{searchingFlightBean.generateLabelForFlight(flight)}"
-							itemValue="#{flight.id}" />
+							itemValue="#{flight}" />
 						<p:ajax update="form" />
 					</p:selectOneRadio>
 				</h:panelGroup>
+
 				<br />
 
-				<div class="command-btns">
-					<p:commandLink id="cancel"
+				<p:panelGrid columns="2" styleClass="command-buttons">
+					<p:commandLink id="cancel" value="Cancel"
 						actionListener="#{ivyWorkflowView.cancel()}" process="@this"
-						value="Cancel" />
-					<p:commandButton id="proceed" actionListener="#{logic.close}"
-						value="Proceed" update="form" icon="pi pi-check"
-						disabled="#{searchingFlightBean.selectedFlightId == null}" />
-				</div>
+						styleClass="btn-cancel" />
+
+					<p:commandButton id="proceed" value="Proceed" icon="pi pi-check"
+						actionListener="#{logic.updateInformation(searchingFlightBean.selectedFlight)}"
+						update="form" styleClass="btn-proceed" />
+				</p:panelGrid>
+
 			</h:form>
 		</ui:define>
 	</ui:composition>
 </h:body>
-
 </html>

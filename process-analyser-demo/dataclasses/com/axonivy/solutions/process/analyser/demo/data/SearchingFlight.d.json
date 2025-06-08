@@ -1,35 +1,23 @@
 {
   "$schema" : "https://json-schema.axonivy.com/data-class/12.0.0/data-class.json",
-  "simpleName" : "FlightInformation",
+  "simpleName" : "SearchingFlight",
   "namespace" : "com.axonivy.solutions.process.analyser.demo.data",
   "isBusinessCaseData" : false,
   "fields" : [ {
-    "name" : "planeRegistrationNumber",
+    "name" : "flightId",
     "type" : "String",
     "modifiers" : [ "PERSISTENT" ]
   }, {
-    "name" : "startTime",
-    "type" : "java.time.LocalTime",
-    "modifiers" : [ "PERSISTENT" ]
-  }, {
-    "name" : "endTime",
-    "type" : "java.time.LocalTime",
-    "modifiers" : [ "PERSISTENT" ]
-  }, {
-    "name" : "from",
+    "name" : "selectedFrom",
     "type" : "String",
     "modifiers" : [ "PERSISTENT" ]
   }, {
-    "name" : "to",
+    "name" : "selectedTo",
     "type" : "String",
     "modifiers" : [ "PERSISTENT" ]
   }, {
-    "name" : "date",
+    "name" : "selectedTime",
     "type" : "java.util.Date",
-    "modifiers" : [ "PERSISTENT" ]
-  }, {
-    "name" : "id",
-    "type" : "String",
     "modifiers" : [ "PERSISTENT" ]
   } ]
 }
