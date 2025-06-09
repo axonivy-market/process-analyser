@@ -11,9 +11,5 @@
     "name" : "isBackToSearchPage",
     "type" : "Boolean",
     "modifiers" : [ "PERSISTENT" ]
-  }, {
-    "name" : "flightInformation",
-    "type" : "com.axonivy.solutions.process.analyser.demo.data.FlightInformation",
-    "modifiers" : [ "PERSISTENT" ]
   } ]
 }
