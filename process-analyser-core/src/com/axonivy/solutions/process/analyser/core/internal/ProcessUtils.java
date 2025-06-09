@@ -77,19 +77,21 @@ public class ProcessUtils {
   }
 
   public static List<ProcessElement> getNestedProcessElementsFromSub(Object element) {
-    if (element instanceof EmbeddedProcessElement embeddedElement) {
-      return embeddedElement.getEmbeddedProcess().getProcessElements();
-    }
-    if (element instanceof SubProcessCall subProcessCall) {
-      String processName = subProcessCall.getCallTarget().getProcessName().getName();
-      return IProcessManager.instance().getProjectDataModels().stream()
-          .map(model -> model.getProcessByPath(processName)).filter(Objects::nonNull).findAny()
-          .map(process -> process.getModel().getProcessElements().stream()
-              .flatMap(pe -> Stream.concat(Stream.of(pe), getNestedProcessElementsFromSub(pe).stream()))
-              .collect(Collectors.toList()))
-          .orElse(Collections.emptyList());
-    }
-    return Collections.emptyList();
+    return switch (element) {
+    case EmbeddedProcessElement embeddedElement -> embeddedElement.getEmbeddedProcess().getProcessElements();
+    case SubProcessCall subProcessCall ->
+      getProcessElementsFromCallableSubProcessPath(subProcessCall.getCallTarget().getProcessName().getName());
+    default -> Collections.emptyList();
+    };
+  }
+
+  private static List<ProcessElement> getProcessElementsFromCallableSubProcessPath(String subProcessPath) {
+    return IProcessManager.instance().getProjectDataModels().stream()
+        .map(model -> model.getProcessByPath(subProcessPath)).filter(Objects::nonNull).findAny()
+        .map(process -> process.getModel().getProcessElements().stream()
+            .flatMap(pe -> Stream.concat(Stream.of(pe), getNestedProcessElementsFromSub(pe).stream()))
+            .collect(Collectors.toList()))
+        .orElse(Collections.emptyList());
   }
 
   public static List<ProcessElement> getProcessElementsFrom(IProcessWebStartable startElement) {

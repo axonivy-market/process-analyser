@@ -63,30 +63,29 @@ public class ProcessesMonitorUtils {
   }
 
   public static List<Node> convertProcessElementToNode(ProcessElement element) {
-    if (element instanceof TaskSwitchGateway taskSwitchGateway) {
-      Node baseNode = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT);
-      baseNode.setOutGoingPathIds(element.getOutgoing().stream().map(ProcessUtils::getElementPid).toList());
-      baseNode.setInCommingPathIds(element.getIncoming().stream().map(ProcessUtils::getElementPid).toList());
-      baseNode.setTaskSwitchGateway(true);
+    Node node = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT);
+    node.setOutGoingPathIds(element.getOutgoing().stream().map(ProcessUtils::getElementPid).toList());
+    return switch (element) {
+    case TaskSwitchGateway taskSwitchGateway -> {
+      node.setInCommingPathIds(element.getIncoming().stream().map(ProcessUtils::getElementPid).toList());
+      node.setTaskSwitchGateway(true);
       String elementId = element.getPid().toString();
       List<Node> taskNodes = taskSwitchGateway.getAllTaskConfigs().stream()
           .map(task -> createNode(
               elementId + ProcessAnalyticsConstants.SLASH + task.getTaskIdentifier().getTaskIvpLinkName(),
               task.getName().getRawMacro(), NodeType.ELEMENT))
           .collect(Collectors.toList());
-      taskNodes.add(0, baseNode);
-      return taskNodes;
-    } else if (element instanceof RequestStart requestStart) {
-      Node node = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT);
-      node.setOutGoingPathIds(element.getOutgoing().stream().map(ProcessUtils::getElementPid).toList());
-      node.setRequestPath(requestStart.getRequestPath().getLinkPath());
-      return List.of(node);
-    } else {
-      Node node = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT);
-      node.setOutGoingPathIds(element.getOutgoing().stream().map(ProcessUtils::getElementPid).toList());
-      node.setInCommingPathIds(element.getIncoming().stream().map(ProcessUtils::getElementPid).toList());
-      return List.of(node);
+      taskNodes.add(0, node);
+      yield taskNodes;
     }
+    case RequestStart requestStart -> {
+      node.setRequestPath(requestStart.getRequestPath().getLinkPath());
+      yield List.of(node);
+    }
+    default -> {
+      node.setInCommingPathIds(element.getIncoming().stream().map(ProcessUtils::getElementPid).toList());
+      yield List.of(node);
+    }};
   }
 
   public static Node convertSequenceFlowToNode(SequenceFlow flow) {
@@ -428,19 +427,24 @@ public class ProcessesMonitorUtils {
     String flowPid = ProcessUtils.getElementPid(currentFlow);
     String destinationElementPid = ProcessUtils.getElementPid(destinationElement);
     path.getNodeIdsInPath().add(flowPid);
-    if (ProcessUtils.isTaskSwitchInstance(destinationElement)
-        && StringUtils.isBlank(path.getTaskSwitchEventIdOnPath())) {
-      path.setTaskSwitchEventIdOnPath(destinationElementPid);
-    }
+    updateTaskSwitchEventIdOnPath(path, destinationElement);
     if (ProcessUtils.isAlternativePathEndElement(destinationElement)) {
       return;
     }
     path.getNodeIdsInPath().add(destinationElementPid);
     if (ProcessUtils.isEmbeddedElementInstance(destinationElement)) {
+      // Change destination element from embedded sub into embedded start that connect to the current flow
       destinationElement = ProcessUtils.getEmbeddedStartConnectToFlow(destinationElement, flowPid);
       path.getNodeIdsInPath().add(ProcessUtils.getElementPid(destinationElement));
     }
-    destinationElement.getOutgoing().forEach(outgoingPath -> followPath(path, outgoingPath));
+    destinationElement.getOutgoing().forEach(outgoingPath -> followPath(path, outgoingPath));   
+  }
+
+  private static void updateTaskSwitchEventIdOnPath(AlternativePath path, ProcessElement destinationElement) {
+    if (ProcessUtils.isTaskSwitchInstance(destinationElement)
+        && StringUtils.isBlank(path.getTaskSwitchEventIdOnPath())) {
+      path.setTaskSwitchEventIdOnPath(ProcessUtils.getElementPid(destinationElement));
+    }
   }
 
   /**
