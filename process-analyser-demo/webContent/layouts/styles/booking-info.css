@@ -1,0 +1,49 @@
+.booking-title {
+    margin-bottom: 1.5rem;
+    color: var(--primary-color, #2c76ff);
+    font-size: 1.35rem;
+    font-weight: 600;
+}
+
+.booking-panel {
+    padding: 1rem;
+    background: var(--surface-card, #ffffff);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+
+.booking-grid .label-col {
+    font-weight: 600;
+    width: 20%;
+}
+
+.booking-grid .value-col {
+    width: 30%;
+    word-break: break-word;
+}
+
+.command-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem; 
+    padding-top: 1rem;
+}
+
+.btn-cancel {
+    color: #2563eb;
+    background: none;
+    border: none;
+}
+
+.btn-back {
+    background-color: #0284c7;
+    border: none;
+    color: white;
+}
+
+.btn-proceed {
+    background-color: #10b981;
+    border: none;
+    color: white;
+}
+
