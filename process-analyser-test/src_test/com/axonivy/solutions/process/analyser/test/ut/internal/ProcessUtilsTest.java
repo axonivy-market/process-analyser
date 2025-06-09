@@ -61,8 +61,8 @@ public class ProcessUtilsTest extends BaseSetup {
   @Test
   void test_getNestedProcessElementsFromSub() {
     assertThat(ProcessUtils.getNestedProcessElementsFromSub(startProcessElement)).isEmpty();
-    assertThat(ProcessUtils.getNestedProcessElementsFromSub(subProcessElement).size()).isEqualTo(3);
-    assertThat(ProcessUtils.getNestedProcessElementsFromSub(subProcessCall).size()).isEqualTo(3);
+    assertThat(ProcessUtils.getNestedProcessElementsFromSub(subProcessElement).size()).isEqualTo(9);
+    assertThat(ProcessUtils.getNestedProcessElementsFromSub(subProcessCall).size()).isEqualTo(9);
 
   }
 
