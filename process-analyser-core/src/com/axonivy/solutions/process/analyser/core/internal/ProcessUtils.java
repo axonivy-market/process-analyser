@@ -76,6 +76,10 @@ public class ProcessUtils {
     return Join.class.isInstance(element);
   }
 
+  public static boolean isSubProcessCallInstance(Object element) {
+    return SubProcessCall.class.isInstance(element);
+  }
+
   public static List<ProcessElement> getNestedProcessElementsFromSub(Object element) {
     return switch (element) {
     case EmbeddedProcessElement embeddedElement -> embeddedElement.getEmbeddedProcess().getProcessElements();
