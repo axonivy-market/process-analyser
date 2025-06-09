@@ -443,7 +443,7 @@ public class ProcessesMonitorUtils {
   private static void updateTaskSwitchEventIdOnPath(AlternativePath path, ProcessElement destinationElement) {
     if (ProcessUtils.isTaskSwitchInstance(destinationElement)
         && StringUtils.isBlank(path.getTaskSwitchEventIdOnPath())) {
-      path.setTaskSwitchEventIdOnPath(ProcessUtils.getElementPid(destinationElement));
+      path.setTaskSwitchEventIdOnPath(destinationElementPid);
     }
   }
 
