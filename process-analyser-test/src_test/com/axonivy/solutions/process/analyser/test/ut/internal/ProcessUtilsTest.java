@@ -1,6 +1,7 @@
 package com.axonivy.solutions.process.analyser.test.ut.internal;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -61,9 +62,8 @@ public class ProcessUtilsTest extends BaseSetup {
   @Test
   void test_getNestedProcessElementsFromSub() {
     assertThat(ProcessUtils.getNestedProcessElementsFromSub(startProcessElement)).isEmpty();
-    assertThat(ProcessUtils.getNestedProcessElementsFromSub(subProcessElement).size()).isEqualTo(3);
-    assertThat(ProcessUtils.getNestedProcessElementsFromSub(subProcessCall).size()).isEqualTo(3);
-
+    assertEquals(3, ProcessUtils.getNestedProcessElementsFromSub(subProcessElement).size());
+    assertEquals(3, ProcessUtils.getNestedProcessElementsFromSub(subProcessCall).size());
   }
 
   @Test
