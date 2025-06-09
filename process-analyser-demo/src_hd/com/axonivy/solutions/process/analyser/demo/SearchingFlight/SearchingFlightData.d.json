@@ -4,8 +4,20 @@
   "namespace" : "com.axonivy.solutions.process.analyser.demo.SearchingFlight",
   "isBusinessCaseData" : false,
   "fields" : [ {
-    "name" : "searchingFlight",
-    "type" : "com.axonivy.solutions.process.analyser.demo.data.FlightInformation",
+    "name" : "flightId",
+    "type" : "String",
+    "modifiers" : [ "PERSISTENT" ]
+  }, {
+    "name" : "selectedFrom",
+    "type" : "String",
+    "modifiers" : [ "PERSISTENT" ]
+  }, {
+    "name" : "selectedTo",
+    "type" : "String",
+    "modifiers" : [ "PERSISTENT" ]
+  }, {
+    "name" : "selectedTime",
+    "type" : "java.util.Date",
     "modifiers" : [ "PERSISTENT" ]
   } ]
 }

@@ -9,7 +9,7 @@
 	<ui:composition template="/layouts/frame-10.xhtml">
 		<ui:define name="title">SubmitPersonalInformation</ui:define>
 		<ui:define name="content">
-			<h:outputStylesheet name="/layouts/styles/booking-info.css" />
+
 			<h1>Submit your personal and payment information</h1>
 
 			<h:form id="form">
@@ -17,25 +17,21 @@
 				<p:panelGrid columns="2" layout="grid"
 					styleClass="ui-panelgrid-blank ui-fluid"
 					columnClasses="ui-g-12 ui-md-3 ui-lg-2, ui-g-12 ui-md-9 ui-lg-4, ui-g-12 ui-md-3 ui-lg-2, ui-g-12 ui-md-9 ui-lg-4">
-					<p:selectOneRadio id="isChargeLater" value="#{data.isChargeLater}"
-						layout="pageDirection">
+					<p:selectOneRadio id="isChargeLater" value="#{data.isChargeLater}" layout="pageDirection">
 						<f:selectItem itemLabel="Charge now" itemValue="false" />
 						<f:selectItem itemLabel="Charge later" itemValue="true" />
 					</p:selectOneRadio>
 				</p:panelGrid>
-				<h:panelGroup layout="block" styleClass="command-buttons">
+				<br />
+				<div class="command-btns">
 					<p:commandLink id="cancel"
 						actionListener="#{ivyWorkflowView.cancel()}" process="@this"
-						value="Cancel" styleClass="btn-cancel" />
-
+						value="Cancel" />
 					<p:commandButton id="back" actionListener="#{logic.back}"
-						value="Back" styleClass="btn-back" icon="pi pi-arrow-left" />
-
+						value="Back" styleClass="mr-2" />
 					<p:commandButton id="proceed" actionListener="#{logic.close}"
-						value="Proceed" update="form" icon="pi pi-check"
-						styleClass="btn-proceed" />
-				</h:panelGroup>
-
+						value="Proceed" update="form" icon="pi pi-check" />
+				</div>
 			</h:form>
 
 		</ui:define>

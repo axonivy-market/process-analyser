@@ -3,96 +3,78 @@ package com.axonivy.solutions.process.analyser.demo.managedbean;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.List;
-import java.util.Random;
-import java.util.Set;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import com.axonivy.solutions.process.analyser.demo.data.FlightInformation;
+import org.apache.commons.lang3.StringUtils;
 
-import ch.ivyteam.ivy.environment.Ivy;
+import com.axonivy.solutions.process.analyser.demo.data.FlightInformation;
 
 @ManagedBean
 @ViewScoped
 public class SearchingFlightBean {
-	private FlightInformation selectedFlight;
+  private String selectedFlightId;
+  private List<FlightInformation> flights = new ArrayList<>();
 
-	public FlightInformation getSelectedFlight() {
-		return selectedFlight;
-	}
+  public void searchFlights(String from, String to, Date date) {
+    if (StringUtils.isBlank(to) || StringUtils.isBlank(from) || date == null) {
+      return;
+    }
+    FlightInformation flight1 = new FlightInformation();
+    flight1.setId("F-1");
+    flight1.setPlaneRegistrationNumber("0001");
+    flight1.setStartTime(LocalTime.of(6, 0));
+    flight1.setEndTime(LocalTime.of(12, 0));
+    flight1.setDate(date);
+    flight1.setFrom(from);
+    flight1.setTo(to);
 
-	public void setSelectedFlight(FlightInformation selectedFlight) {
-		this.selectedFlight = selectedFlight;
-	}
+    FlightInformation flight2 = new FlightInformation();
+    flight2.setId("F-2");
+    flight2.setPlaneRegistrationNumber("0002");
+    flight2.setStartTime(LocalTime.of(13, 0));
+    flight2.setEndTime(LocalTime.of(19, 0));
+    flight2.setDate(date);
+    flight2.setFrom(from);
+    flight2.setTo(to);
 
-	private List<FlightInformation> flights = new ArrayList<>();
+    FlightInformation flight3 = new FlightInformation();
+    flight3.setId("F-3");
+    flight3.setPlaneRegistrationNumber("0003");
+    flight3.setStartTime(LocalTime.of(17, 0));
+    flight3.setEndTime(LocalTime.of(23, 0));
+    flight3.setDate(date);
+    flight3.setFrom(from);
+    flight3.setTo(to);
 
-	public void searchFlights(FlightInformation  flightInformation) {
-		if (flightInformation.getFrom()==null||flightInformation.getDate()==null||flightInformation.getTo()==null) {
-			return ;
-		}
-		flights = new ArrayList<>();
-		Random random = new Random();
-		int numberOfFlights = 3 + random.nextInt(8);
+    flights = new ArrayList<>();
+    flights.add(flight1);
+    flights.add(flight2);
+    flights.add(flight3);
+  }
 
-		Set<LocalTime[]> scheduledTimes = new HashSet<>();
+  public List<FlightInformation> getFlights() {
+    return flights;
+  }
 
-		for (int i = 1; i <= numberOfFlights; i++) {
-			LocalTime startTime;
-			LocalTime endTime;
-			boolean isOverlap;
+  public void setFlights(List<FlightInformation> flights) {
+    this.flights = flights;
+  }
 
-			do {
-				int startHour = random.nextInt(23);
-				int startMinute = random.nextBoolean() ? 0 : 30;
-				startTime = LocalTime.of(startHour, startMinute);
+  public String getSelectedFlightId() {
+    return selectedFlightId;
+  }
 
-				int duration = 1 + random.nextInt(6);
-				endTime = startTime.plusHours(duration);
-				if (endTime.isAfter(LocalTime.of(23, 59))) {
-					endTime = LocalTime.of(23, 59);
-				}
+  public void setSelectedFlightId(String selectedFlightId) {
+    this.selectedFlightId = selectedFlightId;
+  }
 
-				isOverlap = false;
-				for (LocalTime[] existing : scheduledTimes) {
-					if (!(endTime.isBefore(existing[0]) || startTime.isAfter(existing[1]))) {
-						isOverlap = true;
-						break;
-					}
-				}
-
-			} while (isOverlap);
-
-			scheduledTimes.add(new LocalTime[] { startTime, endTime });
-
-			FlightInformation flight = new FlightInformation();
-			flight.setId("F-" + i);
-			Ivy.log().info(flight.getId());
-			flight.setPlaneRegistrationNumber(String.format("%04d", i));
-			flight.setStartTime(startTime);
-			flight.setEndTime(endTime);
-			flight.setDate(flightInformation.getDate());
-			flight.setTo(flightInformation.getTo());
-			flight.setFrom(flightInformation.getFrom());
-
-			flights.add(flight);
-		}
-	}
-
-	public List<FlightInformation> getFlights() {
-		return flights;
-	}
-
-	public void setFlights(List<FlightInformation> flights) {
-		this.flights = flights;
-	}
-
-	public String generateLabelForFlight(FlightInformation flight) {
-		return String.format("%s: %s - %s", flight.getId(),
-				flight.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")),
-				flight.getEndTime().format(DateTimeFormatter.ofPattern("HH:mm")));
-	}
+  public String generateLabelForFlight(FlightInformation flight) {
+    return String.format("%s: %s (%s) - %s (%s)", flight.getId(),
+        flight.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")), flight.getFrom(),
+        flight.getEndTime().format(DateTimeFormatter.ofPattern("HH:mm")), flight.getTo());
+  }
 }
