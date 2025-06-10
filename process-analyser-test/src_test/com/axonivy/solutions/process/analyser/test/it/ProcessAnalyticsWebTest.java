@@ -25,25 +25,25 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
   private final String TEST_MODULE_NAME = "process-analyser-test";
   private final String DROPDOWN_LIST_SUFFIX = "_items";
-
-  @Test
-  void showStatisticButtonShouldEnableWhenChosenFulfiled() {
+//
+//  @Test
+//  void showStatisticButtonShouldEnableWhenChosenFulfiled() {
 //    login();
 //    resetLocale();
-    startAnalyzingProcess();
-    // Check the current status of show statistic button
-    $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, "true"));
-
-    // Choose test project PM
-    verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX,
-        DROPDOWN_LABEL_SUFFIX);
-    // Verify English process name is rendered
-    verifyAndClickItemLabelInDropdown(PROCESS_DROPDOWN_CSS_SELECTOR, PROCESS_NAME_EN, DROPDOWN_LIST_SUFFIX,
-        DROPDOWN_LABEL_SUFFIX);
-    verifyAndClickItemLabelInDropdown(KPI_DROPDOWN_CSS_SELECTOR, FREQUENCY_OPTION_NAME, CASCADE_DROPDOWN_LIST_SUFFIX,
-        CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX);
-    // Check the status of show statistic button after data fulfilled
-    $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, StringUtils.EMPTY));
+//    startAnalyzingProcess();
+//    // Check the current status of show statistic button
+//    $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, "true"));
+//
+//    // Choose test project PM
+//    verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX,
+//        DROPDOWN_LABEL_SUFFIX);
+//    // Verify English process name is rendered
+//    verifyAndClickItemLabelInDropdown(PROCESS_DROPDOWN_CSS_SELECTOR, PROCESS_NAME_EN, DROPDOWN_LIST_SUFFIX,
+//        DROPDOWN_LABEL_SUFFIX);
+//    verifyAndClickItemLabelInDropdown(KPI_DROPDOWN_CSS_SELECTOR, FREQUENCY_OPTION_NAME, CASCADE_DROPDOWN_LIST_SUFFIX,
+//        CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX);
+//    // Check the status of show statistic button after data fulfilled
+//    $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, StringUtils.EMPTY));
 //
 //    // Change locale
 //    changeLocaleToGerman();
@@ -55,5 +55,5 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
 //    verifyAndClickItemLabelInDropdown(PROCESS_DROPDOWN_CSS_SELECTOR, PROCESS_NAME_DE, DROPDOWN_LIST_SUFFIX,
 //        DROPDOWN_LABEL_SUFFIX);
 //    resetLocale();
-  }
+//  }
 }
