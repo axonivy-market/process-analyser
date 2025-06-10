@@ -37,8 +37,8 @@ public class BaseSetup {
   protected static List<SequenceFlow> testSequenceFlows;
   protected static ProcessElement subProcessElement;
   protected static ProcessElement subProcessCall;
-//  protected static String outerFlowPid;
-//  protected static ProcessElement embeddedStart;
+  protected static String outerFlowPid;
+  protected static ProcessElement embeddedStart;
 
 
   protected static void prepareData() {
