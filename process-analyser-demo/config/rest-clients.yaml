@@ -2,6 +2,6 @@
 RestClients:
   SampleRestClient:
     UUID: 4a4f321f-73ae-4da3-be66-e35cf38b0b50
-    Url: ${ivy.var.com.axonivy.solutions.process-analyser.demo.restUrl}
+    Url: ${ivy.var.com.axonivy.solutions.processAnalyser.demo.restUrl}
     Features:
     - ch.ivyteam.ivy.rest.client.mapper.JsonFeature
