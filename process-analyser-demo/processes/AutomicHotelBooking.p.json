@@ -10,6 +10,10 @@
       "name" : "Hotel Booking (Automatic)",
       "config" : {
         "signature" : "HotelBooking",
+        "request" : {
+          "name" : "<%=ivy.cms.co(\"/Processes/Process/AutomicHotelBooking/name\")%>",
+          "description" : "<%=ivy.cms.co(\"/Processes/Process/AutomicHotelBooking/description\")%>"
+        },
         "case" : {
           "attachToBusinessCase" : false
         }
