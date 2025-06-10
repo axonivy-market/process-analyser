@@ -78,7 +78,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     List<ICase> cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(
       ProcessUtils.getTaskStartIdFromPID(selectedPid), new TimeIntervalFilter(new Date(), new Date()), new ArrayList<>());
     List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(testProcessStart, KpiType.FREQUENCY, cases);
-    assertThat(results.size()).isEqualTo(16);
+    assertThat(results.size()).isEqualTo(28);
     assertThat(results.get(0).getLabelValue()).isEqualTo("0");
   }
 

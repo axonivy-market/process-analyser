@@ -56,7 +56,7 @@ public class ProcessUtilsTest extends BaseSetup {
 
   @Test
   void test_getProcessElementsFromIProcessWebStartable() {
-    assertThat(ProcessUtils.getProcessElementsFrom(testProcessStart).size()).isEqualTo(8);
+    assertThat(ProcessUtils.getProcessElementsFrom(testProcessStart).size()).isEqualTo(15);
   }
 
   @Test
