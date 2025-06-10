@@ -96,6 +96,6 @@ public class ProcessUtilsTest extends BaseSetup {
 
   @Test
   void test_getEmbeddedStartConnectToFlow() {
-    assertTrue(ProcessUtils.isEmbeddedStartConnectToSequenceFlow(embeddedStart, outerFlowPid));
+    assertThat(ProcessUtils.isEmbeddedStartConnectToSequenceFlow(embeddedStart, outerFlowPid)).isTrue();
   }
 }
