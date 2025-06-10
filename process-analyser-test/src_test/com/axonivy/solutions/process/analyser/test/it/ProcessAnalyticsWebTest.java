@@ -54,5 +54,6 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     // Verify German process name is rendered
     verifyAndClickItemLabelInDropdown(PROCESS_DROPDOWN_CSS_SELECTOR, PROCESS_NAME_DE, DROPDOWN_LIST_SUFFIX,
         DROPDOWN_LABEL_SUFFIX);
+    resetLocale();
   }
 }
