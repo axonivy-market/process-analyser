@@ -2,6 +2,7 @@ package com.axonivy.solutions.process.analyser.test.ut.internal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -91,5 +92,10 @@ public class ProcessUtilsTest extends BaseSetup {
   void test_getSelectedProcessFilePath() {
     assertThat(ProcessUtils.getSelectedProcessFilePath(SELECTED_STARTABLE_ID, SELECTED_MODULE_URL, TEST_APPLICATION_NAME))
         .isEqualTo(SELECTED_STARTABLE_ID);
+  }
+
+  @Test
+  void test_getEmbeddedStartConnectToFlow() {
+    assertTrue(ProcessUtils.isEmbeddedStartConnectToSequenceFlow(embeddedStart, outerFlowPid));
   }
 }
