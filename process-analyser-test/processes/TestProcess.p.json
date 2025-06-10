@@ -10,6 +10,9 @@
       "name" : "test",
       "config" : {
         "signature" : "test",
+        "request" : {
+          "name" : "Test process"
+        },
         "case" : {
           "attachToBusinessCase" : false
         }
