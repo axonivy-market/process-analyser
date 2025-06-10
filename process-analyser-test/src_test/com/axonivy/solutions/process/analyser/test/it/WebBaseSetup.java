@@ -10,10 +10,6 @@ import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.apache.commons.lang3.StringUtils;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.axonivy.ivy.webtest.engine.EngineUrl;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
@@ -30,30 +26,6 @@ public class WebBaseSetup {
 
   protected void openProfilePage() {
     open(EngineUrl.base() + "/dev-workflow-ui/faces/profile.xhtml");
-  }
-
-  protected void login() {
-    open(EngineUrl.createProcessUrl(LOGIN_URL));
-  }
-
-  protected void changeLocaleToGerman() {
-    open(EngineUrl.createProcessUrl(CHANGE_LANGUAGE_LOCALE + Locale.GERMAN.getLanguage()));
-  }
-
-  protected void resetLocale() {
-    open(EngineUrl.createProcessUrl(CHANGE_LANGUAGE_LOCALE + Locale.ENGLISH.getLanguage()));
-  }
-
-  protected void login() {
-    open(EngineUrl.createProcessUrl(LOGIN_URL));
-  }
-
-  protected void changeLocaleToGerman() {
-    open(EngineUrl.createProcessUrl(CHANGE_LANGUAGE_LOCALE + Locale.GERMAN.getLanguage()));
-  }
-
-  protected void resetLocale() {
-    open(EngineUrl.createProcessUrl(CHANGE_LANGUAGE_LOCALE + Locale.ENGLISH.getLanguage()));
   }
 
   protected void login() {
