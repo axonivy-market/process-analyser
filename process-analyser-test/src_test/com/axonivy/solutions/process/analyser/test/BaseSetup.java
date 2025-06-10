@@ -38,8 +38,8 @@ public class BaseSetup {
     testProcessStart = (IProcessWebStartable) ProcessUtils.getAllProcesses().stream()
         .filter(start -> StringUtils.contains(start.getName(), TEST_PROCESS_NAME)).findAny().orElse(null);
     testProcessElements = ProcessUtils.getProcessElementsFrom(testProcessStart);
-    subProcessElement = testProcessElements.stream().filter(ProcessUtils::isEmbeddedElementInstance).findAny().get();
-    subProcessCall = testProcessElements.stream().filter(ProcessUtils::isSubProcessCallInstance).findAny().get();
+//    subProcessElement = testProcessElements.stream().filter(ProcessUtils::isEmbeddedElementInstance).findAny().get();
+//    subProcessCall = testProcessElements.stream().filter(ProcessUtils::isSubProcessCallInstance).findAny().get();
     testSequenceFlows = ProcessUtils.getSequenceFlowsFrom(testProcessElements);
     startProcessElement = testProcessElements.stream()
         .filter(element -> StringUtils.contains(element.getPid().toString(), TEST_PROCESS_ELEMENT_START_PID)).findAny()
