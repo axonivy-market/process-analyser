@@ -51,7 +51,7 @@ public class ProcessUtilsTest extends BaseSetup {
   void test_getAllProcesses() {
     var results = ProcessUtils.getAllProcesses();
     assertThat(results).isNotEmpty();
-    assertThat(results.size()).isEqualTo(1);
+    assertThat(results.size()).isEqualTo(3);
   }
 
   @Test
@@ -62,8 +62,8 @@ public class ProcessUtilsTest extends BaseSetup {
   @Test
   void test_getNestedProcessElementsFromSub() {
     assertThat(ProcessUtils.getNestedProcessElementsFromSub(startProcessElement)).isEmpty();
-//    assertEquals(3, ProcessUtils.getNestedProcessElementsFromSub(subProcessElement).size());
-//    assertEquals(3, ProcessUtils.getNestedProcessElementsFromSub(subProcessCall).size());
+    assertEquals(3, ProcessUtils.getNestedProcessElementsFromSub(subProcessElement).size());
+    assertEquals(3, ProcessUtils.getNestedProcessElementsFromSub(subProcessCall).size());
   }
 
   @Test
