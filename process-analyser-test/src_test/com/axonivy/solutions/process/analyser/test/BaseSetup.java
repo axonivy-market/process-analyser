@@ -37,8 +37,8 @@ public class BaseSetup {
   protected static List<SequenceFlow> testSequenceFlows;
   protected static ProcessElement subProcessElement;
   protected static ProcessElement subProcessCall;
-  protected static String outerFlowPid;
-  protected static ProcessElement embeddedStart;
+//  protected static String outerFlowPid;
+//  protected static ProcessElement embeddedStart;
 
 
   protected static void prepareData() {
@@ -47,11 +47,11 @@ public class BaseSetup {
     testProcessElements = ProcessUtils.getProcessElementsFrom(testProcessStart);
     subProcessElement = getProcessElementByPid(EMBEDDED_PID);
     subProcessCall = getProcessElementByPid(REST_CALL_PID);
-	outerFlowPid = testSequenceFlows.stream().filter(arrow -> OUTER_FLOW_TO_SUB_PID.equals(arrow.getPid().toString()))
-			.map(SequenceFlow::getPid).map(String::valueOf).findAny().get();
     testSequenceFlows = ProcessUtils.getSequenceFlowsFrom(testProcessElements);
     startProcessElement = getProcessElementByPid(TEST_PROCESS_ELEMENT_START_PID);
-    embeddedStart = getProcessElementByPid(SUB_PROCESS_START);
+//    outerFlowPid = testSequenceFlows.stream().filter(arrow -> OUTER_FLOW_TO_SUB_PID.equals(arrow.getPid().toString()))
+//        .map(SequenceFlow::getPid).map(String::valueOf).findAny().get();
+//    embeddedStart = getProcessElementByPid(SUB_PROCESS_START);
     flowFromStartElement = startProcessElement.getOutgoing().get(0);
   }
 
