@@ -50,7 +50,7 @@ public class BaseSetup {
     testSequenceFlows = ProcessUtils.getSequenceFlowsFrom(testProcessElements);
     startProcessElement = getProcessElementByPid(TEST_PROCESS_ELEMENT_START_PID);
     outerFlowPid = testSequenceFlows.stream().filter(arrow -> OUTER_FLOW_TO_SUB_PID.equals(arrow.getPid().toString()))
-        .map(SequenceFlow::getPid).map(String::valueOf).findAny().get();
+        .map(flow -> flow.getPid().toString()).findAny().get();
     embeddedStart = getProcessElementByPid(SUB_PROCESS_START);
     flowFromStartElement = startProcessElement.getOutgoing().get(0);
   }

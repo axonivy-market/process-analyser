@@ -94,8 +94,8 @@ public class ProcessUtilsTest extends BaseSetup {
         .isEqualTo(SELECTED_STARTABLE_ID);
   }
 
-//  @Test
-//  void test_getEmbeddedStartConnectToFlow() {
-//    assertTrue(ProcessUtils.isEmbeddedStartConnectToSequenceFlow(embeddedStart, outerFlowPid));
-//  }
+  @Test
+  void test_getEmbeddedStartConnectToFlow() {
+    assertTrue(ProcessUtils.isEmbeddedStartConnectToSequenceFlow(embeddedStart, outerFlowPid));
+  }
 }
