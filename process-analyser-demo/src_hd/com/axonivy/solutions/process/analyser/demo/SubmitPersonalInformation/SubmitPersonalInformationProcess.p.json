@@ -8,22 +8,28 @@
   "elements" : [ {
       "id" : "f0",
       "type" : "HtmlDialogStart",
-      "name" : "start()",
+      "name" : "start(FlightInformation)",
       "config" : {
         "signature" : "start",
         "input" : {
+          "params" : [
+            { "name" : "flightBooking", "type" : "com.axonivy.solutions.process.analyser.demo.data.FlightInformation", "desc" : "" }
+          ],
           "map" : {
+            "out.flightInformation" : "param.flightBooking",
             "out.isChargeLater" : "false"
           }
         },
         "result" : {
           "params" : [
             { "name" : "isChargeLater", "type" : "Boolean", "desc" : "" },
-            { "name" : "isBackToSearchPage", "type" : "Boolean", "desc" : "" }
+            { "name" : "isBackToSearchPage", "type" : "Boolean", "desc" : "" },
+            { "name" : "flightInformation", "type" : "com.axonivy.solutions.process.analyser.demo.data.FlightInformation", "desc" : "" }
           ],
           "map" : {
             "result.isChargeLater" : "in.isChargeLater",
-            "result.isBackToSearchPage" : "in.isBackToSearchPage"
+            "result.isBackToSearchPage" : "in.isBackToSearchPage",
+            "result.flightInformation" : "in.flightInformation"
           }
         },
         "guid" : "18F562EC8C5909DC"

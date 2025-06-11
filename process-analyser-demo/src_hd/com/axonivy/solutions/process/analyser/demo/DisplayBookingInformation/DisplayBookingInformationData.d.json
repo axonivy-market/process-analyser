@@ -7,5 +7,9 @@
     "name" : "isBackToSubmitInformationPage",
     "type" : "Boolean",
     "modifiers" : [ "PERSISTENT" ]
+  }, {
+    "name" : "flightBooking",
+    "type" : "com.axonivy.solutions.process.analyser.demo.data.FlightInformation",
+    "modifiers" : [ "PERSISTENT" ]
   } ]
 }
