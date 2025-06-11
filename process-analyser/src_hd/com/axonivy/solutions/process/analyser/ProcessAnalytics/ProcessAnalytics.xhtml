@@ -98,6 +98,34 @@
             width="100%" height="400" onload="loadIframe(false)"/>
         </h:panelGroup>
         <br />
+
+        <p:outputPanel id="color-bar-segment">
+          <h:panelGroup layout="block" styleClass="duration-container">
+            <div>
+              <h:outputText value="&lt; Low duration" escape="false" styleClass="duration-label left" />
+              <h:outputText value="High duration &gt;" escape="false" styleClass="duration-label right" />
+            </div>
+            <div class="duration-bar">
+              <ui:repeat value="#{processesAnalyticsBean.colorSegments}" var="color" varStatus="status">
+                <p:commandLink actionListener="#{processesAnalyticsBean.onSegmentClick}" update="process-analytics-form:colorPickerPanel"
+                  styleClass="segment" style="background-color: #{color};" oncomplete="PF('colorPickerWidget').show();">
+                  <f:attribute name="segmentIndex" value="#{status.index}" />
+                </p:commandLink>
+              </ui:repeat>
+            </div>
+          </h:panelGroup>
+        </p:outputPanel>
+
+        <p:outputPanel id="colorPickerPanel">
+          <p:colorPicker id="inline" mode="inline" value="#{processesAnalyticsBean.selectedColor}" style="margin-top: 1em;"
+            rendered="#{processesAnalyticsBean.selectedIndex >= 0}" styleClass="no-preview" widgetVar="colorPickerWidget" theme="large"
+            format="rgb" clearButton="true" closeButton="true" alpha="false">
+            <p:ajax event="change" listener="#{processesAnalyticsBean.onColorChange}" update="process-analytics-form:color-bar-segment" />
+          </p:colorPicker>
+        </p:outputPanel>
+
+        <hr />
+
         <h:panelGroup id="arrow-statistics" layout="block">
           <p:dataTable var="node" styleClass="grid" id="node"
             value="#{processesAnalyticsBean.renderNodesForKPIType(processesAnalyticsBean.nodes)}" scrollable="true"

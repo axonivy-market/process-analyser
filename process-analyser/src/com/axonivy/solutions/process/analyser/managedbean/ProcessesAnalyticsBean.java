@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
@@ -14,6 +16,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 
@@ -68,6 +71,9 @@ public class ProcessesAnalyticsBean {
   private double minValue;
   private double maxValue;
   private List<SelectItem> kpiTypes;
+  private List<String> colorSegments;
+  private String selectedColor;
+  private int selectedIndex = -1;
 
   @PostConstruct
   private void init() {
@@ -82,6 +88,22 @@ public class ProcessesAnalyticsBean {
     selectedCustomFilters = new ArrayList<>();
     selectedCustomFieldNames = new ArrayList<>();
     initKpiTypes();
+    generateSegments();
+  }
+
+  public void generateSegments() {
+    colorSegments = new ArrayList<>();
+    String[] baseColors =
+        {"#FFF7EA", "#FFEDCD", "#FFDEA5", "#FFCE7B", "#FFC054", "#FFB22E", "#D99727", "#B57E21", "#91651A", "#735015"};
+
+    for (String color : baseColors) {
+      colorSegments.add(color);
+    }
+  }
+
+  public void onSegmentClick(ActionEvent event) {
+    selectedIndex = (Integer) event.getComponent().getAttributes().get("segmentIndex");
+    selectedColor = colorSegments.get(selectedIndex);
   }
 
   private void initKpiTypes() {
@@ -246,7 +268,8 @@ public class ProcessesAnalyticsBean {
   }
 
   private void updateBpmnIframeSourceUrl() {
-    bpmnIframeSourceUrl = ProcessUtils.buildBpmnIFrameSourceUrl(getSelectedIProcessWebStartable().getId(), selectedModule);
+    bpmnIframeSourceUrl =
+        ProcessUtils.buildBpmnIFrameSourceUrl(getSelectedIProcessWebStartable().getId(), selectedModule);
   }
 
   private void loadNodes() {
@@ -285,7 +308,7 @@ public class ProcessesAnalyticsBean {
         ? String.format(ProcessAnalyticsConstants.ANALYSIS_EXCEL_FILE_PATTERN, formattedKpiTypeName, selectedProcess)
         : StringUtils.EMPTY;
   }
-  
+
   public List<Node> renderNodesForKPIType(List<Node> nodes) {
     if (this.selectedKpiType != null && this.selectedKpiType.isDescendantOf(KpiType.DURATION)) {
       List<String> avaibleTaskIds =
@@ -411,5 +434,60 @@ public class ProcessesAnalyticsBean {
 
   public List<SelectItem> getKpiTypes() {
     return kpiTypes;
+  }
+
+  public void onColorChange() {
+    this.colorSegments = generateGradientFromRgb(selectedColor, 10);
+  }
+
+  public List<String> generateGradientFromRgb(String rgbColor, int steps) {
+    List<String> gradient = new ArrayList<>();
+
+    // rgb(123, 45, 67)
+    Pattern pattern = Pattern.compile("rgb\\s*\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)");
+    Matcher matcher = pattern.matcher(rgbColor);
+
+    if (!matcher.matches()) {
+      throw new IllegalArgumentException("Invalid RGB format: " + rgbColor);
+    }
+
+    int r = Integer.parseInt(matcher.group(1));
+    int g = Integer.parseInt(matcher.group(2));
+    int b = Integer.parseInt(matcher.group(3));
+
+    for (int i = 0; i < steps; i++) {
+      float factor = 1.4f - (i * (0.8f / (steps - 1))); // from 1.4 to 0.6
+
+      int nr = Math.min(255, Math.max(0, Math.round(r * factor)));
+      int ng = Math.min(255, Math.max(0, Math.round(g * factor)));
+      int nb = Math.min(255, Math.max(0, Math.round(b * factor)));
+
+      gradient.add(String.format("rgb(%d, %d, %d)", nr, ng, nb));
+    }
+    return gradient;
+  }
+
+  public List<String> getColorSegments() {
+    return colorSegments;
+  }
+
+  public void setColorSegments(List<String> colorSegments) {
+    this.colorSegments = colorSegments;
+  }
+
+  public String getSelectedColor() {
+    return selectedColor;
+  }
+
+  public void setSelectedColor(String selectedColor) {
+    this.selectedColor = selectedColor;
+  }
+
+  public int getSelectedIndex() {
+    return selectedIndex;
+  }
+
+  public void setSelectedIndex(int selectedIndex) {
+    this.selectedIndex = selectedIndex;
   }
 }
