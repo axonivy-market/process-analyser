@@ -30,9 +30,10 @@ public class SearchingFlightBean {
 
 	private List<FlightInformation> flights = new ArrayList<>();
 
-	public void searchFlights(FlightInformation  flightInformation) {
-		if (flightInformation.getFrom()==null||flightInformation.getDate()==null||flightInformation.getTo()==null) {
-			return ;
+	public void searchFlights(FlightInformation flightInformation) {
+		if (flightInformation.getFrom() == "" || flightInformation.getDate() == null
+				|| flightInformation.getTo() == "") {
+			return;
 		}
 		flights = new ArrayList<>();
 		Random random = new Random();

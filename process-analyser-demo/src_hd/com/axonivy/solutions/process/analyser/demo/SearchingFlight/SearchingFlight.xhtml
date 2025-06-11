@@ -31,7 +31,6 @@
 				<p:commandButton
 					actionListener="#{searchingFlightBean.searchFlights(data.searchingFlight)}"
 					value="Search" update="form" />
-				<br />
 
 				<h:panelGroup
 					rendered="#{not searchingFlightBean.flights.isEmpty()}">
@@ -45,8 +44,6 @@
 					</p:selectOneRadio>
 				</h:panelGroup>
 
-				<br />
-
 				<p:panelGrid columns="2" styleClass="command-buttons">
 					<p:commandLink id="cancel" value="Cancel"
 						actionListener="#{ivyWorkflowView.cancel()}" process="@this"
@@ -54,7 +51,8 @@
 
 					<p:commandButton id="proceed" value="Proceed" icon="pi pi-check"
 						actionListener="#{logic.updateInformation(searchingFlightBean.selectedFlight)}"
-						update="form" styleClass="btn-proceed" />
+						update="form" styleClass="btn-proceed"
+						disabled="#{data.searchingFlight.date == null}" />
 				</p:panelGrid>
 
 			</h:form>

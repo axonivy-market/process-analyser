@@ -154,9 +154,6 @@
           "config" : {
             "task" : {
               "name" : "Submit Personal and Payment Info"
-            },
-            "output" : {
-              "code" : "ivy.log.info(\"param: {0}\",out.flightInformation.toString());"
             }
           },
           "visual" : {
@@ -184,8 +181,7 @@
               "map" : {
                 "out" : "in",
                 "out.flightInformation" : "result.flightInformation"
-              },
-              "code" : "ivy.log.info(out.flightInformation.date);"
+              }
             }
           },
           "visual" : {
