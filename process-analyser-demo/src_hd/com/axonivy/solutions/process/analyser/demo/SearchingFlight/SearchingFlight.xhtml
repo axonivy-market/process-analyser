@@ -52,7 +52,7 @@
 					<p:commandButton id="proceed" value="Proceed" icon="pi pi-check"
 						actionListener="#{logic.updateInformation(searchingFlightBean.selectedFlight)}"
 						update="form" styleClass="btn-proceed"
-						disabled="#{data.searchingFlight.date == null}" />
+						 disabled="#{searchingFlightBean.selectedFlight == null}"/>
 				</p:panelGrid>
 
 			</h:form>
