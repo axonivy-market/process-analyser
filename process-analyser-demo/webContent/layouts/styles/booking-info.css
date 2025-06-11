@@ -31,8 +31,9 @@
 
 .btn-cancel {
     color: #2563eb;
-    background: none;
+    background-color: white;
     border: none;
+    align-content:center;
 }
 
 .btn-back {
