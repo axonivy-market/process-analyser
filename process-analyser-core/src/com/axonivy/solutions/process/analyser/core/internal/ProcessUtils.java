@@ -24,7 +24,9 @@ import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.EmbeddedProcessElement;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.element.activity.SubProcessCall;
+import ch.ivyteam.ivy.process.model.element.event.end.CallSubEnd;
 import ch.ivyteam.ivy.process.model.element.event.intermediate.TaskSwitchEvent;
+import ch.ivyteam.ivy.process.model.element.event.start.CallSubStart;
 import ch.ivyteam.ivy.process.model.element.event.start.EmbeddedStart;
 import ch.ivyteam.ivy.process.model.element.event.start.RequestStart;
 import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
@@ -86,6 +88,16 @@ public class ProcessUtils {
       getProcessElementsFromCallableSubProcessPath(subProcessCall.getCallTarget().getProcessName().getName());
     default -> Collections.emptyList();
     };
+  }
+
+  public static ProcessElement getStartElementFromSubProcessCall(Object element) {
+    if (!(element instanceof SubProcessCall subProcessCall)) {
+      return null;
+    }
+    String targetName = subProcessCall.getCallTarget().getSignature().getName();
+    return getNestedProcessElementsFromSub(element).stream().filter(CallSubStart.class::isInstance)
+        .map(CallSubStart.class::cast).filter(start -> StringUtils.equals(start.getSignature().getName(), targetName))
+        .findAny().orElse(null);
   }
 
   private static List<ProcessElement> getProcessElementsFromCallableSubProcessPath(String subProcessPath) {
@@ -195,6 +207,7 @@ public class ProcessUtils {
     case Alternative alternative -> true;
     case Join join -> false;
     case EmbeddedProcessElement sub -> false;
+    case CallSubEnd end -> true;
     default -> isProcessPathEndElement(processElement) || isElementWithMultipleIncomingFlow(processElement);
     };
   }
@@ -231,8 +244,8 @@ public class ProcessUtils {
   }
 
   public static ProcessElement getEmbeddedStartConnectToFlow(ProcessElement processElement, String outerFlowId) {
-    if (processElement instanceof EmbeddedProcessElement embeddedElement) {
-      processElement = embeddedElement.getEmbeddedProcess().getProcessElements().stream()
+    if (isEmbeddedElementInstance(processElement)) {
+      processElement = getNestedProcessElementsFromSub(processElement).stream()
           .filter(element -> isEmbeddedStartConnectToSequenceFlow(element, outerFlowId)).findAny().orElse(null);
     }
     return processElement;
