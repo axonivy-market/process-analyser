@@ -102,10 +102,10 @@ public class ProcessUtils {
   }
 
   public static ProcessElement getStartElementFromSubProcessCall(Object element) {
-    if (!(element instanceof SubProcessCall subProcessCall)) {
+    if (!SubProcessCall.class.isInstance(element)) {
       return null;
     }
-    String targetName = subProcessCall.getCallTarget().getSignature().getName();
+    String targetName = SubProcessCall.class.cast(element).getCallTarget().getSignature().getName();
     return getNestedProcessElementsFromSub(element).stream().filter(CallSubStart.class::isInstance)
         .map(CallSubStart.class::cast).filter(start -> StringUtils.equals(start.getSignature().getName(), targetName))
         .findAny().orElse(null);
