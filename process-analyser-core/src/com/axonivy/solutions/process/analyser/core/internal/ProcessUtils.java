@@ -83,7 +83,8 @@ public class ProcessUtils {
 
   public static List<ProcessElement> getNestedProcessElementsFromSub(Object element) {
     return switch (element) {
-    case EmbeddedProcessElement embeddedElement -> getEmbbedProcessElements(embeddedElement);
+    case EmbeddedProcessElement embeddedElement -> getEmbbedProcessElements(embeddedElement).stream()
+        .flatMap(e -> Stream.concat(Stream.of(e), getEmbbedProcessElements(e).stream())).collect(Collectors.toList());
     case SubProcessCall subProcessCall ->
       getProcessElementsFromCallableSubProcessPath(subProcessCall.getCallTarget().getProcessName().getName());
     default -> Collections.emptyList();
@@ -93,10 +94,11 @@ public class ProcessUtils {
   /*
    * Get nested process elements inside the sub (we only support 2 nested layer)
    */
-  public static List<ProcessElement> getEmbbedProcessElements(EmbeddedProcessElement embeddedElement) {
-    return getNestedProcessElementsFromSub(embeddedElement).stream()
-        .flatMap(e -> Stream.concat(Stream.of(e), getNestedProcessElementsFromSub(e).stream()))
-        .collect(Collectors.toList());
+  public static List<ProcessElement> getEmbbedProcessElements(ProcessElement processElement) {
+    if (processElement instanceof EmbeddedProcessElement embeddedElement) {
+      return embeddedElement.getEmbeddedProcess().getProcessElements();
+    }
+    return Collections.emptyList();
   }
 
   public static ProcessElement getStartElementFromSubProcessCall(Object element) {
