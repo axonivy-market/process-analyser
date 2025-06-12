@@ -2,6 +2,7 @@ package com.axonivy.solutions.process.analyser.test.ut.internal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -97,5 +98,11 @@ public class ProcessUtilsTest extends BaseSetup {
   @Test
   void test_getEmbeddedStartConnectToFlow() {
     assertTrue(ProcessUtils.isEmbeddedStartConnectToSequenceFlow(embeddedStart, outerFlowPid));
+  }
+
+  @Test
+  void test_getStartElementFromSubProcessCall() {
+    assertNotNull(ProcessUtils.getStartElementFromSubProcessCall(subProcessCall),
+        "Sub process call should be filter from test process");
   }
 }

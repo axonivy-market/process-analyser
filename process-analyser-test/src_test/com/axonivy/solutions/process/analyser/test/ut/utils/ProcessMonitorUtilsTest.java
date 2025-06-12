@@ -17,8 +17,8 @@ import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
-import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 import com.axonivy.solutions.process.analyser.test.BaseSetup;
+import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 
 import ch.ivyteam.ivy.environment.IvyTest;
 import ch.ivyteam.ivy.workflow.ICase;
@@ -115,7 +115,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
   void test_updateNodeWiwthDefinedFrequency() {
     Node mockNode = new Node();
     int mockValue = 9;
-    ProcessesMonitorUtils.updateNodeWiwthDefinedFrequency(mockValue, mockNode);
+    ProcessesMonitorUtils.updateNodeWithDefinedFrequency(mockValue, mockNode);
     assertThat(mockNode.getLabelValue()).isEqualTo(String.valueOf(mockValue));
     assertThat(mockNode.getFrequency()).isEqualTo(mockValue);
     assertThat(mockNode.getRelativeValue()).isEqualTo(1);
