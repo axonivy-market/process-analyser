@@ -11,7 +11,7 @@
       "config" : {
         "signature" : "test",
         "request" : {
-          "name" : "Test process"
+          "name" : "<%=ivy.cms.co(\"/Processes/Process/TestProcess/name\")%>"
         },
         "case" : {
           "attachToBusinessCase" : false
