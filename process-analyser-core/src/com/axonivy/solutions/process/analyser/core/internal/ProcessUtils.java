@@ -102,7 +102,7 @@ public class ProcessUtils {
   }
 
   public static ProcessElement getStartElementFromSubProcessCall(Object element) {
-    if (!SubProcessCall.class.isInstance(element)) {
+    if (!isSubProcessCallInstance(element)) {
       return null;
     }
     String targetName = SubProcessCall.class.cast(element).getCallTarget().getSignature().getName();
