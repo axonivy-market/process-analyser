@@ -231,11 +231,6 @@ public class ProcessesMonitorUtils {
     return sorted.size() % 2 == 0 ? (sorted.get(middle - 1) + sorted.get(middle)) / 2.0f : sorted.get(middle);
   }
 
-  /**
-   * . If
-   * not, we need to check which path from alternative is running to update
-   * frequency for elements belong to its.
-   **/
   public static void updateFrequencyForNodes(List<Node> results, List<ProcessElement> processElements,
       List<ICase> cases) {
     List<ProcessElement> branchSwitchingElement = ProcessUtils.getAlterNativesWithMultiOutgoings(processElements);
