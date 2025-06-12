@@ -119,7 +119,7 @@
         <p:outputPanel id="colorPickerPanel">
           <p:colorPicker id="inline" mode="inline" value="#{processesAnalyticsBean.selectedColor}" style="margin-top: 1em;"
             rendered="#{processesAnalyticsBean.selectedIndex >= 0}" styleClass="no-preview" widgetVar="colorPickerWidget" theme="large"
-            format="rgb" clearButton="true" closeButton="true" alpha="false">
+            format="rgb" alpha="false">
             <p:ajax event="change" listener="#{processesAnalyticsBean.onColorChange}" update="process-analytics-form:color-bar-segment" />
           </p:colorPicker>
         </p:outputPanel>

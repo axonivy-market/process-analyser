@@ -290,6 +290,7 @@ public class ProcessesAnalyticsBean {
         analyzedNode = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(process, selectedKpiType, cases);
         processMiningData.setNodes(analyzedNode);
         processMiningData.setNumberOfInstances(cases.size());
+        processMiningData.setColors(colorSegments);
       }
     }
     nodes = analyzedNode;
@@ -437,7 +438,8 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onColorChange() {
-    this.colorSegments = generateGradientFromRgb(selectedColor, 10);
+    colorSegments = generateGradientFromRgb(selectedColor, 10);
+    updateDiagramAndStatistic();
   }
 
   public List<String> generateGradientFromRgb(String rgbColor, int steps) {
