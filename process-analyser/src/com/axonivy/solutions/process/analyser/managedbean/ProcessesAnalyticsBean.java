@@ -50,11 +50,13 @@ import ch.ivyteam.ivy.workflow.start.IWebStartable;
 @ManagedBean
 @ViewScoped
 public class ProcessesAnalyticsBean {
+  private static final String SUB_PROCESS_CALL_PID_PARAM_NAME = "subProcessCallPid";
   private Map<String, List<IProcessWebStartable>> processesMap = new HashMap<>();
   private String selectedProcess;
   private String selectedModule;
   private KpiType selectedKpiType;
   private List<Node> nodes;
+  private List<Node> analyzedNode;
   private TimeIntervalFilter timeIntervalFilter;
   private ProcessMiningData processMiningData;
   private String selectedPid;
@@ -82,6 +84,18 @@ public class ProcessesAnalyticsBean {
     selectedCustomFilters = new ArrayList<>();
     selectedCustomFieldNames = new ArrayList<>();
     initKpiTypes();
+  }
+
+  public void updateDataTable() {
+    String subProcessCallPid = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
+        .get(SUB_PROCESS_CALL_PID_PARAM_NAME);
+    if (StringUtils.isNotBlank(subProcessCallPid)) {
+      updateDataTableWithNodesPrefix(subProcessCallPid);
+    }
+  }
+
+  private void updateDataTableWithNodesPrefix(String prefix) {
+    nodes = analyzedNode.stream().filter(node -> node.getId().startsWith(prefix)).toList();
   }
 
   private void initKpiTypes() {
@@ -250,10 +264,10 @@ public class ProcessesAnalyticsBean {
   }
 
   private void loadNodes() {
-    List<Node> analyzedNode = new ArrayList<>();
+    analyzedNode = new ArrayList<>();
     var process = getSelectedIProcessWebStartable();
+    selectedPid = process.pid().toString();
     if (StringUtils.isNoneBlank(selectedProcess, selectedModule) && ObjectUtils.allNotNull(selectedKpiType, process)) {
-      selectedPid = process.pid().toString();
       Long taskStartId = ProcessUtils.getTaskStartIdFromPID(selectedPid);
       List<ICase> cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId,
           timeIntervalFilter, selectedCustomFilters);
@@ -269,7 +283,7 @@ public class ProcessesAnalyticsBean {
         processMiningData.setNumberOfInstances(cases.size());
       }
     }
-    nodes = analyzedNode;
+    updateDataTableWithNodesPrefix(ProcessUtils.getProcessPidFromElement(selectedPid));
   }
 
   private void updateProcessMiningDataJson() {

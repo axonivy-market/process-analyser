@@ -238,6 +238,7 @@
             }, {
               "id" : "S10-S10-f3",
               "type" : "Script",
+              "name" : "process payment",
               "visual" : {
                 "at" : { "x" : 352, "y" : 160 }
               },

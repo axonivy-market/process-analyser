@@ -26,21 +26,6 @@
         "labelOffset" : { "x" : 13, "y" : 33 }
       }
     }, {
-      "id" : "f3",
-      "type" : "RestClientCall",
-      "name" : "Visa card validation",
-      "config" : {
-        "target" : {
-          "clientId" : "4a4f321f-73ae-4da3-be66-e35cf38b0b50"
-        }
-      },
-      "visual" : {
-        "at" : { "x" : 320, "y" : 64 }
-      },
-      "connect" : [
-        { "id" : "f4", "to" : "f1", "color" : "default" }
-      ]
-    }, {
       "id" : "f5",
       "type" : "TaskSwitchEvent",
       "name" : "Check CVR number",
@@ -58,7 +43,54 @@
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
-        { "id" : "f6", "to" : "f3", "color" : "default" }
+        { "id" : "f7", "to" : "S10", "color" : "default" }
+      ]
+    }, {
+      "id" : "S10",
+      "type" : "EmbeddedProcess",
+      "name" : "validation step",
+      "elements" : [ {
+          "id" : "S10-f3",
+          "type" : "RestClientCall",
+          "name" : "Visa card validation",
+          "config" : {
+            "target" : {
+              "clientId" : "4a4f321f-73ae-4da3-be66-e35cf38b0b50"
+            }
+          },
+          "visual" : {
+            "at" : { "x" : 192, "y" : 160 }
+          },
+          "connect" : [
+            { "id" : "S10-f1", "to" : "S10-g1", "color" : "default" }
+          ]
+        }, {
+          "id" : "S10-g0",
+          "type" : "EmbeddedStart",
+          "name" : "in 1",
+          "visual" : {
+            "at" : { "x" : 64, "y" : 160 },
+            "labelOffset" : { "x" : 3, "y" : 23 }
+          },
+          "parentConnector" : "f7",
+          "connect" : [
+            { "id" : "S10-f0", "to" : "S10-f3" }
+          ]
+        }, {
+          "id" : "S10-g1",
+          "type" : "EmbeddedEnd",
+          "name" : "out 1",
+          "visual" : {
+            "at" : { "x" : 320, "y" : 160 },
+            "labelOffset" : { "x" : 3, "y" : 23 }
+          },
+          "parentConnector" : "f8"
+        } ],
+      "visual" : {
+        "at" : { "x" : 320, "y" : 64 }
+      },
+      "connect" : [
+        { "id" : "f8", "to" : "f1" }
       ]
     } ]
 }
