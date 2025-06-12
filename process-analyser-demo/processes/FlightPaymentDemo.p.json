@@ -175,30 +175,6 @@
       "type" : "EmbeddedProcess",
       "name" : "Record payment",
       "elements" : [ {
-          "id" : "S10-f9",
-          "type" : "Script",
-          "name" : "record payment",
-          "config" : {
-            "output" : {
-              "code" : [
-                "import java.util.Random;",
-                "",
-                "Random random = new Random();",
-                "ivy.case.customFields().numberField(\"Price\").set(random.nextDouble(200,5000));",
-                "",
-                "ivy.task.customFields().timestampField(\"Date\").set(new Date());"
-              ]
-            }
-          },
-          "visual" : {
-            "at" : { "x" : 192, "y" : 160 }
-          },
-          "connect" : [
-            { "id" : "S10-f2", "to" : "S10-g2", "label" : {
-                "name" : "f2"
-              } }
-          ]
-        }, {
           "id" : "S10-g0",
           "type" : "EmbeddedStart",
           "name" : "in 1",
@@ -208,7 +184,7 @@
           },
           "parentConnector" : "f18",
           "connect" : [
-            { "id" : "S10-f0", "to" : "S10-f9" }
+            { "id" : "S10-f5", "to" : "S10-S10" }
           ]
         }, {
           "id" : "S10-g1",
@@ -220,17 +196,94 @@
           },
           "parentConnector" : "f19",
           "connect" : [
-            { "id" : "S10-f1", "to" : "S10-f9", "via" : [ { "x" : 192, "y" : 64 } ] }
+            { "id" : "S10-f6", "to" : "S10-S10", "via" : [ { "x" : 272, "y" : 64 } ] }
           ]
         }, {
           "id" : "S10-g2",
           "type" : "EmbeddedEnd",
           "name" : "out 1",
           "visual" : {
-            "at" : { "x" : 320, "y" : 160 },
+            "at" : { "x" : 480, "y" : 160 },
             "labelOffset" : { "x" : 3, "y" : 23 }
           },
           "parentConnector" : "f20"
+        }, {
+          "id" : "S10-S10",
+          "type" : "EmbeddedProcess",
+          "name" : "nested sub",
+          "elements" : [ {
+              "id" : "S10-S10-f9",
+              "type" : "Script",
+              "name" : "record payment",
+              "config" : {
+                "output" : {
+                  "code" : [
+                    "import java.util.Random;",
+                    "",
+                    "Random random = new Random();",
+                    "ivy.case.customFields().numberField(\"Price\").set(random.nextDouble(200,5000));",
+                    "",
+                    "ivy.task.customFields().timestampField(\"Date\").set(new Date());"
+                  ]
+                }
+              },
+              "visual" : {
+                "at" : { "x" : 192, "y" : 160 }
+              },
+              "connect" : [
+                { "id" : "S10-S10-f2", "to" : "S10-S10-f3", "label" : {
+                    "name" : "f2"
+                  } }
+              ]
+            }, {
+              "id" : "S10-S10-f3",
+              "type" : "Script",
+              "visual" : {
+                "at" : { "x" : 352, "y" : 160 }
+              },
+              "connect" : [
+                { "id" : "S10-S10-f4", "to" : "S10-S10-g2", "color" : "default" }
+              ]
+            }, {
+              "id" : "S10-S10-g0",
+              "type" : "EmbeddedStart",
+              "name" : "in 1",
+              "visual" : {
+                "at" : { "x" : 64, "y" : 160 },
+                "labelOffset" : { "x" : 3, "y" : 23 }
+              },
+              "parentConnector" : "S10-f5",
+              "connect" : [
+                { "id" : "S10-S10-f0", "to" : "S10-S10-f9" }
+              ]
+            }, {
+              "id" : "S10-S10-g1",
+              "type" : "EmbeddedStart",
+              "name" : "in 2",
+              "visual" : {
+                "at" : { "x" : 48, "y" : 64 },
+                "labelOffset" : { "x" : 3, "y" : 23 }
+              },
+              "parentConnector" : "S10-f6",
+              "connect" : [
+                { "id" : "S10-S10-f1", "to" : "S10-S10-f9", "via" : [ { "x" : 192, "y" : 64 } ] }
+              ]
+            }, {
+              "id" : "S10-S10-g2",
+              "type" : "EmbeddedEnd",
+              "name" : "out 1",
+              "visual" : {
+                "at" : { "x" : 480, "y" : 160 },
+                "labelOffset" : { "x" : 3, "y" : 23 }
+              },
+              "parentConnector" : "S10-f7"
+            } ],
+          "visual" : {
+            "at" : { "x" : 272, "y" : 160 }
+          },
+          "connect" : [
+            { "id" : "S10-f7", "to" : "S10-g2" }
+          ]
         } ],
       "visual" : {
         "at" : { "x" : 960, "y" : 384 }

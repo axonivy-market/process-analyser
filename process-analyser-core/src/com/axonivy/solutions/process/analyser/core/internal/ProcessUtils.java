@@ -83,11 +83,20 @@ public class ProcessUtils {
 
   public static List<ProcessElement> getNestedProcessElementsFromSub(Object element) {
     return switch (element) {
-    case EmbeddedProcessElement embeddedElement -> embeddedElement.getEmbeddedProcess().getProcessElements();
+    case EmbeddedProcessElement embeddedElement -> getEmbbedProcessElements(embeddedElement);
     case SubProcessCall subProcessCall ->
       getProcessElementsFromCallableSubProcessPath(subProcessCall.getCallTarget().getProcessName().getName());
     default -> Collections.emptyList();
     };
+  }
+
+  /*
+   * Get nested process elements inside the sub (we only support 2 nested layer)
+   */
+  public static List<ProcessElement> getEmbbedProcessElements(EmbeddedProcessElement embeddedElement) {
+    return getNestedProcessElementsFromSub(embeddedElement).stream()
+        .flatMap(e -> Stream.concat(Stream.of(e), getNestedProcessElementsFromSub(e).stream()))
+        .collect(Collectors.toList());
   }
 
   public static ProcessElement getStartElementFromSubProcessCall(Object element) {
@@ -100,6 +109,12 @@ public class ProcessUtils {
         .findAny().orElse(null);
   }
 
+  /*
+   * Get nested process elements inside the call-able sub by these steps: 1) find
+   * the process path which is called inside the sub 2) find all of process element
+   * from this process 3) (Optional) find nested embedded process inside the BPMN
+   * sub (if exist)
+   */
   private static List<ProcessElement> getProcessElementsFromCallableSubProcessPath(String subProcessPath) {
     return IProcessManager.instance().getProjectDataModels().stream()
         .map(model -> model.getProcessByPath(subProcessPath)).filter(Objects::nonNull).findAny()
@@ -148,7 +163,7 @@ public class ProcessUtils {
     String pmName = process.pmv().getProcessModel().getName();
     return !(StringUtils.equals(pmName, ProcessAnalyticsConstants.PROCESS_ANALYSER_PMV_NAME)
         || StringUtils.contains(pmName, ProcessAnalyticsConstants.PORTAL_PMV_SUFFIX))
-        && process instanceof IProcessWebStartable;
+        && IProcessWebStartable.class.isInstance(process);
   }
 
   public static List<ProcessElement> getAlterNativesWithMultiOutgoings(List<ProcessElement> processElements) {
@@ -159,9 +174,28 @@ public class ProcessUtils {
 
   public static List<ProcessElement> getElementsWithMultiIncomings(List<ProcessElement> processElements) {
     return Optional.ofNullable(processElements).orElse(new ArrayList<>()).stream()
-        .filter(element -> !(isAlternativeInstance(element) && isJoinInstance(processElements))
-            && isElementWithMultipleIncomingFlow(element))
-        .collect(Collectors.toList());
+        .filter(ProcessUtils::isComplexElementWithMultiIncomings).collect(Collectors.toList());
+  }
+
+  public static List<ProcessElement> getTaskStart(List<ProcessElement> processElements) {
+    return Optional.ofNullable(processElements).orElse(new ArrayList<>()).stream()
+        .filter(ProcessUtils::isTaskStartElement).collect(Collectors.toList());
+  }
+
+  public static boolean isTaskStartElement(ProcessElement element) {
+    return switch (element) {
+    case TaskSwitchGateway taskSwitchGateway -> true;
+    case TaskSwitchEvent taskSwitchEvent -> true;
+    case RequestStart requestStart -> true;
+    default -> false;
+    };
+  }
+
+  public static boolean isComplexElementWithMultiIncomings(ProcessElement element) {
+    return switch (element) {
+    case Join join -> false;
+    default -> isElementWithMultipleIncomingFlow(element);
+    };
   }
 
   public static List<ProcessElement> getTaskSwitchEvents(List<ProcessElement> processElements) {

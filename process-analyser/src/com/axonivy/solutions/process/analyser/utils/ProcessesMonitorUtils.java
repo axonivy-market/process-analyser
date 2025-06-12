@@ -62,9 +62,9 @@ public class ProcessesMonitorUtils {
 
     return switch (element) {
     case TaskSwitchGateway taskSwitchGateway -> {
-      node.setInCommingPathIds(element.getIncoming().stream().map(ProcessUtils::getElementPid).toList());
+      node.setInCommingPathIds(taskSwitchGateway.getIncoming().stream().map(ProcessUtils::getElementPid).toList());
       node.setTaskSwitchGateway(true);
-      String elementId = element.getPid().toString();
+      String elementId = taskSwitchGateway.getPid().toString();
       List<Node> taskNodes = taskSwitchGateway.getAllTaskConfigs().stream()
           .map(task -> createNode(
               elementId + ProcessAnalyticsConstants.SLASH + task.getTaskIdentifier().getTaskIvpLinkName(),
@@ -118,7 +118,7 @@ public class ProcessesMonitorUtils {
     }
     List<ProcessElement> processElements = ProcessUtils.getProcessElementsFrom(processStart);
     if (isDuration(analysisType)) {
-      processElements = filterTaskStartFromElements(processElements);
+      processElements = ProcessUtils.getTaskStart(processElements);
     }
     List<SequenceFlow> sequenceFlows = ProcessUtils.getSequenceFlowsFrom(processElements);
     List<Node> nodes = convertToNodes(processElements, sequenceFlows);
@@ -129,14 +129,6 @@ public class ProcessesMonitorUtils {
     }
     nodes.forEach(node -> updateNodeByAnalysisType(node, analysisType));
     return nodes;
-  }
-
-  private static List<ProcessElement> filterTaskStartFromElements(List<ProcessElement> processElements) {
-    processElements = processElements.stream()
-        .filter(element -> ProcessUtils.isTaskSwitchGatewayInstance(element)
-            || ProcessUtils.isTaskSwitchInstance(element) || ProcessUtils.isRequestStartInstance(element))
-        .collect(Collectors.toList());
-    return processElements;
   }
 
   private static boolean isFrequency(KpiType kpiType) {
