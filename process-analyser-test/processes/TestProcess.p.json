@@ -10,9 +10,6 @@
       "name" : "test",
       "config" : {
         "signature" : "test",
-        "request" : {
-          "name" : "<%=ivy.cms.co(\"/Processes/Process/TestProcess/name\")%>"
-        },
         "case" : {
           "attachToBusinessCase" : false
         }

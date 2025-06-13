@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import com.axonivy.ivy.webtest.IvyWebTest;
 
+@IvyWebTest
 public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
   private final String SHOW_STATISTIC_BTN_CSS_SELECTOR = "#process-analytics-form\\:show-statistic-btn";
@@ -25,6 +26,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private final String TEST_MODULE_NAME = "process-analyser-test";
   private final String DROPDOWN_LIST_SUFFIX = "_items";
 
+  @Test
   void showStatisticButtonShouldEnableWhenChosenFulfiled() {
     login();
     resetLocale();
