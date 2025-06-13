@@ -212,17 +212,17 @@ public class ProcessesAnalyticsBean {
   }
 
   public double getMinValue(String fieldName) {
-    if (getNumberTypeValue(fieldName).count() > 1) {
-      return getNumberTypeValue(fieldName).map(value -> Math.floor(value * 100) / 100).min().orElse(0);
+    if (getDoubleValueFromCustomNumberField(fieldName).count() > 1) {
+      return getDoubleValueFromCustomNumberField(fieldName).map(value -> Math.floor(value * 100) / 100).min().orElse(0);
     }
     return 0;
   }
 
   public double getMaxValue(String fieldName) {
-    return getNumberTypeValue(fieldName).map(value -> Math.ceil(value * 100) / 100).max().orElse(0);
+    return getDoubleValueFromCustomNumberField(fieldName).map(value -> Math.ceil(value * 100) / 100).max().orElse(0);
   }
 
-  private DoubleStream getNumberTypeValue(String fieldName) {
+  private DoubleStream getDoubleValueFromCustomNumberField(String fieldName) {
     return customFieldsByType.stream().filter(entry -> entry.getCustomFieldMeta().name().equals(fieldName))
         .flatMap(entry -> entry.getAvailableCustomFieldValues().stream()).filter(Number.class::isInstance)
         .mapToDouble(value -> Number.class.cast(value).doubleValue());
