@@ -283,9 +283,9 @@
             "name" : "yes",
             "offset" : { "x" : 1, "y" : 14 }
           }, "color" : "default" },
-        { "id" : "f17", "to" : "S20", "via" : [ { "x" : 1088, "y" : 480 }, { "x" : 392, "y" : 480 } ], "label" : {
+        { "id" : "f17", "to" : "f5", "via" : [ { "x" : 1088, "y" : 480 } ], "label" : {
             "name" : "no",
-            "segment" : 0.56
+            "segment" : 0.32
           } }
       ]
     }, {
@@ -326,7 +326,7 @@
             "at" : { "x" : 320, "y" : 272 },
             "labelOffset" : { "x" : 3, "y" : 23 }
           },
-          "parentConnector" : "f17",
+          "parentConnector" : "f6",
           "connect" : [
             { "id" : "S20-f0", "to" : "S20-f5", "via" : [ { "x" : 192, "y" : 272 } ] }
           ]
@@ -357,6 +357,26 @@
       },
       "connect" : [
         { "id" : "f22", "to" : "f11" }
+      ]
+    }, {
+      "id" : "f5",
+      "type" : "TaskSwitchEvent",
+      "name" : "Retry validate",
+      "config" : {
+        "task" : {
+          "name" : "Retry validate",
+          "responsible" : {
+            "activator" : "SYSTEM"
+          },
+          "skipTasklist" : true
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 784, "y" : 480 },
+        "labelOffset" : { "x" : 14, "y" : 34 }
+      },
+      "connect" : [
+        { "id" : "f6", "to" : "S20", "via" : [ { "x" : 392, "y" : 480 } ], "color" : "default" }
       ]
     } ],
   "layout" : {
