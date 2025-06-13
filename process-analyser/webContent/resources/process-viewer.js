@@ -20,6 +20,8 @@ const EXECUTED_CLASS = "executed";
 const EXECUTED_CLASS_CSS_SELECTOR = "." + EXECUTED_CLASS;
 const EXECUTION_BADGE_CSS_SELECTOR = ".execution-badge";
 const COMPLETE = "complete";
+const PID_QUERY_PARAM_NAME = "pid";
+const SUB_PROCESS_CALL_PID = "subProcessCallPid";
 
 function getCenterizeButton() {
   return queryObjectById(DIAGRAM_IFRAME_ID)
@@ -173,13 +175,22 @@ function getProcessDiagramIframe() {
   return queryObjectById(DIAGRAM_IFRAME_ID).contents();
 }
 
+function getPidQueryParamValue(url) {
+  const parseUrl = new URL(url);
+  return parseUrl.searchParams.get(PID_QUERY_PARAM_NAME);
+}
+
 function loadIframe(recheckIndicator) {
+  var iframe = document.getElementById(DIAGRAM_IFRAME_ID);
+  
   if (recheckIndicator) {
-    var iframe = document.getElementById(DIAGRAM_IFRAME_ID);
     const iframeDoc = iframe.contentDocument;
     if (iframeDoc.readyState == COMPLETE) {
       santizeDiagram();
       clearTimeout(recheckFrameTimer);
+      const iframeRootUrl = iframe.contentWindow.location.href;
+      const pidValue = getPidQueryParamValue(iframeRootUrl);
+      updateDataTable([{ name: SUB_PROCESS_CALL_PID, value: pidValue }]);
       return;
     }
   }

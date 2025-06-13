@@ -1,1 +1,7 @@
+# yaml-language-server: $schema=https://json-schema.axonivy.com/app/12.0.0/rest-clients.json
 RestClients:
+  testClient:
+    UUID: 6d5fcdba-edcc-43e2-89ec-4c81a4f9c525
+    Url: http://localhost/
+    Features:
+    - ch.ivyteam.ivy.rest.client.mapper.JsonFeature

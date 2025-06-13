@@ -32,7 +32,7 @@
       "type" : "TaskEnd",
       "name" : "End",
       "visual" : {
-        "at" : { "x" : 1072, "y" : 384 }
+        "at" : { "x" : 1136, "y" : 384 }
       }
     }, {
       "id" : "f3",
@@ -101,37 +101,11 @@
         "at" : { "x" : 672, "y" : 384 }
       },
       "connect" : [
-        { "id" : "f10", "to" : "f9", "label" : {
+        { "id" : "f18", "to" : "S10", "label" : {
             "name" : [
               "save record from",
               "e-wallet"
-            ],
-            "offset" : { "x" : 50, "y" : -130 }
-          } }
-      ]
-    }, {
-      "id" : "f9",
-      "type" : "Script",
-      "name" : "record payment",
-      "config" : {
-        "output" : {
-          "code" : [
-            "import java.util.Random;",
-            "",
-            "Random random = new Random();",
-            "ivy.case.customFields().numberField(\"Price\").set(random.nextDouble(200,5000));",
-            "",
-            "ivy.task.customFields().timestampField(\"Date\").set(new Date());"
-          ]
-        }
-      },
-      "visual" : {
-        "at" : { "x" : 896, "y" : 384 }
-      },
-      "connect" : [
-        { "id" : "f2", "to" : "f1", "label" : {
-            "name" : "f2",
-            "offset" : { "x" : -3, "y" : -10 }
+            ]
           } }
       ]
     }, {
@@ -178,10 +152,145 @@
       },
       "visual" : {
         "at" : { "x" : 672, "y" : 272 },
-        "labelOffset" : { "x" : 14, "y" : 34 }
+        "labelOffset" : { "x" : -15, "y" : 41 }
       },
       "connect" : [
-        { "id" : "f15", "to" : "f9", "via" : [ { "x" : 896, "y" : 272 } ], "color" : "default" }
+        { "id" : "f15", "to" : "f16", "color" : "default" }
+      ]
+    }, {
+      "id" : "f16",
+      "type" : "SubProcessCall",
+      "name" : "validate visa card",
+      "config" : {
+        "processCall" : "demo/VisaValidation:visaValidation()"
+      },
+      "visual" : {
+        "at" : { "x" : 800, "y" : 272 }
+      },
+      "connect" : [
+        { "id" : "f19", "to" : "S10", "via" : [ { "x" : 960, "y" : 272 } ], "color" : "default" }
+      ]
+    }, {
+      "id" : "S10",
+      "type" : "EmbeddedProcess",
+      "name" : "Record payment",
+      "elements" : [ {
+          "id" : "S10-g0",
+          "type" : "EmbeddedStart",
+          "name" : "in 1",
+          "visual" : {
+            "at" : { "x" : 64, "y" : 160 },
+            "labelOffset" : { "x" : 3, "y" : 23 }
+          },
+          "parentConnector" : "f18",
+          "connect" : [
+            { "id" : "S10-f5", "to" : "S10-S10" }
+          ]
+        }, {
+          "id" : "S10-g1",
+          "type" : "EmbeddedStart",
+          "name" : "in 2",
+          "visual" : {
+            "at" : { "x" : 32, "y" : 64 },
+            "labelOffset" : { "x" : 3, "y" : 23 }
+          },
+          "parentConnector" : "f19",
+          "connect" : [
+            { "id" : "S10-f6", "to" : "S10-S10", "via" : [ { "x" : 272, "y" : 64 } ] }
+          ]
+        }, {
+          "id" : "S10-g2",
+          "type" : "EmbeddedEnd",
+          "name" : "out 1",
+          "visual" : {
+            "at" : { "x" : 480, "y" : 160 },
+            "labelOffset" : { "x" : 3, "y" : 23 }
+          },
+          "parentConnector" : "f20"
+        }, {
+          "id" : "S10-S10",
+          "type" : "EmbeddedProcess",
+          "name" : "nested sub",
+          "elements" : [ {
+              "id" : "S10-S10-f9",
+              "type" : "Script",
+              "name" : "record payment",
+              "config" : {
+                "output" : {
+                  "code" : [
+                    "import java.util.Random;",
+                    "",
+                    "Random random = new Random();",
+                    "ivy.case.customFields().numberField(\"Price\").set(random.nextDouble(200,5000));",
+                    "",
+                    "ivy.task.customFields().timestampField(\"Date\").set(new Date());"
+                  ]
+                }
+              },
+              "visual" : {
+                "at" : { "x" : 192, "y" : 160 }
+              },
+              "connect" : [
+                { "id" : "S10-S10-f2", "to" : "S10-S10-f3", "label" : {
+                    "name" : "f2"
+                  } }
+              ]
+            }, {
+              "id" : "S10-S10-f3",
+              "type" : "Script",
+              "name" : "process payment",
+              "visual" : {
+                "at" : { "x" : 352, "y" : 160 }
+              },
+              "connect" : [
+                { "id" : "S10-S10-f4", "to" : "S10-S10-g2", "color" : "default" }
+              ]
+            }, {
+              "id" : "S10-S10-g0",
+              "type" : "EmbeddedStart",
+              "name" : "in 1",
+              "visual" : {
+                "at" : { "x" : 64, "y" : 160 },
+                "labelOffset" : { "x" : 3, "y" : 23 }
+              },
+              "parentConnector" : "S10-f5",
+              "connect" : [
+                { "id" : "S10-S10-f0", "to" : "S10-S10-f9" }
+              ]
+            }, {
+              "id" : "S10-S10-g1",
+              "type" : "EmbeddedStart",
+              "name" : "in 2",
+              "visual" : {
+                "at" : { "x" : 48, "y" : 64 },
+                "labelOffset" : { "x" : 3, "y" : 23 }
+              },
+              "parentConnector" : "S10-f6",
+              "connect" : [
+                { "id" : "S10-S10-f1", "to" : "S10-S10-f9", "via" : [ { "x" : 192, "y" : 64 } ] }
+              ]
+            }, {
+              "id" : "S10-S10-g2",
+              "type" : "EmbeddedEnd",
+              "name" : "out 1",
+              "visual" : {
+                "at" : { "x" : 480, "y" : 160 },
+                "labelOffset" : { "x" : 3, "y" : 23 }
+              },
+              "parentConnector" : "S10-f7"
+            } ],
+          "visual" : {
+            "at" : { "x" : 272, "y" : 160 }
+          },
+          "connect" : [
+            { "id" : "S10-f7", "to" : "S10-g2" }
+          ]
+        } ],
+      "visual" : {
+        "at" : { "x" : 960, "y" : 384 }
+      },
+      "connect" : [
+        { "id" : "f20", "to" : "f1" }
       ]
     } ],
   "layout" : {

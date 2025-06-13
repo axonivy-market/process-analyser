@@ -1,0 +1,43 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/process/12.0.0/process.json",
+  "id" : "1975591B4FDDED13",
+  "kind" : "CALLABLE_SUB",
+  "config" : {
+    "data" : "com.axonivy.solutions.process.analyser.test.data.TestSubData"
+  },
+  "elements" : [ {
+      "id" : "f0",
+      "type" : "CallSubStart",
+      "name" : "call()",
+      "config" : {
+        "signature" : "call"
+      },
+      "visual" : {
+        "at" : { "x" : 96, "y" : 64 }
+      },
+      "connect" : [
+        { "id" : "f3", "to" : "f2" }
+      ]
+    }, {
+      "id" : "f1",
+      "type" : "CallSubEnd",
+      "visual" : {
+        "at" : { "x" : 488, "y" : 64 },
+        "labelOffset" : { "x" : 13, "y" : 33 }
+      }
+    }, {
+      "id" : "f2",
+      "type" : "RestClientCall",
+      "config" : {
+        "target" : {
+          "clientId" : "6d5fcdba-edcc-43e2-89ec-4c81a4f9c525"
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 288, "y" : 64 }
+      },
+      "connect" : [
+        { "id" : "f4", "to" : "f1" }
+      ]
+    } ]
+}

@@ -1,6 +1,9 @@
 package com.axonivy.solutions.process.analyser.test.ut.internal;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -50,17 +53,19 @@ public class ProcessUtilsTest extends BaseSetup {
   void test_getAllProcesses() {
     var results = ProcessUtils.getAllProcesses();
     assertThat(results).isNotEmpty();
-    assertThat(results.size()).isEqualTo(1);
+    assertThat(results.size()).isEqualTo(3);
   }
 
   @Test
   void test_getProcessElementsFromIProcessWebStartable() {
-    assertThat(ProcessUtils.getProcessElementsFrom(testProcessStart).size()).isEqualTo(8);
+    assertThat(ProcessUtils.getProcessElementsFrom(testProcessStart).size()).isEqualTo(15);
   }
 
   @Test
   void test_getNestedProcessElementsFromSub() {
     assertThat(ProcessUtils.getNestedProcessElementsFromSub(startProcessElement)).isEmpty();
+    assertEquals(3, ProcessUtils.getNestedProcessElementsFromSub(subProcessElement).size());
+    assertEquals(3, ProcessUtils.getNestedProcessElementsFromSub(subProcessCall).size());
   }
 
   @Test
@@ -88,5 +93,16 @@ public class ProcessUtilsTest extends BaseSetup {
   void test_getSelectedProcessFilePath() {
     assertThat(ProcessUtils.getSelectedProcessFilePath(SELECTED_STARTABLE_ID, SELECTED_MODULE_URL, TEST_APPLICATION_NAME))
         .isEqualTo(SELECTED_STARTABLE_ID);
+  }
+
+  @Test
+  void test_getEmbeddedStartConnectToFlow() {
+    assertTrue(ProcessUtils.isEmbeddedStartConnectToSequenceFlow(embeddedStart, outerFlowPid));
+  }
+
+  @Test
+  void test_getStartElementFromSubProcessCall() {
+    assertNotNull(ProcessUtils.getStartElementFromSubProcessCall(subProcessCall),
+        "Sub process call should be filter from test process");
   }
 }
