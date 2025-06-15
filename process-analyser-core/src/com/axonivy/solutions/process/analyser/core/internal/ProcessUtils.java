@@ -196,6 +196,8 @@ public class ProcessUtils {
   public static boolean isComplexElementWithMultiIncomings(ProcessElement element) {
     return switch (element) {
     case Join join -> false;
+    case EmbeddedProcessElement embeddedProcessElement -> false;
+    case SubProcessCall subProcessCall-> false;
     default -> isElementWithMultipleIncomingFlow(element);
     };
   }

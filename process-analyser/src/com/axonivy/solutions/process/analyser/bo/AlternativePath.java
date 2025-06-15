@@ -2,11 +2,15 @@ package com.axonivy.solutions.process.analyser.bo;
 
 import java.util.List;
 
+import ch.ivyteam.ivy.process.model.element.ProcessElement;
+
+@SuppressWarnings("restriction")
 public class AlternativePath {
   private List<String> precedingFlowIds;
   private List<String> nodeIdsInPath;
   private String taskSwitchEventIdOnPath;
   private boolean isPathFromAlternativeEnd;
+  private ProcessElement nestedSubProcessCall;
 
   public String getTaskSwitchEventIdOnPath() {
     return taskSwitchEventIdOnPath;
@@ -38,5 +42,13 @@ public class AlternativePath {
 
   public void setPrecedingFlowIds(List<String> precedingFlowIds) {
     this.precedingFlowIds = precedingFlowIds;
+  }
+
+  public ProcessElement getNestedSubProcessCall() {
+    return nestedSubProcessCall;
+  }
+
+  public void setNestedSubProcessCall(ProcessElement nestedSubProcessCall) {
+    this.nestedSubProcessCall = nestedSubProcessCall;
   }
 }

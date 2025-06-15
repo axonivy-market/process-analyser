@@ -110,9 +110,9 @@
             "name" : "yes",
             "offset" : { "x" : 9, "y" : -18 }
           }, "color" : "default" },
-        { "id" : "f10", "to" : "f6", "via" : [ { "x" : 608, "y" : 168 }, { "x" : 224, "y" : 168 } ], "label" : {
+        { "id" : "f10", "to" : "f11", "via" : [ { "x" : 608, "y" : 168 } ], "label" : {
             "name" : "no",
-            "segment" : 1.45,
+            "segment" : 1.26,
             "offset" : { "x" : 143, "y" : -18 }
           } }
       ]
@@ -125,6 +125,26 @@
       },
       "connect" : [
         { "id" : "f9", "to" : "f5", "color" : "default" }
+      ]
+    }, {
+      "id" : "f11",
+      "type" : "TaskSwitchEvent",
+      "name" : "Retry",
+      "config" : {
+        "task" : {
+          "name" : "Retry",
+          "responsible" : {
+            "activator" : "SYSTEM"
+          },
+          "skipTasklist" : true
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 392, "y" : 168 },
+        "labelOffset" : { "x" : 14, "y" : 34 }
+      },
+      "connect" : [
+        { "id" : "f12", "to" : "f6", "via" : [ { "x" : 224, "y" : 168 } ], "color" : "default" }
       ]
     } ]
 }
