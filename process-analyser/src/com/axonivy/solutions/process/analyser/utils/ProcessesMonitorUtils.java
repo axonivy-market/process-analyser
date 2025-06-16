@@ -3,6 +3,7 @@ package com.axonivy.solutions.process.analyser.utils;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -12,6 +13,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -571,5 +574,45 @@ public class ProcessesMonitorUtils {
     node.setRelativeValue(releativeValue);
     node.setLabelValue(Objects.requireNonNullElse(value, 0).toString());
     node.setFrequency(value);
+  }
+  
+
+  public static List<String> generateColorSegments(KpiType selectedKpiType) {
+    String[] baseColors = new String[0];
+    if (KpiType.FREQUENCY == selectedKpiType) {
+      baseColors = new String[] {"#EDFAF1", "#C8F0D4", "#ADE8BF", "#87DEA1", "#70D78F", "#4CCD73", "#45BB69", "#369252",
+          "#2A713F", "#205630"};
+    } else {
+      baseColors = new String[] {"#FFF7EA", "#FFEDCD", "#FFDEA5", "#FFCE7B", "#FFC054", "#FFB22E", "#D99727", "#B57E21",
+          "#91651A", "#735015"};
+    }
+    return new ArrayList<>(Arrays.asList(baseColors));
+  }
+
+  public static List<String> generateGradientFromRgb(String rgbColor, int steps) {
+    List<String> gradient = new ArrayList<>();
+
+    // rgb(123, 45, 67)
+    Pattern pattern = Pattern.compile("rgb\\s*\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)");
+    Matcher matcher = pattern.matcher(rgbColor);
+
+    if (!matcher.matches()) {
+      throw new IllegalArgumentException("Invalid RGB format: " + rgbColor);
+    }
+
+    int r = Integer.parseInt(matcher.group(1));
+    int g = Integer.parseInt(matcher.group(2));
+    int b = Integer.parseInt(matcher.group(3));
+
+    for (int i = 0; i < steps; i++) {
+      float factor = 1.4f - (i * (0.8f / (steps - 1))); // from 1.4 to 0.6
+
+      int nr = Math.min(255, Math.max(0, Math.round(r * factor)));
+      int ng = Math.min(255, Math.max(0, Math.round(g * factor)));
+      int nb = Math.min(255, Math.max(0, Math.round(b * factor)));
+
+      gradient.add(String.format("rgb(%d, %d, %d)", nr, ng, nb));
+    }
+    return gradient;
   }
 }

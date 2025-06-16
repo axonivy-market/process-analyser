@@ -40,10 +40,17 @@ h3 {
   margin: 0px;
 }
 
-.duration-bar-container {
+/* .duration-container {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  align-items: end;
+  margin-top: 1em;
+}
+
+.duration-labels {
+  display: flex;
+  justify-content: space-between;
+  width: 240px;
 }
 
 .duration-label {
@@ -59,15 +66,46 @@ h3 {
   overflow: hidden;
   height: 24px;
   width: 240px;
-  margin-top: 1em;
+  margin-top: 0.5em;
 }
 
 .segment {
   flex: 1;
   cursor: pointer;
   transition: transform 0.2s ease;
-  /*   width: 30px; 
-    height: 20px; 
-    display: inline-block; 
-    margin-right: 2px; */
+} */
+
+.color-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1em;
+  margin-top: 1em;
+}
+
+.duration-labels {
+  display: flex;
+  justify-content: space-between;
+  width: 240px;
+}
+
+.duration-label {
+  font-size: 0.9em;
+  color: #666;
+  white-space: nowrap;
+}
+
+.duration-bar {
+  display: flex;
+  flex-direction: row;
+  border-radius: 999px;
+  overflow: hidden;
+  height: 24px;
+  width: 240px;
+}
+
+.segment {
+  flex: 1;
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }

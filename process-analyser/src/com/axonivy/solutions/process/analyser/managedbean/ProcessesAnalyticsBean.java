@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
@@ -88,22 +86,6 @@ public class ProcessesAnalyticsBean {
     selectedCustomFilters = new ArrayList<>();
     selectedCustomFieldNames = new ArrayList<>();
     initKpiTypes();
-    generateSegments();
-  }
-
-  public void generateSegments() {
-    colorSegments = new ArrayList<>();
-    String[] baseColors =
-        {"#FFF7EA", "#FFEDCD", "#FFDEA5", "#FFCE7B", "#FFC054", "#FFB22E", "#D99727", "#B57E21", "#91651A", "#735015"};
-
-    for (String color : baseColors) {
-      colorSegments.add(color);
-    }
-  }
-
-  public void onSegmentClick(ActionEvent event) {
-    selectedIndex = (Integer) event.getComponent().getAttributes().get("segmentIndex");
-    selectedColor = colorSegments.get(selectedIndex);
   }
 
   private void initKpiTypes() {
@@ -157,6 +139,9 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onKpiTypeSelect() {
+    selectedIndex = -1;
+    selectedColor = null;
+    colorSegments = ProcessesMonitorUtils.generateColorSegments(selectedKpiType);
     updateDiagramAndStatistic();
   }
 
@@ -239,6 +224,16 @@ public class ProcessesAnalyticsBean {
   public String getRangeDisplayForNumberType(List<Double> numberValue) {
     return Ivy.cms().co("/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/NumberRange",
         Arrays.asList(numberValue.get(0), numberValue.get(1)));
+  }
+
+  public void onSegmentClick(ActionEvent event) {
+    selectedIndex = (Integer) event.getComponent().getAttributes().get("segmentIndex");
+    selectedColor = colorSegments.get(selectedIndex);
+  }
+
+  public void onColorChange() {
+    colorSegments = ProcessesMonitorUtils.generateGradientFromRgb(selectedColor, 10);
+    updateDiagramAndStatistic();
   }
 
   public void updateDataOnChangingFilter() throws ParseException {
@@ -435,38 +430,6 @@ public class ProcessesAnalyticsBean {
 
   public List<SelectItem> getKpiTypes() {
     return kpiTypes;
-  }
-
-  public void onColorChange() {
-    colorSegments = generateGradientFromRgb(selectedColor, 10);
-    updateDiagramAndStatistic();
-  }
-
-  public List<String> generateGradientFromRgb(String rgbColor, int steps) {
-    List<String> gradient = new ArrayList<>();
-
-    // rgb(123, 45, 67)
-    Pattern pattern = Pattern.compile("rgb\\s*\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)");
-    Matcher matcher = pattern.matcher(rgbColor);
-
-    if (!matcher.matches()) {
-      throw new IllegalArgumentException("Invalid RGB format: " + rgbColor);
-    }
-
-    int r = Integer.parseInt(matcher.group(1));
-    int g = Integer.parseInt(matcher.group(2));
-    int b = Integer.parseInt(matcher.group(3));
-
-    for (int i = 0; i < steps; i++) {
-      float factor = 1.4f - (i * (0.8f / (steps - 1))); // from 1.4 to 0.6
-
-      int nr = Math.min(255, Math.max(0, Math.round(r * factor)));
-      int ng = Math.min(255, Math.max(0, Math.round(g * factor)));
-      int nb = Math.min(255, Math.max(0, Math.round(b * factor)));
-
-      gradient.add(String.format("rgb(%d, %d, %d)", nr, ng, nb));
-    }
-    return gradient;
   }
 
   public List<String> getColorSegments() {
