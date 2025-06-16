@@ -40,41 +40,6 @@ h3 {
   margin: 0px;
 }
 
-/* .duration-container {
-  display: flex;
-  flex-direction: column;
-  align-items: end;
-  margin-top: 1em;
-}
-
-.duration-labels {
-  display: flex;
-  justify-content: space-between;
-  width: 240px;
-}
-
-.duration-label {
-  font-size: 0.9em;
-  color: #666;
-  white-space: nowrap;
-}
-
-.duration-bar {
-  display: flex;
-  flex-direction: row;
-  border-radius: 999px;
-  overflow: hidden;
-  height: 24px;
-  width: 240px;
-  margin-top: 0.5em;
-}
-
-.segment {
-  flex: 1;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-} */
-
 .color-container {
   display: flex;
   flex-direction: column;
@@ -90,8 +55,8 @@ h3 {
 }
 
 .duration-label {
-  font-size: 0.9em;
-  color: #666;
+  font-size: 0.625rem;
+  color: #757575;
   white-space: nowrap;
 }
 

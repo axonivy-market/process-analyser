@@ -102,9 +102,19 @@
         <h:panelGroup layout="block" styleClass="color-container">
           <p:outputPanel id="color-bar-segment">
             <h:panelGroup layout="block" styleClass="duration-container" rendered="#{processesAnalyticsBean.selectedKpiType != null}">
-              <div class="duration-labels">
-                <span class="duration-label left">&lt; Low duration</span> <span class="duration-label right">High duration &gt;</span>
-              </div>
+              <h:panelGroup class="duration-labels" rendered="#{'FREQUENCY' eq processesAnalyticsBean.selectedKpiType}">
+                <h:outputText styleClass="duration-label left"
+                  value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/LowExecution')}" escape="false" />
+                <h:outputText styleClass="duration-label right"
+                  value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/HighExecution')}" escape="false" />
+              </h:panelGroup>
+
+              <h:panelGroup class="duration-labels" rendered="#{'FREQUENCY' ne processesAnalyticsBean.selectedKpiType}">
+                <h:outputText styleClass="duration-label left"
+                  value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/LowDuration')}" escape="false" />
+                <h:outputText styleClass="duration-label right"
+                  value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/HighDuration')}" escape="false" />
+              </h:panelGroup>
 
               <div class="duration-bar">
                 <ui:repeat value="#{processesAnalyticsBean.colorSegments}" var="color" varStatus="status">
