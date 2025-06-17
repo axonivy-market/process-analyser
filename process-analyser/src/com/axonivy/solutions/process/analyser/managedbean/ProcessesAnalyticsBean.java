@@ -100,7 +100,7 @@ public class ProcessesAnalyticsBean {
   }
 
   private void updateDataTableWithNodesPrefix(String prefix) {
-    nodes = analyzedNode.stream().filter(node -> node.getId().startsWith(prefix)).toList();
+    nodes = analyzedNode.stream().filter(node -> node.getId().startsWith(prefix)).collect(Collectors.toList());
   }
 
   private void initKpiTypes() {

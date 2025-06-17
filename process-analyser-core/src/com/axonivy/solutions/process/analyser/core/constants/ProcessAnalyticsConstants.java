@@ -12,6 +12,7 @@ public class ProcessAnalyticsConstants {
   public static final String FROM = "from";
   public static final String TO = "to";
   public static final String COMMA = ",";
+  public static final String HASHTAG = "#";
   public static final String COMMA_CONNECT_PATTERN = ", ";
   public static final String CURRENT_TIME_PATTERN = "%s - %s %s";
   public static final String WHOLE_DAY_PATTERN = "%s - %s, %s %s, %s";
@@ -32,4 +33,7 @@ public class ProcessAnalyticsConstants {
   public static final String COLOR_SEGMENT_ATTRIBUTE = "segmentIndex";
   public static final String RGB_REGEX_PATTERN = "rgb\\((\\d+),\\s*(\\d+),\\s*(\\d+)\\)";
   public static final String RGB_FORMAT = "rgb(%d, %d, %d)";
+  public static final String LIGHT_TEXT_COLOR = "#FFFFFF";
+  public static final String DARK_TEXT_COLOR = "#000000";
+  public static final String NON_DIGIT_COMMA_REGEX = "[^\\d,]";
 }
