@@ -254,11 +254,11 @@ public class ProcessesAnalyticsBean {
   }
   
   public String getCalulatedCellColor(Double value) {
-	return ColorUtils.calculateColorFromList(value, colorSegments);
+    return ColorUtils.calculateColorFromList(value, colorSegments);
   }
   
   public String getAccessibleTextColor(Double value) {
-	  return ColorUtils.getAccessibleTextColor(getCalulatedCellColor(value));
+    return ColorUtils.getAccessibleTextColor(getCalulatedCellColor(value));
   }
 
   public void updateDataOnChangingFilter() throws ParseException {
