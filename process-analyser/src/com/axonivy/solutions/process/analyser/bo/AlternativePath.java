@@ -11,6 +11,7 @@ public class AlternativePath {
   private String taskSwitchEventIdOnPath;
   private boolean isSolePathFromAlternativeEnd;
   private ProcessElement nestedSubProcessCall;
+  private boolean isCallSubEndPath;
 
   public String getTaskSwitchEventIdOnPath() {
     return taskSwitchEventIdOnPath;
@@ -50,5 +51,20 @@ public class AlternativePath {
 
   public void setSolePathFromAlternativeEnd(boolean isSolePathFromAlternativeEnd) {
     this.isSolePathFromAlternativeEnd = isSolePathFromAlternativeEnd;
-  }  
+  }
+
+  @Override
+  public String toString() {
+    return "AlternativePath [precedingFlowIds=" + precedingFlowIds + ", nodeIdsInPath=" + nodeIdsInPath
+        + ", taskSwitchEventIdOnPath=" + taskSwitchEventIdOnPath + ", isSolePathFromAlternativeEnd="
+        + isSolePathFromAlternativeEnd + ", nestedSubProcessCall=" + nestedSubProcessCall + "]";
+  }
+
+  public boolean isCallSubEndPath() {
+    return isCallSubEndPath;
+  }
+
+  public void setCallSubEndPath(boolean isCallSubEndPath) {
+    this.isCallSubEndPath = isCallSubEndPath;
+  }
 }
