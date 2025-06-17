@@ -3,7 +3,6 @@ package com.axonivy.solutions.process.analyser.utils;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -28,6 +27,7 @@ import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
+import com.axonivy.solutions.process.analyser.enums.KpiColor;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
 
@@ -578,23 +578,11 @@ public class ProcessesMonitorUtils {
   
 
   public static List<String> generateColorSegments(KpiType selectedKpiType) {
-    String[] baseColors = new String[0];
-    if (KpiType.FREQUENCY == selectedKpiType) {
-      baseColors = new String[] {"#EDFAF1", "#C8F0D4", "#ADE8BF", "#87DEA1", "#70D78F", "#4CCD73", "#45BB69", "#369252",
-          "#2A713F", "#205630"};
-    } else {
-      baseColors = new String[] {"#FFF7EA", "#FFEDCD", "#FFDEA5", "#FFCE7B", "#FFC054", "#FFB22E", "#D99727", "#B57E21",
-          "#91651A", "#735015"};
-    }
-    return new ArrayList<>(Arrays.asList(baseColors));
+    return KpiColor.fromKpiType(selectedKpiType);
   }
 
   public static List<String> generateGradientFromRgb(String rgbColor, int steps) {
-    List<String> gradient = new ArrayList<>();
-
-    // rgb(123, 45, 67)
-    Pattern pattern = Pattern.compile("rgb\\s*\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)");
-    Matcher matcher = pattern.matcher(rgbColor);
+    Matcher matcher = Pattern.compile(ProcessAnalyticsConstants.RGB_REGEX).matcher(rgbColor);
 
     if (!matcher.matches()) {
       throw new IllegalArgumentException("Invalid RGB format: " + rgbColor);
@@ -604,15 +592,27 @@ public class ProcessesMonitorUtils {
     int g = Integer.parseInt(matcher.group(2));
     int b = Integer.parseInt(matcher.group(3));
 
+    double brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+    boolean isLightColor = brightness > 205;
+
+    List<String> gradient = new ArrayList<>(steps);
+
     for (int i = 0; i < steps; i++) {
-      float factor = 1.4f - (i * (0.8f / (steps - 1))); // from 1.4 to 0.6
+      float t = (float) i / (steps - 1);
+      float factor = isLightColor ? t * 0.85f : (1 - t) * 0.85f;
 
-      int nr = Math.min(255, Math.max(0, Math.round(r * factor)));
-      int ng = Math.min(255, Math.max(0, Math.round(g * factor)));
-      int nb = Math.min(255, Math.max(0, Math.round(b * factor)));
+      int nr = adjustColor(r, factor, isLightColor);
+      int ng = adjustColor(g, factor, isLightColor);
+      int nb = adjustColor(b, factor, isLightColor);
 
-      gradient.add(String.format("rgb(%d, %d, %d)", nr, ng, nb));
+      gradient.add(String.format(ProcessAnalyticsConstants.RGB_FORMAT, nr, ng, nb));
     }
     return gradient;
+  }
+
+  private static int adjustColor(int base, float factor, boolean darken) {
+    int value = darken ? Math.round(base * (1 - factor)) // darkening
+        : Math.round(base + (255 - base) * factor); // brightening
+    return Math.max(0, Math.min(255, value));
   }
 }

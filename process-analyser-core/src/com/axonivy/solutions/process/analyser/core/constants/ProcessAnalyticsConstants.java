@@ -27,4 +27,6 @@ public class ProcessAnalyticsConstants {
   public static final String UNDERSCORE = "_";
   public static final String SPACE_DASH_REGEX = "[\\s-]+";
   public static final String MULTIPLE_UNDERSCORES_REGEX = "_+";
+  public static final String RGB_REGEX = "rgb\\s*\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)";
+  public static final String RGB_FORMAT = "rgb(%d, %d, %d)";
 }
