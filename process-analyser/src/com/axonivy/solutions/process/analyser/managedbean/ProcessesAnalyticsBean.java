@@ -32,6 +32,7 @@ import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsCon
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
+import com.axonivy.solutions.process.analyser.utils.ColorUtils;
 import com.axonivy.solutions.process.analyser.utils.DateUtils;
 import com.axonivy.solutions.process.analyser.utils.JacksonUtils;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
@@ -250,6 +251,14 @@ public class ProcessesAnalyticsBean {
     colorSegments =
         ProcessesMonitorUtils.generateGradientFromRgb(selectedColor, ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS);
     updateDiagramAndStatistic();
+  }
+  
+  public String getCalulatedCellColor(Double value) {
+	return ColorUtils.calculateColorFromList(value, colorSegments);
+  }
+  
+  public String getAccessibleTextColor(Double value) {
+	  return ColorUtils.getAccessibleTextColor(getCalulatedCellColor(value));
   }
 
   public void updateDataOnChangingFilter() throws ParseException {

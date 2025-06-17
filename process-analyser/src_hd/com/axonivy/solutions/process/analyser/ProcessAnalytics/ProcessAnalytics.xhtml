@@ -161,6 +161,7 @@
             <p:column
               rendered="#{'FREQUENCY' == processesAnalyticsBean.selectedKpiType}"
               styleClass="col-2" sortBy="#{node.frequency}"
+              style="background-color: #{processesAnalyticsBean.getCalulatedCellColor(node.frequency)}; color: #{processesAnalyticsBean.getAccessibleTextColor(node.frequency)};"
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Frequency')}">
               <h:outputText value="#{node.frequency}" />
             </p:column>
