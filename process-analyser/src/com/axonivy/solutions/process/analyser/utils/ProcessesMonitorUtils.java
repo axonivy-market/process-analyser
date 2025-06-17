@@ -245,7 +245,7 @@ public class ProcessesMonitorUtils {
     }
     complexElements.addAll(ProcessUtils.getElementsWithMultiIncomings(processElements));
     List<AlternativePath> paths = convertToAternativePaths(complexElements);
-    handleFrequencyForCasesWithAlternativePaths(paths, results, cases);
+    updateFrequencyForCasesWithAlternativePaths(paths, results, cases);
     List<ProcessElement> taskSwitchElements = processElements.stream()
         .filter(element -> ProcessUtils.isTaskSwitchGatewayInstance(element)).collect(Collectors.toList());
     complexElements.addAll(taskSwitchElements);
@@ -312,27 +312,25 @@ public class ProcessesMonitorUtils {
    * not, we need to check which path from alternative is running to update
    * frequency for elements belong to its.
    **/
-  public static void handleFrequencyForCasesWithAlternativePaths(List<AlternativePath> paths, List<Node> results,
+  public static void updateFrequencyForCasesWithAlternativePaths(List<AlternativePath> paths, List<Node> results,
       List<ICase> cases) {
     if (ObjectUtils.anyNull(paths, results, cases)) {
       return;
     }
-    Map<String, Integer> taskCountMap = new HashMap<String, Integer>();
-    List<String> complexId = paths.stream().flatMap(path -> path.getNodeIdsInPath().stream()).toList();
-    cases.stream().forEach(currentCase -> {
-      currentCase.tasks().all().stream().map(ProcessUtils::getTaskElementId)
-          .forEach(taskId -> taskCountMap.put(taskId, taskCountMap.getOrDefault(taskId, 0) + 1));
-    });
+    Map<String, Integer> taskCountMap = cases.stream().flatMap(c -> c.tasks().all().stream())
+        .map(ProcessUtils::getTaskElementId).filter(StringUtils::isNotBlank)
+        .collect(Collectors.toMap(Function.identity(), id -> 1, Integer::sum));
+    List<String> complexIds = paths.stream().flatMap(path -> path.getNodeIdsInPath().stream()).toList();
     results.forEach(node -> {
-      if (complexId.contains(node.getId())) {
+      if (complexIds.contains(node.getId())) {
         String taskIdInPath = paths.stream().filter(path -> path.getNodeIdsInPath().contains(node.getId())).findAny()
             .map(AlternativePath::getTaskSwitchEventIdOnPath).orElse(StringUtils.EMPTY);
         node.setFrequency(taskCountMap.getOrDefault(taskIdInPath, 0));
         return;
       }
       node.setFrequency(cases.size());
-
     });
+    paths.stream().forEach(path -> Ivy.log().warn(path.getNodeIdsInPath()));
   }
 
   public static List<String> getTaskIdDoneInCase(ICase currentCase) {
@@ -347,27 +345,30 @@ public class ProcessesMonitorUtils {
   public static List<AlternativePath> convertToAlternativePaths(ProcessElement element) {
     List<String> precedingFlowIds = ProcessUtils.isComplexElementWithMultiIncomings(element)
         ? element.getIncoming().stream().map(ProcessUtils::getElementPid).toList()
-        : new ArrayList<String>();
-    return element.getOutgoing().stream().map(flow -> convertSequenceFlowToAlternativePath(flow, precedingFlowIds))
+        : Collections.emptyList();
+    boolean isSolePathFromAlternativeEnd = element.getOutgoing().size() == 1;
+    return element.getOutgoing().stream()
+        .map(flow -> convertSequenceFlowToAlternativePath(flow, precedingFlowIds, isSolePathFromAlternativeEnd))
         .toList();
   }
 
-  public static AlternativePath convertSequenceFlowToAlternativePath(SequenceFlow flow, List<String> precedingFlowIds) {
+  public static AlternativePath convertSequenceFlowToAlternativePath(SequenceFlow flow, List<String> precedingFlowIds,
+      boolean isSolePathFromAlternativeEnd) {
     AlternativePath path = new AlternativePath();
-    path.setPathFromAlternativeEnd(precedingFlowIds.size() > 1);
+    path.setSolePathFromAlternativeEnd(isSolePathFromAlternativeEnd);
     path.setPrecedingFlowIds(precedingFlowIds);
     path.setNodeIdsInPath(new ArrayList<>());
     followPath(path, flow);
     return path;
   }
 
-  public static List<String> getNonRunningElementIdsFromAlternativeEnds(List<AlternativePath> paths,
-      List<String> nonRunningElementIdsFromAlternative) {
-    return paths.stream()
-        .filter(path -> path.isPathFromAlternativeEnd()
-            && CollectionUtils.containsAll(nonRunningElementIdsFromAlternative, path.getPrecedingFlowIds()))
-        .flatMap(path -> path.getNodeIdsInPath().stream()).toList();
-  }
+//  public static List<String> getNonRunningElementIdsFromAlternativeEnds(List<AlternativePath> paths,
+//      List<String> nonRunningElementIdsFromAlternative) {
+//    return paths.stream()
+//        .filter(path -> path.isPathFromAlternativeEnd()
+//            && CollectionUtils.containsAll(nonRunningElementIdsFromAlternative, path.getPrecedingFlowIds()))
+//        .flatMap(path -> path.getNodeIdsInPath().stream()).toList();
+//  }
 
   /**
    * Collect all of elements in current flow. When the flow reach other

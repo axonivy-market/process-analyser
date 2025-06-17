@@ -25,6 +25,7 @@ import ch.ivyteam.ivy.process.model.element.EmbeddedProcessElement;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.element.activity.SubProcessCall;
 import ch.ivyteam.ivy.process.model.element.event.end.CallSubEnd;
+import ch.ivyteam.ivy.process.model.element.event.end.EmbeddedEnd;
 import ch.ivyteam.ivy.process.model.element.event.intermediate.TaskSwitchEvent;
 import ch.ivyteam.ivy.process.model.element.event.start.CallSubStart;
 import ch.ivyteam.ivy.process.model.element.event.start.EmbeddedStart;
@@ -234,12 +235,17 @@ public class ProcessUtils {
         .orElse(false);
   }
 
+  public static boolean isAlternativePathEndElementWithSingleOuterFlow(ProcessElement processElement) {
+    return isAlternativePathEndElement(processElement) && processElement.getOutgoing().size() == 1;
+  }
+
   public static boolean isAlternativePathEndElement(ProcessElement processElement) {
     return switch (processElement) {
     case Alternative alternative -> true;
+    case CallSubEnd callSubEnd -> true;
     case Join join -> false;
     case EmbeddedProcessElement sub -> false;
-    case CallSubEnd end -> true;
+    case EmbeddedEnd subEnd -> false;
     default -> isProcessPathEndElement(processElement) || isElementWithMultipleIncomingFlow(processElement);
     };
   }
