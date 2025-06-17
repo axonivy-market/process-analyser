@@ -105,7 +105,7 @@
         { "id" : "f13", "to" : "f14", "via" : [ { "x" : 840, "y" : 272 } ], "label" : {
             "name" : "start 3",
             "segment" : 1.36,
-            "offset" : { "x" : -61, "y" : 46 }
+            "offset" : { "x" : -71, "y" : 36 }
           } }
       ]
     }, {
@@ -141,7 +141,7 @@
         "at" : { "x" : 1112, "y" : 272 }
       },
       "connect" : [
-        { "id" : "f19", "to" : "f25", "color" : "default" }
+        { "id" : "f19", "to" : "S10", "via" : [ { "x" : 1368, "y" : 272 } ] }
       ]
     }, {
       "id" : "S10",
@@ -167,7 +167,7 @@
             "at" : { "x" : 32, "y" : 64 },
             "labelOffset" : { "x" : 3, "y" : 23 }
           },
-          "parentConnector" : "f26",
+          "parentConnector" : "f19",
           "connect" : [
             { "id" : "S10-f6", "to" : "S10-f0" }
           ]
@@ -205,7 +205,8 @@
               },
               "connect" : [
                 { "id" : "S10-S10-f2", "to" : "S10-S10-f3", "label" : {
-                    "name" : "start 8"
+                    "name" : "start 8",
+                    "offset" : { "x" : 1, "y" : -10 }
                   } }
               ]
             }, {
@@ -229,7 +230,8 @@
               "parentConnector" : "S10-f5",
               "connect" : [
                 { "id" : "S10-S10-f0", "to" : "S10-S10-f9", "label" : {
-                    "name" : "end 7"
+                    "name" : "end 7",
+                    "offset" : { "x" : -1, "y" : -18 }
                   } }
               ]
             }, {
@@ -244,7 +246,8 @@
               "connect" : [
                 { "id" : "S10-S10-f1", "to" : "S10-S10-f9", "via" : [ { "x" : 192, "y" : 64 } ], "label" : {
                     "name" : "end 6",
-                    "segment" : 0.8
+                    "segment" : 0.8,
+                    "offset" : { "x" : -28, "y" : -18 }
                   } }
               ]
             }, {
@@ -299,7 +302,8 @@
       },
       "connect" : [
         { "id" : "f20", "to" : "f2", "label" : {
-            "name" : "end 8"
+            "name" : "end 8",
+            "offset" : { "x" : 5, "y" : 14 }
           } }
       ]
     }, {
@@ -439,18 +443,9 @@
       },
       "connect" : [
         { "id" : "f24", "to" : "f11", "label" : {
-            "name" : "end 1"
+            "name" : "end 1",
+            "offset" : { "x" : 5, "y" : -10 }
           }, "color" : "default" }
-      ]
-    }, {
-      "id" : "f25",
-      "type" : "TaskSwitchEvent",
-      "visual" : {
-        "at" : { "x" : 1240, "y" : 272 },
-        "labelOffset" : { "x" : 14, "y" : 34 }
-      },
-      "connect" : [
-        { "id" : "f26", "to" : "S10", "via" : [ { "x" : 1368, "y" : 272 } ], "color" : "default" }
       ]
     } ],
   "layout" : {

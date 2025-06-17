@@ -38,6 +38,7 @@ import ch.ivyteam.ivy.process.rdm.IProcessManager;
 import ch.ivyteam.ivy.process.rdm.IProjectProcessManager;
 import ch.ivyteam.ivy.security.ISecurityContext;
 import ch.ivyteam.ivy.workflow.IProcessStart;
+import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
 
@@ -70,13 +71,6 @@ public class ProcessUtils {
     return TaskSwitchGateway.class.isInstance(element);
   }
 
-  public static boolean isRequestStartInstance(Object element) {
-    return RequestStart.class.isInstance(element);
-  }
-
-  public static boolean isJoinInstance(Object element) {
-    return Join.class.isInstance(element);
-  }
   public static boolean isSubProcessCallInstance(Object element) {
     return SubProcessCall.class.isInstance(element);
   }
@@ -197,14 +191,9 @@ public class ProcessUtils {
     return switch (element) {
     case Join join -> false;
     case EmbeddedProcessElement embeddedProcessElement -> false;
-    case SubProcessCall subProcessCall-> false;
+    case SubProcessCall subProcessCall -> false;
     default -> isElementWithMultipleIncomingFlow(element);
     };
-  }
-
-  public static List<ProcessElement> getTaskSwitchEvents(List<ProcessElement> processElements) {
-    return Optional.ofNullable(processElements).orElse(Collections.emptyList()).stream()
-        .filter(element -> isTaskSwitchInstance(element)).toList();
   }
 
   @SuppressWarnings("removal")
@@ -220,6 +209,11 @@ public class ProcessUtils {
     // So we have get the node before /{NAME OF TASK}
     // Ignore case {PROCESS ID}/{NAME OF TASK}
     return arr.length > 2 ? arr[arr.length - 2] : StringUtils.EMPTY;
+  }
+
+  public static String getTaskElementId(ITask task) {
+    return Optional.ofNullable(task).map(ITask::getRequestPath).map(ProcessUtils::getTaskElementIdFromRequestPath)
+        .orElse(StringUtils.EMPTY);
   }
 
   public static String getTaskElementIdFromRequestPath(String requestPath, boolean isTaskInTaskSwitchGateway) {

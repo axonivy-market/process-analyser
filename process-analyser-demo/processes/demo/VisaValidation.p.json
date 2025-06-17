@@ -17,7 +17,8 @@
       },
       "connect" : [
         { "id" : "f2", "to" : "f6", "label" : {
-            "name" : "end 3"
+            "name" : "end 3",
+            "offset" : { "x" : 6, "y" : -10 }
           } }
       ]
     }, {
@@ -93,7 +94,8 @@
       },
       "connect" : [
         { "id" : "f8", "to" : "f3", "label" : {
-            "name" : "end 4"
+            "name" : "end 4",
+            "offset" : { "x" : 5, "y" : -10 }
           } }
       ]
     }, {
@@ -112,12 +114,12 @@
       "connect" : [
         { "id" : "f4", "to" : "f1", "label" : {
             "name" : "start 6",
-            "offset" : { "x" : 9, "y" : -18 }
+            "offset" : { "x" : 1, "y" : -10 }
           }, "color" : "default" },
         { "id" : "f10", "to" : "f11", "via" : [ { "x" : 608, "y" : 168 } ], "label" : {
             "name" : "start 5",
             "segment" : 1.26,
-            "offset" : { "x" : 143, "y" : -18 }
+            "offset" : { "x" : 30, "y" : -65 }
           } }
       ]
     }, {
@@ -129,7 +131,8 @@
       },
       "connect" : [
         { "id" : "f9", "to" : "f5", "label" : {
-            "name" : "start 4"
+            "name" : "start 4",
+            "offset" : { "x" : 5, "y" : -18 }
           }, "color" : "default" }
       ]
     }, {
@@ -152,7 +155,8 @@
       "connect" : [
         { "id" : "f12", "to" : "f6", "via" : [ { "x" : 224, "y" : 168 } ], "label" : {
             "name" : "end 5",
-            "segment" : 0.78
+            "segment" : 0.78,
+            "offset" : { "x" : 14, "y" : -8 }
           }, "color" : "default" }
       ]
     } ]

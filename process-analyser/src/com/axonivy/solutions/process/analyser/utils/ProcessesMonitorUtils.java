@@ -181,13 +181,13 @@ public class ProcessesMonitorUtils {
   }
 
   private static boolean isValidTask(ITask task, Set<String> taskSwitchPids, Set<String> requestPaths) {
-    String taskId = ProcessUtils.getTaskElementIdFromRequestPath(task.getRequestPath());
+    String taskId = ProcessUtils.getTaskElementId(task);
     return taskSwitchPids.contains(taskId)
         || (!task.getRequestPath().isBlank() && requestPaths.contains(task.getRequestPath()));
   }
 
   private static String determineTaskKey(ITask task, Set<String> taskSwitchGatewayPids, Set<String> requestPaths) {
-    String taskId = ProcessUtils.getTaskElementIdFromRequestPath(task.getRequestPath());
+    String taskId = ProcessUtils.getTaskElementId(task);
     if (taskSwitchGatewayPids.contains(taskId)) {
       return ProcessUtils.getTaskElementIdFromRequestPath(task.getRequestPath(), true);
     }
@@ -238,21 +238,18 @@ public class ProcessesMonitorUtils {
   public static void updateFrequencyForNodes(List<Node> results, List<ProcessElement> processElements,
       List<ICase> cases) {
     List<ProcessElement> complexElements = ProcessUtils.getAlterNativesWithMultiOutgoings(processElements);
-
     // If current process have no alternative -> frequency = totals cases size.
     if (CollectionUtils.isEmpty(complexElements)) {
       results.stream().forEach(node -> updateNodeWithDefinedFrequency(cases.size(), node));
       return;
     }
-
     complexElements.addAll(ProcessUtils.getElementsWithMultiIncomings(processElements));
     List<AlternativePath> paths = convertToAternativePaths(complexElements);
-
     handleFrequencyForCasesWithAlternativePaths(paths, results, cases);
     List<ProcessElement> taskSwitchElements = processElements.stream()
         .filter(element -> ProcessUtils.isTaskSwitchGatewayInstance(element)).collect(Collectors.toList());
     complexElements.addAll(taskSwitchElements);
-    updateFrequencyForComplexElements(complexElements, results);
+//    updateFrequencyForComplexElements(complexElements, results);
     updateRelativeValueForNodes(results);
 
   }
@@ -320,39 +317,27 @@ public class ProcessesMonitorUtils {
     if (ObjectUtils.anyNull(paths, results, cases)) {
       return;
     }
+    Map<String, Integer> taskCountMap = new HashMap<String, Integer>();
+    List<String> complexId = paths.stream().flatMap(path -> path.getNodeIdsInPath().stream()).toList();
     cases.stream().forEach(currentCase -> {
-      List<String> taskIdsDoneInCase = getTaskIdDoneInCase(currentCase);
-      List<String> nonRunningElementIdsInCase = getNonRunningElementIdsInCase(taskIdsDoneInCase, paths);
-
-      Map<String, Integer> hashMap = countFrequencyOfTask(taskIdsDoneInCase);
-      for (Node node : results) {
-        if (hashMap.containsKey(node.getId()) && CollectionUtils.isNotEmpty(node.getOutGoingPathIds())) {
-          for (String pathId : node.getOutGoingPathIds()) {
-            hashMap.put(pathId, hashMap.get(node.getId()));
-          }
-        }
+      currentCase.tasks().all().stream().map(ProcessUtils::getTaskElementId)
+          .forEach(taskId -> taskCountMap.put(taskId, taskCountMap.getOrDefault(taskId, 0) + 1));
+    });
+    results.forEach(node -> {
+      if (complexId.contains(node.getId())) {
+        String taskIdInPath = paths.stream().filter(path -> path.getNodeIdsInPath().contains(node.getId())).findAny()
+            .map(AlternativePath::getTaskSwitchEventIdOnPath).orElse(StringUtils.EMPTY);
+        node.setFrequency(taskCountMap.getOrDefault(taskIdInPath, 0));
+        return;
       }
+      node.setFrequency(cases.size());
 
-      results.stream().filter(node -> !nonRunningElementIdsInCase.contains(node.getId()))
-          .forEach(node -> node.setFrequency(node.getFrequency() + hashMap.getOrDefault(node.getId(), 1)));
     });
   }
 
   public static List<String> getTaskIdDoneInCase(ICase currentCase) {
     return currentCase.tasks().all().stream()
-        .map(iTask -> ProcessUtils.getTaskElementIdFromRequestPath(iTask.getRequestPath())).toList();
-  }
-
-  public static Map<String, Integer> countFrequencyOfTask(List<String> taskIdsDoneInCase) {
-    // Create HashMap to store the count
-    Map<String, Integer> idCountMap = new HashMap<>();
-
-    // Count occurrences
-    for (String id : taskIdsDoneInCase) {
-      idCountMap.put(id, idCountMap.getOrDefault(id, 0) + 1);
-    }
-
-    return idCountMap;
+        .map(ProcessUtils::getTaskElementId).toList();
   }
 
   public static List<AlternativePath> convertToAternativePaths(List<ProcessElement> elements) {
@@ -374,20 +359,6 @@ public class ProcessesMonitorUtils {
     path.setNodeIdsInPath(new ArrayList<>());
     followPath(path, flow);
     return path;
-  }
-
-  public static List<String> getNonRunningElementIdsInCase(List<String> taskIdsDoneInCase,
-      List<AlternativePath> paths) {
-    List<String> results = new ArrayList<String>();
-    List<String> nonRunningElementIdsFromAlternative = paths.stream()
-        .filter(
-            path -> !path.isPathFromAlternativeEnd() && !taskIdsDoneInCase.contains(path.getTaskSwitchEventIdOnPath()))
-        .flatMap(path -> path.getNodeIdsInPath().stream()).toList();
-    List<String> nonRunningElementIdsFromEndElements = getNonRunningElementIdsFromAlternativeEnds(paths,
-        nonRunningElementIdsFromAlternative);
-    results.addAll(nonRunningElementIdsFromAlternative);
-    results.addAll(nonRunningElementIdsFromEndElements);
-    return results;
   }
 
   public static List<String> getNonRunningElementIdsFromAlternativeEnds(List<AlternativePath> paths,
