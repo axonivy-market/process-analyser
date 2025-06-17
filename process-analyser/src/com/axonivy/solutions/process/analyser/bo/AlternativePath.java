@@ -9,7 +9,7 @@ public class AlternativePath {
   private List<String> precedingFlowIds;
   private List<String> nodeIdsInPath;
   private String taskSwitchEventIdOnPath;
-  private boolean isPathFromAlternativeEnd;
+  private boolean isSolePathFromAlternativeEnd;
   private ProcessElement nestedSubProcessCall;
 
   public String getTaskSwitchEventIdOnPath() {
@@ -28,14 +28,6 @@ public class AlternativePath {
     this.nodeIdsInPath = nodeIdsInPath;
   }
 
-  public boolean isPathFromAlternativeEnd() {
-    return isPathFromAlternativeEnd;
-  }
-
-  public void setPathFromAlternativeEnd(boolean isPathFromAlternativeEnd) {
-    this.isPathFromAlternativeEnd = isPathFromAlternativeEnd;
-  }
-
   public List<String> getPrecedingFlowIds() {
     return precedingFlowIds;
   }
@@ -51,4 +43,12 @@ public class AlternativePath {
   public void setNestedSubProcessCall(ProcessElement nestedSubProcessCall) {
     this.nestedSubProcessCall = nestedSubProcessCall;
   }
+
+  public boolean isSolePathFromAlternativeEnd() {
+    return isSolePathFromAlternativeEnd;
+  }
+
+  public void setSolePathFromAlternativeEnd(boolean isSolePathFromAlternativeEnd) {
+    this.isSolePathFromAlternativeEnd = isSolePathFromAlternativeEnd;
+  }  
 }
