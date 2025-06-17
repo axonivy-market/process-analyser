@@ -13,6 +13,8 @@
       <h:outputScript name="resources/html2canvas.min.js" target="head"/>
       <h:outputStylesheet library="css" name="process-analyser.css" />
       <h:form id="process-analytics-form" styleClass="card">
+        <p:remoteCommand name="updateDataTable"
+          action="#{processesAnalyticsBean.updateDataTable}" update="data-statistics"/>
         <p:graphicImage id="hidden-image" library="ivy-cms"
           name="#{processesAnalyticsBean.miningUrl}" />
         <p:panelGrid columns="2" layout="grid" styleClass="ui-fluid"
@@ -138,7 +140,7 @@
 
         <hr />
 
-        <h:panelGroup id="arrow-statistics" layout="block">
+        <h:panelGroup id="data-statistics" layout="block">
           <p:dataTable var="node" styleClass="grid" id="node"
             value="#{processesAnalyticsBean.renderNodesForKPIType(processesAnalyticsBean.nodes)}" scrollable="true"
             scrollHeight="300"

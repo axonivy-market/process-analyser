@@ -49,15 +49,6 @@ public class ProcessesMonitorUtils {
   private ProcessesMonitorUtils() {
   }
 
-  /**
-   * Get outgoing arrows from each element. If the current element is sub
-   * (Embedded element), it will get all of nested element and execute the same
-   * thing until all of sub is extracted.
-   * 
-   * @param processElements list of process elements need to get its out going
-   *                        workflow
-   * @param results         list of existing arrow from previous step
-   */
   public static List<Node> convertToNodes(List<ProcessElement> processElements, List<SequenceFlow> sequenceFlows) {
     return Stream
         .concat(processElements.stream().flatMap(pe -> ProcessesMonitorUtils.convertProcessElementToNode(pe).stream()),
@@ -65,32 +56,34 @@ public class ProcessesMonitorUtils {
         .collect(Collectors.toList());
   }
 
+  /** 
+   * Convert process element to Node base on its class type 
+  **/
   public static List<Node> convertProcessElementToNode(ProcessElement element) {
-    if (element instanceof TaskSwitchGateway taskSwitchGateway) {
-      Node baseNode = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT);
-      baseNode.setOutGoingPathIds(element.getOutgoing().stream().map(ProcessUtils::getElementPid).toList());
-      baseNode.setInCommingPathIds(element.getIncoming().stream().map(ProcessUtils::getElementPid).toList());
-      baseNode.setTaskSwitchGateway(true);
-      String elementId = element.getPid().toString();
+    Node node = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT);
+    node.setOutGoingPathIds(element.getOutgoing().stream().map(ProcessUtils::getElementPid).toList());
+
+    return switch (element) {
+    case TaskSwitchGateway taskSwitchGateway -> {
+      node.setInCommingPathIds(taskSwitchGateway.getIncoming().stream().map(ProcessUtils::getElementPid).toList());
+      node.setTaskSwitchGateway(true);
+      String elementId = taskSwitchGateway.getPid().toString();
       List<Node> taskNodes = taskSwitchGateway.getAllTaskConfigs().stream()
           .map(task -> createNode(
               elementId + ProcessAnalyticsConstants.SLASH + task.getTaskIdentifier().getTaskIvpLinkName(),
               task.getName().getRawMacro(), NodeType.ELEMENT))
           .collect(Collectors.toList());
-      taskNodes.add(0, baseNode);
-      return taskNodes;
-    } else if (element instanceof RequestStart) {
-      RequestStart requestStart = RequestStart.class.cast(element);
-      Node node = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT);
-      node.setOutGoingPathIds(element.getOutgoing().stream().map(ProcessUtils::getElementPid).toList());
-      node.setRequestPath(requestStart.getRequestPath().getLinkPath());
-      return List.of(node);
-    } else {
-      Node node = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT);
-      node.setOutGoingPathIds(element.getOutgoing().stream().map(ProcessUtils::getElementPid).toList());
-      node.setInCommingPathIds(element.getIncoming().stream().map(ProcessUtils::getElementPid).toList());
-      return List.of(node);
+      taskNodes.add(0, node);
+      yield taskNodes;
     }
+    case RequestStart requestStart -> {
+      node.setRequestPath(requestStart.getRequestPath().getLinkPath());
+      yield List.of(node);
+    }
+    default -> {
+      node.setInCommingPathIds(element.getIncoming().stream().map(ProcessUtils::getElementPid).toList());
+      yield List.of(node);
+    }};
   }
 
   public static Node convertSequenceFlowToNode(SequenceFlow flow) {
@@ -121,11 +114,6 @@ public class ProcessesMonitorUtils {
     }
   }
 
-  /**
-   * New approach to show process analyser data without modifying original
-   * process. All of material which is use to analyzing will be based on task data
-   * from AxonIvy system db.
-   **/
   public static List<Node> filterInitialStatisticByIntervalTime(IProcessWebStartable processStart, KpiType analysisType,
       List<ICase> cases) {
     if (Objects.isNull(processStart)) {
@@ -133,10 +121,7 @@ public class ProcessesMonitorUtils {
     }
     List<ProcessElement> processElements = ProcessUtils.getProcessElementsFrom(processStart);
     if (isDuration(analysisType)) {
-      processElements = processElements.stream()
-          .filter(element -> ProcessUtils.isTaskSwitchGatewayInstance(element)
-              || ProcessUtils.isTaskSwitchInstance(element) || ProcessUtils.isRequestStartInstance(element))
-          .collect(Collectors.toList());
+      processElements = ProcessUtils.getTaskStart(processElements);
     }
     List<SequenceFlow> sequenceFlows = ProcessUtils.getSequenceFlowsFrom(processElements);
     List<Node> nodes = convertToNodes(processElements, sequenceFlows);
@@ -225,7 +210,6 @@ public class ProcessesMonitorUtils {
     return false;
   }
 
-
   private static Function<ITask, Long> getDurationExtractor(KpiType durationKpiType) {
     if (durationKpiType.isDescendantOf(KpiType.DURATION_IDLE)) {
       return task -> getOverallDuration(task) - task.getWorkingTime().toNumber();
@@ -250,34 +234,34 @@ public class ProcessesMonitorUtils {
     return sorted.size() % 2 == 0 ? (sorted.get(middle - 1) + sorted.get(middle)) / 2.0f : sorted.get(middle);
   }
 
-
-
-  /**
-   * If current process have no alternative -> frequency = totals cases size. If not, we need to check which path from
-   * alternative is running to update frequency for elements belong to its.
-   **/
   public static void updateFrequencyForNodes(List<Node> results, List<ProcessElement> processElements,
       List<ICase> cases) {
     List<ProcessElement> branchSwitchingElement = ProcessUtils.getAlterNativesWithMultiOutgoings(processElements);
+
+    // If current process have no alternative -> frequency = totals cases size.
     if (CollectionUtils.isEmpty(branchSwitchingElement)) {
-      results.stream().forEach(node -> updateNodeWiwthDefinedFrequency(cases.size(), node));
-    } else {
-      List<ProcessElement> alternativeEnds = ProcessUtils.getElementsWithMultiIncomings(processElements);
-      branchSwitchingElement.addAll(alternativeEnds);
-      List<AlternativePath> paths = convertToAternativePaths(branchSwitchingElement);
-      handleFrequencyForCasesWithAlternativePaths(paths, results, cases);
-      List<ProcessElement> taskSwitchElements = processElements.stream()
-          .filter(element -> ProcessUtils.isTaskSwitchGatewayInstance(element)).collect(Collectors.toList());
-      List<ProcessElement> complexElements = new ArrayList<>();
-      complexElements.addAll(taskSwitchElements);
-      complexElements.addAll(branchSwitchingElement);
-      List<ProcessElement> subWithOneIncommingElements =
-          processElements.stream().filter(element -> ProcessUtils.isEmbeddedElementInstance(element)
-              && !ProcessUtils.isElementWithMultipleIncomingFlow(element)).collect(Collectors.toList());
-      complexElements.addAll(subWithOneIncommingElements);
-      updateFrequencyForComplexElements(complexElements, results);
-      updateRelativeValueForNodes(results);
+      results.stream().forEach(node -> updateNodeWithDefinedFrequency(cases.size(), node));
+      return;
     }
+
+    // check which path from alternative is running to update frequency for elements belong to its.
+    List<ProcessElement> alternativeEnds = ProcessUtils.getElementsWithMultiIncomings(processElements);
+    branchSwitchingElement.addAll(alternativeEnds);
+    List<AlternativePath> paths = convertToAternativePaths(branchSwitchingElement);
+    handleFrequencyForCasesWithAlternativePaths(paths, results, cases);
+    List<ProcessElement> taskSwitchElements = processElements.stream()
+        .filter(element -> ProcessUtils.isTaskSwitchGatewayInstance(element)).collect(Collectors.toList());
+    List<ProcessElement> complexElements = new ArrayList<>();
+    complexElements.addAll(taskSwitchElements);
+    complexElements.addAll(branchSwitchingElement);
+    List<ProcessElement> subWithOneIncommingElements = processElements.stream()
+        .filter(element -> ProcessUtils.isEmbeddedElementInstance(element)
+            && !ProcessUtils.isElementWithMultipleIncomingFlow(element))
+        .collect(Collectors.toList());
+    complexElements.addAll(subWithOneIncommingElements);
+    updateFrequencyForComplexElements(complexElements, results);
+    updateRelativeValueForNodes(results);
+
   }
 
   public static void updateFrequencyForComplexElements(List<ProcessElement> complexElements, List<Node> nodes) {
@@ -400,7 +384,8 @@ public class ProcessesMonitorUtils {
     return path;
   }
 
-  public static List<String> getNonRunningElementIdsInCase(List<String> taskIdsDoneInCase, List<AlternativePath> paths) {
+  public static List<String> getNonRunningElementIdsInCase(List<String> taskIdsDoneInCase,
+      List<AlternativePath> paths) {
     List<String> results = new ArrayList<String>();
     List<String> nonRunningElementIdsFromAlternative = paths.stream()
         .filter(
@@ -427,17 +412,37 @@ public class ProcessesMonitorUtils {
    * element in that flow
    **/
   public static void followPath(AlternativePath path, SequenceFlow currentFlow) {
-    ProcessElement destinationElement = (ProcessElement) currentFlow.getTarget();
-    path.getNodeIdsInPath().add(ProcessUtils.getElementPid(currentFlow));
+    ProcessElement destinationElement = ProcessElement.class.cast(currentFlow.getTarget());
+    String flowPid = ProcessUtils.getElementPid(currentFlow);
+    String destinationElementPid = ProcessUtils.getElementPid(destinationElement);
+
+    path.getNodeIdsInPath().add(flowPid);
+    updateTaskSwitchEventIdOnPath(path, destinationElement);
+    if (ProcessUtils.isAlternativePathEndElement(destinationElement)) {
+      return;
+    }
+
+    path.getNodeIdsInPath().add(destinationElementPid);
+    if (ProcessUtils.isEmbeddedElementInstance(destinationElement)) {
+      destinationElement = ProcessUtils.getEmbeddedStartConnectToFlow(destinationElement, flowPid);
+    } else if (ProcessUtils.isSubProcessCallInstance(destinationElement)) {
+      ProcessElement callStart = ProcessUtils.getStartElementFromSubProcessCall(destinationElement);
+      addAndTraverseOutgoing(path, callStart);
+    }
+
+    addAndTraverseOutgoing(path, destinationElement);
+  }
+
+  private static void addAndTraverseOutgoing(AlternativePath path, ProcessElement element) {
+    path.getNodeIdsInPath().add(ProcessUtils.getElementPid(element));
+    element.getOutgoing().forEach(outgoing -> followPath(path, outgoing));
+  }
+
+  private static void updateTaskSwitchEventIdOnPath(AlternativePath path, ProcessElement destinationElement) {
     if (ProcessUtils.isTaskSwitchInstance(destinationElement)
         && StringUtils.isBlank(path.getTaskSwitchEventIdOnPath())) {
       path.setTaskSwitchEventIdOnPath(ProcessUtils.getElementPid(destinationElement));
     }
-    if (ProcessUtils.isAlternativePathEndElement(destinationElement)) {
-      return;
-    }
-    path.getNodeIdsInPath().add(ProcessUtils.getElementPid(destinationElement));
-    destinationElement.getOutgoing().forEach(outgoingPath -> followPath(path, outgoingPath));
   }
 
   /**
@@ -569,7 +574,7 @@ public class ProcessesMonitorUtils {
     }
   }
 
-  public static void updateNodeWiwthDefinedFrequency(int value, Node node) {
+  public static void updateNodeWithDefinedFrequency(int value, Node node) {
     Long releativeValue = (long) (value == 0 ? 0 : 1);
     node.setRelativeValue(releativeValue);
     node.setLabelValue(Objects.requireNonNullElse(value, 0).toString());
