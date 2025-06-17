@@ -245,6 +245,7 @@ public class ProcessesMonitorUtils {
     }
     complexElements.addAll(ProcessUtils.getElementsWithMultiIncomings(processElements));
     List<AlternativePath> paths = convertToAternativePaths(complexElements);
+    paths.stream().forEach(a-> Ivy.log().warn(a.toString()));
     updateFrequencyForCasesWithAlternativePaths(paths, results, cases);
     List<ProcessElement> taskSwitchElements = processElements.stream()
         .filter(element -> ProcessUtils.isTaskSwitchGatewayInstance(element)).collect(Collectors.toList());
@@ -388,7 +389,6 @@ public class ProcessesMonitorUtils {
 
   private static void processDestinationElement(AlternativePath path, ProcessElement element, String incomingFlowPid) {
     path.getNodeIdsInPath().add(ProcessUtils.getElementPid(element));
-
     ProcessElement nextElement = switch (element) {
     case EmbeddedProcessElement embedded -> ProcessUtils.getEmbeddedStartConnectToFlow(embedded, incomingFlowPid);
     case SubProcessCall subProcess -> {
@@ -398,12 +398,12 @@ public class ProcessesMonitorUtils {
     case EmbeddedEnd embeddedEnd -> {
       SequenceFlow outerFlow = embeddedEnd.getConnectedOuterSequenceFlow();
       path.getNodeIdsInPath().add(ProcessUtils.getElementPid(outerFlow));
-      yield (ProcessElement) outerFlow.getTarget();
+      yield ProcessElement.class.cast(outerFlow.getTarget());
     }
     case CallSubEnd callSubEnd -> {
       SequenceFlow outerFlow = path.getNestedSubProcessCall().getOutgoing().getFirst();
       path.getNodeIdsInPath().add(ProcessUtils.getElementPid(outerFlow));
-      yield (ProcessElement) outerFlow.getTarget();
+      yield ProcessElement.class.cast(outerFlow.getTarget());
     }
     default -> element;
     };
