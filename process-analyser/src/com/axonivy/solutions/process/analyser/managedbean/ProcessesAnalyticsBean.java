@@ -227,12 +227,14 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onSegmentClick(ActionEvent event) {
-    selectedIndex = (Integer) event.getComponent().getAttributes().get("segmentIndex");
+    selectedIndex =
+        (Integer) event.getComponent().getAttributes().get(ProcessAnalyticsConstants.COLOR_SEGMENT_ATTRIBUTE);
     selectedColor = colorSegments.get(selectedIndex);
   }
 
   public void onColorChange() {
-    colorSegments = ProcessesMonitorUtils.generateGradientFromRgb(selectedColor, 10);
+    colorSegments =
+        ProcessesMonitorUtils.generateGradientFromRgb(selectedColor, ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS);
     updateDiagramAndStatistic();
   }
 

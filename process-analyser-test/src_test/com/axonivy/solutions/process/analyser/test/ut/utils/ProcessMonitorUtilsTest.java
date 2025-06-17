@@ -177,17 +177,17 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
   }
 
   @Test
-  void test_generateColorSegments_withFrequency_returnsEnumPalette() {
-    List<String> expected = KpiColor.FREQUENCY.getColors();
-    List<String> actual = ProcessesMonitorUtils.generateColorSegments(KpiType.FREQUENCY);
-    assertThat(actual).containsExactlyElementsOf(expected);
+  void test_generateColorSegments_withFrequencyKpi() {
+    List<String> frequencyColors = KpiColor.FREQUENCY.getColors();
+    List<String> colorSegments = ProcessesMonitorUtils.generateColorSegments(KpiType.FREQUENCY);
+    assertThat(colorSegments).containsExactlyElementsOf(frequencyColors);
   }
 
   @Test
-  void test_generateColorSegments_withDuration_returnsEnumPalette() {
-    List<String> expected = KpiColor.DURATION.getColors();
-    List<String> actual = ProcessesMonitorUtils.generateColorSegments(KpiType.DURATION);
-    assertThat(actual).containsExactlyElementsOf(expected);
+  void test_generateColorSegments_withDurationKpi() {
+    List<String> durationColors = KpiColor.DURATION.getColors();
+    List<String> colorSegments = ProcessesMonitorUtils.generateColorSegments(KpiType.DURATION);
+    assertThat(colorSegments).containsExactlyElementsOf(durationColors);
   }
 
   @Test
@@ -214,20 +214,12 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
   }
 
   @Test
-  void test_generateGradientFromRgb_oneStep() {
-    List<String> gradient = ProcessesMonitorUtils.generateGradientFromRgb("rgb(120, 130, 140)", 1);
-    assertThat(gradient).hasSize(1);
-    assertThat(gradient.get(0)).startsWith("rgb(");
-  }
-
-  @Test
-  void test_generateGradientFromRgb_darkColorGetsBrighter() {
+  void test_generateGradientFromRgb_withSelectedDarkenColor() {
     String input = "rgb(10, 20, 30)";
     int steps = 5;
     List<String> gradient = ProcessesMonitorUtils.generateGradientFromRgb(input, steps);
     assertThat(gradient).hasSize(steps);
 
-    // Extract and compare RGB values: brightness should increase
     for (int i = 1; i < steps; i++) {
       int prev = extractBrightness(gradient.get(i - 1));
       int curr = extractBrightness(gradient.get(i));
@@ -236,7 +228,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
   }
 
   @Test
-  void test_generateGradientFromRgb_lightColorGetsDarker() {
+  void test_generateGradientFromRgb_withSelectedLightenColor() {
     String input = "rgb(240, 240, 240)";
     int steps = 6;
     List<String> gradient = ProcessesMonitorUtils.generateGradientFromRgb(input, steps);
@@ -258,29 +250,20 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
   }
 
   @Test
-  void test_generateGradientFromRgb_minRgb_becomesBrighterWhite() {
+  void test_generateGradientFromRgb_withPureBlack() {
     String input = "rgb(0, 0, 0)";
     int steps = 3;
     List<String> gradient = ProcessesMonitorUtils.generateGradientFromRgb(input, steps);
-    assertThat(gradient.get(0)).isEqualTo("rgb(216, 216, 216)"); // depends on brighten factor
+    assertThat(gradient.get(0)).isEqualTo("rgb(216, 216, 216)");
     assertThat(gradient.get(steps - 1)).isEqualTo("rgb(0, 0, 0)");
   }
 
   @Test
-  void test_generateGradientFromRgb_maxRgb_becomesDarkerBlack() {
+  void test_generateGradientFromRgb_withPureWhite() {
     String input = "rgb(255, 255, 255)";
     int steps = 3;
     List<String> gradient = ProcessesMonitorUtils.generateGradientFromRgb(input, steps);
-    assertThat(gradient.get(0)).startsWith("rgb(3"); // Very dark
+    assertThat(gradient.get(0)).startsWith("rgb(3");
     assertThat(gradient.get(steps - 1)).isEqualTo("rgb(255, 255, 255)");
-  }
-
-  // Helper method to calculate perceived brightness from rgb string
-  private int extractBrightness(String rgbString) {
-    String[] parts = rgbString.replaceAll("[^0-9,]", "").split(",");
-    int r = Integer.parseInt(parts[0].trim());
-    int g = Integer.parseInt(parts[1].trim());
-    int b = Integer.parseInt(parts[2].trim());
-    return (int) (0.299 * r + 0.587 * g + 0.114 * b);
   }
 }

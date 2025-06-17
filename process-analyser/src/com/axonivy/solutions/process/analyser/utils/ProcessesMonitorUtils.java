@@ -575,14 +575,22 @@ public class ProcessesMonitorUtils {
     node.setLabelValue(Objects.requireNonNullElse(value, 0).toString());
     node.setFrequency(value);
   }
-  
 
   public static List<String> generateColorSegments(KpiType selectedKpiType) {
     return KpiColor.fromKpiType(selectedKpiType);
   }
 
+  /**
+   * Generates a gradient of RGB colors from the selected color.
+   * If the color is light, it produces a darkening gradient.
+   * If the color is dark, it produces a brightening gradient.
+   *
+   * @param rgbColor RGB string in the format "rgb(r, g, b)"
+   * @param steps    Number of gradient steps to generate
+   * @return List of RGB color strings forming the gradient
+   */
   public static List<String> generateGradientFromRgb(String rgbColor, int steps) {
-    Matcher matcher = Pattern.compile(ProcessAnalyticsConstants.RGB_REGEX).matcher(rgbColor);
+    Matcher matcher = Pattern.compile(ProcessAnalyticsConstants.RGB_REGEX_PATTERN).matcher(rgbColor);
 
     if (!matcher.matches()) {
       throw new IllegalArgumentException("Invalid RGB format: " + rgbColor);
@@ -592,27 +600,27 @@ public class ProcessesMonitorUtils {
     int g = Integer.parseInt(matcher.group(2));
     int b = Integer.parseInt(matcher.group(3));
 
-    double brightness = 0.299 * r + 0.587 * g + 0.114 * b;
-    boolean isLightColor = brightness > 205;
+    double perceivedLuminance = 0.299 * r + 0.587 * g + 0.114 * b;
+    boolean isLightColor = perceivedLuminance > 205;
 
-    List<String> gradient = new ArrayList<>(steps);
+    List<String> gradientColors = new ArrayList<>(steps);
 
     for (int i = 0; i < steps; i++) {
       float t = (float) i / (steps - 1);
-      float factor = isLightColor ? t * 0.85f : (1 - t) * 0.85f;
+      float adjustmentFactor = isLightColor ? t * 0.85f : (1 - t) * 0.85f;
 
-      int nr = adjustColor(r, factor, isLightColor);
-      int ng = adjustColor(g, factor, isLightColor);
-      int nb = adjustColor(b, factor, isLightColor);
+      int adjustedRed = adjustColor(r, adjustmentFactor, isLightColor);
+      int adjustedGreen = adjustColor(g, adjustmentFactor, isLightColor);
+      int adjustedBlue = adjustColor(b, adjustmentFactor, isLightColor);
 
-      gradient.add(String.format(ProcessAnalyticsConstants.RGB_FORMAT, nr, ng, nb));
+      gradientColors.add(String.format(ProcessAnalyticsConstants.RGB_FORMAT, adjustedRed, adjustedGreen, adjustedBlue));
     }
-    return gradient;
+    return gradientColors;
   }
 
-  private static int adjustColor(int base, float factor, boolean darken) {
-    int value = darken ? Math.round(base * (1 - factor)) // darkening
-        : Math.round(base + (255 - base) * factor); // brightening
+  private static int adjustColor(int baseValue, float adjustmentFactor, boolean shouldDarken) {
+    int value = shouldDarken ? Math.round(baseValue * (1 - adjustmentFactor))
+        : Math.round(baseValue + (255 - baseValue) * adjustmentFactor);
     return Math.max(0, Math.min(255, value));
   }
 }

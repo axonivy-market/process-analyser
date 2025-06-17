@@ -51,4 +51,12 @@ public class BaseSetup {
   protected NodeElement getElementNextToTestStart() {
     return flowFromStartElement.getTarget();
   }
+
+  protected int extractBrightness(String rgbString) {
+    String[] parts = rgbString.replaceAll("[^0-9,]", "").split(",");
+    int r = Integer.parseInt(parts[0].trim());
+    int g = Integer.parseInt(parts[1].trim());
+    int b = Integer.parseInt(parts[2].trim());
+    return (int) (0.299 * r + 0.587 * g + 0.114 * b);
+  }
 }
