@@ -141,6 +141,7 @@
         <hr />
 
         <h:panelGroup id="data-statistics" layout="block">
+          <p:dataTable var="node" styleClass="grid" id="node"
             value="#{processesAnalyticsBean.renderNodesForKPIType(processesAnalyticsBean.nodes)}" scrollable="true"
             scrollHeight="300"
             emptyMessage="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/NoRecordsFound')}">
@@ -162,8 +163,8 @@
               styleClass="col-2" sortBy="#{node.frequency}"
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Frequency')}">
               <h:panelGroup layout="block" styleClass="colorable-cell"
-                style="background-color: #{processesAnalyticsBean.getCalulatedCellColor(node.frequency)};
-                  color: #{processesAnalyticsBean.getAccessibleTextColor(node.frequency)};">
+                style="background-color: #{processesAnalyticsBean.getCalulatedCellColor(node.relativeValue)};
+                  color: #{processesAnalyticsBean.getAccessibleTextColor(node.relativeValue)};">
                 <h:outputText value="#{node.frequency}" />
               </h:panelGroup>
             </p:column>
@@ -172,8 +173,8 @@
               styleClass="col-2" sortBy="#{node.medianDuration}"
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/MedianDuration')}">
               <h:panelGroup layout="block" styleClass="colorable-cell"
-                style="background-color: #{processesAnalyticsBean.getCalulatedCellColor(node.frequency)};
-                  color: #{processesAnalyticsBean.getAccessibleTextColor(node.frequency)};">
+                style="background-color: #{processesAnalyticsBean.getCalulatedCellColor(node.medianDuration)};
+                  color: #{processesAnalyticsBean.getAccessibleTextColor(node.medianDuration)};">
                 <h:outputText value="#{node.formattedMedianDuration}" />
               </h:panelGroup>
             </p:column>
