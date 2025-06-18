@@ -142,7 +142,7 @@
 
         <h:panelGroup id="data-statistics" layout="block">
           <p:dataTable var="node" styleClass="grid" id="node"
-            value="#{processesAnalyticsBean.renderNodesForKPIType(processesAnalyticsBean.nodes)}" scrollable="true"
+            value="#{processesAnalyticsBean.renderNodesForKPIType()}" scrollable="true"
             scrollHeight="300"
             emptyMessage="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/NoRecordsFound')}">
             <p:column styleClass="col-2" sortBy="#{node.id}"
@@ -180,7 +180,7 @@
             </p:column>
             <f:facet name="footer">
               <h:outputText
-                value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/TotalElements', [processesAnalyticsBean.nodes.size()])}"
+                value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/TotalElements', [processesAnalyticsBean.getDataTableTotalRow()])}"
                 styleClass="col-12" />
             </f:facet>
           </p:dataTable>

@@ -23,21 +23,21 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PF;
 
+import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.ProcessMiningData;
 import com.axonivy.solutions.process.analyser.bo.TimeFrame;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
+import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
-import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
+import com.axonivy.solutions.process.analyser.service.IvyTaskOccurrenceService;
 import com.axonivy.solutions.process.analyser.utils.ColorUtils;
 import com.axonivy.solutions.process.analyser.utils.DateUtils;
 import com.axonivy.solutions.process.analyser.utils.JacksonUtils;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
-import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
-import com.axonivy.solutions.process.analyser.service.IvyTaskOccurrenceService;
 
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.cm.ContentObject;
@@ -330,7 +330,7 @@ public class ProcessesAnalyticsBean {
         : StringUtils.EMPTY;
   }
 
-  public List<Node> renderNodesForKPIType(List<Node> nodes) {
+  public List<Node> renderNodesForKPIType() {
     if (this.selectedKpiType != null && this.selectedKpiType.isDescendantOf(KpiType.DURATION)) {
       List<String> avaibleTaskIds =
           nodes.stream().filter(node -> node.getType() == NodeType.ARROW).map(node -> node.getSourceNodeId()).toList();
@@ -339,6 +339,10 @@ public class ProcessesAnalyticsBean {
           .toList();
     }
     return nodes;
+  }
+
+  public int getDataTableTotalRow() {
+    return renderNodesForKPIType().size();
   }
 
   public boolean isMedianDurationColumnVisible() {
