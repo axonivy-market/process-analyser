@@ -5,6 +5,7 @@ import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnaly
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HASHTAG;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.LIGHT_TEXT_COLOR;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.NON_DIGIT_COMMA_REGEX;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.RGB;
 
 import java.util.List;;
 
@@ -23,7 +24,7 @@ public class ColorUtils {
       r = (val >> 16) & 0xFF;
       g = (val >> 8) & 0xFF;
       b = val & 0xFF;
-    } else if (color.startsWith("rgb")) {
+    } else if (color.startsWith(RGB)) {
       String[] parts = color.replaceAll(NON_DIGIT_COMMA_REGEX, "").split(COMMA);
       r = Integer.parseInt(parts[0]);
       g = Integer.parseInt(parts[1]);
@@ -31,6 +32,8 @@ public class ColorUtils {
     } else {
       throw new IllegalArgumentException("#getAccessibleTextColor: Unsupported color: " + color);
     }
+    // 0.299 * r + 0.587 * g + 0.114 * b:
+    // Luminance formula for determine dark and light color
     return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.5 ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR;
   }
 

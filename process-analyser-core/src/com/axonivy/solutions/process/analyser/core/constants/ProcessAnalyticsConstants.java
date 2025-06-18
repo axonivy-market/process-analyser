@@ -35,5 +35,6 @@ public class ProcessAnalyticsConstants {
   public static final String RGB_FORMAT = "rgb(%d, %d, %d)";
   public static final String LIGHT_TEXT_COLOR = "#FFFFFF";
   public static final String DARK_TEXT_COLOR = "#000000";
+  public static final String RGB = "rgb";
   public static final String NON_DIGIT_COMMA_REGEX = "[^\\d,]";
 }
