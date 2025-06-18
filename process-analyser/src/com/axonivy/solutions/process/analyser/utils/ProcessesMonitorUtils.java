@@ -83,7 +83,8 @@ public class ProcessesMonitorUtils {
     default -> {
       node.setInCommingPathIds(element.getIncoming().stream().map(ProcessUtils::getElementPid).toList());
       yield List.of(node);
-    }};
+    }
+    };
   }
 
   public static Node convertSequenceFlowToNode(SequenceFlow flow) {
@@ -370,27 +371,24 @@ public class ProcessesMonitorUtils {
   }
 
   private static List<SequenceFlow> getNextOutgoingFlows(ProcessElement nextElement) {
-    return (nextElement instanceof EmbeddedEnd embeddedEnd)
-        ? List.of(embeddedEnd.getConnectedOuterSequenceFlow())
+    return (nextElement instanceof EmbeddedEnd embeddedEnd) ? List.of(embeddedEnd.getConnectedOuterSequenceFlow())
         : nextElement.getOutgoing();
   }
 
-  private static ProcessElement resolveNextElement(AlternativePath path, ProcessElement element, String currentFlowPid) {
+  private static ProcessElement resolveNextElement(AlternativePath path, ProcessElement element,
+      String currentFlowPid) {
     return switch (element) {
-        case EmbeddedProcessElement embedded ->
-            ProcessUtils.getEmbeddedStartConnectToFlow(embedded, currentFlowPid);
-        case CallSubEnd callSubEnd ->
-            path.getNestedSubProcessCall();
-        case SubProcessCall subProcess ->
-            ProcessUtils.getStartElementFromSubProcessCall(subProcess);
-        case EmbeddedEnd embeddedEnd -> {
-            SequenceFlow outerFlow = embeddedEnd.getConnectedOuterSequenceFlow();
-            path.getNodeIdsInPath().add(ProcessUtils.getElementPid(outerFlow));
-            yield ProcessElement.class.cast(outerFlow.getTarget());
-        }
-        default -> element;
+    case EmbeddedProcessElement embedded -> ProcessUtils.getEmbeddedStartConnectToFlow(embedded, currentFlowPid);
+    case CallSubEnd callSubEnd -> path.getNestedSubProcessCall();
+    case SubProcessCall subProcess -> ProcessUtils.getStartElementFromSubProcessCall(subProcess);
+    case EmbeddedEnd embeddedEnd -> {
+      SequenceFlow outerFlow = embeddedEnd.getConnectedOuterSequenceFlow();
+      path.getNodeIdsInPath().add(ProcessUtils.getElementPid(outerFlow));
+      yield ProcessElement.class.cast(outerFlow.getTarget());
+    }
+    default -> element;
     };
-}
+  }
 
   private static void updateTaskSwitchEventIdOnPath(AlternativePath path, ProcessElement destinationElement) {
     if (ProcessUtils.isTaskSwitchInstance(destinationElement)
