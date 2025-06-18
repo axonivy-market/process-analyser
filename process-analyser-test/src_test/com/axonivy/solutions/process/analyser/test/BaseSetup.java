@@ -27,6 +27,7 @@ public class BaseSetup {
   protected static final String SELECTED_MODULE_URL = "HRTest";
   protected static final String OUTER_FLOW_TO_SUB_PID = "193485C5ABDFEA93-f16";
   protected static final String SUB_PROCESS_START = "193485C5ABDFEA93-S10-g0";
+  protected static final String SUB_PROCESS_END = "193485C5ABDFEA93-S10-g1";
   protected static final String EMBEDDED_PID = "193485C5ABDFEA93-S10";
   protected static final String REST_CALL_PID = "193485C5ABDFEA93-f3";
 
@@ -39,7 +40,7 @@ public class BaseSetup {
   protected static ProcessElement subProcessCall;
   protected static String outerFlowPid;
   protected static ProcessElement embeddedStart;
-
+  protected static ProcessElement embeddedEnd;
 
   protected static void prepareData() {
     testProcessStart = (IProcessWebStartable) ProcessUtils.getAllProcesses().stream()
@@ -52,6 +53,7 @@ public class BaseSetup {
     outerFlowPid = testSequenceFlows.stream().filter(arrow -> OUTER_FLOW_TO_SUB_PID.equals(arrow.getPid().toString()))
         .map(flow -> flow.getPid().toString()).findAny().get();
     embeddedStart = getProcessElementByPid(SUB_PROCESS_START);
+    embeddedEnd = getProcessElementByPid(SUB_PROCESS_END);
     flowFromStartElement = startProcessElement.getOutgoing().get(0);
   }
 

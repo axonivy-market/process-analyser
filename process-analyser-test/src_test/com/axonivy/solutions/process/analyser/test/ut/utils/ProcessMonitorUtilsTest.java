@@ -27,6 +27,8 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
 
   private final static String NODE_A_ID = "A";
   private final static String NODE_B_ID = "B";
+  private final static String NODE_C_ID = "C";
+
 
   @BeforeAll
   static void setUp() {
@@ -140,6 +142,21 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     List<Node> nodes = prepareMockNodeList();
     assertThat(ProcessesMonitorUtils.findNodeById(NODE_A_ID, nodes).getFrequency()).isEqualTo(1);
     assertThat(ProcessesMonitorUtils.findNodeById(NODE_B_ID, nodes).getFrequency()).isEqualTo(2);
+  }
+
+  @Test
+  void test_updateFrequencyForComplexElements() {
+    List<Node> nodes = prepareMockNodeList();
+    Node nodeC = new Node();
+    nodeC.setFrequency(0);
+    nodeC.setId(NODE_C_ID);
+    nodes.add(nodeC);
+    AlternativePath alternative = new AlternativePath();
+    alternative.setPrecedingFlowIds(List.of(NODE_A_ID,NODE_B_ID));
+    alternative.setSolePathFromAlternativeEnd(true);
+    alternative.setNodeIdsInPath(List.of(NODE_C_ID));
+    ProcessesMonitorUtils.updateFrequencyForComplexElements(List.of(alternative), nodes);
+    assertThat(nodes.getLast().getFrequency()).isEqualTo(3);
   }
 
   private List<Node> prepareMockNodeList() {

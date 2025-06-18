@@ -244,10 +244,6 @@ public class ProcessUtils {
         .orElse(false);
   }
 
-  public static boolean isAlternativePathEndElementWithSingleOuterFlow(ProcessElement processElement) {
-    return isAlternativePathEndElement(processElement) && processElement.getOutgoing().size() == 1;
-  }
-
   public static boolean isAlternativePathEndElement(ProcessElement processElement) {
     return switch (processElement) {
     case Alternative alternative -> true;

@@ -105,4 +105,14 @@ public class ProcessUtilsTest extends BaseSetup {
     assertNotNull(ProcessUtils.getStartElementFromSubProcessCall(subProcessCall),
         "Sub process call should be filter from test process");
   }
+
+  @Test
+  void test_isEmbeddedEndInstance() {
+    assertTrue(ProcessUtils.isEmbeddedEndInstance(embeddedEnd));
+  }
+
+  @Test
+  void test_isComplexElementWithMultiIncomings() {
+    assertTrue(ProcessUtils.isComplexElementWithMultiIncomings(embeddedEnd));
+  }
 }

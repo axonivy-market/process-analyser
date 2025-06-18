@@ -83,8 +83,7 @@ public class ProcessesMonitorUtils {
     default -> {
       node.setInCommingPathIds(element.getIncoming().stream().map(ProcessUtils::getElementPid).toList());
       yield List.of(node);
-    }
-    };
+    }};
   }
 
   public static Node convertSequenceFlowToNode(SequenceFlow flow) {
