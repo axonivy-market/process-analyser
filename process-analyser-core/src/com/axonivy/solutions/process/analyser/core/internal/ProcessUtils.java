@@ -242,7 +242,7 @@ public class ProcessUtils {
   public static boolean isAlternativePathEndElement(ProcessElement processElement) {
     return switch (processElement) {
     case Alternative alternative -> true;
-    case CallSubEnd callSubEnd -> true;
+    case CallSubEnd callSubEnd -> false;
     case Join join -> false;
     case EmbeddedProcessElement sub -> false;
     case EmbeddedEnd subEnd -> false;

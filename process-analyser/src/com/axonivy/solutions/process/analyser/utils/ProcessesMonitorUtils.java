@@ -246,24 +246,15 @@ public class ProcessesMonitorUtils {
     complexElements.addAll(ProcessUtils.getElementsWithMultiIncomings(processElements));
     List<AlternativePath> paths = convertToAternativePaths(complexElements,
         processElements.stream().filter(SubProcessCall.class::isInstance).toList());
-
     updateFrequencyForCasesWithAlternativePaths(paths, results, cases);
-//    List<ProcessElement> taskSwitchElements = processElements.stream()
-//        .filter(element -> ProcessUtils.isTaskSwitchGatewayInstance(element)).collect(Collectors.toList());
-//    complexElements.addAll(taskSwitchElements);
     updateFrequencyForComplexElements(paths, results);
     updateRelativeValueForNodes(results);
-
   }
 
   public static void updateFrequencyForComplexElements(List<AlternativePath> paths, List<Node> nodes) {
     paths.stream().filter(AlternativePath::isSolePathFromAlternativeEnd).forEach(path -> {
-      Ivy.log().warn(path.toString());
       int totalFrequencyFromPreceedingFlow = path.getPrecedingFlowIds().stream()
           .mapToInt(flowId -> getFrequencyById(flowId, nodes)).sum();
-      path.getPrecedingFlowIds().stream()
-      .forEach(flowId -> Ivy.log().warn(getFrequencyById(flowId, nodes)));
-
       nodes.stream().filter(node -> path.getNodeIdsInPath().contains(node.getId()))
           .forEach(node -> node.setFrequency(totalFrequencyFromPreceedingFlow));
     });
@@ -318,14 +309,6 @@ public class ProcessesMonitorUtils {
       }
       node.setFrequency(cases.size());
     });
-
-//    paths.stream().filter(AlternativePath::isSolePathFromAlternativeEnd).forEach(path -> {
-//      Ivy.log().warn(path.toString());
-//      int totalFrequencyFromPreceedingFlow = path.getPrecedingFlowIds().stream()
-//          .mapToInt(flowId -> getFrequencyById(flowId, results)).sum();
-//      results.stream().filter(node -> path.getNodeIdsInPath().contains(node.getId()))
-//          .forEach(node -> node.setFrequency(totalFrequencyFromPreceedingFlow));
-//    });
   }
 
   public static List<String> getTaskIdDoneInCase(ICase currentCase) {
@@ -344,8 +327,9 @@ public class ProcessesMonitorUtils {
         : Collections.emptyList();
     boolean isSolePathFromAlternativeEnd = element.getOutgoing().size() == 1;
     ProcessElement nestedSubElement = subProcessCalls.stream()
-        .filter(subProcessCall -> subProcessCall.getRootProcess().getElements().contains(element)).findAny()
-        .orElse(null);
+        .filter(subProcessCall -> ProcessUtils.getNestedProcessElementsFromSub(subProcessCall).stream()
+            .map(ProcessUtils::getElementPid).toList().contains(ProcessUtils.getElementPid(element)))
+        .findAny().orElse(null);
     return element.getOutgoing().stream().map(flow -> convertSequenceFlowToAlternativePath(flow, precedingFlowIds,
         isSolePathFromAlternativeEnd, nestedSubElement)).toList();
   }
@@ -374,13 +358,9 @@ public class ProcessesMonitorUtils {
     if (ProcessUtils.isAlternativePathEndElement(destinationElement)) {
       return;
     }
-    processDestinationElement(path, destinationElement, flowPid);
-  }
-
-  private static void processDestinationElement(AlternativePath path, ProcessElement element, String incomingFlowPid) {
-    path.getNodeIdsInPath().add(ProcessUtils.getElementPid(element));
-    ProcessElement nextElement = switch (element) {
-    case EmbeddedProcessElement embedded -> ProcessUtils.getEmbeddedStartConnectToFlow(embedded, incomingFlowPid);
+    path.getNodeIdsInPath().add(ProcessUtils.getElementPid(destinationElement));
+    ProcessElement nextElement = switch (destinationElement) {
+    case EmbeddedProcessElement embedded -> ProcessUtils.getEmbeddedStartConnectToFlow(embedded, flowPid);
     case SubProcessCall subProcess -> {
       path.setNestedSubProcessCall(subProcess);
       yield ProcessUtils.getStartElementFromSubProcessCall(subProcess);
@@ -390,17 +370,14 @@ public class ProcessesMonitorUtils {
       path.getNodeIdsInPath().add(ProcessUtils.getElementPid(outerFlow));
       yield ProcessElement.class.cast(outerFlow.getTarget());
     }
-    case CallSubEnd callSubEnd -> {
-      SequenceFlow outerFlow = path.getNestedSubProcessCall().getOutgoing().getFirst();
-      path.setCallSubEndPath(true);
-      path.getNodeIdsInPath().add(ProcessUtils.getElementPid(outerFlow));
-
-      yield ProcessElement.class.cast(outerFlow.getTarget());
-    }
-    default -> element;
+    case CallSubEnd callSubEnd -> path.getNestedSubProcessCall();
+    default -> destinationElement;
     };
-    if (nextElement != element) {
-      path.getNodeIdsInPath().add(ProcessUtils.getElementPid(element));
+    if (nextElement != destinationElement) {
+      path.getNodeIdsInPath().add(ProcessUtils.getElementPid(nextElement));
+      if (ProcessUtils.isAlternativePathEndElement(nextElement)) {
+        return;
+      }
     }
     nextElement.getOutgoing().forEach(outgoing -> followPath(path, outgoing));
   }

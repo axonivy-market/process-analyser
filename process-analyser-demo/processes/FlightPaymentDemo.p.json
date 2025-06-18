@@ -32,7 +32,7 @@
       "type" : "TaskEnd",
       "name" : "End",
       "visual" : {
-        "at" : { "x" : 1592, "y" : 384 }
+        "at" : { "x" : 1848, "y" : 384 }
       }
     }, {
       "id" : "f3",
@@ -312,7 +312,8 @@
       "name" : "is payment successed?",
       "config" : {
         "conditions" : {
-          "f9" : "Math.random()>0.5"
+          "f9" : "Math.random()>0.5",
+          "f17" : ""
         }
       },
       "visual" : {
@@ -320,15 +321,15 @@
         "labelOffset" : { "y" : -24 }
       },
       "connect" : [
-        { "id" : "f9", "to" : "f1", "label" : {
-            "name" : "yes",
-            "offset" : { "x" : 1, "y" : 14 }
-          }, "color" : "default" },
         { "id" : "f17", "to" : "f5", "via" : [ { "x" : 1496, "y" : 480 } ], "label" : {
             "name" : "start 2",
             "segment" : 0.32,
             "offset" : { "x" : 31, "y" : 26 }
-          } }
+          } },
+        { "id" : "f9", "to" : "f25", "label" : {
+            "name" : "yes",
+            "offset" : { "x" : -47, "y" : 14 }
+          }, "color" : "default" }
       ]
     }, {
       "id" : "S20",
@@ -446,6 +447,35 @@
             "name" : "end 1",
             "offset" : { "x" : 5, "y" : -10 }
           }, "color" : "default" }
+      ]
+    }, {
+      "id" : "f25",
+      "type" : "TaskSwitchEvent",
+      "name" : "send mail",
+      "config" : {
+        "task" : {
+          "responsible" : {
+            "activator" : "SYSTEM"
+          },
+          "skipTasklist" : true
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 1592, "y" : 384 },
+        "labelOffset" : { "x" : 14, "y" : 34 }
+      },
+      "connect" : [
+        { "id" : "f26", "to" : "f27", "color" : "default" }
+      ]
+    }, {
+      "id" : "f27",
+      "type" : "Script",
+      "name" : "send confirmation mail",
+      "visual" : {
+        "at" : { "x" : 1720, "y" : 384 }
+      },
+      "connect" : [
+        { "id" : "f28", "to" : "f1", "color" : "default" }
       ]
     } ],
   "layout" : {
