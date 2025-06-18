@@ -32,6 +32,7 @@ import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsCon
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
+import com.axonivy.solutions.process.analyser.utils.ColorUtils;
 import com.axonivy.solutions.process.analyser.utils.DateUtils;
 import com.axonivy.solutions.process.analyser.utils.JacksonUtils;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
@@ -72,6 +73,7 @@ public class ProcessesAnalyticsBean {
   private double maxValue;
   private List<SelectItem> kpiTypes;
   private List<String> colorSegments;
+  private List<String> textColors;
   private String selectedColor;
   private int selectedIndex = -1;
 
@@ -155,7 +157,8 @@ public class ProcessesAnalyticsBean {
   public void onKpiTypeSelect() {
     selectedIndex = -1;
     selectedColor = null;
-    colorSegments = ProcessesMonitorUtils.generateColorSegments(selectedKpiType);
+    colorSegments = ColorUtils.generateColorSegments(selectedKpiType);
+    textColors = ColorUtils.getAccessibleTextColors(colorSegments);
     updateDiagramAndStatistic();
   }
 
@@ -248,7 +251,8 @@ public class ProcessesAnalyticsBean {
 
   public void onColorChange() {
     colorSegments =
-        ProcessesMonitorUtils.generateGradientFromRgb(selectedColor, ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS);
+        ColorUtils.generateGradientFromRgb(selectedColor, ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS);
+    textColors = ColorUtils.getAccessibleTextColors(colorSegments);
     updateDiagramAndStatistic();
   }
 
@@ -302,6 +306,7 @@ public class ProcessesAnalyticsBean {
         processMiningData.setNodes(analyzedNode);
         processMiningData.setNumberOfInstances(cases.size());
         processMiningData.setColors(colorSegments);
+        processMiningData.setTextColors(textColors);
       }
     }
     updateDataTableWithNodesPrefix(ProcessUtils.getProcessPidFromElement(selectedPid));
@@ -454,6 +459,14 @@ public class ProcessesAnalyticsBean {
 
   public void setColorSegments(List<String> colorSegments) {
     this.colorSegments = colorSegments;
+  }
+
+  public List<String> getTextColors() {
+    return textColors;
+  }
+
+  public void setTextColors(List<String> textColors) {
+    this.textColors = textColors;
   }
 
   public String getSelectedColor() {

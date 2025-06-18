@@ -1,18 +1,6 @@
 {
   "processName": "ExampleProcess",
   "analysisType": "frequency",
-  "colors": [
-    "#FFF7EA",
-    "#FFEDCD",
-    "#FFDEA5",
-    "#FFCE7B",
-    "#FFC054",
-    "#FFB22E",
-    "#D99727",
-    "#B57E21",
-    "#91651A",
-    "#735015"
-  ],
   "nodes": [
     {
       "type": "arrow",
@@ -91,5 +79,29 @@
     "start": "2024-01-01T00:00:00Z",
     "end": "2024-01-31T23:59:59Z"
   },
-  "numberOfInstances": 1376
+  "numberOfInstances": 1376,
+  "colors": [
+    "#FFF7EA",
+    "#FFEDCD",
+    "#FFDEA5",
+    "#FFCE7B",
+    "#FFC054",
+    "#FFB22E",
+    "#D99727",
+    "#B57E21",
+    "#91651A",
+    "#735015"
+  ],
+  "textColors": [
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#FFFFFF",
+    "#FFFFFF",
+    "#FFFFFF",
+    "#FFFFFF",
+    "#FFFFFF",
+    "#FFFFFF"
+  ]
 }

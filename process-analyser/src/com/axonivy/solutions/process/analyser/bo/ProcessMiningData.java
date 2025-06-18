@@ -14,6 +14,7 @@ public class ProcessMiningData {
   private TimeFrame timeFrame;
   private int numberOfInstances;
   private List<String> colors;
+  private List<String> textColors;
 
   public String getProcessId() {
     return processId;
@@ -69,5 +70,13 @@ public class ProcessMiningData {
 
   public void setColors(List<String> colors) {
     this.colors = colors;
+  }
+
+  public List<String> getTextColors() {
+    return textColors;
+  }
+
+  public void setTextColors(List<String> textColors) {
+    this.textColors = textColors;
   }
 }

@@ -71,7 +71,8 @@ public class BaseSetup {
   }
 
   protected int extractBrightness(String rgbString) {
-    String[] parts = rgbString.replaceAll("[^0-9,]", Strings.EMPTY).split(ProcessAnalyticsConstants.COMMA);
+    String[] parts = rgbString.replaceAll(ProcessAnalyticsConstants.NON_DIGIT_REGEX, Strings.EMPTY)
+        .split(ProcessAnalyticsConstants.COMMA);
     int r = Integer.parseInt(parts[0].trim());
     int g = Integer.parseInt(parts[1].trim());
     int b = Integer.parseInt(parts[2].trim());
