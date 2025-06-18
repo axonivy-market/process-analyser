@@ -37,7 +37,7 @@
       "id" : "f1",
       "type" : "TaskEnd",
       "visual" : {
-        "at" : { "x" : 2200, "y" : 880 }
+        "at" : { "x" : 1456, "y" : 648 }
       }
     }, {
       "id" : "S10",
@@ -59,8 +59,10 @@
         }, {
           "id" : "S10-g1",
           "type" : "EmbeddedEnd",
+          "name" : "S10-f0",
           "visual" : {
-            "at" : { "x" : 528, "y" : 256 }
+            "at" : { "x" : 720, "y" : 256 },
+            "labelOffset" : { "x" : -141, "y" : 19 }
           },
           "parentConnector" : "f3"
         }, {
@@ -68,16 +70,19 @@
           "type" : "DialogCall",
           "name" : "Search for a Flight",
           "config" : {
-            "dialog" : "com.axonivy.solutions.process.analyser.demo.SearchingFlight:start()"
+            "dialog" : "com.axonivy.solutions.process.analyser.demo.SearchingFlight:start()",
+            "output" : {
+              "map" : {
+                "out" : "in",
+                "out.flightInformation" : "result.flightInformation"
+              }
+            }
           },
           "visual" : {
             "at" : { "x" : 392, "y" : 256 }
           },
           "connect" : [
-            { "id" : "S10-f0", "to" : "S10-g1", "label" : {
-                "name" : "S10-f0",
-                "offset" : { "y" : 14 }
-              } }
+            { "id" : "S10-f0", "to" : "S10-g1" }
           ]
         }, {
           "id" : "S10-g2",
@@ -85,7 +90,7 @@
           "visual" : {
             "at" : { "x" : 392, "y" : 96 }
           },
-          "parentConnector" : "f22",
+          "parentConnector" : "f20",
           "connect" : [
             { "id" : "S10-f9", "to" : "S10-f8", "label" : {
                 "name" : "S10-f9",
@@ -117,9 +122,9 @@
         "size" : { "width" : 128 }
       },
       "connect" : [
-        { "id" : "f3", "to" : "f39", "label" : {
+        { "id" : "f3", "to" : "S20", "label" : {
             "name" : "f3",
-            "offset" : { "x" : -11, "y" : -10 }
+            "offset" : { "x" : -3, "y" : -10 }
           } }
       ]
     }, {
@@ -130,9 +135,9 @@
           "id" : "S20-g0",
           "type" : "EmbeddedStart",
           "visual" : {
-            "at" : { "x" : 64, "y" : 256 }
+            "at" : { "x" : 200, "y" : 256 }
           },
-          "parentConnector" : "f40",
+          "parentConnector" : "f3",
           "connect" : [
             { "id" : "S20-f2", "to" : "S20-f1", "label" : {
                 "name" : "S20-f2",
@@ -143,7 +148,7 @@
           "id" : "S20-g1",
           "type" : "EmbeddedEnd",
           "visual" : {
-            "at" : { "x" : 512, "y" : 256 }
+            "at" : { "x" : 776, "y" : 256 }
           },
           "parentConnector" : "f5"
         }, {
@@ -156,13 +161,13 @@
             }
           },
           "visual" : {
-            "at" : { "x" : 168, "y" : 256 },
+            "at" : { "x" : 304, "y" : 256 },
             "labelOffset" : { "x" : 14, "y" : 34 }
           },
           "connect" : [
             { "id" : "S20-f4", "to" : "S20-f3", "label" : {
                 "name" : "S20-f4",
-                "offset" : { "x" : -2, "y" : -10 }
+                "offset" : { "x" : -1, "y" : -10 }
               } }
           ]
         }, {
@@ -170,17 +175,21 @@
           "type" : "DialogCall",
           "name" : "Submit personal information",
           "config" : {
-            "dialog" : "com.axonivy.solutions.process.analyser.demo.SubmitPersonalInformation:start()",
+            "dialog" : "com.axonivy.solutions.process.analyser.demo.SubmitPersonalInformation:start(com.axonivy.solutions.process.analyser.demo.data.FlightInformation)",
+            "call" : {
+              "map" : {
+                "param.flightBooking" : "in.flightInformation"
+              }
+            },
             "output" : {
               "map" : {
                 "out" : "in",
-                "out.isBackToSearchPage" : "result.isBackToSearchPage",
-                "out.isChargeLater" : "result.isChargeLater"
+                "out.flightInformation" : "result.flightInformation"
               }
             }
           },
           "visual" : {
-            "at" : { "x" : 328, "y" : 256 }
+            "at" : { "x" : 560, "y" : 256 }
           },
           "connect" : [
             { "id" : "S20-f0", "to" : "S20-g1", "label" : {
@@ -192,9 +201,9 @@
           "id" : "S20-g2",
           "type" : "EmbeddedStart",
           "visual" : {
-            "at" : { "x" : 328, "y" : 408 }
+            "at" : { "x" : 560, "y" : 408 }
           },
-          "parentConnector" : "f28",
+          "parentConnector" : "f24",
           "connect" : [
             { "id" : "S20-f6", "to" : "S20-f5", "label" : {
                 "name" : "S20-f6",
@@ -211,7 +220,7 @@
             }
           },
           "visual" : {
-            "at" : { "x" : 328, "y" : 344 },
+            "at" : { "x" : 560, "y" : 344 },
             "labelOffset" : { "x" : 153, "y" : 9 }
           },
           "connect" : [
@@ -222,13 +231,13 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 568, "y" : 392 },
+        "at" : { "x" : 448, "y" : 392 },
         "size" : { "width" : 144 }
       },
       "connect" : [
-        { "id" : "f5", "to" : "f50", "label" : {
+        { "id" : "f5", "to" : "f4", "label" : {
             "name" : "f5",
-            "offset" : { "x" : 5, "y" : -10 }
+            "offset" : { "x" : 1, "y" : -10 }
           } }
       ]
     }, {
@@ -241,18 +250,17 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 848, "y" : 392 },
+        "at" : { "x" : 600, "y" : 392 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
-        { "id" : "f20", "to" : "f21", "via" : [ { "x" : 848, "y" : 328 } ], "label" : {
+        { "id" : "f20", "to" : "S10", "via" : [ { "x" : 600, "y" : 328 }, { "x" : 272, "y" : 328 } ], "label" : {
             "name" : "Yes",
-            "segment" : 0.83,
-            "offset" : { "x" : -18, "y" : -20 }
+            "offset" : { "x" : -159, "y" : -18 }
           } },
-        { "id" : "f6", "to" : "f25", "label" : {
+        { "id" : "f6", "to" : "S21", "label" : {
             "name" : "No",
-            "offset" : { "x" : -31, "y" : -10 }
+            "offset" : { "x" : 1, "y" : -10 }
           } }
       ]
     }, {
@@ -265,19 +273,17 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1392, "y" : 392 },
+        "at" : { "x" : 920, "y" : 392 },
         "labelOffset" : { "x" : 40, "y" : -24 }
       },
       "connect" : [
-        { "id" : "f24", "to" : "f27", "via" : [ { "x" : 1392, "y" : 464 }, { "x" : 1288, "y" : 464 } ], "label" : {
+        { "id" : "f24", "to" : "S20", "via" : [ { "x" : 920, "y" : 456 }, { "x" : 448, "y" : 456 } ], "label" : {
             "name" : "Yes",
-            "segment" : 0.7,
-            "offset" : { "x" : 20, "y" : 19 }
+            "offset" : { "x" : -7, "y" : 14 }
           } },
-        { "id" : "f10", "to" : "f37", "label" : {
+        { "id" : "f10", "to" : "f12", "via" : [ { "x" : 1016, "y" : 392 } ], "label" : {
             "name" : "No",
-            "segment" : 0.17,
-            "offset" : { "x" : 22, "y" : 14 }
+            "offset" : { "x" : 14, "y" : 9 }
           } }
       ]
     }, {
@@ -297,7 +303,7 @@
           "visual" : {
             "at" : { "x" : 104, "y" : 256 }
           },
-          "parentConnector" : "f26",
+          "parentConnector" : "f6",
           "connect" : [
             { "id" : "S21-f2", "to" : "S21-f1", "label" : {
                 "name" : "S21-f2",
@@ -311,6 +317,12 @@
           "config" : {
             "task" : {
               "name" : "Display booking information"
+            },
+            "output" : {
+              "map" : {
+                "out" : "in1",
+                "out.flightInformation" : "in1.flightInformation"
+              }
             }
           },
           "visual" : {
@@ -328,7 +340,12 @@
           "type" : "DialogCall",
           "name" : "DisplayBookingInformation",
           "config" : {
-            "dialog" : "com.axonivy.solutions.process.analyser.demo.DisplayBookingInformation:start()",
+            "dialog" : "com.axonivy.solutions.process.analyser.demo.DisplayBookingInformation:start(com.axonivy.solutions.process.analyser.demo.data.FlightInformation)",
+            "call" : {
+              "map" : {
+                "param.flightBooking" : "in.flightInformation"
+              }
+            },
             "output" : {
               "map" : {
                 "out" : "in",
@@ -348,13 +365,13 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 1136, "y" : 392 },
+        "at" : { "x" : 752, "y" : 392 },
         "size" : { "width" : 144 }
       },
       "connect" : [
-        { "id" : "f8", "to" : "f52", "label" : {
+        { "id" : "f8", "to" : "f7", "label" : {
             "name" : "f8",
-            "offset" : { "x" : -59, "y" : 14 }
+            "offset" : { "x" : 1, "y" : 14 }
           } }
       ]
     }, {
@@ -367,7 +384,7 @@
           "visual" : {
             "at" : { "x" : 64, "y" : 256 }
           },
-          "parentConnector" : "f9",
+          "parentConnector" : "f14",
           "connect" : [
             { "id" : "S22-f2", "to" : "S22-f1", "label" : {
                 "name" : "S22-f2",
@@ -378,7 +395,7 @@
           "id" : "S22-g1",
           "type" : "EmbeddedEnd",
           "visual" : {
-            "at" : { "x" : 344, "y" : 256 }
+            "at" : { "x" : 512, "y" : 256 }
           },
           "parentConnector" : "f11"
         }, {
@@ -399,18 +416,44 @@
             "labelOffset" : { "x" : 14, "y" : 34 }
           },
           "connect" : [
+            { "id" : "S22-f4", "to" : "S22-f3", "label" : {
+                "name" : "S22-f4",
+                "offset" : { "x" : 2, "y" : -10 }
+              } }
+          ]
+        }, {
+          "id" : "S22-f3",
+          "type" : "EMail",
+          "name" : "Send email about Ticket Information",
+          "config" : {
+            "headers" : {
+              "subject" : "Thanks",
+              "from" : "thanks@axonivy.com",
+              "to" : "customer@gamil.com"
+            },
+            "message" : {
+              "body" : "Thanks!"
+            }
+          },
+          "visual" : {
+            "at" : { "x" : 368, "y" : 256 }
+          },
+          "connect" : [
             { "id" : "S22-f0", "to" : "S22-g1", "label" : {
                 "name" : "S22-f0",
-                "offset" : { "y" : -10 }
+                "offset" : { "x" : 4, "y" : -10 }
               } }
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 1824, "y" : 880 },
+        "at" : { "x" : 1016, "y" : 768 },
         "size" : { "width" : 144 }
       },
       "connect" : [
-        { "id" : "f11", "to" : "f1" }
+        { "id" : "f11", "to" : "S40", "label" : {
+            "name" : "f11",
+            "offset" : { "x" : 5, "y" : 14 }
+          } }
       ]
     }, {
       "id" : "f12",
@@ -422,18 +465,18 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1488, "y" : 584 },
-        "labelOffset" : { "y" : 40 }
+        "at" : { "x" : 1016, "y" : 544 },
+        "labelOffset" : { "x" : -40, "y" : 8 }
       },
       "connect" : [
-        { "id" : "f23", "to" : "f29", "label" : {
+        { "id" : "f23", "to" : "S25", "label" : {
             "name" : "Yes",
             "segment" : 0.52,
-            "offset" : { "y" : -10 }
+            "offset" : { "x" : -8, "y" : -10 }
           } },
-        { "id" : "f15", "to" : "f33", "label" : {
+        { "id" : "f15", "to" : "S23", "label" : {
             "name" : "No",
-            "offset" : { "x" : -7, "y" : -10 }
+            "offset" : { "x" : 17, "y" : 1 }
           } }
       ]
     }, {
@@ -446,7 +489,7 @@
           "visual" : {
             "at" : { "x" : 176, "y" : 136 }
           },
-          "parentConnector" : "f34",
+          "parentConnector" : "f15",
           "connect" : [
             { "id" : "S23-f2", "to" : "S23-f1", "label" : {
                 "name" : "S23-f2",
@@ -454,12 +497,19 @@
               } }
           ]
         }, {
+          "id" : "S23-g1",
+          "type" : "EmbeddedEnd",
+          "visual" : {
+            "at" : { "x" : 176, "y" : 440 }
+          },
+          "parentConnector" : "f14"
+        }, {
           "id" : "S23-g2",
           "type" : "EmbeddedStart",
           "visual" : {
             "at" : { "x" : 480, "y" : 304 }
           },
-          "parentConnector" : "f36",
+          "parentConnector" : "f13",
           "connect" : [
             { "id" : "S23-f7", "to" : "S23-f6", "label" : {
                 "name" : "S23-f7",
@@ -499,7 +549,7 @@
           "connect" : [
             { "id" : "S23-f0", "to" : "S23-g1", "label" : {
                 "name" : "S23-f0",
-                "offset" : { "x" : 25, "y" : -6 }
+                "offset" : { "x" : 25, "y" : 2 }
               } }
           ]
         }, {
@@ -525,21 +575,16 @@
                 "offset" : { "x" : -4, "y" : -18 }
               } }
           ]
-        }, {
-          "id" : "S23-g1",
-          "type" : "EmbeddedEnd",
-          "visual" : {
-            "at" : { "x" : 176, "y" : 448 },
-            "labelOffset" : { "x" : 3, "y" : 23 }
-          },
-          "parentConnector" : "f9"
         } ],
       "visual" : {
-        "at" : { "x" : 1488, "y" : 880 },
+        "at" : { "x" : 1016, "y" : 648 },
         "size" : { "width" : 144 }
       },
       "connect" : [
-        { "id" : "f9", "to" : "S22" }
+        { "id" : "f14", "to" : "S22", "label" : {
+            "name" : "f14",
+            "offset" : { "x" : 17, "y" : 2 }
+          } }
       ]
     }, {
       "id" : "S25",
@@ -551,7 +596,7 @@
           "visual" : {
             "at" : { "x" : 64, "y" : 256 }
           },
-          "parentConnector" : "f30",
+          "parentConnector" : "f23",
           "connect" : [
             { "id" : "S25-f2", "to" : "S25-f1", "label" : {
                 "name" : "S60-f0",
@@ -603,7 +648,7 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 1816, "y" : 584 },
+        "at" : { "x" : 1168, "y" : 544 },
         "size" : { "width" : 144 }
       },
       "connect" : [
@@ -618,24 +663,22 @@
       "name" : "Paid?",
       "config" : {
         "conditions" : {
-          "f13" : "in.isPaid",
-          "f19" : ""
+          "f13" : "in.isPaid"
         }
       },
       "visual" : {
-        "at" : { "x" : 1944, "y" : 736 },
+        "at" : { "x" : 1296, "y" : 648 },
         "labelOffset" : { "y" : 40 }
       },
       "connect" : [
-        { "id" : "f19", "to" : "f31", "label" : {
+        { "id" : "f13", "to" : "S23", "label" : {
+            "name" : "Yes",
+            "offset" : { "x" : 73, "y" : -10 }
+          } },
+        { "id" : "f19", "to" : "f1", "label" : {
             "name" : "No",
             "segment" : 0.27,
-            "offset" : { "x" : 8, "y" : -10 }
-          } },
-        { "id" : "f13", "to" : "f35", "label" : {
-            "name" : "Yes",
-            "segment" : 0.9,
-            "offset" : { "x" : 311, "y" : -10 }
+            "offset" : { "x" : -17, "y" : -10 }
           } }
       ]
     }, {
@@ -705,267 +748,110 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 1815, "y" : 392 },
+        "at" : { "x" : 1167, "y" : 392 },
         "size" : { "width" : 161, "height" : 62 }
       },
       "connect" : [
-        { "id" : "f18", "to" : "f17", "via" : [ { "x" : 1944, "y" : 392 } ], "label" : {
+        { "id" : "f18", "to" : "f17", "via" : [ { "x" : 1296, "y" : 392 } ], "label" : {
             "name" : "f18",
             "segment" : 1.23,
-            "offset" : { "x" : 21, "y" : 78 }
+            "offset" : { "x" : 18, "y" : 78 }
           } }
       ]
     }, {
-      "id" : "f21",
-      "type" : "TaskSwitchEvent",
-      "name" : "Process to search step",
-      "config" : {
-        "task" : {
-          "responsible" : {
-            "activator" : "SYSTEM"
-          }
-        }
-      },
+      "id" : "S40",
+      "type" : "EmbeddedProcess",
+      "name" : "Send Email to reminder user about their Flight",
+      "elements" : [ {
+          "id" : "S40-g0",
+          "type" : "EmbeddedStart",
+          "visual" : {
+            "at" : { "x" : 40, "y" : 256 }
+          },
+          "parentConnector" : "f11",
+          "connect" : [
+            { "id" : "S40-f2", "to" : "S40-f1", "label" : {
+                "name" : "S40-f2",
+                "offset" : { "x" : 2, "y" : -10 }
+              } }
+          ]
+        }, {
+          "id" : "S40-g1",
+          "type" : "EmbeddedEnd",
+          "visual" : {
+            "at" : { "x" : 536, "y" : 256 }
+          },
+          "parentConnector" : "f9"
+        }, {
+          "id" : "S40-f1",
+          "type" : "TaskSwitchEvent",
+          "name" : "Send Email to reminder user about their Flight",
+          "config" : {
+            "task" : {
+              "name" : "Send Email to reminder user about their Flight",
+              "responsible" : {
+                "activator" : "SYSTEM"
+              },
+              "skipTasklist" : true
+            }
+          },
+          "visual" : {
+            "at" : { "x" : 184, "y" : 256 },
+            "labelOffset" : { "x" : 17, "y" : 33 }
+          },
+          "connect" : [
+            { "id" : "S40-f4", "to" : "S40-f3", "label" : {
+                "name" : "S40-f4",
+                "offset" : { "y" : -10 }
+              } }
+          ]
+        }, {
+          "id" : "S40-f3",
+          "type" : "EMail",
+          "name" : "Send Email to reminder user about their Flight",
+          "config" : {
+            "headers" : {
+              "subject" : "Thanks",
+              "from" : "thanks@axonivy.com",
+              "to" : "customer@gamil.com"
+            },
+            "message" : {
+              "body" : "Thanks!"
+            }
+          },
+          "visual" : {
+            "at" : { "x" : 408, "y" : 255 },
+            "size" : { "width" : 152, "height" : 63 }
+          },
+          "connect" : [
+            { "id" : "S40-f0", "to" : "S40-g1", "label" : {
+                "name" : "S40-f0",
+                "offset" : { "x" : 10, "y" : -25 }
+              } }
+          ]
+        } ],
       "visual" : {
-        "at" : { "x" : 568, "y" : 328 },
-        "labelOffset" : { "x" : 33, "y" : -15 }
+        "at" : { "x" : 1456, "y" : 768 },
+        "size" : { "width" : 144 }
       },
       "connect" : [
-        { "id" : "f22", "to" : "S10", "via" : [ { "x" : 272, "y" : 328 } ], "label" : {
-            "name" : "f22",
-            "segment" : 0.81,
-            "offset" : { "x" : 28, "y" : -11 }
-          }, "color" : "default" }
-      ]
-    }, {
-      "id" : "f25",
-      "type" : "TaskSwitchEvent",
-      "name" : [
-        "Process to check",
-        "booking information"
-      ],
-      "config" : {
-        "task" : {
-          "responsible" : {
-            "activator" : "SYSTEM"
-          }
-        }
-      },
-      "visual" : {
-        "at" : { "x" : 976, "y" : 392 },
-        "labelOffset" : { "x" : 17, "y" : 33 }
-      },
-      "connect" : [
-        { "id" : "f26", "to" : "S21", "label" : {
-            "name" : "f26",
-            "offset" : { "x" : -2, "y" : -10 }
-          }, "color" : "default" }
-      ]
-    }, {
-      "id" : "f27",
-      "type" : "TaskSwitchEvent",
-      "name" : "Process to submit personal details",
-      "config" : {
-        "task" : {
-          "responsible" : {
-            "activator" : "SYSTEM"
-          }
-        }
-      },
-      "visual" : {
-        "at" : { "x" : 1000, "y" : 464 },
-        "labelOffset" : { "x" : 14, "y" : 34 }
-      },
-      "connect" : [
-        { "id" : "f28", "to" : "S20", "via" : [ { "x" : 568, "y" : 464 } ], "label" : {
-            "name" : "f28",
-            "segment" : 0.67,
-            "offset" : { "x" : 53, "y" : -8 }
-          }, "color" : "default" }
-      ]
-    }, {
-      "id" : "f29",
-      "type" : "TaskSwitchEvent",
-      "name" : "Process to Hold Seat",
-      "config" : {
-        "task" : {
-          "responsible" : {
-            "activator" : "SYSTEM"
-          }
-        }
-      },
-      "visual" : {
-        "at" : { "x" : 1640, "y" : 584 },
-        "labelOffset" : { "x" : 14, "y" : 34 }
-      },
-      "connect" : [
-        { "id" : "f30", "to" : "S25", "label" : {
-            "name" : "f30",
-            "offset" : { "x" : -2, "y" : -10 }
-          }, "color" : "default" }
-      ]
-    }, {
-      "id" : "f31",
-      "type" : "TaskSwitchEvent",
-      "name" : "Process to cancel",
-      "config" : {
-        "task" : {
-          "responsible" : {
-            "activator" : "SYSTEM"
-          }
-        }
-      },
-      "visual" : {
-        "at" : { "x" : 2080, "y" : 736 },
-        "labelOffset" : { "x" : 14, "y" : 34 }
-      },
-      "connect" : [
-        { "id" : "f32", "to" : "f1", "via" : [ { "x" : 2200, "y" : 736 } ], "label" : {
-            "name" : "f32",
-            "segment" : 1.24,
-            "offset" : { "x" : 17, "y" : 32 }
-          }, "color" : "default" }
-      ]
-    }, {
-      "id" : "f33",
-      "type" : "TaskSwitchEvent",
-      "name" : "Process to payment",
-      "config" : {
-        "task" : {
-          "responsible" : {
-            "activator" : "SYSTEM"
-          }
-        }
-      },
-      "visual" : {
-        "at" : { "x" : 1312, "y" : 584 },
-        "labelOffset" : { "x" : -7, "y" : -23 }
-      },
-      "connect" : [
-        { "id" : "f34", "to" : "S23", "via" : [ { "x" : 1312, "y" : 880 } ], "label" : {
-            "name" : "f34",
-            "segment" : 0.76,
-            "offset" : { "x" : 13, "y" : -61 }
-          }, "color" : "default" }
-      ]
-    }, {
-      "id" : "f35",
-      "type" : "TaskSwitchEvent",
-      "name" : "Process to payment",
-      "config" : {
-        "task" : {
-          "responsible" : {
-            "activator" : "SYSTEM"
-          }
-        }
-      },
-      "visual" : {
-        "at" : { "x" : 1488, "y" : 736 },
-        "labelOffset" : { "x" : 25, "y" : -23 }
-      },
-      "connect" : [
-        { "id" : "f36", "to" : "S23", "label" : {
-            "name" : "f36",
-            "offset" : { "x" : -18, "y" : -14 }
-          }, "color" : "default" }
-      ]
-    }, {
-      "id" : "f37",
-      "type" : "TaskSwitchEvent",
-      "name" : "Process to decide payment step",
-      "config" : {
-        "task" : {
-          "responsible" : {
-            "activator" : "SYSTEM"
-          }
-        }
-      },
-      "visual" : {
-        "at" : { "x" : 1488, "y" : 392 },
-        "labelOffset" : { "x" : 121, "y" : 9 }
-      },
-      "connect" : [
-        { "id" : "f38", "to" : "f12", "label" : {
-            "name" : "f38",
-            "segment" : 0.45,
-            "offset" : { "x" : 17, "y" : -1 }
-          }, "color" : "default" }
-      ]
-    }, {
-      "id" : "f39",
-      "type" : "TaskSwitchEvent",
-      "name" : [
-        "Process to",
-        "submit information"
-      ],
-      "config" : {
-        "task" : {
-          "responsible" : {
-            "activator" : "SYSTEM"
-          }
-        }
-      },
-      "visual" : {
-        "at" : { "x" : 408, "y" : 392 },
-        "labelOffset" : { "x" : 17, "y" : 41 }
-      },
-      "connect" : [
-        { "id" : "f40", "to" : "S20", "label" : {
-            "name" : "f40",
-            "offset" : { "x" : -2, "y" : -10 }
-          }, "color" : "default" }
-      ]
-    }, {
-      "id" : "f50",
-      "type" : "TaskSwitchEvent",
-      "name" : "Process",
-      "config" : {
-        "task" : {
-          "responsible" : {
-            "activator" : "SYSTEM"
-          }
-        }
-      },
-      "visual" : {
-        "at" : { "x" : 728, "y" : 392 },
-        "labelOffset" : { "x" : 17, "y" : 33 }
-      },
-      "connect" : [
-        { "id" : "f51", "to" : "f4", "label" : {
-            "name" : "f51",
-            "offset" : { "x" : -2, "y" : -10 }
-          }, "color" : "default" }
-      ]
-    }, {
-      "id" : "f52",
-      "type" : "TaskSwitchEvent",
-      "name" : "Process",
-      "config" : {
-        "task" : {
-          "responsible" : {
-            "activator" : "SYSTEM"
-          }
-        }
-      },
-      "visual" : {
-        "at" : { "x" : 1296, "y" : 392 },
-        "labelOffset" : { "x" : 14, "y" : 34 }
-      },
-      "connect" : [
-        { "id" : "f53", "to" : "f7", "color" : "default" }
+        { "id" : "f9", "to" : "f1", "label" : {
+            "name" : "f9",
+            "offset" : { "x" : 17, "y" : 1 }
+          } }
       ]
     } ],
   "layout" : {
     "lanes" : [ {
         "name" : "FlightBookingDemo",
         "offset" : 296,
-        "size" : 696,
+        "size" : 536,
         "lanes" : [ {
             "name" : "End user",
-            "size" : 216
+            "size" : 192
           }, {
             "name" : "System",
-            "size" : 480
+            "size" : 344
           } ]
       } ]
   }

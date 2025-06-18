@@ -201,6 +201,11 @@ public class ProcessUtils {
     };
   }
 
+  public static List<ProcessElement> getTaskSwitchEvents(List<ProcessElement> processElements) {
+    return Optional.ofNullable(processElements).orElse(Collections.emptyList()).stream()
+        .filter(element -> isTaskSwitchInstance(element)).toList();
+  }
+
   @SuppressWarnings("removal")
   public static Long getTaskStartIdFromPID(String rawPid) {
     return Ivy.session().getStartableProcessStarts().stream()
