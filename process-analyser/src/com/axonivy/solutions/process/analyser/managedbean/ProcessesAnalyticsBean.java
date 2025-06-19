@@ -29,7 +29,6 @@ import com.axonivy.solutions.process.analyser.bo.TimeFrame;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
-import com.axonivy.solutions.process.analyser.core.constants.UserProperty;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
@@ -50,6 +49,14 @@ import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
+
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_SIGN;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_REGEX;
+import static com.axonivy.solutions.process.analyser.enums.KpiType.FREQUENCY;
+import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.FREQUENCY_COLOR;
+import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.FREQUENCY_TEXT_COLOR;
+import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.DURATION_COLOR;
+import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.DURATION_TEXT_COLOR;
 
 @ManagedBean
 @ViewScoped
@@ -263,8 +270,8 @@ public class ProcessesAnalyticsBean {
     String colorKey = getColorPropertyKey();
     String textKey = getTextColorPropertyKey();
 
-    user.setProperty(colorKey, String.join(ProcessAnalyticsConstants.HYPHEN_SIGN, colorSegments));
-    user.setProperty(textKey, String.join(ProcessAnalyticsConstants.HYPHEN_SIGN, textColors));
+    user.setProperty(colorKey, String.join(HYPHEN_SIGN, colorSegments));
+    user.setProperty(textKey, String.join(HYPHEN_SIGN, textColors));
   }
 
   private void getBackgroundAndTextColors() {
@@ -276,8 +283,8 @@ public class ProcessesAnalyticsBean {
     String textProperty = user.getProperty(textKey);
 
     if (colorProperty != null && textProperty != null) {
-      colorSegments = Arrays.asList(colorProperty.split(ProcessAnalyticsConstants.HYPHEN_REGEX));
-      textColors = Arrays.asList(textProperty.split(ProcessAnalyticsConstants.HYPHEN_REGEX));
+      colorSegments = Arrays.asList(colorProperty.split(HYPHEN_REGEX));
+      textColors = Arrays.asList(textProperty.split(HYPHEN_REGEX));
     } else {
       colorSegments = ColorUtils.generateColorSegments(selectedKpiType);
       textColors = ColorUtils.getAccessibleTextColors(colorSegments);
@@ -370,12 +377,11 @@ public class ProcessesAnalyticsBean {
   }
 
   private String getColorPropertyKey() {
-    return (KpiType.FREQUENCY == selectedKpiType) ? UserProperty.FREQUENCY_COLOR : UserProperty.DURATION_COLOR;
+    return FREQUENCY == selectedKpiType ? FREQUENCY_COLOR : DURATION_COLOR;
   }
 
   private String getTextColorPropertyKey() {
-    return (KpiType.FREQUENCY == selectedKpiType) ? UserProperty.FREQUENCY_TEXT_COLOR
-        : UserProperty.DURATION_TEXT_COLOR;
+    return FREQUENCY == selectedKpiType ? FREQUENCY_TEXT_COLOR : DURATION_TEXT_COLOR;
   }
 
   public String getSelectedProcess() {

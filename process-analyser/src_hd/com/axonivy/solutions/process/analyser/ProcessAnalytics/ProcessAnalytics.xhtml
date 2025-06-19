@@ -122,7 +122,7 @@
                 <ui:repeat value="#{processesAnalyticsBean.colorSegments}" var="color" varStatus="status">
                   <p:commandLink actionListener="#{processesAnalyticsBean.onSegmentClick}"
                     update="process-analytics-form:color-picker-panel" styleClass="segment" style="background-color: #{color};"
-                    oncomplete="PF('colorPickerWidget').show();">
+                    oncomplete="PF('colorPickerWidget').show();" ondblclick="return;">
                     <f:attribute name="segmentIndex" value="#{status.index}" />
                   </p:commandLink>
                 </ui:repeat>
