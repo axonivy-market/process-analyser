@@ -252,17 +252,48 @@ public class ProcessesMonitorUtils {
 
   // TODO: Refactor this one with the logic of building path from task to task instead of alternative path
   public static void updateFrequencyForComplexElements(List<AlternativePath> paths, List<Node> nodes) {
-    // Update exact frequency for path without task
+    if (ObjectUtils.anyNull(paths, nodes)) {
+      return;
+    }
+    Map<String, Node> nodeMap = mapNodesById(nodes);
+    // 1. Handle paths without task switch (sole alternative ends)
+    updateFrequenciesFromPrecedingFlows(paths, nodeMap);
+    // 2. Handle retries
+    updateFrequenciesWithRetries(paths, nodeMap);
+  }
+
+  private static void updateFrequenciesFromPrecedingFlows(List<AlternativePath> paths, Map<String, Node> nodeMap) {
     paths.stream().filter(AlternativePath::isSolePathFromAlternativeEnd).forEach(path -> {
-      int totalFrequencyFromPreceedingFlow = path.getPrecedingFlowIds().stream()
-          .mapToInt(flowId -> getFrequencyById(flowId, nodes)).sum();
-      nodes.stream().filter(node -> path.getNodeIdsInPath().contains(node.getId()))
-          .forEach(node -> node.setFrequency(totalFrequencyFromPreceedingFlow));
+      int totalFrequency = path.getPrecedingFlowIds().stream().mapToInt(flowId -> getFrequencyById(flowId, nodeMap))
+          .sum();
+
+      path.getNodeIdsInPath().forEach(nodeId -> {
+        Node node = nodeMap.get(nodeId);
+        if (node != null) {
+          node.setFrequency(totalFrequency);
+        }
+      });
     });
-    // Update frequency with retries
-    paths.stream().filter(alternative -> alternative.getNumberOfRetries() != 0)
-        .forEach(path -> path.getNodeIdsInPath().stream().map(id -> findNodeById(id, nodes))
-            .forEach(node -> node.setFrequency(node.getFrequency() + path.getNumberOfRetries())));
+  }
+
+  private static void updateFrequenciesWithRetries(List<AlternativePath> paths, Map<String, Node> nodeMap) {
+    paths.stream().filter(path -> path.getNumberOfRetries() != 0)
+        .forEach(path -> path.getNodeIdsInPath().forEach(nodeId -> {
+          Node node = nodeMap.get(nodeId);
+          if (node != null) {
+            int updatedFrequency = node.getFrequency() + 1 + path.getNumberOfRetries();
+            node.setFrequency(updatedFrequency);
+          }
+        }));
+  }
+
+  private static Map<String, Node> mapNodesById(List<Node> nodes) {
+    return nodes.stream().collect(Collectors.toMap(Node::getId, Function.identity(), (a, b) -> a));
+  }
+
+  private static int getFrequencyById(String id, Map<String, Node> nodeMap) {
+    Node node = nodeMap.get(id);
+    return node != null ? node.getFrequency() : 0;
   }
 
   public static int getFrequencyById(String id, List<Node> nodes) {
