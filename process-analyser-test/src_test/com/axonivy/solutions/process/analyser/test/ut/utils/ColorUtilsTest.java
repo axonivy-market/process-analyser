@@ -1,6 +1,10 @@
 package com.axonivy.solutions.process.analyser.test.ut.utils;
 
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.DARK_TEXT_COLOR;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.LIGHT_TEXT_COLOR;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -22,6 +26,8 @@ public class ColorUtilsTest extends BaseSetup {
   protected static final String MEDIUM_GRAY = "rgb(128, 128, 128)";
   protected static final String DARK_BLUE_GRAY = "rgb(20, 40, 60)";
   protected static final String EXTREME_DARK_BLUE_GRAY = "rgb(10, 20, 30)";
+
+  private static final String RGB_LIGHT_COLOR = "rgb(247, 246, 245)";
 
   @Test
   void test_generateColorSegments_withFrequencyKpi() {
@@ -53,6 +59,12 @@ public class ColorUtilsTest extends BaseSetup {
   }
 
   @Test
+  void testCalculateColorFromList() {
+    List<String> colors = List.of(LIGHT_TEXT_COLOR, DARK_TEXT_COLOR);
+    assertEquals(LIGHT_TEXT_COLOR, ColorUtils.calculateColorFromList(0.27, colors));
+  }
+
+  @Test
   void test_generateGradientFromRgb_withSelectedDarkenColor() {
     int steps = 5;
     List<String> gradient = ColorUtils.generateGradientFromRgb(EXTREME_DARK_BLUE_GRAY, steps);
@@ -66,6 +78,11 @@ public class ColorUtilsTest extends BaseSetup {
   }
 
   @Test
+  void testGetAccessibleTextForHexColor() {
+    assertEquals(DARK_TEXT_COLOR, ColorUtils.getAccessibleTextColor(LIGHT_TEXT_COLOR));
+  }
+
+  @Test
   void test_generateGradientFromRgb_withSelectedLightenColor() {
     int steps = 6;
     List<String> gradient = ColorUtils.generateGradientFromRgb(LIGHT_GRAY, steps);
@@ -75,6 +92,11 @@ public class ColorUtilsTest extends BaseSetup {
       int curr = extractBrightness(gradient.get(i));
       assertThat(curr).isLessThanOrEqualTo(prev);
     }
+  }
+
+  @Test
+  void testGetAccessibleTextForRGBColor() {
+    assertEquals(DARK_TEXT_COLOR, ColorUtils.getAccessibleTextColor(RGB_LIGHT_COLOR));
   }
 
   @Test
@@ -91,6 +113,13 @@ public class ColorUtilsTest extends BaseSetup {
     List<String> gradient = ColorUtils.generateGradientFromRgb(PURE_BLACK, steps);
     assertThat(gradient.get(0)).isEqualTo(NEUTRAL_GRAY);
     assertThat(gradient.get(steps - 1)).isEqualTo(PURE_BLACK);
+  }
+
+  @Test
+  void testGetAccessibleTextColorWithError() {
+    String color = "invalid";
+    assertThatThrownBy(() -> ColorUtils.getAccessibleTextColor(color)).isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("#getAccessibleTextColor: Unsupported color: " + color);
   }
 
   @Test

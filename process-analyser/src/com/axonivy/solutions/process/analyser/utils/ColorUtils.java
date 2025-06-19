@@ -60,6 +60,12 @@ public class ColorUtils {
     return gradientColors;
   }
 
+  public static String calculateColorFromList(Double value, List<String> colors) {
+    int index = (int) Math.floor(value * colors.size());
+    index = Math.min(Math.max(index, 0), colors.size() - 1);
+    return colors.get(index);
+  }
+
   private static int adjustColor(int baseValue, float adjustmentFactor, boolean shouldDarken) {
     int value = shouldDarken ? Math.round(baseValue * (1 - adjustmentFactor))
         : Math.round(baseValue + (255 - baseValue) * adjustmentFactor);

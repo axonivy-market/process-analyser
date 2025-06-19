@@ -1,5 +1,15 @@
 package com.axonivy.solutions.process.analyser.managedbean;
 
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COLOR_SEGMENT_ATTRIBUTE;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_REGEX;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_SIGN;
+import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.DURATION_COLOR;
+import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.DURATION_TEXT_COLOR;
+import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.FREQUENCY_COLOR;
+import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.FREQUENCY_TEXT_COLOR;
+import static com.axonivy.solutions.process.analyser.enums.KpiType.FREQUENCY;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,21 +33,21 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PF;
 
+import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.ProcessMiningData;
 import com.axonivy.solutions.process.analyser.bo.TimeFrame;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
+import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
-import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
+import com.axonivy.solutions.process.analyser.service.IvyTaskOccurrenceService;
 import com.axonivy.solutions.process.analyser.utils.ColorUtils;
 import com.axonivy.solutions.process.analyser.utils.DateUtils;
 import com.axonivy.solutions.process.analyser.utils.JacksonUtils;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
-import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
-import com.axonivy.solutions.process.analyser.service.IvyTaskOccurrenceService;
 
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.cm.ContentObject;
@@ -49,16 +59,6 @@ import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
-
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_SIGN;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_REGEX;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COLOR_SEGMENT_ATTRIBUTE;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS;
-import static com.axonivy.solutions.process.analyser.enums.KpiType.FREQUENCY;
-import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.FREQUENCY_COLOR;
-import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.FREQUENCY_TEXT_COLOR;
-import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.DURATION_COLOR;
-import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.DURATION_TEXT_COLOR;
 
 @ManagedBean
 @ViewScoped
@@ -112,7 +112,7 @@ public class ProcessesAnalyticsBean {
   }
 
   private void updateDataTableWithNodesPrefix(String prefix) {
-    nodes = analyzedNode.stream().filter(node -> node.getId().startsWith(prefix)).toList();
+    nodes = analyzedNode.stream().filter(node -> node.getId().startsWith(prefix)).collect(Collectors.toList());
   }
 
   private void initKpiTypes() {
@@ -254,17 +254,23 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onSegmentClick(ActionEvent event) {
-    selectedIndex =
-        (Integer) event.getComponent().getAttributes().get(COLOR_SEGMENT_ATTRIBUTE);
+    selectedIndex = (Integer) event.getComponent().getAttributes().get(COLOR_SEGMENT_ATTRIBUTE);
     selectedColor = colorSegments.get(selectedIndex);
   }
 
   public void onColorChange() {
-    colorSegments =
-        ColorUtils.generateGradientFromRgb(selectedColor, GRADIENT_COLOR_LEVELS);
+    colorSegments = ColorUtils.generateGradientFromRgb(selectedColor, GRADIENT_COLOR_LEVELS);
     textColors = ColorUtils.getAccessibleTextColors(colorSegments);
     updateColorProperties();
     updateDiagramAndStatistic();
+  }
+
+  public String getCalulatedCellColor(Double value) {
+    return ColorUtils.calculateColorFromList(value, colorSegments);
+  }
+
+  public String getAccessibleTextColor(Double value) {
+    return ColorUtils.getAccessibleTextColor(getCalulatedCellColor(value));
   }
 
   private void updateColorProperties() {
@@ -320,8 +326,8 @@ public class ProcessesAnalyticsBean {
   }
 
   private void updateBpmnIframeSourceUrl() {
-    bpmnIframeSourceUrl =
-        ProcessUtils.buildBpmnIFrameSourceUrl(getSelectedIProcessWebStartable().getId(), selectedModule);
+    bpmnIframeSourceUrl = ProcessUtils.buildBpmnIFrameSourceUrl(getSelectedIProcessWebStartable().getId(),
+        selectedModule);
   }
 
   private void loadNodes() {
@@ -363,15 +369,19 @@ public class ProcessesAnalyticsBean {
         : StringUtils.EMPTY;
   }
 
-  public List<Node> renderNodesForKPIType(List<Node> nodes) {
+  public List<Node> renderNodesForKPIType() {
     if (this.selectedKpiType != null && this.selectedKpiType.isDescendantOf(KpiType.DURATION)) {
-      List<String> avaibleTaskIds =
-          nodes.stream().filter(node -> node.getType() == NodeType.ARROW).map(node -> node.getSourceNodeId()).toList();
+      List<String> avaibleTaskIds = nodes.stream().filter(node -> node.getType() == NodeType.ARROW)
+          .map(node -> node.getSourceNodeId()).collect(Collectors.toList());
 
       return nodes.stream().filter(node -> node.getType() != NodeType.ARROW && avaibleTaskIds.contains(node.getId()))
-          .toList();
+          .collect(Collectors.toList());
     }
     return nodes;
+  }
+
+  public int getDataTableTotalRow() {
+    return renderNodesForKPIType().size();
   }
 
   public boolean isMedianDurationColumnVisible() {

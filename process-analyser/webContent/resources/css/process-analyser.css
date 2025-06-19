@@ -79,3 +79,10 @@ h3 {
   position: absolute;
   margin-top: 3rem;
 }
+.colorable-cell {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box
+}
