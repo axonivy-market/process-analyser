@@ -34,8 +34,6 @@ import com.axonivy.solutions.process.analyser.core.constants.UserProperty;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
-import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
-import com.axonivy.solutions.process.analyser.utils.ColorUtils;
 import com.axonivy.solutions.process.analyser.service.IvyTaskOccurrenceService;
 import com.axonivy.solutions.process.analyser.utils.ColorUtils;
 import com.axonivy.solutions.process.analyser.utils.DateUtils;
@@ -247,14 +245,13 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onSegmentClick(ActionEvent event) {
-    selectedIndex =
-        (Integer) event.getComponent().getAttributes().get(ProcessAnalyticsConstants.COLOR_SEGMENT_ATTRIBUTE);
+    selectedIndex = (Integer) event.getComponent().getAttributes()
+        .get(ProcessAnalyticsConstants.COLOR_SEGMENT_ATTRIBUTE);
     selectedColor = colorSegments.get(selectedIndex);
   }
 
   public void onColorChange() {
-    colorSegments =
-        ColorUtils.generateGradientFromRgb(selectedColor, ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS);
+    colorSegments = ColorUtils.generateGradientFromRgb(selectedColor, ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS);
     textColors = ColorUtils.getAccessibleTextColors(colorSegments);
     updateColorProperties();
     updateDiagramAndStatistic();
@@ -321,8 +318,8 @@ public class ProcessesAnalyticsBean {
   }
 
   private void updateBpmnIframeSourceUrl() {
-    bpmnIframeSourceUrl =
-        ProcessUtils.buildBpmnIFrameSourceUrl(getSelectedIProcessWebStartable().getId(), selectedModule);
+    bpmnIframeSourceUrl = ProcessUtils.buildBpmnIFrameSourceUrl(getSelectedIProcessWebStartable().getId(),
+        selectedModule);
   }
 
   private void loadNodes() {
@@ -366,8 +363,8 @@ public class ProcessesAnalyticsBean {
 
   public List<Node> renderNodesForKPIType() {
     if (this.selectedKpiType != null && this.selectedKpiType.isDescendantOf(KpiType.DURATION)) {
-      List<String> avaibleTaskIds =
-          nodes.stream().filter(node -> node.getType() == NodeType.ARROW).map(node -> node.getSourceNodeId()).toList();
+      List<String> avaibleTaskIds = nodes.stream().filter(node -> node.getType() == NodeType.ARROW)
+          .map(node -> node.getSourceNodeId()).toList();
 
       return nodes.stream().filter(node -> node.getType() != NodeType.ARROW && avaibleTaskIds.contains(node.getId()))
           .toList();

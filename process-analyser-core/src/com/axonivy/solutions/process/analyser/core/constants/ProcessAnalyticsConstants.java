@@ -33,7 +33,6 @@ public class ProcessAnalyticsConstants {
   public static final String MULTIPLE_UNDERSCORES_REGEX = "_+";
   public static final String NON_DIGIT_REGEX = "[^0-9,]";
   public static final String NON_DIGIT_COMMA_REGEX = "[^\\d,]";
-  public static final String HASHTAG = "#";
   public static final String COLOR_SEGMENT_ATTRIBUTE = "segmentIndex";
   public static final String RGB_REGEX_PATTERN = "rgb\\((\\d+),\\s*(\\d+),\\s*(\\d+)\\)";
   public static final String RGB_FORMAT = "rgb(%d, %d, %d)";

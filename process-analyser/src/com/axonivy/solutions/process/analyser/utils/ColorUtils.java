@@ -1,25 +1,20 @@
 package com.axonivy.solutions.process.analyser.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.logging.log4j.util.Strings;
-
-import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
-import com.axonivy.solutions.process.analyser.enums.KpiColor;
-import com.axonivy.solutions.process.analyser.enums.KpiType;
-
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COMMA;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.DARK_TEXT_COLOR;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HASHTAG;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.LIGHT_TEXT_COLOR;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.NON_DIGIT_COMMA_REGEX;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.RGB_PREFIX;;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.RGB;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.RGB_PREFIX;
 
-import java.util.List;;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
+import com.axonivy.solutions.process.analyser.enums.KpiColor;
+import com.axonivy.solutions.process.analyser.enums.KpiType;;
 
 public class ColorUtils {
   public static List<String> generateColorSegments(KpiType selectedKpiType) {
@@ -27,11 +22,12 @@ public class ColorUtils {
   }
 
   /**
-   * Generates a gradient of RGB colors from the selected color. If the color is light, it produces a darkening
-   * gradient. If the color is dark, it produces a brightening gradient.
+   * Generates a gradient of RGB colors from the selected color. If the color is
+   * light, it produces a darkening gradient. If the color is dark, it produces a
+   * brightening gradient.
    *
    * @param rgbColor RGB string in the format "rgb(r, g, b)"
-   * @param steps Number of gradient steps to generate
+   * @param steps    Number of gradient steps to generate
    * @return List of RGB color strings forming the gradient
    */
   public static List<String> generateGradientFromRgb(String rgbColor, int steps) {
@@ -61,6 +57,8 @@ public class ColorUtils {
       gradientColors.add(String.format(ProcessAnalyticsConstants.RGB_FORMAT, adjustedRed, adjustedGreen, adjustedBlue));
     }
     return gradientColors;
+  }
+
   public static String calculateColorFromList(Double value, List<String> colors) {
     int index = (int) Math.floor(value * colors.size());
     index = Math.min(Math.max(index, 0), colors.size() - 1);
@@ -73,26 +71,6 @@ public class ColorUtils {
     return Math.max(0, Math.min(255, value));
   }
 
-  public static List<String> getAccessibleTextColors(List<String> colors) {
-    List<String> result = new ArrayList<>();
-    for (String color : colors) {
-      int r, g, b;
-      if (color.startsWith(HASHTAG)) {
-        int val = Integer.parseInt(color.substring(1), 16);
-        r = (val >> 16) & 0xFF;
-        g = (val >> 8) & 0xFF;
-        b = val & 0xFF;
-      } else if (color.startsWith(RGB_PREFIX)) {
-        String[] parts = color.replaceAll(NON_DIGIT_COMMA_REGEX, Strings.EMPTY).split(COMMA);
-        r = Integer.parseInt(parts[0].trim());
-        g = Integer.parseInt(parts[1].trim());
-        b = Integer.parseInt(parts[2].trim());
-      } else {
-        throw new IllegalArgumentException("Unsupported color format: " + color);
-      }
-
-      double brightness = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-      result.add(brightness > 0.5 ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR);
   public static String getAccessibleTextColor(String color) {
     int r, g, b;
     if (color.startsWith(HASHTAG)) {
@@ -103,7 +81,7 @@ public class ColorUtils {
       r = (val >> 16) & 0xFF;
       g = (val >> 8) & 0xFF;
       b = val & 0xFF;
-    } else if (color.startsWith(RGB)) {
+    } else if (color.startsWith(RGB_PREFIX)) {
       String[] parts = color.replaceAll(NON_DIGIT_COMMA_REGEX, "").split(COMMA);
       r = Integer.parseInt(parts[0]);
       g = Integer.parseInt(parts[1]);
@@ -111,7 +89,6 @@ public class ColorUtils {
     } else {
       throw new IllegalArgumentException("#getAccessibleTextColor: Unsupported color: " + color);
     }
-    return result;
     // 0.299 * r + 0.587 * g + 0.114 * b:
     // Luminance formula for determine dark and light color
     return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.5 ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR;

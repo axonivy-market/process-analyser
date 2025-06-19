@@ -1,8 +1,8 @@
 package com.axonivy.solutions.process.analyser.test.ut.utils;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.DARK_TEXT_COLOR;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.LIGHT_TEXT_COLOR;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -20,13 +20,14 @@ import ch.ivyteam.ivy.environment.IvyTest;
 @IvyTest
 public class ColorUtilsTest extends BaseSetup {
 
+  private static final String RGB_LIGHT_COLOR = "rgb(247, 246, 245)";
+
   @Test
   void test_generateColorSegments_withFrequencyKpi() {
     List<String> frequencyColors = KpiColor.FREQUENCY.getColors();
     List<String> colorSegments = ColorUtils.generateColorSegments(KpiType.FREQUENCY);
     assertThat(colorSegments).containsExactlyElementsOf(frequencyColors);
   }
-public class ColorUtilsTest {
 
   @Test
   void test_generateColorSegments_withDurationKpi() {
@@ -50,13 +51,16 @@ public class ColorUtilsTest {
     assertThat(gradient.get(0)).isEqualTo("rgb(250, 250, 250)");
     assertThat(gradient.get(3)).isNotEqualTo("rgb(250, 250, 250)");
   }
-  private static final String RGB_LIGHT_COLOR = "rgb(247, 246, 245)";
 
   @Test
   void test_generateGradientFromRgb_invalidFormat_throwsException() {
     String invalidInput = "rgba(255, 255, 255)";
     assertThatThrownBy(() -> ColorUtils.generateGradientFromRgb(invalidInput, 5))
         .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("Invalid RGB format");
+
+  }
+
+  @Test
   void testCalculateColorFromList() {
     List<String> colors = List.of(LIGHT_TEXT_COLOR, DARK_TEXT_COLOR);
     assertEquals(LIGHT_TEXT_COLOR, ColorUtils.calculateColorFromList(0.27, colors));
@@ -74,6 +78,9 @@ public class ColorUtilsTest {
       int curr = extractBrightness(gradient.get(i));
       assertThat(curr).isLessThanOrEqualTo(prev);
     }
+  }
+
+  @Test
   void testGetAccessibleTextForHexColor() {
     assertEquals(DARK_TEXT_COLOR, ColorUtils.getAccessibleTextColor(LIGHT_TEXT_COLOR));
   }
@@ -89,6 +96,9 @@ public class ColorUtilsTest {
       int curr = extractBrightness(gradient.get(i));
       assertThat(curr).isLessThanOrEqualTo(prev);
     }
+  }
+
+  @Test
   void testGetAccessibleTextForRGBColor() {
     assertEquals(DARK_TEXT_COLOR, ColorUtils.getAccessibleTextColor(RGB_LIGHT_COLOR));
   }
@@ -109,10 +119,12 @@ public class ColorUtilsTest {
     List<String> gradient = ColorUtils.generateGradientFromRgb(input, steps);
     assertThat(gradient.get(0)).isEqualTo("rgb(217, 217, 217)");
     assertThat(gradient.get(steps - 1)).isEqualTo("rgb(0, 0, 0)");
+  }
+
+  @Test
   void testGetAccessibleTextColorWithError() {
     String color = "invalid";
-    assertThatThrownBy(() -> ColorUtils.getAccessibleTextColor(color))
-        .isInstanceOf(IllegalArgumentException.class)
+    assertThatThrownBy(() -> ColorUtils.getAccessibleTextColor(color)).isInstanceOf(IllegalArgumentException.class)
         .hasMessageContaining("#getAccessibleTextColor: Unsupported color: " + color);
   }
 
