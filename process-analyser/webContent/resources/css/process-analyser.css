@@ -45,7 +45,7 @@ h3 {
   flex-direction: column;
   align-items: flex-end;
   gap: 1em;
-  margin-top: 1em;
+  margin: 1em 0;
 }
 
 .duration-labels {
@@ -73,4 +73,9 @@ h3 {
   flex: 1;
   cursor: pointer;
   transition: transform 0.2s ease;
+}
+
+.color-picker-panel{
+  position: absolute;
+  margin-top: 3rem;
 }

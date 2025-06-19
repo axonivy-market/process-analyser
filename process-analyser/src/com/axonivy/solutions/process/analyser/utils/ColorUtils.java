@@ -67,26 +67,33 @@ public class ColorUtils {
   }
 
   public static List<String> getAccessibleTextColors(List<String> colors) {
-    List<String> result = new ArrayList<>();
+    List<String> textColors = new ArrayList<>();
     for (String color : colors) {
-      int r, g, b;
-      if (color.startsWith(HASHTAG)) {
-        int val = Integer.parseInt(color.substring(1), 16);
-        r = (val >> 16) & 0xFF;
-        g = (val >> 8) & 0xFF;
-        b = val & 0xFF;
-      } else if (color.startsWith(RGB_PREFIX)) {
-        String[] parts = color.replaceAll(NON_DIGIT_COMMA_REGEX, Strings.EMPTY).split(COMMA);
-        r = Integer.parseInt(parts[0].trim());
-        g = Integer.parseInt(parts[1].trim());
-        b = Integer.parseInt(parts[2].trim());
-      } else {
-        throw new IllegalArgumentException("Unsupported color format: " + color);
-      }
-
-      double brightness = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-      result.add(brightness > 0.5 ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR);
+      textColors.add(getAccessibleTextColor(color));
     }
-    return result;
+    return textColors;
+  }
+
+  public static String getAccessibleTextColor(String color) {
+    int r, g, b;
+    if (color.startsWith(HASHTAG)) {
+      // Stripping the #
+      // Parsing the 6-character hex as a single integer
+      // Extracting R, G, B by bit-shifting and masking
+      int val = Integer.parseInt(color.substring(1), 16);
+      r = (val >> 16) & 0xFF;
+      g = (val >> 8) & 0xFF;
+      b = val & 0xFF;
+    } else if (color.startsWith(RGB_PREFIX)) {
+      String[] parts = color.replaceAll(NON_DIGIT_COMMA_REGEX, Strings.EMPTY).split(COMMA);
+      r = Integer.parseInt(parts[0]);
+      g = Integer.parseInt(parts[1]);
+      b = Integer.parseInt(parts[2]);
+    } else {
+      throw new IllegalArgumentException("#getAccessibleTextColor: Unsupported color: " + color);
+    }
+    // 0.299 * r + 0.587 * g + 0.114 * b:
+    // Luminance formula for determine dark and light color
+    return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.5 ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR;
   }
 }

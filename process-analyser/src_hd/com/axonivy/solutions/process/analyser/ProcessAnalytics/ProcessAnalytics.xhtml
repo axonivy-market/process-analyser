@@ -131,10 +131,13 @@
           </p:outputPanel>
 
           <p:outputPanel id="color-picker-panel" styleClass="color-picker-panel">
-            <p:colorPicker id="inline" mode="inline" value="#{processesAnalyticsBean.selectedColor}" style="margin-top: 1em;"
-              rendered="#{processesAnalyticsBean.selectedIndex >= 0}" widgetVar="colorPickerWidget" theme="large" format="rgb" alpha="false">
-              <p:ajax event="change" listener="#{processesAnalyticsBean.onColorChange}" update="process-analytics-form:color-bar-segment" />
-            </p:colorPicker>
+            <div id="color-picker-wrapper">
+              <p:colorPicker id="inline" mode="inline" value="#{processesAnalyticsBean.selectedColor}"
+                rendered="#{processesAnalyticsBean.selectedIndex >= 0}" widgetVar="colorPickerWidget" theme="large" format="rgb"
+                alpha="false">
+                <p:ajax event="change" listener="#{processesAnalyticsBean.onColorChange}" update="process-analytics-form:color-bar-segment" />
+              </p:colorPicker>
+            </div>
           </p:outputPanel>
         </h:panelGroup>
 
@@ -203,6 +206,13 @@
         };
         addCustomTextForEmptyDropdown;
         setInterval(addCustomTextForEmptyDropdown, 500);
+        document.addEventListener('click', function(event) {
+          var colorPicker = document.getElementById('color-picker-wrapper');
+          var colorPickerWidget = PF('colorPickerWidget');
+          if (colorPicker &amp;&amp; colorPickerWidget &amp;&amp; !colorPicker.contains(event.target)) {
+             colorPicker.style.display = "none";
+          }
+        });
       </script>
     </ui:define>
   </ui:composition>
