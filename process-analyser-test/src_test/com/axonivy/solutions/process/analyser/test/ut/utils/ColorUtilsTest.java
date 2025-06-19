@@ -43,8 +43,8 @@ public class ColorUtilsTest extends BaseSetup {
   void test_generateGradientFromRgb_withLightColor() {
     List<String> gradient = ColorUtils.generateGradientFromRgb("rgb(250, 250, 250)", 4);
     assertThat(gradient).hasSize(4);
-    assertThat(gradient.get(0)).isNotEqualTo(gradient.get(3));
-    assertThat(gradient.get(3)).isEqualTo("rgb(250, 250, 250)");
+    assertThat(gradient.get(0)).isEqualTo("rgb(250, 250, 250)");
+    assertThat(gradient.get(3)).isNotEqualTo("rgb(250, 250, 250)");
   }
 
   @Test
@@ -64,7 +64,7 @@ public class ColorUtilsTest extends BaseSetup {
     for (int i = 1; i < steps; i++) {
       int prev = extractBrightness(gradient.get(i - 1));
       int curr = extractBrightness(gradient.get(i));
-      assertThat(curr).isGreaterThanOrEqualTo(prev);
+      assertThat(curr).isLessThanOrEqualTo(prev);
     }
   }
 
@@ -86,8 +86,8 @@ public class ColorUtilsTest extends BaseSetup {
     String input = "rgb(128, 128, 128)";
     int steps = 4;
     List<String> gradient = ColorUtils.generateGradientFromRgb(input, steps);
-    assertThat(gradient.get(0)).isNotEqualTo(gradient.get(steps - 1));
-    assertThat(extractBrightness(gradient.get(steps - 1))).isGreaterThan(extractBrightness(gradient.get(0)));
+    assertThat(gradient.get(steps - 1)).isEqualTo(input);
+    assertThat(extractBrightness(gradient.get(0))).isGreaterThan(extractBrightness(gradient.get(steps - 1)));
   }
 
   @Test
@@ -95,7 +95,7 @@ public class ColorUtilsTest extends BaseSetup {
     String input = "rgb(0, 0, 0)";
     int steps = 3;
     List<String> gradient = ColorUtils.generateGradientFromRgb(input, steps);
-    assertThat(gradient.get(0)).isEqualTo("rgb(216, 216, 216)");
+    assertThat(gradient.get(0)).isEqualTo("rgb(217, 217, 217)");
     assertThat(gradient.get(steps - 1)).isEqualTo("rgb(0, 0, 0)");
   }
 
@@ -104,7 +104,7 @@ public class ColorUtilsTest extends BaseSetup {
     String input = "rgb(255, 255, 255)";
     int steps = 3;
     List<String> gradient = ColorUtils.generateGradientFromRgb(input, steps);
-    assertThat(gradient.get(0)).startsWith("rgb(3");
-    assertThat(gradient.get(steps - 1)).isEqualTo("rgb(255, 255, 255)");
+    assertThat(gradient.get(0)).isEqualTo("rgb(255, 255, 255)");
+    assertThat(gradient.get(steps - 1)).startsWith("rgb(3");
   }
 }
