@@ -52,6 +52,8 @@ import ch.ivyteam.ivy.workflow.start.IWebStartable;
 
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_SIGN;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_REGEX;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COLOR_SEGMENT_ATTRIBUTE;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS;
 import static com.axonivy.solutions.process.analyser.enums.KpiType.FREQUENCY;
 import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.FREQUENCY_COLOR;
 import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.FREQUENCY_TEXT_COLOR;
@@ -253,13 +255,13 @@ public class ProcessesAnalyticsBean {
 
   public void onSegmentClick(ActionEvent event) {
     selectedIndex =
-        (Integer) event.getComponent().getAttributes().get(ProcessAnalyticsConstants.COLOR_SEGMENT_ATTRIBUTE);
+        (Integer) event.getComponent().getAttributes().get(COLOR_SEGMENT_ATTRIBUTE);
     selectedColor = colorSegments.get(selectedIndex);
   }
 
   public void onColorChange() {
     colorSegments =
-        ColorUtils.generateGradientFromRgb(selectedColor, ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS);
+        ColorUtils.generateGradientFromRgb(selectedColor, GRADIENT_COLOR_LEVELS);
     textColors = ColorUtils.getAccessibleTextColors(colorSegments);
     updateColorProperties();
     updateDiagramAndStatistic();
