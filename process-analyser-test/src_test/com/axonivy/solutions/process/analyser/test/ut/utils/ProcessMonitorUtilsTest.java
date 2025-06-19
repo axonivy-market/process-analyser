@@ -28,7 +28,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
 
   private final static String NODE_A_ID = "A";
   private final static String NODE_B_ID = "B";
-  
+
   @BeforeAll
   static void setUp() {
     prepareData();
@@ -120,7 +120,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     assertThat(mockNode.getFrequency()).isEqualTo(mockValue);
     assertThat(mockNode.getRelativeValue()).isEqualTo(1);
   }
-  
+
   @Test
   void test_getNonRunningElementIdsFromAlternativeEnds() {
     AlternativePath testPath = new AlternativePath();

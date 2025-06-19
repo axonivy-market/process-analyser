@@ -74,7 +74,7 @@
               value="#{processesAnalyticsBean.selectedKpiType}" converter="kpiTypeConverter">
               <f:selectItems value="#{processesAnalyticsBean.kpiTypes}" />
               <p:ajax event="itemSelect"
-                listener="#{processesAnalyticsBean.onKpiTypeSelect}" />
+                listener="#{processesAnalyticsBean.onKpiTypeSelect}" update="color-bar-segment color-picker-panel"/>
             </p:cascadeSelect>
           </h:panelGroup>
         </p:panelGrid>
@@ -100,9 +100,52 @@
             width="100%" height="400" onload="loadIframe(false)"/>
         </h:panelGroup>
         <br />
+
+        <h:panelGroup layout="block" styleClass="color-container">
+          <p:outputPanel id="color-bar-segment">
+            <h:panelGroup layout="block" styleClass="duration-container" rendered="#{processesAnalyticsBean.selectedKpiType != null}">
+              <h:panelGroup class="duration-labels" rendered="#{'FREQUENCY' eq processesAnalyticsBean.selectedKpiType}">
+                <h:outputText styleClass="duration-label left"
+                  value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/LowExecution')}" escape="false" />
+                <h:outputText styleClass="duration-label right"
+                  value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/HighExecution')}" escape="false" />
+              </h:panelGroup>
+
+              <h:panelGroup class="duration-labels" rendered="#{'FREQUENCY' ne processesAnalyticsBean.selectedKpiType}">
+                <h:outputText styleClass="duration-label left"
+                  value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/LowDuration')}" escape="false" />
+                <h:outputText styleClass="duration-label right"
+                  value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/HighDuration')}" escape="false" />
+              </h:panelGroup>
+
+              <div class="duration-bar">
+                <ui:repeat value="#{processesAnalyticsBean.colorSegments}" var="color" varStatus="status">
+                  <p:commandLink actionListener="#{processesAnalyticsBean.onSegmentClick}"
+                    update="process-analytics-form:color-picker-panel" styleClass="segment" style="background-color: #{color};"
+                    oncomplete="PF('colorPickerWidget').show();" ondblclick="return;">
+                    <f:attribute name="segmentIndex" value="#{status.index}" />
+                  </p:commandLink>
+                </ui:repeat>
+              </div>
+            </h:panelGroup>
+          </p:outputPanel>
+
+          <p:outputPanel id="color-picker-panel" styleClass="color-picker-panel">
+            <div id="color-picker-wrapper">
+              <p:colorPicker id="inline" mode="inline" value="#{processesAnalyticsBean.selectedColor}"
+                rendered="#{processesAnalyticsBean.selectedIndex >= 0}" widgetVar="colorPickerWidget" theme="large" format="rgb"
+                alpha="false">
+                <p:ajax event="change" listener="#{processesAnalyticsBean.onColorChange}" update="process-analytics-form:color-bar-segment" />
+              </p:colorPicker>
+            </div>
+          </p:outputPanel>
+        </h:panelGroup>
+
+        <hr />
+
         <h:panelGroup id="data-statistics" layout="block">
           <p:dataTable var="node" styleClass="grid" id="node"
-            value="#{processesAnalyticsBean.renderNodesForKPIType(processesAnalyticsBean.nodes)}" scrollable="true"
+            value="#{processesAnalyticsBean.renderNodesForKPIType()}" scrollable="true"
             scrollHeight="300"
             emptyMessage="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/NoRecordsFound')}">
             <p:column styleClass="col-2" sortBy="#{node.id}"
@@ -122,17 +165,25 @@
               rendered="#{'FREQUENCY' == processesAnalyticsBean.selectedKpiType}"
               styleClass="col-2" sortBy="#{node.frequency}"
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Frequency')}">
-              <h:outputText value="#{node.frequency}" />
+              <h:panelGroup layout="block" styleClass="colorable-cell"
+                style="background-color: #{processesAnalyticsBean.getCalulatedCellColor(node.relativeValue)};
+                  color: #{processesAnalyticsBean.getAccessibleTextColor(node.relativeValue)};">
+                <h:outputText value="#{node.frequency}" />
+              </h:panelGroup>
             </p:column>
             <p:column
               rendered="#{processesAnalyticsBean.isMedianDurationColumnVisible()}"
               styleClass="col-2" sortBy="#{node.medianDuration}"
               headerText="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/MedianDuration')}">
-              <h:outputText value="#{node.formattedMedianDuration}" />
+              <h:panelGroup layout="block" styleClass="colorable-cell"
+                style="background-color: #{processesAnalyticsBean.getCalulatedCellColor(node.relativeValue)};
+                  color: #{processesAnalyticsBean.getAccessibleTextColor(node.relativeValue)};">
+                <h:outputText value="#{node.formattedMedianDuration}" />
+              </h:panelGroup>
             </p:column>
             <f:facet name="footer">
               <h:outputText
-                value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/TotalElements', [processesAnalyticsBean.nodes.size()])}"
+                value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/TotalElements', [processesAnalyticsBean.getDataTableTotalRow()])}"
                 styleClass="col-12" />
             </f:facet>
           </p:dataTable>
@@ -163,6 +214,13 @@
         };
         addCustomTextForEmptyDropdown;
         setInterval(addCustomTextForEmptyDropdown, 500);
+        document.addEventListener('click', function(event) {
+          var colorPicker = document.getElementById('color-picker-wrapper');
+          var colorPickerWidget = PF('colorPickerWidget');
+          if (colorPicker &amp;&amp; colorPickerWidget &amp;&amp; !colorPicker.contains(event.target)) {
+             colorPicker.style.display = "none";
+          }
+        });
       </script>
     </ui:define>
   </ui:composition>

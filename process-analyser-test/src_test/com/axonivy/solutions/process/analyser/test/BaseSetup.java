@@ -1,9 +1,12 @@
 package com.axonivy.solutions.process.analyser.test;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 
 import ch.ivyteam.ivy.process.model.NodeElement;
@@ -66,5 +69,16 @@ public class BaseSetup {
 
   private static ProcessElement getProcessElementByPid(String pid) {
     return testProcessElements.stream().filter(element -> pid.equals(element.getPid().toString())).findAny().get();
+  }
+
+  protected int extractBrightness(String rgbString) {
+    Matcher matcher = Pattern.compile(ProcessAnalyticsConstants.RGB_REGEX_PATTERN).matcher(rgbString);
+    if (!matcher.matches()) {
+      throw new IllegalArgumentException("Invalid RGB format: " + rgbString);
+    }
+    int r = Integer.parseInt(matcher.group(1));
+    int g = Integer.parseInt(matcher.group(2));
+    int b = Integer.parseInt(matcher.group(3));
+    return (int) (0.299 * r + 0.587 * g + 0.114 * b);
   }
 }

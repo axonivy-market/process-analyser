@@ -35,6 +35,9 @@ Key features:
 
 ![downoad and export demo](images/download-and-export.png)
 
+  3) **Custom color bar:** Customize the color of each KPI value using a gradient from light to dark, representing the progression from lower to higher values.
+![color map demo](images/color-custom.png)
+
 ## Setup
 To collect data and analyze your processes, please follow these steps:
 1. Prepare your own project and processes.
