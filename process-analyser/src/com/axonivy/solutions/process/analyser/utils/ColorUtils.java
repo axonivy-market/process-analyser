@@ -1,20 +1,22 @@
 package com.axonivy.solutions.process.analyser.utils;
 
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COMMA;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.DARK_TEXT_COLOR;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HASHTAG;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.LIGHT_TEXT_COLOR;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.NON_DIGIT_COMMA_REGEX;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.RGB_PREFIX;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.util.Strings;
+
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
 import com.axonivy.solutions.process.analyser.enums.KpiColor;
-import com.axonivy.solutions.process.analyser.enums.KpiType;;
+import com.axonivy.solutions.process.analyser.enums.KpiType;
+
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COMMA;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.DARK_TEXT_COLOR;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HASHTAG;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.LIGHT_TEXT_COLOR;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.NON_DIGIT_COMMA_REGEX;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.RGB_PREFIX;;
 
 public class ColorUtils {
   public static List<String> generateColorSegments(KpiType selectedKpiType) {
@@ -22,12 +24,11 @@ public class ColorUtils {
   }
 
   /**
-   * Generates a gradient of RGB colors from the selected color. If the color is
-   * light, it produces a darkening gradient. If the color is dark, it produces a
-   * brightening gradient.
+   * Generates a gradient of RGB colors from the selected color. If the color is light, it produces a darkening
+   * gradient. If the color is dark, it produces a brightening gradient.
    *
    * @param rgbColor RGB string in the format "rgb(r, g, b)"
-   * @param steps    Number of gradient steps to generate
+   * @param steps Number of gradient steps to generate
    * @return List of RGB color strings forming the gradient
    */
   public static List<String> generateGradientFromRgb(String rgbColor, int steps) {
@@ -71,6 +72,14 @@ public class ColorUtils {
     return Math.max(0, Math.min(255, value));
   }
 
+  public static List<String> getAccessibleTextColors(List<String> colors) {
+    List<String> textColors = new ArrayList<>();
+    for (String color : colors) {
+      textColors.add(getAccessibleTextColor(color));
+    }
+    return textColors;
+  }
+
   public static String getAccessibleTextColor(String color) {
     int r, g, b;
     if (color.startsWith(HASHTAG)) {
@@ -82,7 +91,7 @@ public class ColorUtils {
       g = (val >> 8) & 0xFF;
       b = val & 0xFF;
     } else if (color.startsWith(RGB_PREFIX)) {
-      String[] parts = color.replaceAll(NON_DIGIT_COMMA_REGEX, "").split(COMMA);
+      String[] parts = color.replaceAll(NON_DIGIT_COMMA_REGEX, Strings.EMPTY).split(COMMA);
       r = Integer.parseInt(parts[0]);
       g = Integer.parseInt(parts[1]);
       b = Integer.parseInt(parts[2]);
