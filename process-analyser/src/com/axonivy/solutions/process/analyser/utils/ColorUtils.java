@@ -20,6 +20,9 @@ public class ColorUtils {
   public static String getAccessibleTextColor(String color) {
     int r, g, b;
     if (color.startsWith(HASHTAG)) {
+      // Stripping the #
+      // Parsing the 6-character hex as a single integer
+      // Extracting R, G, B by bit-shifting and masking
       int val = Integer.parseInt(color.substring(1), 16);
       r = (val >> 16) & 0xFF;
       g = (val >> 8) & 0xFF;

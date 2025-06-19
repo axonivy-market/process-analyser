@@ -171,8 +171,17 @@ public class ProcessesMonitorUtils {
     List<Node> arrows = nodes.stream().filter(node -> node.getType() == NodeType.ARROW)
         .sorted(Comparator.comparingDouble(Node::getMedianDuration)).toList();
 
+    if (arrows.isEmpty()) {
+      return;
+    }
+
+    float maxMedian = arrows.getLast().getMedianDuration();
+    if (maxMedian == 0) {
+      return; // avoid division by zero
+    }
+
     nodes.forEach(arrNode -> arrNode
-        .setRelativeValue(arrNode.getMedianDuration() / arrows.get(arrows.size() - 1).getMedianDuration()));
+        .setRelativeValue(arrNode.getMedianDuration() / maxMedian));
   }
 
   private static Set<String> extractNodeAttributes(List<Node> nodes, Function<Node, String> attributeExtractor) {
