@@ -6,6 +6,7 @@ public class ProcessAnalyticsConstants {
   public static final int DEFAULT_INITIAL_STATISTIC_NUMBER = 0;
   public static final int GRADIENT_COLOR_LEVELS = 10;
   public static final String HYPHEN_SIGN = "-";
+  public static final String HYPHEN_REGEX = "\\-";
   public static final String DEFAULT_SECURITY_CONTEXT = "default";
   public static final String PROCESS_ANALYSER_PMV_NAME = "process-analyser";
   public static final String PORTAL_PMV_SUFFIX = "portal";
