@@ -180,8 +180,7 @@ public class ProcessesMonitorUtils {
       return; // avoid division by zero
     }
 
-    nodes.forEach(arrNode -> arrNode
-        .setRelativeValue(arrNode.getMedianDuration() / maxMedian));
+    nodes.forEach(arrNode -> arrNode.setRelativeValue(arrNode.getMedianDuration() / maxMedian));
   }
 
   private static Set<String> extractNodeAttributes(List<Node> nodes, Function<Node, String> attributeExtractor) {
