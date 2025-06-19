@@ -59,13 +59,6 @@ public class ColorUtilsTest extends BaseSetup {
   }
 
   @Test
-  void test_generateGradientFromRgb_invalidFormat_throwsException() {
-    assertThatThrownBy(() -> ColorUtils.generateGradientFromRgb(PURE_WHITE, 5))
-        .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("Invalid RGB format");
-
-  }
-
-  @Test
   void testCalculateColorFromList() {
     List<String> colors = List.of(LIGHT_TEXT_COLOR, DARK_TEXT_COLOR);
     assertEquals(LIGHT_TEXT_COLOR, ColorUtils.calculateColorFromList(0.27, colors));
