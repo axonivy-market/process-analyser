@@ -1,9 +1,10 @@
 package com.axonivy.solutions.process.analyser.test;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.util.Strings;
 
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
@@ -71,10 +72,13 @@ public class BaseSetup {
   }
 
   protected int extractBrightness(String rgbString) {
-    String[] parts = rgbString.replaceAll("[^0-9,]", Strings.EMPTY).split(ProcessAnalyticsConstants.COMMA);
-    int r = Integer.parseInt(parts[0].trim());
-    int g = Integer.parseInt(parts[1].trim());
-    int b = Integer.parseInt(parts[2].trim());
+    Matcher matcher = Pattern.compile(ProcessAnalyticsConstants.RGB_REGEX_PATTERN).matcher(rgbString);
+    if (!matcher.matches()) {
+      throw new IllegalArgumentException("Invalid RGB format: " + rgbString);
+    }
+    int r = Integer.parseInt(matcher.group(1));
+    int g = Integer.parseInt(matcher.group(2));
+    int b = Integer.parseInt(matcher.group(3));
     return (int) (0.299 * r + 0.587 * g + 0.114 * b);
   }
 }

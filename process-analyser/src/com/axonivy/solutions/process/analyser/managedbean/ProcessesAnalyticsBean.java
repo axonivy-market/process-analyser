@@ -30,9 +30,12 @@ import com.axonivy.solutions.process.analyser.bo.TimeFrame;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
+import com.axonivy.solutions.process.analyser.core.constants.UserProperty;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
+import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
+import com.axonivy.solutions.process.analyser.utils.ColorUtils;
 import com.axonivy.solutions.process.analyser.service.IvyTaskOccurrenceService;
 import com.axonivy.solutions.process.analyser.utils.ColorUtils;
 import com.axonivy.solutions.process.analyser.utils.DateUtils;
@@ -44,6 +47,7 @@ import ch.ivyteam.ivy.cm.ContentObject;
 import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.location.IParser.ParseException;
+import ch.ivyteam.ivy.security.IUser;
 import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
@@ -73,6 +77,7 @@ public class ProcessesAnalyticsBean {
   private double maxValue;
   private List<SelectItem> kpiTypes;
   private List<String> colorSegments;
+  private List<String> textColors;
   private String selectedColor;
   private int selectedIndex = -1;
 
@@ -156,7 +161,7 @@ public class ProcessesAnalyticsBean {
   public void onKpiTypeSelect() {
     selectedIndex = -1;
     selectedColor = null;
-    colorSegments = ProcessesMonitorUtils.generateColorSegments(selectedKpiType);
+    getBackgroundAndTextColors();
     updateDiagramAndStatistic();
   }
 
@@ -249,16 +254,44 @@ public class ProcessesAnalyticsBean {
 
   public void onColorChange() {
     colorSegments =
-        ProcessesMonitorUtils.generateGradientFromRgb(selectedColor, ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS);
+        ColorUtils.generateGradientFromRgb(selectedColor, ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS);
+    textColors = ColorUtils.getAccessibleTextColors(colorSegments);
+    updateColorProperties();
     updateDiagramAndStatistic();
   }
-  
+
   public String getCalulatedCellColor(Double value) {
     return ColorUtils.calculateColorFromList(value, colorSegments);
   }
-  
+
   public String getAccessibleTextColor(Double value) {
     return ColorUtils.getAccessibleTextColor(getCalulatedCellColor(value));
+  }
+
+  private void updateColorProperties() {
+    IUser user = Ivy.session().getSessionUser();
+    String colorKey = getColorPropertyKey();
+    String textKey = getTextColorPropertyKey();
+
+    user.setProperty(colorKey, String.join(ProcessAnalyticsConstants.HYPHEN_SIGN, colorSegments));
+    user.setProperty(textKey, String.join(ProcessAnalyticsConstants.HYPHEN_SIGN, textColors));
+  }
+
+  private void getBackgroundAndTextColors() {
+    IUser user = Ivy.session().getSessionUser();
+    String colorKey = getColorPropertyKey();
+    String textKey = getTextColorPropertyKey();
+
+    String colorProperty = user.getProperty(colorKey);
+    String textProperty = user.getProperty(textKey);
+
+    if (colorProperty != null && textProperty != null) {
+      colorSegments = Arrays.asList(colorProperty.split(ProcessAnalyticsConstants.HYPHEN_REGEX));
+      textColors = Arrays.asList(textProperty.split(ProcessAnalyticsConstants.HYPHEN_REGEX));
+    } else {
+      colorSegments = ColorUtils.generateColorSegments(selectedKpiType);
+      textColors = ColorUtils.getAccessibleTextColors(colorSegments);
+    }
   }
 
   public void updateDataOnChangingFilter() throws ParseException {
@@ -311,6 +344,7 @@ public class ProcessesAnalyticsBean {
         processMiningData.setNodes(analyzedNode);
         processMiningData.setNumberOfInstances(cases.size());
         processMiningData.setColors(colorSegments);
+        processMiningData.setTextColors(textColors);
       }
     }
     updateDataTableWithNodesPrefix(ProcessUtils.getProcessPidFromElement(selectedPid));
@@ -347,6 +381,15 @@ public class ProcessesAnalyticsBean {
 
   public boolean isMedianDurationColumnVisible() {
     return ProcessesMonitorUtils.isDuration(selectedKpiType);
+  }
+
+  private String getColorPropertyKey() {
+    return (KpiType.FREQUENCY == selectedKpiType) ? UserProperty.FREQUENCY_COLOR : UserProperty.DURATION_COLOR;
+  }
+
+  private String getTextColorPropertyKey() {
+    return (KpiType.FREQUENCY == selectedKpiType) ? UserProperty.FREQUENCY_TEXT_COLOR
+        : UserProperty.DURATION_TEXT_COLOR;
   }
 
   public String getSelectedProcess() {
@@ -467,6 +510,14 @@ public class ProcessesAnalyticsBean {
 
   public void setColorSegments(List<String> colorSegments) {
     this.colorSegments = colorSegments;
+  }
+
+  public List<String> getTextColors() {
+    return textColors;
+  }
+
+  public void setTextColors(List<String> textColors) {
+    this.textColors = textColors;
   }
 
   public String getSelectedColor() {
