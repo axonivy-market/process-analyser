@@ -3,8 +3,10 @@ package com.axonivy.solutions.process.analyser.test.ut.utils;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -28,7 +30,8 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
   private final static String NODE_A_ID = "A";
   private final static String NODE_B_ID = "B";
   private final static String NODE_C_ID = "C";
-
+  private final static String TASK_A_ID = "TASK_A";
+  private final static String TASK_B_ID = "TASK_B";
 
   @BeforeAll
   static void setUp() {
@@ -77,10 +80,8 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
   void test_filterInitialStatisticByIntervalTime() {
     String selectedPid = testProcessStart.pid().getParent().toString();
     List<ICase> cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(
-        ProcessUtils.getTaskStartIdFromPID(selectedPid), new TimeIntervalFilter(new Date(), new Date()),
-        new ArrayList<>());
-    List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(testProcessStart, KpiType.FREQUENCY,
-        cases);
+        ProcessUtils.getTaskStartIdFromPID(selectedPid), new TimeIntervalFilter(new Date(), new Date()), new ArrayList<>());
+    List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(testProcessStart, KpiType.FREQUENCY, cases);
     assertThat(results.size()).isEqualTo(28);
     assertThat(results.get(0).getLabelValue()).isEqualTo("0");
   }
@@ -157,6 +158,23 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     alternative.setNodeIdsInPath(List.of(NODE_C_ID));
     ProcessesMonitorUtils.updateFrequencyForComplexElements(List.of(alternative), nodes);
     assertThat(nodes.getLast().getFrequency()).isEqualTo(3);
+  }
+
+  @Test
+  void test_buildNodeWithTaskMap() {
+    AlternativePath path1 = new AlternativePath();
+    path1.setNodeIdsInPath(List.of(NODE_A_ID));
+    path1.setTaskSwitchEventIdOnPath(TASK_A_ID);
+
+    AlternativePath path2 = new AlternativePath();
+    path2.setNodeIdsInPath(List.of(NODE_B_ID, NODE_C_ID));
+    path2.setTaskSwitchEventIdOnPath(TASK_B_ID);
+
+    Map<String, String> result = ProcessesMonitorUtils.buildNodeWithTaskMap(List.of(path1, path2), Collections.emptyMap());
+    assertThat(result.size()).isEqualTo(3);
+    assertThat(result.get(NODE_A_ID)).isEqualTo(TASK_A_ID);
+    assertThat(result.get(NODE_B_ID)).isEqualTo(TASK_B_ID);
+    assertThat(result.get(NODE_C_ID)).isEqualTo(TASK_B_ID);
   }
 
   private List<Node> prepareMockNodeList() {

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -246,17 +247,22 @@ public class ProcessesMonitorUtils {
     List<AlternativePath> paths = convertToAternativePaths(complexElements,
         processElements.stream().filter(SubProcessCall.class::isInstance).toList());
     updateFrequencyForCasesWithAlternativePaths(paths, results, cases);
-    updateFrequencyForComplexElements(paths, results);
     updateRelativeValueForNodes(results);
   }
 
+  // TODO: Refactor this one with the logic of building path from task to task instead of alternative path
   public static void updateFrequencyForComplexElements(List<AlternativePath> paths, List<Node> nodes) {
+    // Update exact frequency for path without task
     paths.stream().filter(AlternativePath::isSolePathFromAlternativeEnd).forEach(path -> {
       int totalFrequencyFromPreceedingFlow = path.getPrecedingFlowIds().stream()
           .mapToInt(flowId -> getFrequencyById(flowId, nodes)).sum();
       nodes.stream().filter(node -> path.getNodeIdsInPath().contains(node.getId()))
           .forEach(node -> node.setFrequency(totalFrequencyFromPreceedingFlow));
     });
+    // Update frequency with retries
+    paths.stream().filter(alternative -> alternative.getNumberOfRetries() != 0)
+        .forEach(path -> path.getNodeIdsInPath().stream().map(id -> findNodeById(id, nodes))
+            .forEach(node -> node.setFrequency(node.getFrequency() + path.getNumberOfRetries())));
   }
 
   public static int getFrequencyById(String id, List<Node> nodes) {
@@ -295,19 +301,42 @@ public class ProcessesMonitorUtils {
     if (ObjectUtils.anyNull(paths, results, cases)) {
       return;
     }
-    Map<String, Integer> taskCountMap = cases.stream().flatMap(c -> c.tasks().all().stream())
-        .map(ProcessUtils::getTaskElementId).filter(StringUtils::isNotBlank)
-        .collect(Collectors.toMap(Function.identity(), id -> 1, Integer::sum));
-    List<String> complexIds = paths.stream().flatMap(path -> path.getNodeIdsInPath().stream()).toList();
-    results.forEach(node -> {
-      if (complexIds.contains(node.getId())) {
-        String taskIdInPath = paths.stream().filter(path -> path.getNodeIdsInPath().contains(node.getId())).findAny()
-            .map(AlternativePath::getTaskSwitchEventIdOnPath).orElse(StringUtils.EMPTY);
-        node.setFrequency(taskCountMap.getOrDefault(taskIdInPath, 0));
-        return;
+    Map<String, Integer> taskCountMap = new HashMap<>();
+    Map<String, Integer> taskRetriesCountMap = new HashMap<>();
+    updateTaskCountAndRetriesCountMap(cases, taskCountMap, taskRetriesCountMap);
+    Map<String, String> nodeWithTaskMap = buildNodeWithTaskMap(paths, taskRetriesCountMap);
+    int defaultFrequency = cases.size();
+    for (Node node : results) {
+      String taskId = nodeWithTaskMap.get(node.getId());
+      int frequency = StringUtils.isNotBlank(taskId) ? taskCountMap.getOrDefault(taskId, 0) : defaultFrequency;
+      node.setFrequency(frequency);
+    }
+    updateFrequencyForComplexElements(paths, results);
+  }
+
+  private static void updateTaskCountAndRetriesCountMap(List<ICase> cases, Map<String, Integer> taskCountMap,
+      Map<String, Integer> taskRetriesCountMap) {
+    for (ICase c : cases) {
+      for (ITask task : c.tasks().all()) {
+        String taskId = ProcessUtils.getTaskElementId(task);
+        if (StringUtils.isNotBlank(taskId)) {
+          taskCountMap.merge(taskId, 1, Integer::sum);
+          taskRetriesCountMap.merge(taskId, task.getNumberOfFailures(), Integer::sum);
+        }
       }
-      node.setFrequency(cases.size());
-    });
+    }
+  }
+
+  public static Map<String, String> buildNodeWithTaskMap(List<AlternativePath> paths, Map<String, Integer> taskRetriesCountMap) {
+    Map<String, String> nodeIdToTaskMap = new HashMap<>();
+    for (AlternativePath path : paths) {
+      path.setNumberOfRetries(taskRetriesCountMap.getOrDefault(path.getTaskSwitchEventIdOnPath(), 0));
+      for (String nodeId : path.getNodeIdsInPath()) {
+        String taskId = path.getTaskSwitchEventIdOnPath();
+        nodeIdToTaskMap.putIfAbsent(nodeId, taskId);
+      }
+    }
+    return nodeIdToTaskMap;
   }
 
   public static List<String> getTaskIdDoneInCase(ICase currentCase) {
@@ -376,6 +405,10 @@ public class ProcessesMonitorUtils {
 
   private static ProcessElement resolveNextElement(AlternativePath path, ProcessElement element,
       String currentFlowPid) {
+    switch (element) {
+    default:
+      break;
+    }
     return switch (element) {
     case EmbeddedProcessElement embedded -> ProcessUtils.getEmbeddedStartConnectToFlow(embedded, currentFlowPid);
     case CallSubEnd callSubEnd -> path.getNestedSubProcessCall();
