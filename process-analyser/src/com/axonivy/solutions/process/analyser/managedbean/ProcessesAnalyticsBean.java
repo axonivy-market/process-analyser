@@ -70,6 +70,7 @@ public class ProcessesAnalyticsBean {
   private KpiType selectedKpiType;
   private List<Node> nodes;
   private List<Node> analyzedNode;
+  private List<Node> filteredNodes;
   private TimeIntervalFilter timeIntervalFilter;
   private ProcessMiningData processMiningData;
   private String selectedPid;
@@ -162,6 +163,7 @@ public class ProcessesAnalyticsBean {
     if (StringUtils.isNotBlank(selectedProcess)) {
       updateDiagramAndStatistic();
       getCaseAndTaskCustomFields();
+      renderNodesForKPIType();
     }
   }
 
@@ -170,6 +172,7 @@ public class ProcessesAnalyticsBean {
     selectedColor = null;
     getBackgroundAndTextColors();
     updateDiagramAndStatistic();
+    renderNodesForKPIType();
   }
 
   private void resetStatisticValue() {
@@ -229,6 +232,7 @@ public class ProcessesAnalyticsBean {
     onCustomFieldSelect();
     updateDiagramAndStatistic();
     updateCustomFilterPanel();
+    renderNodesForKPIType();
   }
 
   public double getMinValue(String fieldName) {
@@ -263,6 +267,7 @@ public class ProcessesAnalyticsBean {
     textColors = ColorUtils.getAccessibleTextColors(colorSegments);
     updateColorProperties();
     updateDiagramAndStatistic();
+    renderNodesForKPIType();
   }
 
   public String getCalulatedCellColor(Double value) {
@@ -308,6 +313,7 @@ public class ProcessesAnalyticsBean {
     resetStatisticValue();
     getCaseAndTaskCustomFields();
     updateDiagramAndStatistic();
+    renderNodesForKPIType();
   }
 
   public void updateDiagramAndStatistic() {
@@ -369,19 +375,16 @@ public class ProcessesAnalyticsBean {
         : StringUtils.EMPTY;
   }
 
-  public List<Node> renderNodesForKPIType() {
+  public void renderNodesForKPIType() {
+    filteredNodes = new ArrayList<>(nodes);
     if (this.selectedKpiType != null && this.selectedKpiType.isDescendantOf(KpiType.DURATION)) {
-      List<String> avaibleTaskIds = nodes.stream().filter(node -> node.getType() == NodeType.ARROW)
-          .map(node -> node.getSourceNodeId()).collect(Collectors.toList());
+      List<String> avaibleTaskIds = filteredNodes.stream().filter(node -> node.getType() == NodeType.ARROW)
+          .map(node -> node.getSourceNodeId()).toList();
 
-      return nodes.stream().filter(node -> node.getType() != NodeType.ARROW && avaibleTaskIds.contains(node.getId()))
+      filteredNodes = filteredNodes.stream()
+          .filter(node -> node.getType() != NodeType.ARROW && avaibleTaskIds.contains(node.getId()))
           .collect(Collectors.toList());
     }
-    return nodes;
-  }
-
-  public int getDataTableTotalRow() {
-    return renderNodesForKPIType().size();
   }
 
   public boolean isMedianDurationColumnVisible() {
@@ -538,5 +541,13 @@ public class ProcessesAnalyticsBean {
 
   public void setSelectedIndex(int selectedIndex) {
     this.selectedIndex = selectedIndex;
+  }
+
+  public List<Node> getFilteredNodes() {
+    return filteredNodes;
+  }
+
+  public void setFilteredNodes(List<Node> filteredNodes) {
+    this.filteredNodes = filteredNodes;
   }
 }
