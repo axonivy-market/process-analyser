@@ -23,22 +23,21 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PF;
 
-import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.ProcessMiningData;
 import com.axonivy.solutions.process.analyser.bo.TimeFrame;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
-import com.axonivy.solutions.process.analyser.core.constants.UserProperty;
-import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
-import com.axonivy.solutions.process.analyser.service.IvyTaskOccurrenceService;
+import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.utils.ColorUtils;
 import com.axonivy.solutions.process.analyser.utils.DateUtils;
 import com.axonivy.solutions.process.analyser.utils.JacksonUtils;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
+import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
+import com.axonivy.solutions.process.analyser.service.IvyTaskOccurrenceService;
 
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.cm.ContentObject;
@@ -50,6 +49,16 @@ import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
+
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_SIGN;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_REGEX;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COLOR_SEGMENT_ATTRIBUTE;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS;
+import static com.axonivy.solutions.process.analyser.enums.KpiType.FREQUENCY;
+import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.FREQUENCY_COLOR;
+import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.FREQUENCY_TEXT_COLOR;
+import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.DURATION_COLOR;
+import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.DURATION_TEXT_COLOR;
 
 @ManagedBean
 @ViewScoped
@@ -103,7 +112,7 @@ public class ProcessesAnalyticsBean {
   }
 
   private void updateDataTableWithNodesPrefix(String prefix) {
-    nodes = analyzedNode.stream().filter(node -> node.getId().startsWith(prefix)).collect(Collectors.toList());
+    nodes = analyzedNode.stream().filter(node -> node.getId().startsWith(prefix)).toList();
   }
 
   private void initKpiTypes() {
@@ -245,13 +254,14 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onSegmentClick(ActionEvent event) {
-    selectedIndex = (Integer) event.getComponent().getAttributes()
-        .get(ProcessAnalyticsConstants.COLOR_SEGMENT_ATTRIBUTE);
+    selectedIndex =
+        (Integer) event.getComponent().getAttributes().get(COLOR_SEGMENT_ATTRIBUTE);
     selectedColor = colorSegments.get(selectedIndex);
   }
 
   public void onColorChange() {
-    colorSegments = ColorUtils.generateGradientFromRgb(selectedColor, ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS);
+    colorSegments =
+        ColorUtils.generateGradientFromRgb(selectedColor, GRADIENT_COLOR_LEVELS);
     textColors = ColorUtils.getAccessibleTextColors(colorSegments);
     updateColorProperties();
     updateDiagramAndStatistic();
@@ -270,8 +280,8 @@ public class ProcessesAnalyticsBean {
     String colorKey = getColorPropertyKey();
     String textKey = getTextColorPropertyKey();
 
-    user.setProperty(colorKey, String.join(ProcessAnalyticsConstants.HYPHEN_SIGN, colorSegments));
-    user.setProperty(textKey, String.join(ProcessAnalyticsConstants.HYPHEN_SIGN, textColors));
+    user.setProperty(colorKey, String.join(HYPHEN_SIGN, colorSegments));
+    user.setProperty(textKey, String.join(HYPHEN_SIGN, textColors));
   }
 
   private void getBackgroundAndTextColors() {
@@ -283,8 +293,8 @@ public class ProcessesAnalyticsBean {
     String textProperty = user.getProperty(textKey);
 
     if (colorProperty != null && textProperty != null) {
-      colorSegments = Arrays.asList(colorProperty.split(ProcessAnalyticsConstants.HYPHEN_REGEX));
-      textColors = Arrays.asList(textProperty.split(ProcessAnalyticsConstants.HYPHEN_REGEX));
+      colorSegments = Arrays.asList(colorProperty.split(HYPHEN_REGEX));
+      textColors = Arrays.asList(textProperty.split(HYPHEN_REGEX));
     } else {
       colorSegments = ColorUtils.generateColorSegments(selectedKpiType);
       textColors = ColorUtils.getAccessibleTextColors(colorSegments);
@@ -318,8 +328,8 @@ public class ProcessesAnalyticsBean {
   }
 
   private void updateBpmnIframeSourceUrl() {
-    bpmnIframeSourceUrl = ProcessUtils.buildBpmnIFrameSourceUrl(getSelectedIProcessWebStartable().getId(),
-        selectedModule);
+    bpmnIframeSourceUrl =
+        ProcessUtils.buildBpmnIFrameSourceUrl(getSelectedIProcessWebStartable().getId(), selectedModule);
   }
 
   private void loadNodes() {
@@ -381,12 +391,11 @@ public class ProcessesAnalyticsBean {
   }
 
   private String getColorPropertyKey() {
-    return (KpiType.FREQUENCY == selectedKpiType) ? UserProperty.FREQUENCY_COLOR : UserProperty.DURATION_COLOR;
+    return FREQUENCY == selectedKpiType ? FREQUENCY_COLOR : DURATION_COLOR;
   }
 
   private String getTextColorPropertyKey() {
-    return (KpiType.FREQUENCY == selectedKpiType) ? UserProperty.FREQUENCY_TEXT_COLOR
-        : UserProperty.DURATION_TEXT_COLOR;
+    return FREQUENCY == selectedKpiType ? FREQUENCY_TEXT_COLOR : DURATION_TEXT_COLOR;
   }
 
   public String getSelectedProcess() {
