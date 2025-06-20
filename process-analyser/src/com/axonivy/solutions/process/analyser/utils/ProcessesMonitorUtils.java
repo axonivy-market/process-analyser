@@ -289,7 +289,7 @@ public class ProcessesMonitorUtils {
         .forEach(path -> path.getNodeIdsInPath().forEach(nodeId -> {
           Node node = nodeMap.get(nodeId);
           if (node != null) {
-            int updatedFrequency = node.getFrequency() + 1 + path.getNumberOfRetries();
+            int updatedFrequency = node.getFrequency() + path.getNumberOfRetries();
             node.setFrequency(updatedFrequency);
           }
         }));
@@ -359,11 +359,20 @@ public class ProcessesMonitorUtils {
       for (ITask task : c.tasks().all()) {
         String taskId = ProcessUtils.getTaskElementId(task);
         if (StringUtils.isNotBlank(taskId)) {
+          int numberOfRetires = getRealNumberOfRetries(task.getNumberOfFailures(), task.getNumberOfResumes());
           taskCountMap.merge(taskId, 1, Integer::sum);
-          taskRetriesCountMap.merge(taskId, task.getNumberOfFailures(), Integer::sum);
+          taskRetriesCountMap.merge(taskId, numberOfRetires, Integer::sum);
         }
       }
     }
+  }
+
+  private static int getRealNumberOfRetries(int numberOfFailures, int numberOfResume) {
+    boolean isDoneAfterFirstFailed = numberOfFailures == 0 && numberOfResume == 2;
+    if (isDoneAfterFirstFailed || numberOfFailures != 0) {
+      return numberOfFailures + 1;
+    }
+    return 0;
   }
 
   public static Map<String, String> buildNodeWithTaskMap(List<AlternativePath> paths, Map<String, Integer> taskRetriesCountMap) {
