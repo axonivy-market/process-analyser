@@ -1,5 +1,15 @@
 package com.axonivy.solutions.process.analyser.managedbean;
 
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COLOR_SEGMENT_ATTRIBUTE;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_REGEX;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_SIGN;
+import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.DURATION_COLOR;
+import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.DURATION_TEXT_COLOR;
+import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.FREQUENCY_COLOR;
+import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.FREQUENCY_TEXT_COLOR;
+import static com.axonivy.solutions.process.analyser.enums.KpiType.FREQUENCY;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,6 +24,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 
@@ -22,26 +33,28 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PF;
 
+import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.ProcessMiningData;
 import com.axonivy.solutions.process.analyser.bo.TimeFrame;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
+import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
-import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
+import com.axonivy.solutions.process.analyser.service.IvyTaskOccurrenceService;
+import com.axonivy.solutions.process.analyser.utils.ColorUtils;
 import com.axonivy.solutions.process.analyser.utils.DateUtils;
 import com.axonivy.solutions.process.analyser.utils.JacksonUtils;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
-import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
-import com.axonivy.solutions.process.analyser.service.IvyTaskOccurrenceService;
 
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.cm.ContentObject;
 import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.location.IParser.ParseException;
+import ch.ivyteam.ivy.security.IUser;
 import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
@@ -57,6 +70,7 @@ public class ProcessesAnalyticsBean {
   private KpiType selectedKpiType;
   private List<Node> nodes;
   private List<Node> analyzedNode;
+  private List<Node> filteredNodes;
   private TimeIntervalFilter timeIntervalFilter;
   private ProcessMiningData processMiningData;
   private String selectedPid;
@@ -70,6 +84,10 @@ public class ProcessesAnalyticsBean {
   private double minValue;
   private double maxValue;
   private List<SelectItem> kpiTypes;
+  private List<String> colorSegments;
+  private List<String> textColors;
+  private String selectedColor;
+  private int selectedIndex = -1;
 
   @PostConstruct
   private void init() {
@@ -145,11 +163,16 @@ public class ProcessesAnalyticsBean {
     if (StringUtils.isNotBlank(selectedProcess)) {
       updateDiagramAndStatistic();
       getCaseAndTaskCustomFields();
+      renderNodesForKPIType();
     }
   }
 
   public void onKpiTypeSelect() {
+    selectedIndex = -1;
+    selectedColor = null;
+    getBackgroundAndTextColors();
     updateDiagramAndStatistic();
+    renderNodesForKPIType();
   }
 
   private void resetStatisticValue() {
@@ -209,6 +232,7 @@ public class ProcessesAnalyticsBean {
     onCustomFieldSelect();
     updateDiagramAndStatistic();
     updateCustomFilterPanel();
+    renderNodesForKPIType();
   }
 
   public double getMinValue(String fieldName) {
@@ -233,6 +257,53 @@ public class ProcessesAnalyticsBean {
         Arrays.asList(numberValue.get(0), numberValue.get(1)));
   }
 
+  public void onSegmentClick(ActionEvent event) {
+    selectedIndex = (Integer) event.getComponent().getAttributes().get(COLOR_SEGMENT_ATTRIBUTE);
+    selectedColor = colorSegments.get(selectedIndex);
+  }
+
+  public void onColorChange() {
+    colorSegments = ColorUtils.generateGradientFromRgb(selectedColor, GRADIENT_COLOR_LEVELS);
+    textColors = ColorUtils.getAccessibleTextColors(colorSegments);
+    updateColorProperties();
+    updateDiagramAndStatistic();
+    renderNodesForKPIType();
+  }
+
+  public String getCalulatedCellColor(Double value) {
+    return ColorUtils.calculateColorFromList(value, colorSegments);
+  }
+
+  public String getAccessibleTextColor(Double value) {
+    return ColorUtils.getAccessibleTextColor(getCalulatedCellColor(value));
+  }
+
+  private void updateColorProperties() {
+    IUser user = Ivy.session().getSessionUser();
+    String colorKey = getColorPropertyKey();
+    String textKey = getTextColorPropertyKey();
+
+    user.setProperty(colorKey, String.join(HYPHEN_SIGN, colorSegments));
+    user.setProperty(textKey, String.join(HYPHEN_SIGN, textColors));
+  }
+
+  private void getBackgroundAndTextColors() {
+    IUser user = Ivy.session().getSessionUser();
+    String colorKey = getColorPropertyKey();
+    String textKey = getTextColorPropertyKey();
+
+    String colorProperty = user.getProperty(colorKey);
+    String textProperty = user.getProperty(textKey);
+
+    if (colorProperty != null && textProperty != null) {
+      colorSegments = Arrays.asList(colorProperty.split(HYPHEN_REGEX));
+      textColors = Arrays.asList(textProperty.split(HYPHEN_REGEX));
+    } else {
+      colorSegments = ColorUtils.generateColorSegments(selectedKpiType);
+      textColors = ColorUtils.getAccessibleTextColors(colorSegments);
+    }
+  }
+
   public void updateDataOnChangingFilter() throws ParseException {
     var parameterMap = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
     String from = parameterMap.get(ProcessAnalyticsConstants.FROM);
@@ -242,6 +313,7 @@ public class ProcessesAnalyticsBean {
     resetStatisticValue();
     getCaseAndTaskCustomFields();
     updateDiagramAndStatistic();
+    renderNodesForKPIType();
   }
 
   public void updateDiagramAndStatistic() {
@@ -260,7 +332,8 @@ public class ProcessesAnalyticsBean {
   }
 
   private void updateBpmnIframeSourceUrl() {
-    bpmnIframeSourceUrl = ProcessUtils.buildBpmnIFrameSourceUrl(getSelectedIProcessWebStartable().getId(), selectedModule);
+    bpmnIframeSourceUrl = ProcessUtils.buildBpmnIFrameSourceUrl(getSelectedIProcessWebStartable().getId(),
+        selectedModule);
   }
 
   private void loadNodes() {
@@ -281,6 +354,8 @@ public class ProcessesAnalyticsBean {
         analyzedNode = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(process, selectedKpiType, cases);
         processMiningData.setNodes(analyzedNode);
         processMiningData.setNumberOfInstances(cases.size());
+        processMiningData.setColors(colorSegments);
+        processMiningData.setTextColors(textColors);
       }
     }
     updateDataTableWithNodesPrefix(ProcessUtils.getProcessPidFromElement(selectedPid));
@@ -299,20 +374,29 @@ public class ProcessesAnalyticsBean {
         ? String.format(ProcessAnalyticsConstants.ANALYSIS_EXCEL_FILE_PATTERN, formattedKpiTypeName, selectedProcess)
         : StringUtils.EMPTY;
   }
-  
-  public List<Node> renderNodesForKPIType(List<Node> nodes) {
+
+  public void renderNodesForKPIType() {
+    filteredNodes = new ArrayList<>(nodes);
     if (this.selectedKpiType != null && this.selectedKpiType.isDescendantOf(KpiType.DURATION)) {
-      List<String> avaibleTaskIds =
-          nodes.stream().filter(node -> node.getType() == NodeType.ARROW).map(node -> node.getSourceNodeId())
-              .collect(Collectors.toList());
-      return nodes.stream().filter(node -> node.getType() != NodeType.ARROW && avaibleTaskIds.contains(node.getId()))
+      List<String> avaibleTaskIds = filteredNodes.stream().filter(node -> node.getType() == NodeType.ARROW)
+          .map(node -> node.getSourceNodeId()).toList();
+
+      filteredNodes = filteredNodes.stream()
+          .filter(node -> node.getType() != NodeType.ARROW && avaibleTaskIds.contains(node.getId()))
           .collect(Collectors.toList());
     }
-    return nodes;
   }
 
   public boolean isMedianDurationColumnVisible() {
     return ProcessesMonitorUtils.isDuration(selectedKpiType);
+  }
+
+  private String getColorPropertyKey() {
+    return FREQUENCY == selectedKpiType ? FREQUENCY_COLOR : DURATION_COLOR;
+  }
+
+  private String getTextColorPropertyKey() {
+    return FREQUENCY == selectedKpiType ? FREQUENCY_TEXT_COLOR : DURATION_TEXT_COLOR;
   }
 
   public String getSelectedProcess() {
@@ -425,5 +509,45 @@ public class ProcessesAnalyticsBean {
 
   public List<SelectItem> getKpiTypes() {
     return kpiTypes;
+  }
+
+  public List<String> getColorSegments() {
+    return colorSegments;
+  }
+
+  public void setColorSegments(List<String> colorSegments) {
+    this.colorSegments = colorSegments;
+  }
+
+  public List<String> getTextColors() {
+    return textColors;
+  }
+
+  public void setTextColors(List<String> textColors) {
+    this.textColors = textColors;
+  }
+
+  public String getSelectedColor() {
+    return selectedColor;
+  }
+
+  public void setSelectedColor(String selectedColor) {
+    this.selectedColor = selectedColor;
+  }
+
+  public int getSelectedIndex() {
+    return selectedIndex;
+  }
+
+  public void setSelectedIndex(int selectedIndex) {
+    this.selectedIndex = selectedIndex;
+  }
+
+  public List<Node> getFilteredNodes() {
+    return filteredNodes;
+  }
+
+  public void setFilteredNodes(List<Node> filteredNodes) {
+    this.filteredNodes = filteredNodes;
   }
 }
