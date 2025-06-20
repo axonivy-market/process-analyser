@@ -346,16 +346,14 @@ public class ProcessesMonitorUtils {
 
   private static void updateTaskCountAndRetriesCountMap(List<ICase> cases, Map<String, Integer> taskCountMap,
       Map<String, Integer> taskRetriesCountMap) {
-    for (ICase c : cases) {
-      for (ITask task : c.tasks().all()) {
-        String taskId = ProcessUtils.getTaskElementId(task);
-        if (StringUtils.isNotBlank(taskId)) {
-          int numberOfRetires = getRealNumberOfRetries(task.getNumberOfFailures(), task.getNumberOfResumes());
-          taskCountMap.merge(taskId, 1, Integer::sum);
-          taskRetriesCountMap.merge(taskId, numberOfRetires, Integer::sum);
-        }
+    cases.stream().flatMap(c -> c.tasks().all().stream()).forEach(task -> {
+      String taskId = ProcessUtils.getTaskElementId(task);
+      if (StringUtils.isNotBlank(taskId)) {
+        int numberOfRetries = getRealNumberOfRetries(task.getNumberOfFailures(), task.getNumberOfResumes());
+        taskCountMap.merge(taskId, 1, Integer::sum);
+        taskRetriesCountMap.merge(taskId, numberOfRetries, Integer::sum);
       }
-    }
+    });
   }
 
   private static int getRealNumberOfRetries(int numberOfFailures, int numberOfResume) {
@@ -390,11 +388,14 @@ public class ProcessesMonitorUtils {
         : Collections.emptyList();
     boolean isSolePathFromAlternativeEnd = element.getOutgoing().size() == 1;
     ProcessElement nestedSubElement = subProcessCalls.stream()
-        .filter(subProcessCall -> ProcessUtils.getNestedProcessElementsFromSub(subProcessCall).stream()
-            .map(ProcessUtils::getElementPid).toList().contains(ProcessUtils.getElementPid(element)))
-        .findAny().orElse(null);
+        .filter(subProcessCall -> isSubProcessCallContainElement(element, subProcessCall)).findAny().orElse(null);
     return element.getOutgoing().stream().map(flow -> convertSequenceFlowToAlternativePath(flow, precedingFlowIds,
         isSolePathFromAlternativeEnd, nestedSubElement)).toList();
+  }
+
+  private static boolean isSubProcessCallContainElement(ProcessElement element, ProcessElement subProcessCall) {
+    return ProcessUtils.getNestedProcessElementsFromSub(subProcessCall).stream().map(ProcessUtils::getElementPid)
+        .toList().contains(ProcessUtils.getElementPid(element));
   }
 
   public static AlternativePath convertSequenceFlowToAlternativePath(SequenceFlow flow, List<String> precedingFlowIds,
