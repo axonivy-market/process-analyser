@@ -132,20 +132,6 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
   }
 
   @Test
-  void test_getFrequencyById() {
-    List<Node> nodes = prepareMockNodeList();
-    assertThat(ProcessesMonitorUtils.getFrequencyById(NODE_A_ID, nodes)).isEqualTo(1);
-    assertThat(ProcessesMonitorUtils.getFrequencyById(NODE_B_ID, nodes)).isEqualTo(2);
-  }
-
-  @Test
-  void test_findNodeById() {
-    List<Node> nodes = prepareMockNodeList();
-    assertThat(ProcessesMonitorUtils.findNodeById(NODE_A_ID, nodes).getFrequency()).isEqualTo(1);
-    assertThat(ProcessesMonitorUtils.findNodeById(NODE_B_ID, nodes).getFrequency()).isEqualTo(2);
-  }
-
-  @Test
   void test_updateFrequencyForComplexElements() {
     List<Node> nodes = prepareMockNodeList();
     Node nodeC = new Node();

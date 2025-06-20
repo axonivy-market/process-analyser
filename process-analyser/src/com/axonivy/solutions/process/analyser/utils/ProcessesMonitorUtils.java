@@ -304,15 +304,6 @@ public class ProcessesMonitorUtils {
     return node != null ? node.getFrequency() : 0;
   }
 
-  public static int getFrequencyById(String id, List<Node> nodes) {
-    return nodes.stream().filter(node -> node.getId().equals(id)).map(Node::getFrequency).findFirst()
-        .orElseGet(() -> 0);
-  }
-
-  public static Node findNodeById(String id, List<Node> nodes) {
-    return nodes.stream().filter(node -> node.getId().equals(id)).findFirst().orElseGet(() -> null);
-  }
-
   public static void updateRelativeValueForNodes(List<Node> nodes) {
     if (CollectionUtils.isEmpty(nodes)) {
       return;
@@ -387,10 +378,6 @@ public class ProcessesMonitorUtils {
     return nodeIdToTaskMap;
   }
 
-  public static List<String> getTaskIdDoneInCase(ICase currentCase) {
-    return currentCase.tasks().all().stream().map(ProcessUtils::getTaskElementId).toList();
-  }
-
   public static List<AlternativePath> convertToAternativePaths(List<ProcessElement> elements,
       List<ProcessElement> subProcessCalls) {
     return elements.stream().flatMap(element -> convertToAlternativePaths(element, subProcessCalls).stream()).toList();
@@ -453,10 +440,6 @@ public class ProcessesMonitorUtils {
 
   private static ProcessElement resolveNextElement(AlternativePath path, ProcessElement element,
       String currentFlowPid) {
-    switch (element) {
-    default:
-      break;
-    }
     return switch (element) {
     case EmbeddedProcessElement embedded -> ProcessUtils.getEmbeddedStartConnectToFlow(embedded, currentFlowPid);
     case CallSubEnd callSubEnd -> path.getNestedSubProcessCall();
