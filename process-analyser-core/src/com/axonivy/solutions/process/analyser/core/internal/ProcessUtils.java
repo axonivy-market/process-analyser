@@ -25,6 +25,7 @@ import ch.ivyteam.ivy.process.model.element.EmbeddedProcessElement;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.element.activity.SubProcessCall;
 import ch.ivyteam.ivy.process.model.element.event.end.CallSubEnd;
+import ch.ivyteam.ivy.process.model.element.event.end.EmbeddedEnd;
 import ch.ivyteam.ivy.process.model.element.event.intermediate.TaskSwitchEvent;
 import ch.ivyteam.ivy.process.model.element.event.start.CallSubStart;
 import ch.ivyteam.ivy.process.model.element.event.start.EmbeddedStart;
@@ -38,6 +39,7 @@ import ch.ivyteam.ivy.process.rdm.IProcessManager;
 import ch.ivyteam.ivy.process.rdm.IProjectProcessManager;
 import ch.ivyteam.ivy.security.ISecurityContext;
 import ch.ivyteam.ivy.workflow.IProcessStart;
+import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
 
@@ -70,15 +72,12 @@ public class ProcessUtils {
     return TaskSwitchGateway.class.isInstance(element);
   }
 
-  public static boolean isRequestStartInstance(Object element) {
-    return RequestStart.class.isInstance(element);
-  }
-
-  public static boolean isJoinInstance(Object element) {
-    return Join.class.isInstance(element);
-  }
   public static boolean isSubProcessCallInstance(Object element) {
     return SubProcessCall.class.isInstance(element);
+  }
+
+  public static boolean isEmbeddedEndInstance(Object element) {
+    return EmbeddedEnd.class.isInstance(element);
   }
 
   public static List<ProcessElement> getNestedProcessElementsFromSub(Object element) {
@@ -196,6 +195,8 @@ public class ProcessUtils {
   public static boolean isComplexElementWithMultiIncomings(ProcessElement element) {
     return switch (element) {
     case Join join -> false;
+    case EmbeddedProcessElement embeddedProcessElement -> false;
+    case SubProcessCall subProcessCall -> false;
     default -> isElementWithMultipleIncomingFlow(element);
     };
   }
@@ -220,6 +221,11 @@ public class ProcessUtils {
     return arr.length > 2 ? arr[arr.length - 2] : StringUtils.EMPTY;
   }
 
+  public static String getTaskElementId(ITask task) {
+    return Optional.ofNullable(task).map(ITask::getRequestPath).map(ProcessUtils::getTaskElementIdFromRequestPath)
+        .orElse(StringUtils.EMPTY);
+  }
+
   public static String getTaskElementIdFromRequestPath(String requestPath, boolean isTaskInTaskSwitchGateway) {
     if (!isTaskInTaskSwitchGateway) {
       return getTaskElementIdFromRequestPath(requestPath);
@@ -241,9 +247,10 @@ public class ProcessUtils {
   public static boolean isAlternativePathEndElement(ProcessElement processElement) {
     return switch (processElement) {
     case Alternative alternative -> true;
+    case CallSubEnd callSubEnd -> false;
     case Join join -> false;
     case EmbeddedProcessElement sub -> false;
-    case CallSubEnd end -> true;
+    case EmbeddedEnd subEnd -> false;
     default -> isProcessPathEndElement(processElement) || isElementWithMultipleIncomingFlow(processElement);
     };
   }

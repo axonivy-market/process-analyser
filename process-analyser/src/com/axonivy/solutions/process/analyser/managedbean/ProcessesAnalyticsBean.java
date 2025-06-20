@@ -109,6 +109,7 @@ public class ProcessesAnalyticsBean {
         .get(SUB_PROCESS_CALL_PID_PARAM_NAME);
     if (StringUtils.isNotBlank(subProcessCallPid)) {
       updateDataTableWithNodesPrefix(subProcessCallPid);
+      renderNodesForKPIType();
     }
   }
 

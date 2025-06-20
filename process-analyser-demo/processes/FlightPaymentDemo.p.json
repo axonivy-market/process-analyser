@@ -32,7 +32,7 @@
       "type" : "TaskEnd",
       "name" : "End",
       "visual" : {
-        "at" : { "x" : 1136, "y" : 384 }
+        "at" : { "x" : 1848, "y" : 384 }
       }
     }, {
       "id" : "f3",
@@ -51,35 +51,8 @@
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
-        { "id" : "f6", "to" : "f5", "label" : {
-            "name" : "f6",
-            "offset" : { "x" : 6, "y" : -10 }
-          } }
-      ]
-    }, {
-      "id" : "f5",
-      "type" : "Script",
-      "name" : "validate payment method",
-      "config" : {
-        "output" : {
-          "code" : [
-            "import com.axonivy.solutions.process.analyser.demo.constants.FlightConstants;",
-            "import java.util.Random;",
-            "",
-            "Random random = new Random();",
-            "int index = random.nextInt(FlightConstants.PAYMENT_METHODS.size());",
-            "",
-            "ivy.task.customFields().textField(\"PaymentMethod\").set(FlightConstants.PAYMENT_METHODS.get(index));"
-          ]
-        }
-      },
-      "visual" : {
-        "at" : { "x" : 392, "y" : 384 }
-      },
-      "connect" : [
-        { "id" : "f12", "to" : "f11", "label" : {
-            "name" : "f12",
-            "offset" : { "x" : 1, "y" : -10 }
+        { "id" : "f21", "to" : "S20", "label" : {
+            "name" : "f6"
           } }
       ]
     }, {
@@ -98,7 +71,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 672, "y" : 384 }
+        "at" : { "x" : 984, "y" : 384 }
       },
       "connect" : [
         { "id" : "f18", "to" : "S10", "label" : {
@@ -121,18 +94,18 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 528, "y" : 384 },
+        "at" : { "x" : 840, "y" : 384 },
         "labelOffset" : { "x" : 24, "y" : 32 }
       },
       "connect" : [
         { "id" : "f8", "to" : "f7", "label" : {
-            "name" : "no",
+            "name" : "start 7",
             "offset" : { "x" : 1, "y" : -10 }
           } },
-        { "id" : "f13", "to" : "f14", "via" : [ { "x" : 528, "y" : 272 } ], "label" : {
-            "name" : "yes",
+        { "id" : "f13", "to" : "f14", "via" : [ { "x" : 840, "y" : 272 } ], "label" : {
+            "name" : "start 3",
             "segment" : 1.36,
-            "offset" : { "x" : -61, "y" : 46 }
+            "offset" : { "x" : -71, "y" : 36 }
           } }
       ]
     }, {
@@ -151,7 +124,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 672, "y" : 272 },
+        "at" : { "x" : 984, "y" : 272 },
         "labelOffset" : { "x" : -15, "y" : 41 }
       },
       "connect" : [
@@ -160,15 +133,15 @@
     }, {
       "id" : "f16",
       "type" : "SubProcessCall",
-      "name" : "validate visa card",
+      "name" : "validate payment account",
       "config" : {
         "processCall" : "demo/VisaValidation:visaValidation()"
       },
       "visual" : {
-        "at" : { "x" : 800, "y" : 272 }
+        "at" : { "x" : 1112, "y" : 272 }
       },
       "connect" : [
-        { "id" : "f19", "to" : "S10", "via" : [ { "x" : 960, "y" : 272 } ], "color" : "default" }
+        { "id" : "f19", "to" : "S10", "via" : [ { "x" : 1368, "y" : 272 } ] }
       ]
     }, {
       "id" : "S10",
@@ -196,14 +169,14 @@
           },
           "parentConnector" : "f19",
           "connect" : [
-            { "id" : "S10-f6", "to" : "S10-S10", "via" : [ { "x" : 272, "y" : 64 } ] }
+            { "id" : "S10-f6", "to" : "S10-f0" }
           ]
         }, {
           "id" : "S10-g2",
           "type" : "EmbeddedEnd",
           "name" : "out 1",
           "visual" : {
-            "at" : { "x" : 480, "y" : 160 },
+            "at" : { "x" : 504, "y" : 160 },
             "labelOffset" : { "x" : 3, "y" : 23 }
           },
           "parentConnector" : "f20"
@@ -232,7 +205,8 @@
               },
               "connect" : [
                 { "id" : "S10-S10-f2", "to" : "S10-S10-f3", "label" : {
-                    "name" : "f2"
+                    "name" : "start 8",
+                    "offset" : { "x" : 1, "y" : -10 }
                   } }
               ]
             }, {
@@ -243,7 +217,7 @@
                 "at" : { "x" : 352, "y" : 160 }
               },
               "connect" : [
-                { "id" : "S10-S10-f4", "to" : "S10-S10-g2", "color" : "default" }
+                { "id" : "S10-S10-f4", "to" : "S10-S10-f5", "color" : "default" }
               ]
             }, {
               "id" : "S10-S10-g0",
@@ -255,7 +229,10 @@
               },
               "parentConnector" : "S10-f5",
               "connect" : [
-                { "id" : "S10-S10-f0", "to" : "S10-S10-f9" }
+                { "id" : "S10-S10-f0", "to" : "S10-S10-f9", "label" : {
+                    "name" : "end 7",
+                    "offset" : { "x" : -1, "y" : -18 }
+                  } }
               ]
             }, {
               "id" : "S10-S10-g1",
@@ -265,32 +242,240 @@
                 "at" : { "x" : 48, "y" : 64 },
                 "labelOffset" : { "x" : 3, "y" : 23 }
               },
-              "parentConnector" : "S10-f6",
+              "parentConnector" : "S10-f1",
               "connect" : [
-                { "id" : "S10-S10-f1", "to" : "S10-S10-f9", "via" : [ { "x" : 192, "y" : 64 } ] }
+                { "id" : "S10-S10-f1", "to" : "S10-S10-f9", "via" : [ { "x" : 192, "y" : 64 } ], "label" : {
+                    "name" : "end 6",
+                    "segment" : 0.8,
+                    "offset" : { "x" : -28, "y" : -18 }
+                  } }
               ]
             }, {
               "id" : "S10-S10-g2",
               "type" : "EmbeddedEnd",
               "name" : "out 1",
               "visual" : {
-                "at" : { "x" : 480, "y" : 160 },
+                "at" : { "x" : 640, "y" : 160 },
                 "labelOffset" : { "x" : 3, "y" : 23 }
               },
               "parentConnector" : "S10-f7"
+            }, {
+              "id" : "S10-S10-f5",
+              "type" : "Script",
+              "name" : "confirm payment",
+              "visual" : {
+                "at" : { "x" : 512, "y" : 160 }
+              },
+              "connect" : [
+                { "id" : "S10-S10-f6", "to" : "S10-S10-g2", "color" : "default" }
+              ]
             } ],
           "visual" : {
-            "at" : { "x" : 272, "y" : 160 }
+            "at" : { "x" : 296, "y" : 160 }
           },
           "connect" : [
             { "id" : "S10-f7", "to" : "S10-g2" }
           ]
+        }, {
+          "id" : "S10-f0",
+          "type" : "TaskSwitchEvent",
+          "name" : "Record for e-wallet",
+          "config" : {
+            "task" : {
+              "name" : "Record for e-wallet",
+              "responsible" : {
+                "activator" : "SYSTEM"
+              },
+              "skipTasklist" : true
+            }
+          },
+          "visual" : {
+            "at" : { "x" : 168, "y" : 64 },
+            "labelOffset" : { "x" : 14, "y" : 34 }
+          },
+          "connect" : [
+            { "id" : "S10-f1", "to" : "S10-S10", "via" : [ { "x" : 296, "y" : 64 } ], "color" : "default" }
+          ]
         } ],
       "visual" : {
-        "at" : { "x" : 960, "y" : 384 }
+        "at" : { "x" : 1368, "y" : 384 }
       },
       "connect" : [
-        { "id" : "f20", "to" : "f1" }
+        { "id" : "f20", "to" : "f2", "label" : {
+            "name" : "end 8",
+            "offset" : { "x" : 5, "y" : 14 }
+          } }
+      ]
+    }, {
+      "id" : "f2",
+      "type" : "Alternative",
+      "name" : "is payment successed?",
+      "config" : {
+        "conditions" : {
+          "f9" : "Math.random()>0.5",
+          "f17" : ""
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 1496, "y" : 384 },
+        "labelOffset" : { "y" : -24 }
+      },
+      "connect" : [
+        { "id" : "f17", "to" : "f5", "via" : [ { "x" : 1496, "y" : 480 } ], "label" : {
+            "name" : "start 2",
+            "segment" : 0.32,
+            "offset" : { "x" : 31, "y" : 26 }
+          } },
+        { "id" : "f9", "to" : "f25", "label" : {
+            "name" : "yes",
+            "offset" : { "x" : -47, "y" : 14 }
+          }, "color" : "default" }
+      ]
+    }, {
+      "id" : "S20",
+      "type" : "EmbeddedProcess",
+      "name" : "validate payment method",
+      "elements" : [ {
+          "id" : "S20-f5",
+          "type" : "Script",
+          "name" : "validate payment method",
+          "config" : {
+            "output" : {
+              "code" : [
+                "import com.axonivy.solutions.process.analyser.demo.constants.FlightConstants;",
+                "import java.util.Random;",
+                "",
+                "Random random = new Random();",
+                "int index = random.nextInt(FlightConstants.PAYMENT_METHODS.size());",
+                "",
+                "ivy.task.customFields().textField(\"PaymentMethod\").set(FlightConstants.PAYMENT_METHODS.get(index));"
+              ]
+            }
+          },
+          "visual" : {
+            "at" : { "x" : 192, "y" : 160 }
+          },
+          "connect" : [
+            { "id" : "S20-f2", "to" : "S20-g2", "label" : {
+                "name" : "start 1 ",
+                "offset" : { "x" : 4, "y" : -18 }
+              } }
+          ]
+        }, {
+          "id" : "S20-g0",
+          "type" : "EmbeddedStart",
+          "name" : "in 1",
+          "visual" : {
+            "at" : { "x" : 320, "y" : 272 },
+            "labelOffset" : { "x" : 3, "y" : 23 }
+          },
+          "parentConnector" : "f6",
+          "connect" : [
+            { "id" : "S20-f0", "to" : "S20-f5", "via" : [ { "x" : 192, "y" : 272 } ], "label" : {
+                "name" : "end 2",
+                "segment" : 0.85,
+                "offset" : { "x" : 6, "y" : -24 }
+              } }
+          ]
+        }, {
+          "id" : "S20-g1",
+          "type" : "EmbeddedStart",
+          "name" : "in 2",
+          "visual" : {
+            "at" : { "x" : 64, "y" : 160 },
+            "labelOffset" : { "x" : 3, "y" : 23 }
+          },
+          "parentConnector" : "f21",
+          "connect" : [
+            { "id" : "S20-f1", "to" : "S20-f5" }
+          ]
+        }, {
+          "id" : "S20-g2",
+          "type" : "EmbeddedEnd",
+          "name" : "out 1",
+          "visual" : {
+            "at" : { "x" : 320, "y" : 160 },
+            "labelOffset" : { "x" : 3, "y" : 23 }
+          },
+          "parentConnector" : "f22"
+        } ],
+      "visual" : {
+        "at" : { "x" : 392, "y" : 384 }
+      },
+      "connect" : [
+        { "id" : "f22", "to" : "f10" }
+      ]
+    }, {
+      "id" : "f5",
+      "type" : "TaskSwitchEvent",
+      "name" : "Retry validate",
+      "config" : {
+        "task" : {
+          "name" : "Retry validate",
+          "responsible" : {
+            "activator" : "SYSTEM"
+          },
+          "skipTasklist" : true
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 1096, "y" : 480 },
+        "labelOffset" : { "x" : 14, "y" : 34 }
+      },
+      "connect" : [
+        { "id" : "f6", "to" : "S20", "via" : [ { "x" : 392, "y" : 480 } ], "color" : "default" }
+      ]
+    }, {
+      "id" : "f10",
+      "type" : "Script",
+      "name" : "get payment provider",
+      "visual" : {
+        "at" : { "x" : 552, "y" : 384 }
+      },
+      "connect" : [
+        { "id" : "f12", "to" : "f23", "color" : "default" }
+      ]
+    }, {
+      "id" : "f23",
+      "type" : "Script",
+      "name" : "validate payment provider",
+      "visual" : {
+        "at" : { "x" : 712, "y" : 384 }
+      },
+      "connect" : [
+        { "id" : "f24", "to" : "f11", "label" : {
+            "name" : "end 1",
+            "offset" : { "x" : 5, "y" : -10 }
+          }, "color" : "default" }
+      ]
+    }, {
+      "id" : "f25",
+      "type" : "TaskSwitchEvent",
+      "name" : "send mail",
+      "config" : {
+        "task" : {
+          "responsible" : {
+            "activator" : "SYSTEM"
+          },
+          "skipTasklist" : true
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 1592, "y" : 384 },
+        "labelOffset" : { "x" : 14, "y" : 34 }
+      },
+      "connect" : [
+        { "id" : "f26", "to" : "f27", "color" : "default" }
+      ]
+    }, {
+      "id" : "f27",
+      "type" : "Script",
+      "name" : "send confirmation mail",
+      "visual" : {
+        "at" : { "x" : 1720, "y" : 384 }
+      },
+      "connect" : [
+        { "id" : "f28", "to" : "f1", "color" : "default" }
       ]
     } ],
   "layout" : {
