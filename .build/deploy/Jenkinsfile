@@ -44,13 +44,6 @@ pipeline {
         }
       }
     }
-    
-    stage('Check Maven') {
-      steps {
-        sh 'mvn -version'
-        sh 'which mvn'
-      }
-    }
 
     stage('Checkout Source') {
       steps {
