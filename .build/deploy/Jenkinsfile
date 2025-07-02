@@ -17,7 +17,7 @@ pipeline {
   agent any
 
   tools {
-    maven 'Maven-3.9.8'
+    maven 'Maven-3.9.8'  // Must match the name defined in Global Tool Configuration
   }
 
   environment {
@@ -34,7 +34,6 @@ pipeline {
     stage('Set Display Name') {
       steps {
         script {
-            sh 'mvn -v'
           def userId = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')[0]?.userId
           def fullName = "system"
           if (userId) {
@@ -64,20 +63,20 @@ pipeline {
     
     stage('Build') {
       steps {
-        sh 'mvn clean install ${MVN_ARGS}'
+        sh 'mvn clean verify \"${MVN_ARGS}\"'
       }
     }
 
     stage('Deploy') {
-      agent { label 'bpmn-statistic' }
       steps {
         script {
-          def version = sh(
-            script: "xmllint --xpath '/*[local-name()=\"project\"]/*[local-name()=\"version\"]/text()' pom.xml",
+        def version = sh(
+            script: "xmlstarlet sel -t -m '/*[local-name()=\"project\"]' -v '*[local-name()=\"version\"]' ${env.WORKSPACE}/pom.xml",
             returnStdout: true
-          ).trim()
-
-          def artifactDir = "artifact/process-analyser"
+        ).trim()
+        echo "📦 Detected project version: ${version}"
+        
+        def artifactDir = "process-analyser"
           def engineDeployDir = "/var/tools/ivy/12/deploy/PROCESS-ANALYSER"
 
           sh """
@@ -89,7 +88,6 @@ pipeline {
     }
     
     stage('Restart Engine') {
-      agent { label 'bpmn-statistic' }
       steps {
         sh """
           cd /etc/docker-compose/engine/12
