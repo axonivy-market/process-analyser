@@ -63,13 +63,13 @@ pipeline {
     stage('Deploy') {
       steps {
         script {
-        def version = sh(
-            script: "xmlstarlet sel -t -m '/*[local-name()=\"project\"]' -v '*[local-name()=\"version\"]' ${env.WORKSPACE}/pom.xml",
-            returnStdout: true
-        ).trim()
-        echo "📦 Detected project version: ${version}"
+          def version = sh(
+              script: "xmlstarlet sel -t -m '/*[local-name()=\"project\"]' -v '*[local-name()=\"version\"]' ${env.WORKSPACE}/pom.xml",
+              returnStdout: true
+          ).trim()
+          echo "📦 Detected project version: ${version}"
         
-        def artifactDir = "process-analyser"
+          def artifactDir = "process-analyser"
           def engineDeployDir = "/var/tools/ivy/12/deploy/PROCESS-ANALYSER"
 
           sh """
