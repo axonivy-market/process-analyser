@@ -1,5 +1,5 @@
 {
-  "$schema" : "https://json-schema.axonivy.com/process/12.0.0/process.json",
+  "$schema" : "https://json-schema.axonivy.com/process/13.1.2/process.json",
   "id" : "18F3D6C205210455",
   "config" : {
     "data" : "com.axonivy.solutions.process.analyser.demo.data.FlightBookingDemoData"
@@ -42,6 +42,7 @@
       "elements" : [ {
           "id" : "S10-g0",
           "type" : "EmbeddedStart",
+          "name" : "",
           "visual" : {
             "at" : { "x" : 168, "y" : 256 }
           },
@@ -55,6 +56,7 @@
         }, {
           "id" : "S10-g1",
           "type" : "EmbeddedEnd",
+          "name" : "",
           "visual" : {
             "at" : { "x" : 528, "y" : 256 }
           },
@@ -382,7 +384,9 @@
             "task" : {
               "name" : "Send email about Ticket Information",
               "responsible" : {
-                "activator" : "SYSTEM"
+                "roles" : [
+                  "SYSTEM"
+                ]
               },
               "skipTasklist" : true
             }
@@ -500,7 +504,9 @@
             "task" : {
               "name" : "Create booking",
               "responsible" : {
-                "activator" : "SYSTEM"
+                "roles" : [
+                  "SYSTEM"
+                ]
               },
               "skipTasklist" : true
             }
@@ -536,7 +542,9 @@
             "task" : {
               "name" : "Create booking",
               "responsible" : {
-                "activator" : "SYSTEM"
+                "roles" : [
+                  "SYSTEM"
+                ]
               },
               "skipTasklist" : true
             }
@@ -594,7 +602,9 @@
             "task" : {
               "name" : "Log task for holding seat script",
               "responsible" : {
-                "activator" : "SYSTEM"
+                "roles" : [
+                  "SYSTEM"
+                ]
               },
               "skipTasklist" : true
             }
@@ -766,7 +776,9 @@
             "task" : {
               "name" : "Send Email to reminder user about their Flight",
               "responsible" : {
-                "activator" : "SYSTEM"
+                "roles" : [
+                  "SYSTEM"
+                ]
               },
               "skipTasklist" : true
             }

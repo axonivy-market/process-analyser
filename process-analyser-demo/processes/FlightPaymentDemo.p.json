@@ -1,5 +1,5 @@
 {
-  "$schema" : "https://json-schema.axonivy.com/process/12.0.0/process.json",
+  "$schema" : "https://json-schema.axonivy.com/process/13.1.2/process.json",
   "id" : "190A58A4E3D99BAD",
   "config" : {
     "data" : "com.axonivy.solutions.process.analyser.demo.Data"
@@ -38,7 +38,9 @@
         "task" : {
           "name" : "Check payment method",
           "responsible" : {
-            "activator" : "SYSTEM"
+            "roles" : [
+              "SYSTEM"
+            ]
           }
         }
       },
@@ -86,7 +88,9 @@
         "task" : {
           "name" : "Confirm payment information",
           "responsible" : {
-            "activator" : "SYSTEM"
+            "roles" : [
+              "SYSTEM"
+            ]
           },
           "customFields" : [
             { "name" : "EWalletPayment", "type" : "STRING", "value" : "\"No\"" }
@@ -165,7 +169,9 @@
         "task" : {
           "name" : "Confirm payment with e-wallet",
           "responsible" : {
-            "activator" : "SYSTEM"
+            "roles" : [
+              "SYSTEM"
+            ]
           },
           "customFields" : [
             { "name" : "EWalletPayment", "type" : "STRING", "value" : "\"Yes\"" }
