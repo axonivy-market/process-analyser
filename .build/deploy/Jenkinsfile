@@ -1,0 +1,88 @@
+properties([
+  parameters([
+    [$class: 'GitParameterDefinition',
+      name: 'BRANCH',
+      type: 'PT_BRANCH',
+      defaultValue: 'origin/develop',
+      description: 'Choose your GitHub branch',
+      branchFilter: '.*',
+      tagFilter: '*',
+      sortMode: 'NONE',
+      selectedValue: 'DEFAULT',
+      quickFilterEnabled: true
+    ]
+  ])
+])
+pipeline {
+  agent any
+
+  tools {
+    maven 'Maven-3.9.8'  // Must match the name defined in Global Tool Configuration
+  }
+
+  environment {
+    PROCESS_ANALYSER_GIT_URL = credentials('PROCESS_ANALYSER_GIT_URL')
+    PATH = "${env.MAVEN_HOME}/bin:${env.JAVA_HOME}/bin:${env.PATH}"
+    MVN_ARGS = '-Divy.engine.download.url=https://dev.axonivy.com/permalink/12.0.0/axonivy-engine.zip -Divy.engine.version=12.0.0 -Dproject.build.plugin.version=12.0.0 -Dtester.version=12.0.1'
+  }
+  
+  stages {
+    stage('Set Display Name') {
+      steps {
+        script {
+          def userId = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')[0]?.userId
+          def fullName = "system"
+          if (userId) {
+            def user = jenkins.model.Jenkins.instance.getUser(userId)
+            fullName = user?.getDisplayName() ?: userId
+          }
+          currentBuild.displayName = "Build #${env.BUILD_NUMBER} on branch ${BRANCH} - trigger by ${fullName}"
+        }
+      }
+    }
+
+    stage('Checkout Source') {
+      steps {
+        script {
+          def gitBranch = params.BRANCH.replaceFirst(/^origin\//, '')
+          git branch: gitBranch, url: env.PROCESS_ANALYSER_GIT_URL
+        }
+      }
+    }
+    
+    stage('Build') {
+      steps {
+        sh 'mvn clean verify \"${MVN_ARGS}\"'
+      }
+    }
+
+    stage('Deploy') {
+      steps {
+        script {
+          def version = sh(
+              script: "xmlstarlet sel -t -m '/*[local-name()=\"project\"]' -v '*[local-name()=\"version\"]' ${env.WORKSPACE}/pom.xml",
+              returnStdout: true
+          ).trim()
+          echo "📦 Detected project version: ${version}"
+        
+          def artifactDir = "process-analyser"
+          def engineDeployDir = "/var/tools/ivy/12/deploy/PROCESS-ANALYSER"
+
+          sh """
+            install -m 666 ${artifactDir}/target/process-analyser-${version}.iar ${engineDeployDir}/process-analyser-${version}.iar
+            install -m 666 ${artifactDir}-demo/target/process-analyser-demo-${version}.iar ${engineDeployDir}/process-analyser-demo-${version}.iar
+          """
+        }
+      }
+    }
+    
+    stage('Restart Engine') {
+      steps {
+        sh """
+          cd /etc/docker-compose/engine/12
+          docker compose restart
+        """
+      }
+    }    
+  }
+}
