@@ -1,5 +1,5 @@
 {
-  "$schema" : "https://json-schema.axonivy.com/process/12.0.0/process.json",
+  "$schema" : "https://json-schema.axonivy.com/process/13.1.2/process.json",
   "id" : "18F5139297C6D0E6",
   "kind" : "HTML_DIALOG",
   "config" : {
@@ -65,12 +65,6 @@
       "id" : "f5",
       "type" : "Script",
       "name" : "print selection",
-      "config" : {
-        "output" : {
-          "code" : [
-          ]
-        }
-      },
       "visual" : {
         "at" : { "x" : 240, "y" : 168 }
       },

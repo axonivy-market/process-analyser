@@ -1,5 +1,5 @@
 {
-  "$schema" : "https://json-schema.axonivy.com/process/12.0.0/process.json",
+  "$schema" : "https://json-schema.axonivy.com/process/13.1.2/process.json",
   "id" : "18F3D6D7AEE204DA",
   "config" : {
     "data" : "com.axonivy.solutions.process.analyser.demo.data.FlightPlanningDemoData"
@@ -291,14 +291,18 @@
             "id" : "TaskA",
             "name" : "Send emails to pilots",
             "responsible" : {
-              "activator" : "SYSTEM"
+              "roles" : [
+                "SYSTEM"
+              ]
             },
             "skipTasklist" : true
           }, {
             "id" : "TaskB",
             "name" : "Send emails to cabin crews",
             "responsible" : {
-              "activator" : "SYSTEM"
+              "roles" : [
+                "SYSTEM"
+              ]
             },
             "skipTasklist" : true
           } ]
@@ -422,7 +426,9 @@
       "config" : {
         "task" : {
           "responsible" : {
-            "activator" : "SYSTEM"
+            "roles" : [
+              "SYSTEM"
+            ]
           }
         }
       },
@@ -440,7 +446,9 @@
       "config" : {
         "task" : {
           "responsible" : {
-            "activator" : "SYSTEM"
+            "roles" : [
+              "SYSTEM"
+            ]
           }
         }
       },
@@ -458,7 +466,9 @@
       "config" : {
         "task" : {
           "responsible" : {
-            "activator" : "SYSTEM"
+            "roles" : [
+              "SYSTEM"
+            ]
           }
         }
       },
@@ -476,7 +486,9 @@
       "config" : {
         "task" : {
           "responsible" : {
-            "activator" : "SYSTEM"
+            "roles" : [
+              "SYSTEM"
+            ]
           }
         }
       },
@@ -494,7 +506,9 @@
       "config" : {
         "task" : {
           "responsible" : {
-            "activator" : "SYSTEM"
+            "roles" : [
+              "SYSTEM"
+            ]
           }
         }
       },
