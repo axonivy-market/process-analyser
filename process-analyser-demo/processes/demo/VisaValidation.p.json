@@ -1,0 +1,163 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/process/12.0.0/process.json",
+  "id" : "19746046194A390D",
+  "kind" : "CALLABLE_SUB",
+  "config" : {
+    "data" : "com.axonivy.solutions.process.analyser.demo.data.VisaValidationData"
+  },
+  "elements" : [ {
+      "id" : "f0",
+      "type" : "CallSubStart",
+      "name" : "visaValidation()",
+      "config" : {
+        "signature" : "visaValidation"
+      },
+      "visual" : {
+        "at" : { "x" : 96, "y" : 64 }
+      },
+      "connect" : [
+        { "id" : "f2", "to" : "f6", "label" : {
+            "name" : "end 3",
+            "offset" : { "x" : 6, "y" : -10 }
+          } }
+      ]
+    }, {
+      "id" : "f1",
+      "type" : "CallSubEnd",
+      "visual" : {
+        "at" : { "x" : 704, "y" : 64 },
+        "labelOffset" : { "x" : 13, "y" : 33 }
+      }
+    }, {
+      "id" : "f5",
+      "type" : "TaskSwitchEvent",
+      "name" : "Check CVR number",
+      "config" : {
+        "task" : {
+          "name" : "Check CVR number",
+          "responsible" : {
+            "activator" : "SYSTEM"
+          },
+          "skipTasklist" : true
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 352, "y" : 64 },
+        "labelOffset" : { "x" : 14, "y" : 34 }
+      },
+      "connect" : [
+        { "id" : "f7", "to" : "S10", "color" : "default" }
+      ]
+    }, {
+      "id" : "S10",
+      "type" : "EmbeddedProcess",
+      "name" : "validation step",
+      "elements" : [ {
+          "id" : "S10-f3",
+          "type" : "RestClientCall",
+          "name" : "Visa card validation",
+          "config" : {
+            "target" : {
+              "clientId" : "4a4f321f-73ae-4da3-be66-e35cf38b0b50"
+            }
+          },
+          "visual" : {
+            "at" : { "x" : 192, "y" : 160 }
+          },
+          "connect" : [
+            { "id" : "S10-f1", "to" : "S10-g1", "color" : "default" }
+          ]
+        }, {
+          "id" : "S10-g0",
+          "type" : "EmbeddedStart",
+          "name" : "in 1",
+          "visual" : {
+            "at" : { "x" : 64, "y" : 160 },
+            "labelOffset" : { "x" : 3, "y" : 23 }
+          },
+          "parentConnector" : "f7",
+          "connect" : [
+            { "id" : "S10-f0", "to" : "S10-f3" }
+          ]
+        }, {
+          "id" : "S10-g1",
+          "type" : "EmbeddedEnd",
+          "name" : "out 1",
+          "visual" : {
+            "at" : { "x" : 320, "y" : 160 },
+            "labelOffset" : { "x" : 3, "y" : 23 }
+          },
+          "parentConnector" : "f8"
+        } ],
+      "visual" : {
+        "at" : { "x" : 480, "y" : 64 }
+      },
+      "connect" : [
+        { "id" : "f8", "to" : "f3", "label" : {
+            "name" : "end 4",
+            "offset" : { "x" : 5, "y" : -10 }
+          } }
+      ]
+    }, {
+      "id" : "f3",
+      "type" : "Alternative",
+      "name" : "validate successed?",
+      "config" : {
+        "conditions" : {
+          "f4" : "Math.random()>0.5"
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 608, "y" : 64 },
+        "labelOffset" : { "y" : -40 }
+      },
+      "connect" : [
+        { "id" : "f4", "to" : "f1", "label" : {
+            "name" : "start 6",
+            "offset" : { "x" : 1, "y" : -10 }
+          }, "color" : "default" },
+        { "id" : "f10", "to" : "f11", "via" : [ { "x" : 608, "y" : 168 } ], "label" : {
+            "name" : "start 5",
+            "segment" : 1.26,
+            "offset" : { "x" : 30, "y" : -65 }
+          } }
+      ]
+    }, {
+      "id" : "f6",
+      "type" : "Script",
+      "name" : "prepare data",
+      "visual" : {
+        "at" : { "x" : 224, "y" : 64 }
+      },
+      "connect" : [
+        { "id" : "f9", "to" : "f5", "label" : {
+            "name" : "start 4",
+            "offset" : { "x" : 5, "y" : -18 }
+          }, "color" : "default" }
+      ]
+    }, {
+      "id" : "f11",
+      "type" : "TaskSwitchEvent",
+      "name" : "Retry",
+      "config" : {
+        "task" : {
+          "name" : "Retry",
+          "responsible" : {
+            "activator" : "SYSTEM"
+          },
+          "skipTasklist" : true
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 392, "y" : 168 },
+        "labelOffset" : { "x" : 14, "y" : 34 }
+      },
+      "connect" : [
+        { "id" : "f12", "to" : "f6", "via" : [ { "x" : 224, "y" : 168 } ], "label" : {
+            "name" : "end 5",
+            "segment" : 0.78,
+            "offset" : { "x" : 14, "y" : -8 }
+          }, "color" : "default" }
+      ]
+    } ]
+}

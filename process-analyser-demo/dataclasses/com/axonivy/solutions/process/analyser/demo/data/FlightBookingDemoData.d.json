@@ -5,16 +5,23 @@
   "isBusinessCaseData" : false,
   "fields" : [ {
     "name" : "isBackToSearchPage",
-    "type" : "Boolean"
+    "type" : "Boolean",
+    "modifiers" : [ "PERSISTENT" ]
   }, {
     "name" : "isBackToSubmitInformationPage",
-    "type" : "Boolean"
+    "type" : "Boolean",
+    "modifiers" : [ "PERSISTENT" ]
   }, {
     "name" : "isPaid",
-    "type" : "Boolean"
+    "type" : "Boolean",
+    "modifiers" : [ "PERSISTENT" ]
   }, {
     "name" : "isChargeLater",
     "type" : "Boolean",
+    "modifiers" : [ "PERSISTENT" ]
+  }, {
+    "name" : "flightInformation",
+    "type" : "com.axonivy.solutions.process.analyser.demo.data.FlightInformation",
     "modifiers" : [ "PERSISTENT" ]
   } ]
 }

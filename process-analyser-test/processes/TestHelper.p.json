@@ -1,0 +1,98 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/process/12.0.0/process.json",
+  "id" : "1973F53724EE655A",
+  "config" : {
+    "data" : "com.axonivy.solutions.process.analyser.test.LoginData"
+  },
+  "elements" : [ {
+      "id" : "f0",
+      "type" : "RequestStart",
+      "name" : "login",
+      "config" : {
+        "signature" : "login",
+        "input" : {
+          "params" : [
+            { "name" : "username", "type" : "String", "desc" : "" },
+            { "name" : "password", "type" : "String", "desc" : "" }
+          ],
+          "map" : {
+            "out.password" : "param.password",
+            "out.username" : "param.username"
+          }
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 96, "y" : 64 }
+      },
+      "connect" : [
+        { "id" : "f2", "to" : "f3" }
+      ]
+    }, {
+      "id" : "f1",
+      "type" : "TaskEnd",
+      "visual" : {
+        "at" : { "x" : 352, "y" : 64 },
+        "labelOffset" : { "x" : 13, "y" : 33 }
+      }
+    }, {
+      "id" : "f3",
+      "type" : "Script",
+      "name" : "login",
+      "config" : {
+        "output" : {
+          "code" : "ivy.session.loginSessionUser(in.username, in.password);"
+        },
+        "sudo" : true
+      },
+      "visual" : {
+        "at" : { "x" : 224, "y" : 64 }
+      },
+      "connect" : [
+        { "id" : "f4", "to" : "f1", "color" : "default" }
+      ]
+    }, {
+      "id" : "f5",
+      "type" : "RequestStart",
+      "name" : "changeLocale",
+      "config" : {
+        "signature" : "changeLocale",
+        "input" : {
+          "params" : [
+            { "name" : "locale", "type" : "String", "desc" : "" }
+          ],
+          "map" : {
+            "out.locale" : "param.locale"
+          }
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 96, "y" : 176 }
+      },
+      "connect" : [
+        { "id" : "f7", "to" : "f6" }
+      ]
+    }, {
+      "id" : "f6",
+      "type" : "Script",
+      "name" : "change locale",
+      "config" : {
+        "output" : {
+          "code" : "ivy.session.setContentLocale(java.util.Locale.of(in.locale));"
+        },
+        "sudo" : true
+      },
+      "visual" : {
+        "at" : { "x" : 232, "y" : 176 }
+      },
+      "connect" : [
+        { "id" : "f9", "to" : "f8" }
+      ]
+    }, {
+      "id" : "f8",
+      "type" : "TaskEnd",
+      "visual" : {
+        "at" : { "x" : 352, "y" : 176 },
+        "labelOffset" : { "x" : 13, "y" : 33 }
+      }
+    } ]
+}

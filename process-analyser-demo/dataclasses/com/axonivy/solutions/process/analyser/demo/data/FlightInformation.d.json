@@ -5,24 +5,31 @@
   "isBusinessCaseData" : false,
   "fields" : [ {
     "name" : "planeRegistrationNumber",
-    "type" : "String"
+    "type" : "String",
+    "modifiers" : [ "PERSISTENT" ]
   }, {
     "name" : "startTime",
-    "type" : "java.time.LocalTime"
+    "type" : "java.time.LocalTime",
+    "modifiers" : [ "PERSISTENT" ]
   }, {
     "name" : "endTime",
-    "type" : "java.time.LocalTime"
+    "type" : "java.time.LocalTime",
+    "modifiers" : [ "PERSISTENT" ]
   }, {
     "name" : "from",
-    "type" : "String"
+    "type" : "String",
+    "modifiers" : [ "PERSISTENT" ]
   }, {
     "name" : "to",
-    "type" : "String"
+    "type" : "String",
+    "modifiers" : [ "PERSISTENT" ]
   }, {
     "name" : "date",
-    "type" : "java.util.Date"
+    "type" : "java.util.Date",
+    "modifiers" : [ "PERSISTENT" ]
   }, {
     "name" : "id",
-    "type" : "String"
+    "type" : "String",
+    "modifiers" : [ "PERSISTENT" ]
   } ]
 }

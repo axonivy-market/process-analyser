@@ -16,6 +16,12 @@ const FULL_HD_RESOLUTION_WIDTH = "1920px";
 const FULL_HD_RESOLUTION_HEIGHT = "1080px";
 const DEFAULT_IFRAME_WIDTH = "100%";
 const DEFAULT_IFRAME_HEIGHT = "400px";
+const EXECUTED_CLASS = "executed";
+const EXECUTED_CLASS_CSS_SELECTOR = "." + EXECUTED_CLASS;
+const EXECUTION_BADGE_CSS_SELECTOR = ".execution-badge";
+const COMPLETE = "complete";
+const PID_QUERY_PARAM_NAME = "pid";
+const SUB_PROCESS_CALL_PID = "subProcessCallPid";
 
 function getCenterizeButton() {
   return queryObjectById(DIAGRAM_IFRAME_ID)
@@ -145,4 +151,50 @@ function getJumpOutBtn() {
   return queryObjectById(DIAGRAM_IFRAME_ID)
     .contents()
     .find(buildClassRef(JUMP_OUT_BTN_CLASS))[0];
+}
+
+function removeExecutedClass() {
+  getProcessDiagramIframe().find(EXECUTED_CLASS_CSS_SELECTOR)
+    .removeClass(EXECUTED_CLASS);
+}
+
+function removeDefaultFrequency() {
+  getProcessDiagramIframe()
+    .find(EXECUTION_BADGE_CSS_SELECTOR)
+    .each(function () {
+      $(this).parent().remove();
+    });
+}
+
+function santizeDiagram() {
+  removeDefaultFrequency();
+  removeExecutedClass();
+}
+
+function getProcessDiagramIframe() {
+  return queryObjectById(DIAGRAM_IFRAME_ID).contents();
+}
+
+function getPidQueryParamValue(url) {
+  const parseUrl = new URL(url);
+  return parseUrl.searchParams.get(PID_QUERY_PARAM_NAME);
+}
+
+function loadIframe(recheckIndicator) {
+  var iframe = document.getElementById(DIAGRAM_IFRAME_ID);
+  
+  if (recheckIndicator) {
+    const iframeDoc = iframe.contentDocument;
+    if (iframeDoc.readyState == COMPLETE) {
+      santizeDiagram();
+      clearTimeout(recheckFrameTimer);
+      const iframeRootUrl = iframe.contentWindow.location.href;
+      const pidValue = getPidQueryParamValue(iframeRootUrl);
+      updateDataTable([{ name: SUB_PROCESS_CALL_PID, value: pidValue }]);
+      return;
+    }
+  }
+  recheckFrameTimer = setTimeout(function () {
+    loadIframe(true);
+  }, 500);
 }

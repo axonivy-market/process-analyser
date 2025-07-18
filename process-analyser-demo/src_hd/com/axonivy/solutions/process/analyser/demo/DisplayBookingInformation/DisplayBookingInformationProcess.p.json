@@ -8,9 +8,17 @@
   "elements" : [ {
       "id" : "f0",
       "type" : "HtmlDialogStart",
-      "name" : "start()",
+      "name" : "start(FlightInformation)",
       "config" : {
         "signature" : "start",
+        "input" : {
+          "params" : [
+            { "name" : "flightBooking", "type" : "com.axonivy.solutions.process.analyser.demo.data.FlightInformation", "desc" : "" }
+          ],
+          "map" : {
+            "out.flightBooking" : "param.flightBooking"
+          }
+        },
         "result" : {
           "params" : [
             { "name" : "isBackToSubmitInformationPage", "type" : "Boolean", "desc" : "" }

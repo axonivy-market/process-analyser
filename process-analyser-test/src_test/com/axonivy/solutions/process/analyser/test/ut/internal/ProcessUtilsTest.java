@@ -1,6 +1,9 @@
 package com.axonivy.solutions.process.analyser.test.ut.internal;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -27,8 +30,8 @@ public class ProcessUtilsTest extends BaseSetup {
   }
 
   @Test
-  void test_extractAlterNativeElementsWithMultiOutGoing() {
-    var results = ProcessUtils.extractAlterNativeElementsWithMultiOutGoing(testProcessElements);
+  void test_extractAlterNativeElementsWithMultiOutgoings() {
+    var results = ProcessUtils.getAlterNativesWithMultiOutgoings(testProcessElements);
     assertThat(results).isNotEmpty();
     assertThat(results.size()).isEqualTo(1);
   }
@@ -50,17 +53,19 @@ public class ProcessUtilsTest extends BaseSetup {
   void test_getAllProcesses() {
     var results = ProcessUtils.getAllProcesses();
     assertThat(results).isNotEmpty();
-    assertThat(results.size()).isEqualTo(1);
+    assertThat(results.size()).isEqualTo(3);
   }
 
   @Test
   void test_getProcessElementsFromIProcessWebStartable() {
-    assertThat(ProcessUtils.getProcessElementsFromIProcessWebStartable(testProcessStart).size()).isEqualTo(5);
+    assertThat(ProcessUtils.getProcessElementsFrom(testProcessStart).size()).isEqualTo(15);
   }
 
   @Test
   void test_getNestedProcessElementsFromSub() {
     assertThat(ProcessUtils.getNestedProcessElementsFromSub(startProcessElement)).isEmpty();
+    assertEquals(3, ProcessUtils.getNestedProcessElementsFromSub(subProcessElement).size());
+    assertEquals(3, ProcessUtils.getNestedProcessElementsFromSub(subProcessCall).size());
   }
 
   @Test
@@ -78,4 +83,36 @@ public class ProcessUtilsTest extends BaseSetup {
     assertThat(ProcessUtils.isAlternativeInstance(getElementNextToTestStart())).isTrue();
   }
 
+  @Test
+  void test_buildBpmnIFrameSourceUrl() {
+    assertThat(ProcessUtils.buildBpmnIFrameSourceUrl(SELECTED_STARTABLE_ID, SELECTED_MODULE_URL))
+        .isEqualTo(TEST_IFRAME_SOURCE_URL);
+  }
+
+  @Test
+  void test_getSelectedProcessFilePath() {
+    assertThat(ProcessUtils.getSelectedProcessFilePath(SELECTED_STARTABLE_ID, SELECTED_MODULE_URL, TEST_APPLICATION_NAME))
+        .isEqualTo(SELECTED_STARTABLE_ID);
+  }
+
+  @Test
+  void test_getEmbeddedStartConnectToFlow() {
+    assertTrue(ProcessUtils.isEmbeddedStartConnectToSequenceFlow(embeddedStart, outerFlowPid));
+  }
+
+  @Test
+  void test_getStartElementFromSubProcessCall() {
+    assertNotNull(ProcessUtils.getStartElementFromSubProcessCall(subProcessCall),
+        "Sub process call should be filter from test process");
+  }
+
+  @Test
+  void test_isEmbeddedEndInstance() {
+    assertTrue(ProcessUtils.isEmbeddedEndInstance(embeddedEnd));
+  }
+
+  @Test
+  void test_isComplexElementWithMultiIncomings() {
+    assertTrue(ProcessUtils.isComplexElementWithMultiIncomings(embeddedEnd));
+  }
 }

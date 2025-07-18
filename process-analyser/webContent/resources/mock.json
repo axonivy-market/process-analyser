@@ -4,80 +4,104 @@
   "nodes": [
     {
       "type": "arrow",
-      "id": "15254DC87A1B183B-f15",
+      "id": "1951D3C5BF69ADB3-f15",
       "relativeValue": 0.15,
-      "labelValue": "130"
+      "labelValue": 130
     },
     {
       "type": "arrow",
-      "id": "15254DC87A1B183B-f20",
+      "id": "1951D3C5BF69ADB3-f20",
       "relativeValue": 0.25,
-      "labelValue": "120"
+      "labelValue": 120
     },
     {
       "type": "arrow",
-      "id": "15254DC87A1B183B-f13",
+      "id": "1951D3C5BF69ADB3-f13",
       "relativeValue": 0.35,
-      "labelValue": "100"
+      "labelValue": 100
     },
     {
       "type": "arrow",
-      "id": "15254DC87A1B183B-f12",
+      "id": "1951D3C5BF69ADB3-f12",
       "relativeValue": 0.45,
-      "labelValue": "90"
+      "labelValue": 90
     },
     {
       "type": "arrow",
-      "id": "15254DC87A1B183B-f9",
+      "id": "1951D3C5BF69ADB3-f9",
       "relativeValue": 0.55,
-      "labelValue": "80"
+      "labelValue": 80
     },
     {
       "type": "arrow",
-      "id": "15254DC87A1B183B-f27",
+      "id": "1951D3C5BF69ADB3-f27",
       "relativeValue": 0.65,
-      "labelValue": "70"
+      "labelValue": 70
     },
     {
       "type": "arrow",
-      "id": "15254DC87A1B183B-f21",
+      "id": "1951D3C5BF69ADB3-f21",
       "relativeValue": 0.75,
-      "labelValue": "60"
+      "labelValue": 60
     },
     {
       "type": "arrow",
-      "id": "15254DC87A1B183B-f10",
-      "relativeValue": 0.85,
-      "labelValue": "50"
+      "id": "1951D3C5BF69ADB3-f10",
+      "relativeValue": 0.9,
+      "labelValue": 50
     },
     {
       "type": "arrow",
-      "id": "15254DC87A1B183B-f11",
+      "id": "1951D3C5BF69ADB3-f11",
       "relativeValue": 0.15,
-      "labelValue": "40"
+      "labelValue": 40
     },
     {
       "type": "arrow",
-      "id": "15254DC87A1B183B-f4",
+      "id": "1951D3C5BF69ADB3-f4",
       "relativeValue": 0.15,
-      "labelValue": "30"
+      "labelValue": 30
     },
     {
       "type": "arrow",
-      "id": "15254DC87A1B183B-f18",
+      "id": "1951D3C5BF69ADB3-f18",
       "relativeValue": 0.15,
-      "labelValue": "20"
+      "labelValue": 20
     },
     {
       "type": "arrow",
-      "id": "15254DC87A1B183B-f17",
+      "id": "1951D3C5BF69ADB3-f17",
       "relativeValue": 0.15,
-      "labelValue": "10"
+      "labelValue": 10
     }
   ],
   "timeFrame": {
     "start": "2024-01-01T00:00:00Z",
     "end": "2024-01-31T23:59:59Z"
   },
-  "numberOfInstances": 1376
+  "numberOfInstances": 1376,
+  "colors": [
+    "#FFF7EA",
+    "#FFEDCD",
+    "#FFDEA5",
+    "#FFCE7B",
+    "#FFC054",
+    "#FFB22E",
+    "#D99727",
+    "#B57E21",
+    "#91651A",
+    "#735015"
+  ],
+  "textColors": [
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#FFFFFF",
+    "#FFFFFF",
+    "#FFFFFF",
+    "#FFFFFF",
+    "#FFFFFF",
+    "#FFFFFF"
+  ]
 }

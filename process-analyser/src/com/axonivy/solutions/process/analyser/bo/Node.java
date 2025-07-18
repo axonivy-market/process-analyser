@@ -1,5 +1,8 @@
 package com.axonivy.solutions.process.analyser.bo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.axonivy.solutions.process.analyser.enums.NodeType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -8,12 +11,42 @@ public class Node {
   private String id;
   @JsonIgnore
   private String label;
-  private int labelValue;
-  private double relativeValue;
+  private String labelValue;
+  private float relativeValue;
   @JsonIgnore
-  private double medianDuration;
+  private float medianDuration;
+  @JsonIgnore
+  private String formattedMedianDuration;
   @JsonIgnore
   private int frequency;
+  @JsonIgnore
+  private List<String> outGoingPathIds = new ArrayList<>();
+  @JsonIgnore
+  private List<String> inCommingPathIds = new ArrayList<>();
+  @JsonIgnore
+  private String targetNodeId;
+  @JsonIgnore
+  private String sourceNodeId;
+  @JsonIgnore
+  private boolean isTaskSwitchGateway;
+  @JsonIgnore
+  private String requestPath;
+
+  public String getSourceNodeId() {
+    return sourceNodeId;
+  }
+
+  public void setSourceNodeId(String sourceNodeId) {
+    this.sourceNodeId = sourceNodeId;
+  }
+
+  public String getFormattedMedianDuration() {
+    return formattedMedianDuration;
+  }
+
+  public void setFormattedMedianDuration(String formattedMedianDuration) {
+    this.formattedMedianDuration = formattedMedianDuration;
+  }
 
   public Node() {}
 
@@ -41,27 +74,27 @@ public class Node {
     this.label = label;
   }
 
-  public int getLabelValue() {
+  public String getLabelValue() {
     return labelValue;
   }
 
-  public void setLabelValue(int labelValue) {
+  public void setLabelValue(String labelValue) {
     this.labelValue = labelValue;
   }
 
-  public double getRelativeValue() {
+  public float getRelativeValue() {
     return relativeValue;
   }
 
-  public void setRelativeValue(double relativeValue) {
+  public void setRelativeValue(float relativeValue) {
     this.relativeValue = relativeValue;
   }
 
-  public double getMedianDuration() {
+  public float getMedianDuration() {
     return medianDuration;
   }
 
-  public void setMedianDuration(double medianDuration) {
+  public void setMedianDuration(float medianDuration) {
     this.medianDuration = medianDuration;
   }
 
@@ -71,5 +104,45 @@ public class Node {
 
   public void setFrequency(int frequency) {
     this.frequency = frequency;
+  }
+
+  public List<String> getOutGoingPathIds() {
+    return outGoingPathIds;
+  }
+
+  public void setOutGoingPathIds(List<String> outGoingPathIds) {
+    this.outGoingPathIds = outGoingPathIds;
+  }
+
+  public List<String> getInCommingPathIds() {
+    return inCommingPathIds;
+  }
+
+  public void setInCommingPathIds(List<String> inCommingPathIds) {
+    this.inCommingPathIds = inCommingPathIds;
+  }
+
+  public String getTargetNodeId() {
+    return targetNodeId;
+  }
+
+  public void setTargetNodeId(String targetNodeId) {
+    this.targetNodeId = targetNodeId;
+  }
+
+  public boolean isTaskSwitchGateway() {
+    return isTaskSwitchGateway;
+  }
+
+  public void setTaskSwitchGateway(boolean isTaskSwitchGateway) {
+    this.isTaskSwitchGateway = isTaskSwitchGateway;
+  }
+
+  public String getRequestPath() {
+    return requestPath;
+  }
+
+  public void setRequestPath(String requestPath) {
+    this.requestPath = requestPath;
   }
 }

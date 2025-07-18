@@ -10,6 +10,10 @@
       "name" : "Book flight tickets",
       "config" : {
         "signature" : "bookFlight",
+        "request" : {
+          "name" : "<%=ivy.cms.co(\"/Processes/Process/FlightBookingDemo/name\")%>",
+          "description" : "<%=ivy.cms.co(\"/Processes/Process/FlightBookingDemo/description\")%>"
+        },
         "task" : {
           "name" : "Search a Flight"
         },
@@ -55,8 +59,10 @@
         }, {
           "id" : "S10-g1",
           "type" : "EmbeddedEnd",
+          "name" : "S10-f0",
           "visual" : {
-            "at" : { "x" : 528, "y" : 256 }
+            "at" : { "x" : 720, "y" : 256 },
+            "labelOffset" : { "x" : -141, "y" : 19 }
           },
           "parentConnector" : "f3"
         }, {
@@ -64,16 +70,19 @@
           "type" : "DialogCall",
           "name" : "Search for a Flight",
           "config" : {
-            "dialog" : "com.axonivy.solutions.process.analyser.demo.SearchingFlight:start()"
+            "dialog" : "com.axonivy.solutions.process.analyser.demo.SearchingFlight:start()",
+            "output" : {
+              "map" : {
+                "out" : "in",
+                "out.flightInformation" : "result.flightInformation"
+              }
+            }
           },
           "visual" : {
             "at" : { "x" : 392, "y" : 256 }
           },
           "connect" : [
-            { "id" : "S10-f0", "to" : "S10-g1", "label" : {
-                "name" : "S10-f0",
-                "offset" : { "y" : 14 }
-              } }
+            { "id" : "S10-f0", "to" : "S10-g1" }
           ]
         }, {
           "id" : "S10-g2",
@@ -126,7 +135,7 @@
           "id" : "S20-g0",
           "type" : "EmbeddedStart",
           "visual" : {
-            "at" : { "x" : 64, "y" : 256 }
+            "at" : { "x" : 200, "y" : 256 }
           },
           "parentConnector" : "f3",
           "connect" : [
@@ -139,7 +148,7 @@
           "id" : "S20-g1",
           "type" : "EmbeddedEnd",
           "visual" : {
-            "at" : { "x" : 512, "y" : 256 }
+            "at" : { "x" : 776, "y" : 256 }
           },
           "parentConnector" : "f5"
         }, {
@@ -152,13 +161,13 @@
             }
           },
           "visual" : {
-            "at" : { "x" : 168, "y" : 256 },
+            "at" : { "x" : 304, "y" : 256 },
             "labelOffset" : { "x" : 14, "y" : 34 }
           },
           "connect" : [
             { "id" : "S20-f4", "to" : "S20-f3", "label" : {
                 "name" : "S20-f4",
-                "offset" : { "x" : -2, "y" : -10 }
+                "offset" : { "x" : -1, "y" : -10 }
               } }
           ]
         }, {
@@ -166,17 +175,21 @@
           "type" : "DialogCall",
           "name" : "Submit personal information",
           "config" : {
-            "dialog" : "com.axonivy.solutions.process.analyser.demo.SubmitPersonalInformation:start()",
+            "dialog" : "com.axonivy.solutions.process.analyser.demo.SubmitPersonalInformation:start(com.axonivy.solutions.process.analyser.demo.data.FlightInformation)",
+            "call" : {
+              "map" : {
+                "param.flightBooking" : "in.flightInformation"
+              }
+            },
             "output" : {
               "map" : {
                 "out" : "in",
-                "out.isBackToSearchPage" : "result.isBackToSearchPage",
-                "out.isChargeLater" : "result.isChargeLater"
+                "out.flightInformation" : "result.flightInformation"
               }
             }
           },
           "visual" : {
-            "at" : { "x" : 328, "y" : 256 }
+            "at" : { "x" : 560, "y" : 256 }
           },
           "connect" : [
             { "id" : "S20-f0", "to" : "S20-g1", "label" : {
@@ -188,7 +201,7 @@
           "id" : "S20-g2",
           "type" : "EmbeddedStart",
           "visual" : {
-            "at" : { "x" : 328, "y" : 408 }
+            "at" : { "x" : 560, "y" : 408 }
           },
           "parentConnector" : "f24",
           "connect" : [
@@ -207,7 +220,7 @@
             }
           },
           "visual" : {
-            "at" : { "x" : 328, "y" : 344 },
+            "at" : { "x" : 560, "y" : 344 },
             "labelOffset" : { "x" : 153, "y" : 9 }
           },
           "connect" : [
@@ -304,6 +317,12 @@
           "config" : {
             "task" : {
               "name" : "Display booking information"
+            },
+            "output" : {
+              "map" : {
+                "out" : "in1",
+                "out.flightInformation" : "in1.flightInformation"
+              }
             }
           },
           "visual" : {
@@ -321,7 +340,12 @@
           "type" : "DialogCall",
           "name" : "DisplayBookingInformation",
           "config" : {
-            "dialog" : "com.axonivy.solutions.process.analyser.demo.DisplayBookingInformation:start()",
+            "dialog" : "com.axonivy.solutions.process.analyser.demo.DisplayBookingInformation:start(com.axonivy.solutions.process.analyser.demo.data.FlightInformation)",
+            "call" : {
+              "map" : {
+                "param.flightBooking" : "in.flightInformation"
+              }
+            },
             "output" : {
               "map" : {
                 "out" : "in",

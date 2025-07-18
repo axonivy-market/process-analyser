@@ -35,6 +35,9 @@ Key features:
 
 ![downoad and export demo](images/download-and-export.png)
 
+  3) **Custom color bar:** Customize the color of each KPI value using a gradient from light to dark, representing the progression from lower to higher values.
+![color map demo](images/color-custom.png)
+
 ## Setup
 To collect data and analyze your processes, please follow these steps:
 1. Prepare your own project and processes.
@@ -56,6 +59,10 @@ To collect data and analyze your processes, please follow these steps:
 5. Launch the Process Analyzer and follow the Demo tab to view the results.
 
 ![analyze process](images/analyze-process.png)
+
+6. (Optional) Update the process display name to avoid the process start technical name (e.g. FlightPlanningDemo/recommendDestination.ivp) being shown in the selection options. Multilanguage support for process names is also available.
+
+![multilanguage process name support](images/multilanguage-process-name.png)
 
 ```
 @variables.yaml@
