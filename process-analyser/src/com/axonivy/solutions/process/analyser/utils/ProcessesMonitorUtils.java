@@ -71,8 +71,8 @@ public class ProcessesMonitorUtils {
       String elementId = taskSwitchGateway.getPid().toString();
       List<Node> taskNodes = taskSwitchGateway.getAllTaskConfigs().stream()
           .map(task -> createNode(
-              elementId + ProcessAnalyticsConstants.SLASH + task.getTaskIdentifier().getTaskIvpLinkName(),
-              task.getName().getRawMacro(), NodeType.ELEMENT))
+              elementId + ProcessAnalyticsConstants.SLASH + task.identifier().getTaskIvpLinkName(),
+              task.name().getRawMacro(), NodeType.ELEMENT))
           .collect(Collectors.toList());
       taskNodes.add(0, node);
       yield taskNodes;

@@ -12,9 +12,6 @@
   <artifactId>process-analyser-core</artifactId>
   <version>13.1.1-SNAPSHOT</version>
   <packaging>iar</packaging>
-  <properties>
-    <project.build.plugin.version>12.0.0</project.build.plugin.version>
-  </properties>
   <dependencies>
     <dependency>
       <groupId>com.axonivy.ivy.api</groupId>
@@ -56,7 +53,6 @@
       </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>3.4.2</version>
         <executions>
           <execution>
             <id>make-assembly</id>
