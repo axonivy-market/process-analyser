@@ -387,10 +387,14 @@ public class ProcessesMonitorUtils {
         ? element.getIncoming().stream().map(ProcessUtils::getElementPid).toList()
         : Collections.emptyList();
     boolean isSolePathFromAlternativeEnd = element.getOutgoing().size() == 1;
-    ProcessElement nestedSubElement = subProcessCalls.stream()
-        .filter(subProcessCall -> isSubProcessCallContainElement(element, subProcessCall)).findAny().orElse(null);
+    ProcessElement nestedSubElement = getNestedSubElement(element, subProcessCalls);
     return element.getOutgoing().stream().map(flow -> convertSequenceFlowToAlternativePath(flow, precedingFlowIds,
-        isSolePathFromAlternativeEnd, nestedSubElement)).toList();
+        isSolePathFromAlternativeEnd, nestedSubElement, subProcessCalls)).toList();
+  }
+
+  private static ProcessElement getNestedSubElement(ProcessElement element, List<ProcessElement> subProcessCalls) {
+    return subProcessCalls.stream().filter(subProcessCall -> isSubProcessCallContainElement(element, subProcessCall))
+        .findAny().orElse(null);
   }
 
   private static boolean isSubProcessCallContainElement(ProcessElement element, ProcessElement subProcessCall) {
@@ -399,13 +403,13 @@ public class ProcessesMonitorUtils {
   }
 
   public static AlternativePath convertSequenceFlowToAlternativePath(SequenceFlow flow, List<String> precedingFlowIds,
-      boolean isSolePathFromAlternativeEnd, ProcessElement nestedSubElement) {
+      boolean isSolePathFromAlternativeEnd, ProcessElement nestedSubElement, List<ProcessElement> subProcessCalls) {
     AlternativePath path = new AlternativePath();
     path.setSolePathFromAlternativeEnd(isSolePathFromAlternativeEnd);
     path.setPrecedingFlowIds(precedingFlowIds);
     path.setNodeIdsInPath(new ArrayList<>());
     path.setNestedSubProcessCall(nestedSubElement);
-    followPath(path, flow);
+    followPath(path, flow, subProcessCalls);
     return path;
   }
 
@@ -414,7 +418,7 @@ public class ProcessesMonitorUtils {
    * alternative, element that is also an end element of other flow or the last
    * element in that flow
    **/
-  public static void followPath(AlternativePath path, SequenceFlow currentFlow) {
+  public static void followPath(AlternativePath path, SequenceFlow currentFlow, List<ProcessElement> subProcessCalls) {
     String flowPid = ProcessUtils.getElementPid(currentFlow);
     path.getNodeIdsInPath().add(flowPid);
     ProcessElement destinationElement = ProcessElement.class.cast(currentFlow.getTarget());
@@ -424,6 +428,11 @@ public class ProcessesMonitorUtils {
     }
     path.getNodeIdsInPath().add(ProcessUtils.getElementPid(destinationElement));
     ProcessElement nextElement = resolveNextElement(path, destinationElement, flowPid);
+    // Handle for case: destinationElement is a CallSubEnd and there is no alternative in the SubProcessCall
+    if (nextElement == null && destinationElement instanceof CallSubEnd) {
+        nextElement = getNestedSubElement(destinationElement, subProcessCalls);
+    }
+
     if (nextElement != destinationElement) {
       path.getNodeIdsInPath().add(ProcessUtils.getElementPid(nextElement));
       if (ProcessUtils.isAlternativePathEndElement(nextElement)) {
@@ -431,7 +440,7 @@ public class ProcessesMonitorUtils {
       }
     }
     List<SequenceFlow> nextOutgoingFlows = getNextOutgoingFlows(nextElement);
-    nextOutgoingFlows.forEach(outgoing -> followPath(path, outgoing));
+    nextOutgoingFlows.forEach(outgoing -> followPath(path, outgoing, subProcessCalls));
   }
 
   private static List<SequenceFlow> getNextOutgoingFlows(ProcessElement nextElement) {

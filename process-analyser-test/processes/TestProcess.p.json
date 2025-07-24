@@ -36,7 +36,7 @@
       "config" : {
         "conditions" : {
           "f6" : "true",
-          "f9" : "false"
+          "f9" : ""
         }
       },
       "visual" : {
@@ -45,8 +45,7 @@
       },
       "connect" : [
         { "id" : "f9", "to" : "f10" },
-        { "id" : "f6", "to" : "f12", "color" : "default" },
-        { "id" : "f8", "to" : "f7" }
+        { "id" : "f6", "to" : "f12", "color" : "default" }
       ]
     }, {
       "id" : "f10",
@@ -97,13 +96,6 @@
       "connect" : [
         { "id" : "f15", "to" : "f1", "color" : "default" }
       ]
-    }, {
-      "id" : "f7",
-      "type" : "TaskEnd",
-      "visual" : {
-        "at" : { "x" : 96, "y" : 160 },
-        "labelOffset" : { "x" : 13, "y" : 33 }
-      }
     }, {
       "id" : "S10",
       "type" : "EmbeddedProcess",
