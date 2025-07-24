@@ -21,7 +21,7 @@ public class BaseSetup {
   protected static final String TEST_PROCESS_ELEMENT_START_PID = "193485C5ABDFEA93-f0";
   protected static final String TEST_FLOW_PID_FROM_START_ELEMENT = "193485C5ABDFEA93-f2";
   protected static final String TEST_PROCESS_RAW_PID = "193485C5ABDFEA93";
-  protected static final String TEST_PROCESS_NAME = "test.ivp";
+  protected static final String TEST_PROCESS_NAME = "Test process";
   protected static final String TEST_APPLICATION_NAME = "test";
   protected static final String TEST_MODULE_NAME = "process-analyser-test";
   protected static final String SELECTED_STARTABLE_ID = "SupportHR.p.json";
@@ -33,6 +33,7 @@ public class BaseSetup {
   protected static final String SUB_PROCESS_END = "193485C5ABDFEA93-S10-g1";
   protected static final String EMBEDDED_PID = "193485C5ABDFEA93-S10";
   protected static final String REST_CALL_PID = "193485C5ABDFEA93-f3";
+  protected static final String MULTI_INCOMINGS_ELEMENT_PID = "193485C5ABDFEA93-f14";
 
   protected static IProcessWebStartable testProcessStart;
   protected static ProcessElement startProcessElement;
@@ -44,11 +45,13 @@ public class BaseSetup {
   protected static String outerFlowPid;
   protected static ProcessElement embeddedStart;
   protected static ProcessElement embeddedEnd;
+  protected static ProcessElement multiIncomingsElement;
 
   protected static void prepareData() {
     testProcessStart = (IProcessWebStartable) ProcessUtils.getAllProcesses().stream()
         .filter(start -> StringUtils.contains(start.getName(), TEST_PROCESS_NAME)).findAny().orElse(null);
     testProcessElements = ProcessUtils.getProcessElementsFrom(testProcessStart);
+    multiIncomingsElement = getProcessElementByPid(MULTI_INCOMINGS_ELEMENT_PID);
     subProcessElement = getProcessElementByPid(EMBEDDED_PID);
     subProcessCall = getProcessElementByPid(REST_CALL_PID);
     testSequenceFlows = ProcessUtils.getSequenceFlowsFrom(testProcessElements);
@@ -58,11 +61,6 @@ public class BaseSetup {
     embeddedStart = getProcessElementByPid(SUB_PROCESS_START);
     embeddedEnd = getProcessElementByPid(SUB_PROCESS_END);
     flowFromStartElement = startProcessElement.getOutgoing().get(0);
-  }
-
-  protected SequenceFlow getEndFlowFromAlternative() {
-    return ((Alternative) flowFromStartElement.getTarget()).getOutgoing().stream()
-        .filter(flow -> ProcessUtils.getElementPid(flow).contains("f8")).findAny().orElse(null);
   }
 
   protected NodeElement getElementNextToTestStart() {
