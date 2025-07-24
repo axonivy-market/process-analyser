@@ -82,7 +82,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     List<ICase> cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(
         ProcessUtils.getTaskStartIdFromPID(selectedPid), new TimeIntervalFilter(new Date(), new Date()), new ArrayList<>());
     List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(testProcessStart, KpiType.FREQUENCY, cases);
-    assertThat(results.size()).isEqualTo(28);
+    assertThat(results.size()).isEqualTo(26);
     assertThat(results.get(0).getLabelValue()).isEqualTo("0");
   }
 
@@ -95,16 +95,6 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     ProcessesMonitorUtils.updateFrequencyForNodes(results, new ArrayList<>(), List.of(mockCase));
     assertThat(results.size()).isNotZero();
     assertThat(results.get(0).getLabelValue()).isEqualTo("1");
-  }
-
-  @Test
-  void test_followPath() {
-    AlternativePath testPath = new AlternativePath();
-    var flowFromAlternative = getEndFlowFromAlternative();
-    testPath.setNodeIdsInPath(new ArrayList<>());
-    ProcessesMonitorUtils.followPath(testPath, flowFromAlternative);
-    assertThat(testPath.getNodeIdsInPath().size()).isEqualTo(1);
-    assertThat(testPath.getTaskSwitchEventIdOnPath()).isNullOrEmpty();
   }
 
   @Test
@@ -164,12 +154,15 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
   }
 
   private List<Node> prepareMockNodeList() {
+    List<Node> nodes = new ArrayList<>();
     Node nodeA = new Node();
     nodeA.setFrequency(1);
     nodeA.setId(NODE_A_ID);
+    nodes.add(nodeA);
     Node nodeB = new Node();
     nodeB.setFrequency(2);
     nodeB.setId(NODE_B_ID);
-    return List.of(nodeA, nodeB);
+    nodes.add(nodeB);
+    return nodes;
   }
 }

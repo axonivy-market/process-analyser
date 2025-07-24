@@ -1,5 +1,5 @@
 {
-  "$schema" : "https://json-schema.axonivy.com/process/12.0.0/process.json",
+  "$schema" : "https://json-schema.axonivy.com/process/13.1.2/process.json",
   "id" : "193485C5ABDFEA93",
   "config" : {
     "data" : "com.axonivy.solutions.process.analyser.test.Data"
@@ -36,7 +36,7 @@
       "config" : {
         "conditions" : {
           "f6" : "true",
-          "f9" : "false"
+          "f9" : ""
         }
       },
       "visual" : {
@@ -45,8 +45,7 @@
       },
       "connect" : [
         { "id" : "f9", "to" : "f10" },
-        { "id" : "f6", "to" : "f12", "color" : "default" },
-        { "id" : "f8", "to" : "f7" }
+        { "id" : "f6", "to" : "f12", "color" : "default" }
       ]
     }, {
       "id" : "f10",
@@ -55,7 +54,9 @@
       "config" : {
         "task" : {
           "responsible" : {
-            "activator" : "SYSTEM"
+            "roles" : [
+              "SYSTEM"
+            ]
           }
         }
       },
@@ -72,7 +73,9 @@
         "task" : {
           "name" : "test task 1",
           "responsible" : {
-            "activator" : "SYSTEM"
+            "roles" : [
+              "SYSTEM"
+            ]
           }
         }
       },
@@ -93,13 +96,6 @@
       "connect" : [
         { "id" : "f15", "to" : "f1", "color" : "default" }
       ]
-    }, {
-      "id" : "f7",
-      "type" : "TaskEnd",
-      "visual" : {
-        "at" : { "x" : 96, "y" : 160 },
-        "labelOffset" : { "x" : 13, "y" : 33 }
-      }
     }, {
       "id" : "S10",
       "type" : "EmbeddedProcess",
