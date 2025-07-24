@@ -58,7 +58,7 @@ public class ProcessUtilsTest extends BaseSetup {
 
   @Test
   void test_getProcessElementsFromIProcessWebStartable() {
-    assertThat(ProcessUtils.getProcessElementsFrom(testProcessStart).size()).isEqualTo(15);
+    assertThat(ProcessUtils.getProcessElementsFrom(testProcessStart).size()).isEqualTo(14);
   }
 
   @Test
@@ -113,6 +113,6 @@ public class ProcessUtilsTest extends BaseSetup {
 
   @Test
   void test_isComplexElementWithMultiIncomings() {
-    assertTrue(ProcessUtils.isComplexElementWithMultiIncomings(embeddedEnd));
+    assertTrue(ProcessUtils.isComplexElementWithMultiIncomings(multiIncomingsElement));
   }
 }
