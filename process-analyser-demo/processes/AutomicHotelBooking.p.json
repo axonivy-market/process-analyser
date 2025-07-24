@@ -1,5 +1,5 @@
 {
-  "$schema" : "https://json-schema.axonivy.com/process/12.0.0/process.json",
+  "$schema" : "https://json-schema.axonivy.com/process/13.1.2/process.json",
   "id" : "194F9ACA622B4E38",
   "config" : {
     "data" : "com.axonivy.solutions.process.analyser.demo.data.AutomicHotelBookingData"
@@ -72,7 +72,9 @@
       "config" : {
         "task" : {
           "responsible" : {
-            "activator" : "SYSTEM"
+            "roles" : [
+              "SYSTEM"
+            ]
           },
           "delay" : "new Duration(0, 0, 0, 0, 0, 2)"
         }
@@ -91,7 +93,9 @@
       "config" : {
         "task" : {
           "responsible" : {
-            "activator" : "SYSTEM"
+            "roles" : [
+              "SYSTEM"
+            ]
           },
           "delay" : "new Duration(0, 0, 0, 0, 0, 3)"
         }
@@ -110,7 +114,9 @@
       "config" : {
         "task" : {
           "responsible" : {
-            "activator" : "SYSTEM"
+            "roles" : [
+              "SYSTEM"
+            ]
           }
         }
       },
@@ -128,7 +134,9 @@
       "config" : {
         "task" : {
           "responsible" : {
-            "activator" : "SYSTEM"
+            "roles" : [
+              "SYSTEM"
+            ]
           }
         }
       },
@@ -180,7 +188,9 @@
       "config" : {
         "task" : {
           "responsible" : {
-            "activator" : "SYSTEM"
+            "roles" : [
+              "SYSTEM"
+            ]
           }
         }
       },
@@ -216,7 +226,9 @@
         "task" : {
           "name" : "Process Booking",
           "responsible" : {
-            "activator" : "SYSTEM"
+            "roles" : [
+              "SYSTEM"
+            ]
           },
           "delay" : "new Duration(0, 0, 0, 0, 0, 4)"
         }
