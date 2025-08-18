@@ -1,0 +1,198 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/process/13.1.2/process.json",
+  "id" : "198A2CD3629AA0D3",
+  "config" : {
+    "data" : "admin.InitiateDataFromQueueData"
+  },
+  "elements" : [ {
+      "id" : "f0",
+      "type" : "RequestStart",
+      "name" : "Manual start",
+      "config" : {
+        "signature" : "start",
+        "request" : {
+          "name" : "Manual Start new case"
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 256, "y" : 224 }
+      },
+      "connect" : [
+        { "id" : "f2", "to" : "f24" }
+      ]
+    }, {
+      "id" : "f1",
+      "type" : "TaskEnd",
+      "visual" : {
+        "at" : { "x" : 1456, "y" : 96 }
+      }
+    }, {
+      "id" : "f3",
+      "type" : "ProgramStart",
+      "name" : "Trigger by Timer",
+      "config" : {
+        "javaClass" : "ch.ivyteam.ivy.process.eventstart.beans.TimerBean",
+        "userConfig" : {
+          "time" : "999"
+        },
+        "link" : "eventLink.ivp"
+      },
+      "visual" : {
+        "at" : { "x" : 104, "y" : 96 }
+      },
+      "connect" : [
+        { "id" : "f5", "to" : "f24" }
+      ]
+    }, {
+      "id" : "f4",
+      "type" : "Script",
+      "name" : "Prepare for next step",
+      "config" : {
+        "output" : {
+          "code" : [
+            "import ch.ivyteam.ivy.workflow.query.CaseQuery;",
+            "in.selectedKey = in.keys.get(0);",
+            "",
+            "// Find running case",
+            "CaseQuery query = CaseQuery.create().businessCases().where().customField().stringField(\"MyKey\").isEqual(in.selectedKey);",
+            "int totalRunningCases = query.executor().count();",
+            "in.isExistedCase = totalRunningCases > 0;"
+          ]
+        },
+        "sudo" : true
+      },
+      "visual" : {
+        "at" : { "x" : 456, "y" : 96 }
+      },
+      "connect" : [
+        { "id" : "f6", "to" : "f7" }
+      ]
+    }, {
+      "id" : "f7",
+      "type" : "Alternative",
+      "name" : "should trigger signal?",
+      "config" : {
+        "conditions" : {
+          "f8" : "Math.abs(new java.util.Random().nextInt()) % 2 == 0"
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 608, "y" : 96 },
+        "labelOffset" : { "y" : -16 }
+      },
+      "connect" : [
+        { "id" : "f8", "to" : "f14", "color" : "default" },
+        { "id" : "f10", "to" : "f9", "via" : [ { "x" : 608, "y" : 256 } ] }
+      ]
+    }, {
+      "id" : "f9",
+      "type" : "Script",
+      "name" : "Print log",
+      "config" : {
+        "output" : {
+          "code" : "ivy.log.warn(\"Dummy skip turn\");"
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 896, "y" : 256 }
+      },
+      "connect" : [
+        { "id" : "f11", "to" : "f19", "via" : [ { "x" : 1208, "y" : 256 } ] }
+      ]
+    }, {
+      "id" : "f12",
+      "type" : "Script",
+      "name" : "Trigger a signal",
+      "config" : {
+        "output" : {
+          "code" : "ivy.wf.signals().send(\"mortgate:purchase\");"
+        },
+        "sudo" : true
+      },
+      "visual" : {
+        "at" : { "x" : 896, "y" : 96 }
+      },
+      "connect" : [
+        { "id" : "f13", "to" : "f16", "color" : "default" }
+      ]
+    }, {
+      "id" : "f14",
+      "type" : "Alternative",
+      "name" : "is existed case?",
+      "config" : {
+        "conditions" : {
+          "f18" : "in.isExistedCase",
+          "f15" : ""
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 752, "y" : 96 },
+        "labelOffset" : { "x" : 8, "y" : -16 }
+      },
+      "connect" : [
+        { "id" : "f15", "to" : "f12", "color" : "default" },
+        { "id" : "f18", "to" : "f16", "via" : [ { "x" : 752, "y" : 176 }, { "x" : 1056, "y" : 176 } ] }
+      ]
+    }, {
+      "id" : "f16",
+      "type" : "Alternative",
+      "visual" : {
+        "at" : { "x" : 1056, "y" : 96 }
+      },
+      "connect" : [
+        { "id" : "f17", "to" : "f19", "color" : "default" }
+      ]
+    }, {
+      "id" : "f19",
+      "type" : "Script",
+      "name" : "Remove proceed key",
+      "config" : {
+        "output" : {
+          "code" : "in.keys.remove(in.selectedKey);"
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 1208, "y" : 96 }
+      },
+      "connect" : [
+        { "id" : "f20", "to" : "f21", "color" : "default" }
+      ]
+    }, {
+      "id" : "f21",
+      "type" : "Alternative",
+      "name" : "has remaining key?",
+      "config" : {
+        "conditions" : {
+          "f23" : "in.keys.size() > 0",
+          "f22" : ""
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 1360, "y" : 96 }
+      },
+      "connect" : [
+        { "id" : "f22", "to" : "f1", "color" : "default" },
+        { "id" : "f23", "to" : "f4", "via" : [ { "x" : 1360, "y" : 32 }, { "x" : 456, "y" : 32 } ] }
+      ]
+    }, {
+      "id" : "f24",
+      "type" : "Script",
+      "name" : "Read data",
+      "config" : {
+        "output" : {
+          "code" : [
+            "import java.util.Random;",
+            "for (int i = 0; i < 5; i++) {",
+            "  in.keys.add(\"MyKey\" + new Random().nextInt());",
+            "}"
+          ]
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 256, "y" : 96 }
+      },
+      "connect" : [
+        { "id" : "f25", "to" : "f4", "color" : "default" }
+      ]
+    } ]
+}

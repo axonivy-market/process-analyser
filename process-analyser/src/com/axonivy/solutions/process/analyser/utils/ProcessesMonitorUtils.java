@@ -115,7 +115,7 @@ public class ProcessesMonitorUtils {
     }
   }
 
-  public static List<Node> filterInitialStatisticByIntervalTime(IProcessWebStartable processStart, KpiType analysisType,
+  public static List<Node> filterInitialStatisticByIntervalTime(com.axonivy.solutions.process.analyser.core.bo.Process processStart, KpiType analysisType,
       List<ICase> cases) {
     if (Objects.isNull(processStart)) {
       return Collections.emptyList();

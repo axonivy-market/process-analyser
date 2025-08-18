@@ -3,23 +3,36 @@ package com.axonivy.solutions.process.analyser.core.internal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.axonivy.solutions.process.analyser.core.bo.Process;
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
 
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.application.IProcessModel;
+import ch.ivyteam.ivy.application.IProcessModelVersion;
+import ch.ivyteam.ivy.bpm.exec.internal.event.start.program.ProgramStartConfig;
+import ch.ivyteam.ivy.bpm.exec.internal.event.start.program.ProgramStartFactory;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.htmldialog.IHtmlDialogContext;
+import ch.ivyteam.ivy.process.acl.element.activity.TriggerCallZ;
+import ch.ivyteam.ivy.process.acl.element.event.start.ProgramStartZ;
+import ch.ivyteam.ivy.process.acl.element.event.start.RequestStartZ;
+import ch.ivyteam.ivy.process.acl.element.event.start.SignalStartEventZ;
+import ch.ivyteam.ivy.process.eventstart.IProcessStartEventBeanEngineManager;
+import ch.ivyteam.ivy.process.eventstart.IProcessStartEventBeanInfo;
 import ch.ivyteam.ivy.process.model.BaseElement;
+import ch.ivyteam.ivy.process.model.ProcessKind;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.EmbeddedProcessElement;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
@@ -39,10 +52,11 @@ import ch.ivyteam.ivy.process.rdm.IProcessManager;
 import ch.ivyteam.ivy.process.rdm.IProjectProcessManager;
 import ch.ivyteam.ivy.security.ISecurityContext;
 import ch.ivyteam.ivy.workflow.IProcessStart;
+import ch.ivyteam.ivy.workflow.IStartElement;
 import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
-
+import ch.ivyteam.ivy.process.eventstart.IProcessStartEventBeanInfo;
 @SuppressWarnings("restriction")
 public class ProcessUtils {
   private ProcessUtils() {
@@ -125,13 +139,13 @@ public class ProcessUtils {
         .orElse(Collections.emptyList());
   }
 
-  public static List<ProcessElement> getProcessElementsFrom(IProcessWebStartable startElement) {
-    if (Optional.ofNullable(startElement).map(IProcessWebStartable::pid).isEmpty()) {
+  public static List<ProcessElement> getProcessElementsFrom(Process startElement) {
+    if (Optional.ofNullable(startElement).map(Process::getId).isEmpty()) {
       return Collections.emptyList();
     }
 
-    String processRawPid = getProcessPidFromElement(startElement.pid().toString());
-    IProjectProcessManager manager = IProcessManager.instance().getProjectDataModelFor(startElement.pmv());
+    String processRawPid = getProcessPidFromElement(startElement.getId().toString());
+    IProjectProcessManager manager = IProcessManager.instance().getProjectDataModelFor(startElement.getPmv());
     IProcess foundProcess = manager.findProcess(processRawPid, true);
     if (foundProcess == null) {
       return Collections.emptyList();
@@ -147,15 +161,62 @@ public class ProcessUtils {
     return elements.stream().flatMap(element -> element.getOutgoing().stream()).collect(Collectors.toList());
   }
 
-  public static List<IWebStartable> getAllProcesses() {
-    return Ivy.session().getStartables().stream().filter(ProcessUtils::isIWebStartableNeedToRecordStatistic).toList();
+  public static List<Process> getAllProcesses() {
+    final List<String> startClassNames = List.of("RequestStartZ", "ProgramStartZ", "SignalStartEventZ", "TriggerCallZ");
+    Set<Process> processes = new HashSet<>();
+    for (var pmv : IApplication.current().getProcessModelVersions().toList()) {
+      if (isPMVNeedToRecordStatistic(pmv)) {
+        IProcessManager.instance().getProjectDataModelFor(pmv).getProcesses()
+          .stream().filter(p-> p.getKind() != ProcessKind.HTML_DIALOG)
+          .forEach(ivyProcess -> {
+          Ivy.log().warn("Found process {0} - {1} - {2}", ivyProcess.getKind(), ivyProcess.getResource().getProjectRelativePath(), ivyProcess.getRequestPath());
+          var process = new Process();
+          process.setId(ivyProcess.getIdentifier());
+          process.setName(ivyProcess.getName());
+          process.setPmvId(pmv.getId());
+          process.setPmvName(pmv.getName());
+          process.setPmv(pmv);
+          process.setProjectRelativePath(ivyProcess.getResource().getProjectRelativePath().toString());
+          
+          for (var element : ivyProcess.getModel().getProcessElements()) {
+            if (startClassNames.contains(element.getClass().getSimpleName())) {
+              process.setRequestPath(element.getPid().getRawPid().concat("/").concat(element.getName()));
+            }
+          }
+         
+          
+          Ivy.log().warn("Combiled process {0}", process);
+          processes.add(process);
+        });
+//        IProcessStartEventBeanEngineManager.instance().getProcessStartEventBeanEngine(pmv).getEventBeanInfos().forEach(processEventInfo -> {
+//          var processstart = processEventInfo.getEventBeanRuntime().getProcessStart();
+//          Ivy.log().warn("Found event start {0} - {1} - {2} - {3}",processstart.pid().getRawPid(),processstart.pid().getParent().getRawPid(), processstart.getProcessElementId(), processstart.pid().getRawPid());
+//          IProcess ivyProcess = IProcessManager.instance().findProcess(processstart.pid().getRawPid());
+//          if (ivyProcess == null) {
+//            ivyProcess =  IProcessManager.instance().findProcess(processstart.pid().getParent().getRawPid());
+//          }
+//          var process = new Process();
+//          process.setId(ivyProcess.getIdentifier());
+//          process.setName(ivyProcess.getName());
+//          process.setPmvId(pmv.getId());
+//          process.setPmvName(pmv.getName());
+//          process.setPmv(pmv);
+//          process.setRequestPath(ivyProcess.getRequestPath());
+//          process.setProjectRelativePath(ivyProcess.getResource().getProjectRelativePath().toString());
+//          processes.add(process);
+//        });
+      }
+    }
+    
+//    return Ivy.session().getStartables().stream().filter(ProcessUtils::isIWebStartableNeedToRecordStatistic).toList();
+    return processes.stream().toList();
   }
 
-  public static Map<String, List<IProcessWebStartable>> getProcessesWithPmv() {
-    Map<String, List<IProcessWebStartable>> result = new HashMap<>();
-    for (IWebStartable process : getAllProcesses()) {
-      String pmvName = process.pmv().getProcessModel().getName();
-      result.computeIfAbsent(pmvName, key -> new ArrayList<>()).add((IProcessWebStartable) process);
+  public static Map<String, List<Process>> getProcessesWithPmv() {
+    Map<String, List<Process>> result = new HashMap<>();
+    for (var process : getAllProcesses()) {
+      String pmvName = process.getPmvName();
+      result.computeIfAbsent(pmvName, key -> new ArrayList<>()).add((Process) process);
     }
     return result;
   }
@@ -165,6 +226,15 @@ public class ProcessUtils {
     return !(StringUtils.equals(pmName, ProcessAnalyticsConstants.PROCESS_ANALYSER_PMV_NAME)
         || StringUtils.contains(pmName, ProcessAnalyticsConstants.PORTAL_PMV_SUFFIX))
         && IProcessWebStartable.class.isInstance(process);
+  }
+
+  private static boolean isPMVNeedToRecordStatistic(IProcessModelVersion pmv) {
+    if (pmv == null) {
+      return false;
+    }
+    String pmName = pmv.getProcessModel().getName();
+    return !(StringUtils.equals(pmName, ProcessAnalyticsConstants.PROCESS_ANALYSER_PMV_NAME)
+        || StringUtils.contains(pmName, ProcessAnalyticsConstants.PORTAL_PMV_SUFFIX));
   }
 
   public static List<ProcessElement> getAlterNativesWithMultiOutgoings(List<ProcessElement> processElements) {
@@ -266,16 +336,15 @@ public class ProcessUtils {
     return processFilePath;
   }
 
-  public static String buildBpmnIFrameSourceUrl(String selectedStartableId, String selectedModule) {
+  public static String buildBpmnIFrameSourceUrl(Process selectedProcess, String selectedModule) {
     IApplication application = IApplication.current();
-    String processFilePath = getSelectedProcessFilePath(selectedStartableId, selectedModule, application.getName());
     String targetHost = IHtmlDialogContext.current().applicationHomeLink().toAbsoluteUri().getAuthority();
     String securityContextName = ISecurityContext.current().getName();
     if (!ISecurityContext.DEFAULT.equals(securityContextName)) {
       targetHost = StringUtils.join(targetHost, ProcessAnalyticsConstants.SLASH, securityContextName);
     }
     return String.format(ProcessAnalyticsConstants.PROCESS_ANALYSER_SOURCE_URL_PATTERN, application.getContextPath(),
-        IProcessModel.current().getName(), targetHost, application.getName(), selectedModule, processFilePath);
+        IProcessModel.current().getName(), targetHost, application.getName(), selectedModule, selectedProcess.getProjectRelativePath());
   }
   
   public static boolean isEmbeddedStartConnectToSequenceFlow(ProcessElement element, String targetSequenceFlowId) {

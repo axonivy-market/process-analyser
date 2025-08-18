@@ -10,6 +10,7 @@ import static com.axonivy.solutions.process.analyser.core.constants.UserProperty
 import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.FREQUENCY_TEXT_COLOR;
 import static com.axonivy.solutions.process.analyser.enums.KpiType.FREQUENCY;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -39,6 +40,7 @@ import com.axonivy.solutions.process.analyser.bo.ProcessMiningData;
 import com.axonivy.solutions.process.analyser.bo.TimeFrame;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
+import com.axonivy.solutions.process.analyser.core.bo.Process;
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
@@ -57,15 +59,13 @@ import ch.ivyteam.ivy.location.IParser.ParseException;
 import ch.ivyteam.ivy.security.IUser;
 import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
-import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
-import ch.ivyteam.ivy.workflow.start.IWebStartable;
 
 @ManagedBean
 @ViewScoped
 public class ProcessesAnalyticsBean {
   private static final String SUB_PROCESS_CALL_PID_PARAM_NAME = "subProcessCallPid";
-  private Map<String, List<IProcessWebStartable>> processesMap = new HashMap<>();
-  private String selectedProcess;
+  private Map<String, List<Process>> processesMap = new HashMap<>();
+  private Process selectedProcess;
   private String selectedModule;
   private KpiType selectedKpiType;
   private List<Node> nodes;
@@ -136,11 +136,11 @@ public class ProcessesAnalyticsBean {
     return group;
   }
 
-  public List<String> getAvailableProcesses() {
+  public List<Process> getAvailableProcesses() {
     if (StringUtils.isBlank(selectedModule)) {
       return new ArrayList<>();
     }
-    return processesMap.get(selectedModule).stream().map(IWebStartable::getDisplayName).collect(Collectors.toList());
+    return processesMap.get(selectedModule);
   }
 
   public Set<String> getAvailableModules() {
@@ -159,16 +159,16 @@ public class ProcessesAnalyticsBean {
     }
   }
 
-  public void onProcessSelect() {
+  public void onProcessSelect() throws IOException {
     resetStatisticValue();
-    if (StringUtils.isNotBlank(selectedProcess)) {
+    if (selectedProcess != null) {
       updateDiagramAndStatistic();
       getCaseAndTaskCustomFields();
       renderNodesForKPIType();
     }
   }
 
-  public void onKpiTypeSelect() {
+  public void onKpiTypeSelect() throws IOException {
     selectedIndex = -1;
     selectedColor = null;
     getBackgroundAndTextColors();
@@ -194,7 +194,7 @@ public class ProcessesAnalyticsBean {
 
   public List<CustomFieldFilter> getCaseAndTaskCustomFields() {
     Optional.ofNullable(getSelectedIProcessWebStartable()).ifPresent(process -> {
-      selectedPid = process.pid().getParent().toString();
+      selectedPid = process.getId();
     });
     customFieldsByType = IvyTaskOccurrenceService.getCaseAndTaskCustomFields(selectedPid, timeIntervalFilter);
     return customFieldsByType;
@@ -229,7 +229,7 @@ public class ProcessesAnalyticsBean {
     PF.current().ajax().update(groupIdsToUpdate);
   }
 
-  public void onCustomfieldUnselect() {
+  public void onCustomfieldUnselect() throws IOException {
     onCustomFieldSelect();
     updateDiagramAndStatistic();
     updateCustomFilterPanel();
@@ -263,7 +263,7 @@ public class ProcessesAnalyticsBean {
     selectedColor = colorSegments.get(selectedIndex);
   }
 
-  public void onColorChange() {
+  public void onColorChange() throws IOException {
     colorSegments = ColorUtils.generateGradientFromRgb(selectedColor, GRADIENT_COLOR_LEVELS);
     textColors = ColorUtils.getAccessibleTextColors(colorSegments);
     updateColorProperties();
@@ -305,7 +305,7 @@ public class ProcessesAnalyticsBean {
     }
   }
 
-  public void updateDataOnChangingFilter() throws ParseException {
+  public void updateDataOnChangingFilter() throws ParseException, IOException {
     var parameterMap = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
     String from = parameterMap.get(ProcessAnalyticsConstants.FROM);
     String to = parameterMap.get(ProcessAnalyticsConstants.TO);
@@ -317,7 +317,7 @@ public class ProcessesAnalyticsBean {
     renderNodesForKPIType();
   }
 
-  public void updateDiagramAndStatistic() {
+  public void updateDiagramAndStatistic() throws IOException {
     if (isDiagramAndStatisticRenderable()) {
       loadNodes();
       updateProcessMiningDataJson();
@@ -327,28 +327,29 @@ public class ProcessesAnalyticsBean {
     }
   }
 
-  private IProcessWebStartable getSelectedIProcessWebStartable() {
-    return CollectionUtils.emptyIfNull(processesMap.get(selectedModule)).stream()
-        .filter(process -> process.getDisplayName().equalsIgnoreCase(selectedProcess)).findAny().orElse(null);
+  private Process getSelectedIProcessWebStartable() {
+//    return CollectionUtils.emptyIfNull(processesMap.get(selectedModule)).stream()
+//        .filter(process -> process.getRequestPath().equalsIgnoreCase(selectedProcess)).findAny().orElse(null);
+    return selectedProcess;
   }
 
   private void updateBpmnIframeSourceUrl() {
-    bpmnIframeSourceUrl = ProcessUtils.buildBpmnIFrameSourceUrl(getSelectedIProcessWebStartable().getId(),
+    bpmnIframeSourceUrl = ProcessUtils.buildBpmnIFrameSourceUrl(selectedProcess,
         selectedModule);
   }
 
   private void loadNodes() {
     analyzedNode = new ArrayList<>();
     var process = getSelectedIProcessWebStartable();
-    selectedPid = process.pid().toString();
-    if (StringUtils.isNoneBlank(selectedProcess, selectedModule) && ObjectUtils.allNotNull(selectedKpiType, process)) {
+    selectedPid = process.getId();
+    if (StringUtils.isNoneBlank(selectedModule) && selectedProcess != null && ObjectUtils.allNotNull(selectedKpiType, process)) {
       Long taskStartId = ProcessUtils.getTaskStartIdFromPID(selectedPid);
       List<ICase> cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId,
           timeIntervalFilter, selectedCustomFilters);
       if (CollectionUtils.isNotEmpty(cases)) {
         processMiningData = new ProcessMiningData();
-        processMiningData.setProcessId(process.pid().getParent().toString());
-        processMiningData.setProcessName(selectedProcess);
+        processMiningData.setProcessId(process.getId());
+        processMiningData.setProcessName(selectedProcess.getName());
         processMiningData.setKpiType(selectedKpiType);
         TimeFrame timeFrame = new TimeFrame(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo());
         processMiningData.setTimeFrame(timeFrame);
@@ -362,8 +363,13 @@ public class ProcessesAnalyticsBean {
     updateDataTableWithNodesPrefix(ProcessUtils.getProcessPidFromElement(selectedPid));
   }
 
-  private void updateProcessMiningDataJson() {
-    String jsonString = JacksonUtils.convertObjectToJSONString(processMiningData);
+  private void updateProcessMiningDataJson() throws IOException {
+    String jsonString;
+    if (processMiningData != null) {
+      jsonString = JacksonUtils.convertObjectToJSONString(processMiningData);
+    } else {
+      jsonString = new String(this.getClass().getResourceAsStream("/mock.json").readAllBytes());
+    }
     processMiningDataJsonFile.value().get(ProcessAnalyticsConstants.EN_CMS_LOCALE).write().string(jsonString);
   }
 
@@ -371,7 +377,7 @@ public class ProcessesAnalyticsBean {
     String formattedKpiTypeName = selectedKpiType.getCmsName()
         .replaceAll(ProcessAnalyticsConstants.SPACE_DASH_REGEX, ProcessAnalyticsConstants.UNDERSCORE)
         .replaceAll(ProcessAnalyticsConstants.MULTIPLE_UNDERSCORES_REGEX, ProcessAnalyticsConstants.UNDERSCORE);
-    return StringUtils.isNotBlank(selectedProcess)
+    return selectedProcess != null
         ? String.format(ProcessAnalyticsConstants.ANALYSIS_EXCEL_FILE_PATTERN, formattedKpiTypeName, selectedProcess)
         : StringUtils.EMPTY;
   }
@@ -400,11 +406,11 @@ public class ProcessesAnalyticsBean {
     return FREQUENCY == selectedKpiType ? FREQUENCY_TEXT_COLOR : DURATION_TEXT_COLOR;
   }
 
-  public String getSelectedProcess() {
+  public Process getSelectedProcess() {
     return selectedProcess;
   }
 
-  public void setSelectedProcess(String selectedProcess) {
+  public void setSelectedProcess(Process selectedProcess) {
     this.selectedProcess = selectedProcess;
   }
 
@@ -441,7 +447,7 @@ public class ProcessesAnalyticsBean {
   }
 
   public boolean isShowStatisticBtnDisabled() {
-    return StringUtils.isAnyBlank(selectedModule, selectedProcess) || selectedKpiType == null;
+    return StringUtils.isBlank(selectedModule) || selectedProcess == null || selectedKpiType == null;
   }
 
   public String getBpmnIframeSourceUrl() {

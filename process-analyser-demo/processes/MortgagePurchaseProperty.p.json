@@ -1,0 +1,335 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/process/13.1.2/process.json",
+  "id" : "198A2D16EA164504",
+  "config" : {
+    "data" : "com.axonivy.solutions.process.analyser.demo.MortgagePurchasePropertyData"
+  },
+  "elements" : [ {
+      "id" : "f1",
+      "type" : "TaskEnd",
+      "visual" : {
+        "at" : { "x" : 2808, "y" : 160 }
+      }
+    }, {
+      "id" : "f3",
+      "type" : "SignalStartEvent",
+      "name" : "mortgate:purchase",
+      "config" : {
+        "signalCode" : "mortgate:purchase",
+        "attachToBusinessCase" : false
+      },
+      "visual" : {
+        "at" : { "x" : 128, "y" : 752 }
+      },
+      "connect" : [
+        { "id" : "f4", "to" : "f5", "color" : "default" }
+      ]
+    }, {
+      "id" : "f5",
+      "type" : "Script",
+      "name" : "Generate data",
+      "visual" : {
+        "at" : { "x" : 288, "y" : 752 }
+      },
+      "connect" : [
+        { "id" : "f81", "to" : "f100" }
+      ]
+    }, {
+      "id" : "f15",
+      "type" : "Alternative",
+      "config" : {
+        "conditions" : {
+          "f16" : "true"
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 536, "y" : 160 }
+      },
+      "connect" : [
+        { "id" : "f16", "to" : "f118", "via" : [ { "x" : 536, "y" : 288 } ], "color" : "default" },
+        { "id" : "f18", "to" : "f117" }
+      ]
+    }, {
+      "id" : "f19",
+      "type" : "Alternative",
+      "visual" : {
+        "at" : { "x" : 784, "y" : 160 }
+      },
+      "connect" : [
+        { "id" : "f22", "to" : "f119" }
+      ]
+    }, {
+      "id" : "f23",
+      "type" : "TaskSwitchGateway",
+      "config" : {
+        "tasks" : [ {
+            "id" : "TaskA"
+          }, {
+            "id" : "TaskB"
+          }, {
+            "id" : "TaskC"
+          } ]
+      },
+      "visual" : {
+        "at" : { "x" : 984, "y" : 320 }
+      },
+      "connect" : [
+        { "id" : "f26", "to" : "f25", "condition" : "ivp==\"TaskA.ivp\"" },
+        { "id" : "f38", "to" : "f37", "condition" : "ivp==\"TaskB.ivp\"" },
+        { "id" : "f48", "to" : "f139", "condition" : "ivp==\"TaskC.ivp\"" }
+      ]
+    }, {
+      "id" : "f25",
+      "type" : "Alternative",
+      "visual" : {
+        "at" : { "x" : 984, "y" : 456 }
+      },
+      "connect" : [
+        { "id" : "f46", "to" : "f120", "via" : [ { "x" : 984, "y" : 552 } ] },
+        { "id" : "f47", "to" : "f41", "via" : [ { "x" : 2128, "y" : 456 } ] }
+      ]
+    }, {
+      "id" : "f36",
+      "type" : "Alternative",
+      "visual" : {
+        "at" : { "x" : 2448, "y" : 160 }
+      },
+      "connect" : [
+        { "id" : "f60", "to" : "f107" }
+      ]
+    }, {
+      "id" : "f37",
+      "type" : "Alternative",
+      "visual" : {
+        "at" : { "x" : 1200, "y" : 320 }
+      },
+      "connect" : [
+        { "id" : "f39", "to" : "f121" },
+        { "id" : "f99", "to" : "f134", "via" : [ { "x" : 1200, "y" : 400 }, { "x" : 1448, "y" : 400 } ] }
+      ]
+    }, {
+      "id" : "f41",
+      "type" : "Alternative",
+      "visual" : {
+        "at" : { "x" : 2128, "y" : 320 }
+      },
+      "connect" : [
+        { "id" : "f43", "to" : "f144" }
+      ]
+    }, {
+      "id" : "f51",
+      "type" : "Alternative",
+      "visual" : {
+        "at" : { "x" : 1984, "y" : 160 }
+      },
+      "connect" : [
+        { "id" : "f52", "to" : "f106", "color" : "default" },
+        { "id" : "f56", "to" : "f139", "via" : [ { "x" : 1976, "y" : 96 }, { "x" : 1096, "y" : 96 } ] }
+      ]
+    }, {
+      "id" : "f53",
+      "type" : "Alternative",
+      "visual" : {
+        "at" : { "x" : 1528, "y" : 160 }
+      },
+      "connect" : [
+        { "id" : "f54", "to" : "f108", "color" : "default" },
+        { "id" : "f55", "to" : "f51", "via" : [ { "x" : 1528, "y" : 216 }, { "x" : 1984, "y" : 216 } ] }
+      ]
+    }, {
+      "id" : "f63",
+      "type" : "Alternative",
+      "visual" : {
+        "at" : { "x" : 2680, "y" : 160 }
+      },
+      "connect" : [
+        { "id" : "f64", "to" : "f1" },
+        { "id" : "f98", "to" : "f144", "via" : [ { "x" : 2680, "y" : 392 }, { "x" : 2272, "y" : 392 } ] }
+      ]
+    }, {
+      "id" : "f100",
+      "type" : "TaskSwitchEvent",
+      "name" : "Prepare case",
+      "config" : {
+        "task" : {
+          "name" : "Prepare case",
+          "skipTasklist" : true
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 288, "y" : 160 },
+        "labelOffset" : { "x" : 9, "y" : -23 }
+      },
+      "connect" : [
+        { "id" : "f101", "to" : "f124", "color" : "default" }
+      ]
+    }, {
+      "id" : "f105",
+      "type" : "TaskSwitchEvent",
+      "visual" : {
+        "at" : { "x" : 2448, "y" : 320 }
+      },
+      "connect" : [
+        { "id" : "f143", "to" : "f36", "color" : "default" }
+      ]
+    }, {
+      "id" : "f106",
+      "type" : "TaskSwitchEvent",
+      "visual" : {
+        "at" : { "x" : 2080, "y" : 160 }
+      },
+      "connect" : [
+        { "id" : "f138", "to" : "f36", "color" : "default" }
+      ]
+    }, {
+      "id" : "f107",
+      "type" : "TaskSwitchEvent",
+      "visual" : {
+        "at" : { "x" : 2552, "y" : 160 }
+      },
+      "connect" : [
+        { "id" : "f142", "to" : "f63", "color" : "default" }
+      ]
+    }, {
+      "id" : "f108",
+      "type" : "TaskSwitchEvent",
+      "visual" : {
+        "at" : { "x" : 1624, "y" : 160 }
+      },
+      "connect" : [
+        { "id" : "f141", "to" : "f51" }
+      ]
+    }, {
+      "id" : "f109",
+      "type" : "TaskSwitchEvent",
+      "visual" : {
+        "at" : { "x" : 1184, "y" : 160 }
+      },
+      "connect" : [
+        { "id" : "f136", "to" : "f53", "color" : "default" }
+      ]
+    }, {
+      "id" : "f110",
+      "type" : "TaskSwitchEvent",
+      "visual" : {
+        "at" : { "x" : 1552, "y" : 320 }
+      },
+      "connect" : [
+        { "id" : "f133", "to" : "f41", "color" : "default" }
+      ]
+    }, {
+      "id" : "f117",
+      "type" : "TaskSwitchEvent",
+      "visual" : {
+        "at" : { "x" : 632, "y" : 160 }
+      },
+      "connect" : [
+        { "id" : "f126", "to" : "f19", "color" : "default" }
+      ]
+    }, {
+      "id" : "f118",
+      "type" : "TaskSwitchEvent",
+      "visual" : {
+        "at" : { "x" : 632, "y" : 288 }
+      },
+      "connect" : [
+        { "id" : "f127", "to" : "f123", "color" : "default" }
+      ]
+    }, {
+      "id" : "f119",
+      "type" : "TaskSwitchEvent",
+      "visual" : {
+        "at" : { "x" : 984, "y" : 160 }
+      },
+      "connect" : [
+        { "id" : "f129", "to" : "f23", "color" : "default", "var" : "in1" }
+      ]
+    }, {
+      "id" : "f120",
+      "type" : "TaskSwitchEvent",
+      "visual" : {
+        "at" : { "x" : 1080, "y" : 552 }
+      },
+      "connect" : [
+        { "id" : "f130", "to" : "f122", "color" : "default" }
+      ]
+    }, {
+      "id" : "f121",
+      "type" : "TaskSwitchEvent",
+      "visual" : {
+        "at" : { "x" : 1296, "y" : 320 }
+      },
+      "connect" : [
+        { "id" : "f132", "to" : "f134", "color" : "default" }
+      ]
+    }, {
+      "id" : "f122",
+      "type" : "TaskSwitchEvent",
+      "visual" : {
+        "at" : { "x" : 1336, "y" : 552 }
+      },
+      "connect" : [
+        { "id" : "f131", "to" : "f41", "via" : [ { "x" : 2128, "y" : 552 } ], "color" : "default" }
+      ]
+    }, {
+      "id" : "f123",
+      "type" : "TaskSwitchEvent",
+      "visual" : {
+        "at" : { "x" : 784, "y" : 288 }
+      },
+      "connect" : [
+        { "id" : "f128", "to" : "f19", "color" : "default" }
+      ]
+    }, {
+      "id" : "f124",
+      "type" : "TaskSwitchEvent",
+      "name" : "Mortgage deed",
+      "visual" : {
+        "at" : { "x" : 416, "y" : 160 }
+      },
+      "connect" : [
+        { "id" : "f125", "to" : "f15", "color" : "default" }
+      ]
+    }, {
+      "id" : "f134",
+      "type" : "Alternative",
+      "visual" : {
+        "at" : { "x" : 1448, "y" : 320 }
+      },
+      "connect" : [
+        { "id" : "f135", "to" : "f110", "color" : "default" }
+      ]
+    }, {
+      "id" : "f139",
+      "type" : "Alternative",
+      "visual" : {
+        "at" : { "x" : 1096, "y" : 160 }
+      },
+      "connect" : [
+        { "id" : "f140", "to" : "f109", "color" : "default" }
+      ]
+    }, {
+      "id" : "f144",
+      "type" : "Alternative",
+      "visual" : {
+        "at" : { "x" : 2272, "y" : 320 }
+      },
+      "connect" : [
+        { "id" : "f145", "to" : "f105" }
+      ]
+    } ],
+  "layout" : {
+    "lanes" : [ {
+        "name" : "Mortgage Purchase Property",
+        "offset" : 64,
+        "size" : 784,
+        "lanes" : [ {
+            "name" : "Responsible",
+            "size" : 592
+          }, {
+            "name" : "Axon Ivy",
+            "size" : 192
+          } ]
+      } ]
+  }
+}
