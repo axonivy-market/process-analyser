@@ -3,12 +3,14 @@ package com.axonivy.solutions.process.analyser.core.internal;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.AND;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.SLASH;
 import static com.axonivy.solutions.process.analyser.core.constants.ViewerConstants.APP;
+import static com.axonivy.solutions.process.analyser.core.constants.ViewerConstants.FACES;
 import static com.axonivy.solutions.process.analyser.core.constants.ViewerConstants.FILE;
 import static com.axonivy.solutions.process.analyser.core.constants.ViewerConstants.HIGHLIGHT;
 import static com.axonivy.solutions.process.analyser.core.constants.ViewerConstants.PMV;
 import static com.axonivy.solutions.process.analyser.core.constants.ViewerConstants.PROCESS_MINER_FILE;
 import static com.axonivy.solutions.process.analyser.core.constants.ViewerConstants.SELECT;
 import static com.axonivy.solutions.process.analyser.core.constants.ViewerConstants.SERVER;
+import static com.axonivy.solutions.process.analyser.core.constants.ViewerConstants.VIEW;
 import static com.axonivy.solutions.process.analyser.core.constants.ViewerConstants.ZOOM;
 
 import java.net.URI;
@@ -18,8 +20,6 @@ import java.util.Map;
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.lang3.StringUtils;
-
-import com.axonivy.solutions.process.analyser.core.bo.Process;
 
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.application.IProcessModel;
@@ -31,13 +31,11 @@ public class ProcessViewerBuilder {
   private final Map<String, String> queryParams = new HashMap<>();
   private final String contextPath;
 
-  public ProcessViewerBuilder(Process selectedProcess) {
+  public ProcessViewerBuilder() {
     IApplication application = IApplication.current();
     contextPath = application.getContextPath();
     setQueryParam(SERVER, detectServerParam());
     setQueryParam(APP, application.getName());
-    setQueryParam(PMV, selectedProcess.getPmvName());
-    setQueryParam(FILE, selectedProcess.getProjectRelativePath());
   }
 
   private String detectServerParam() {
@@ -49,8 +47,12 @@ public class ProcessViewerBuilder {
     return server;
   }
 
-  public ProcessViewerBuilder fitToScreen(boolean fitToScreen) {
-    return addQueryParam("fitToScreen", Boolean.toString(fitToScreen));
+  public ProcessViewerBuilder pmv(String pmvName) {
+    return setQueryParam(PMV, pmvName);
+  }
+
+  public ProcessViewerBuilder projectPath(String projectRelativePath) {
+    return setQueryParam(FILE, projectRelativePath);
   }
 
   public ProcessViewerBuilder highlight(String elementId) {
@@ -67,8 +69,8 @@ public class ProcessViewerBuilder {
 
   public URI toURI() {
     var uriBuilder = UriBuilder.fromPath(contextPath)
-        .path("faces")
-        .path("view")
+        .path(FACES)
+        .path(VIEW)
         .path(IProcessModel.current().getName())
         .path(PROCESS_MINER_FILE);
     for (var queryParam : queryParams.entrySet()) {

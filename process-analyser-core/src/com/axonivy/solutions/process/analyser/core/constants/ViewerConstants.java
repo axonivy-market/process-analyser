@@ -1,6 +1,8 @@
 package com.axonivy.solutions.process.analyser.core.constants;
 
 public class ViewerConstants {
+  public static final String FACES = "faces";
+  public static final String VIEW = "view";
   public static final String SERVER = "server";
   public static final String APP = "app";
   public static final String PMV = "pmv";

@@ -58,7 +58,8 @@ public class ProcessUtilsTest extends BaseSetup {
 
   @Test
   void test_getProcessElementsFromIProcessWebStartable() {
-    assertThat(ProcessUtils.getProcessElementsFrom(testProcessStart).size()).isEqualTo(14);
+    assertThat(ProcessUtils.getProcessElementsFrom(testProcessStart.getId(), testProcessStart.pmv()).size())
+        .isEqualTo(14);
   }
 
   @Test
@@ -81,12 +82,6 @@ public class ProcessUtilsTest extends BaseSetup {
   @Test
   void test_isAlternativeInstance() {
     assertThat(ProcessUtils.isAlternativeInstance(getElementNextToTestStart())).isTrue();
-  }
-
-  @Test
-  void test_buildBpmnIFrameSourceUrl() {
-    assertThat(ProcessUtils.buildBpmnIFrameSourceUrl(SELECTED_STARTABLE_ID, SELECTED_MODULE_URL))
-        .isEqualTo(TEST_IFRAME_SOURCE_URL);
   }
 
   @Test

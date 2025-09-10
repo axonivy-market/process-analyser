@@ -55,7 +55,9 @@ public class ProcessViewerBean implements Serializable {
   }
 
   public void updateBpmnIframeSourceUrl(String selectedItem) {
-    var builder = new ProcessViewerBuilder(selectedProcess);
+    var builder = new ProcessViewerBuilder();
+    builder.pmv(selectedProcess.getPmvName());
+    builder.projectPath(selectedProcess.getProjectRelativePath());
     if (StringUtils.isNoneBlank(selectedItem)) {
       builder.select(selectedItem);
     }

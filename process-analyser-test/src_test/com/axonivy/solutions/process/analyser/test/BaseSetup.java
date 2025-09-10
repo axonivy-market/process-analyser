@@ -12,7 +12,6 @@ import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import ch.ivyteam.ivy.process.model.NodeElement;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
-import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 
 @SuppressWarnings("restriction")
@@ -27,6 +26,7 @@ public class BaseSetup {
   protected static final String SELECTED_STARTABLE_ID = "SupportHR.p.json";
   protected static final String TEST_IFRAME_SOURCE_URL = "/test/faces/view/process-analyser-test/process-miner.xhtml?server=localhost:8080&app=test&pmv=HRTest&file=/processes/"
       + SELECTED_STARTABLE_ID;
+  protected static final String SELECTED_PROJECT_PATH = "/processes/SupportHR.p.json";
   protected static final String SELECTED_MODULE_URL = "HRTest";
   protected static final String OUTER_FLOW_TO_SUB_PID = "193485C5ABDFEA93-f16";
   protected static final String SUB_PROCESS_START = "193485C5ABDFEA93-S10-g0";
@@ -50,7 +50,7 @@ public class BaseSetup {
   protected static void prepareData() {
     testProcessStart = (IProcessWebStartable) ProcessUtils.getAllProcesses().stream()
         .filter(start -> StringUtils.contains(start.getName(), TEST_PROCESS_NAME)).findAny().orElse(null);
-    testProcessElements = ProcessUtils.getProcessElementsFrom(testProcessStart);
+    testProcessElements = ProcessUtils.getProcessElementsFrom(testProcessStart.getId(), testProcessStart.pmv());
     multiIncomingsElement = getProcessElementByPid(MULTI_INCOMINGS_ELEMENT_PID);
     subProcessElement = getProcessElementByPid(EMBEDDED_PID);
     subProcessCall = getProcessElementByPid(REST_CALL_PID);

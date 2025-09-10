@@ -20,7 +20,6 @@ import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
-import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.core.util.ProcessElementUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
@@ -32,8 +31,6 @@ import ch.ivyteam.ivy.application.IProcessModelVersion;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
-import ch.ivyteam.ivy.process.model.element.event.start.RequestStart;
-import ch.ivyteam.ivy.process.model.element.gateway.TaskSwitchGateway;
 import ch.ivyteam.ivy.workflow.CaseState;
 import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.ITask;
@@ -45,51 +42,6 @@ import ch.ivyteam.ivy.workflow.query.TaskQuery;
 public class ProcessesMonitorUtils {
 
   private ProcessesMonitorUtils() { }
-
-  /**
-   * Convert process element to Node base on its class type
-   **/
-  public static List<Node> convertProcessElementToNode(ProcessElement element) {
-    Node node = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT);
-    node.setOutGoingPathIds(element.getOutgoing().stream().map(ProcessUtils::getElementPid).toList());
-
-    return switch (element) {
-    case TaskSwitchGateway taskSwitchGateway -> {
-      node.setInCommingPathIds(taskSwitchGateway.getIncoming().stream().map(ProcessUtils::getElementPid).toList());
-      node.setTaskSwitchGateway(true);
-      String elementId = taskSwitchGateway.getPid().toString();
-      List<Node> taskNodes = taskSwitchGateway.getAllTaskConfigs().stream()
-          .map(task -> createNode(
-              elementId + ProcessAnalyticsConstants.SLASH + task.getTaskIdentifier().getTaskIvpLinkName(),
-              task.getName().getRawMacro(), NodeType.ELEMENT))
-          .collect(Collectors.toList());
-      taskNodes.add(0, node);
-      yield taskNodes;
-    }
-    case RequestStart requestStart -> {
-      node.setRequestPath(requestStart.getRequestPath().getLinkPath());
-      yield List.of(node);
-    }
-    default -> {
-      node.setInCommingPathIds(element.getIncoming().stream().map(ProcessUtils::getElementPid).toList());
-      yield List.of(node);
-    }};
-  }
-
-  public static Node convertSequenceFlowToNode(SequenceFlow flow) {
-    Node node = createNode(ProcessUtils.getElementPid(flow), flow.getName(), NodeType.ARROW);
-    node.setTargetNodeId(flow.getTarget().getPid().toString());
-    node.setSourceNodeId(flow.getSource().getPid().toString());
-    return node;
-  }
-
-  private static Node createNode(String id, String label, NodeType type) {
-    Node node = new Node();
-    node.setId(id);
-    node.setLabel(label);
-    node.setType(type);
-    return node;
-  }
 
   public static List<Node> filterInitialStatisticByIntervalTime(ProcessAnalyser processAnalyser, KpiType analysisType,
       List<ICase> cases) {

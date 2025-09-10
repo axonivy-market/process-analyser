@@ -18,6 +18,7 @@ import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
+import com.axonivy.solutions.process.analyser.resolver.NodeResolver;
 import com.axonivy.solutions.process.analyser.test.BaseSetup;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 
@@ -40,7 +41,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
 
   @Test
   void test_convertSequenceFlowToNode() {
-    Node result = ProcessesMonitorUtils.convertSequenceFlowToNode(flowFromStartElement);
+    Node result = NodeResolver.convertSequenceFlowToNode(flowFromStartElement);
     assertThat(result.getId()).isEqualTo(TEST_FLOW_PID_FROM_START_ELEMENT);
     assertThat(result.getLabel()).isEmpty();
     assertThat(result.getType()).isEqualTo(NodeType.ARROW);
@@ -49,14 +50,14 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
 
   @Test
   void test_extractNodesFromProcessElements() {
-    List<Node> results = ProcessesMonitorUtils.convertToNodes(List.of(startProcessElement), testSequenceFlows);
+    List<Node> results = NodeResolver.convertToNodes(List.of(startProcessElement), testSequenceFlows);
     assertThat(results.size()).isNotZero();
     assertThat(results.get(0).getId()).isEqualTo(TEST_PROCESS_ELEMENT_START_PID);
   }
 
   @Test
   void test_convertProcessElementToNode() {
-    Node result = ProcessesMonitorUtils.convertProcessElementToNode(startProcessElement).getFirst();
+    Node result = NodeResolver.convertProcessElementToNode(startProcessElement).getFirst();
     assertThat(result.getId()).isEqualTo(TEST_PROCESS_ELEMENT_START_PID);
     assertThat(result.getLabel()).isEqualTo("test");
     assertThat(result.getType()).isEqualTo(NodeType.ELEMENT);
@@ -69,10 +70,10 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     result.setFrequency(10);
     result.setMedianDuration(2);
     assertThat(result.getLabel()).isNull();
-    ProcessesMonitorUtils.updateNodeByAnalysisType(result, KpiType.FREQUENCY);
+    NodeResolver.updateNodeByAnalysisType(result, KpiType.FREQUENCY);
     assertThat(result.getLabelValue()).isEqualTo("10");
     assertThat(result.getRelativeValue()).isZero();
-    ProcessesMonitorUtils.updateNodeByAnalysisType(result, KpiType.DURATION_OVERALL);
+    NodeResolver.updateNodeByAnalysisType(result, KpiType.DURATION_OVERALL);
     assertThat(result.getLabelValue()).isEqualTo("2s");
   }
 
