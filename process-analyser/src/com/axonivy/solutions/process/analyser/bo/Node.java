@@ -5,7 +5,9 @@ import java.util.List;
 
 import com.axonivy.solutions.process.analyser.enums.NodeType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Node {
   private NodeType type;
   private String id;
@@ -144,5 +146,11 @@ public class Node {
 
   public void setRequestPath(String requestPath) {
     this.requestPath = requestPath;
+  }
+
+  @Override
+  public String toString() {
+    final var pattern = "Node{ id: %s / inCommingPathIds: %s / outGoingPathIds: %s / isTaskSwitchGateway: %s / targetNodeId: %s / medianDuration: %2d / frequency: %d}";
+    return pattern.formatted(id, inCommingPathIds, outGoingPathIds, isTaskSwitchGateway, targetNodeId, medianDuration, frequency);
   }
 }

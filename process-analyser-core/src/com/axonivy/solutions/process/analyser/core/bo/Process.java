@@ -1,5 +1,7 @@
 package com.axonivy.solutions.process.analyser.core.bo;
 
+import java.util.List;
+
 import ch.ivyteam.ivy.application.IProcessModelVersion;
 
 public class Process {
@@ -11,15 +13,14 @@ public class Process {
   private String requestPath;
   private String name;
   private String projectRelativePath;
+  private List<StartElement> startElements;
 
   public Process() { }
 
-  public Process(String id, long pmvId, String pmvName, String requestPath, String name) {
+  public Process(String id, String name, List<StartElement> startElements) {
     this.id = id;
-    this.pmvId = pmvId;
-    this.pmvName = pmvName;
-    this.requestPath = requestPath;
     this.name = name;
+    this.startElements = startElements;
   }
 
   public String getId() {
@@ -78,9 +79,17 @@ public class Process {
     this.projectRelativePath = projectRelativePath;
   }
 
+  public List<StartElement> getStartElements() {
+    return startElements;
+  }
+
+  public void setStartElements(List<StartElement> startElements) {
+    this.startElements = startElements;
+  }
+
   @Override
   public String toString() {
-    final var pattern = "Process: { id: %s/ name: %s/ pmv: %s/ requestPath: %s/ projectRelativePath: %s }";
-    return pattern.formatted(id, name, pmvName, requestPath, projectRelativePath);
+    final var pattern = "Process: { id: %s/ name: %s/ pmv: %s/ requestPath: %s/ projectRelativePath: %s/ startElements: %s }";
+    return pattern.formatted(id, name, pmvName, requestPath, projectRelativePath, startElements);
   }
 }

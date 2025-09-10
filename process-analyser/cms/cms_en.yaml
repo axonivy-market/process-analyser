@@ -9,6 +9,8 @@ Dialogs:
         process:
           analyser:
             ProcessAnalytics:
+              CaptureCurrentView: Capture current view
+              CaptureEntireScreen: Capture entire process
               ExportExcel: Export Excel
               ExportJPEG: Export JPEG
               From: From
@@ -50,6 +52,20 @@ Dialogs:
               TotalElements: In total there are {0} element(s).
               Type: Type
               Version: Version
+            component:
+              ProcessViewer:
+                ConfigViewerTooltip: Config the viewer
+                EmptyDataMessage: Please select process to see mining data
+                FocusItem: Focus item
+                FocusItemTooltip: Select the element you want the viewer to focus on, and that element will be centered in the viewport.
+                MiningData: Mining data
+                OpenOnNewTabTooltip: Open viewer on new tab
+                Refresh: Refresh
+                ResizeTooltip: You can mouse hover to the bottom edge of panel to resize this frame
+                ToggleTooltip: Toggle the Mining panel
+                ViewerConfig: Viewer config
+                Zoom: Zoom
+                ZoomTooltip: Determine the zoom level that suits your needs.
 Enums:
   KpiType:
     DURATION:
@@ -72,6 +88,15 @@ Enums:
       name: Arrow
     ELEMENT:
       name: Element
+  StartElementType:
+    StartElement:
+      name: 'Start: {0}'
+    StartEventElement:
+      name: 'Event Start: {0}'
+    StartSignalEventElement:
+      name: 'Signal Start: {0}'
+    WebServiceProcessStartElement:
+      name: 'WebService Start: {0}'
   TimeIntervalType:
     CUSTOM:
       name: Custom

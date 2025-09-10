@@ -5,7 +5,6 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry including="mock.json" kind="src" path="webContent/resources"/>
 	<classpathentry kind="src" path="src_wsproc">
 		<attributes>
 			<attribute name="optional" value="true"/>

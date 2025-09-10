@@ -1,5 +1,5 @@
 {
-  "$schema" : "https://json-schema.axonivy.com/process/13.1.2/process.json",
+  "$schema" : "https://json-schema.axonivy.com/process/12.0.0/process.json",
   "id" : "198A2CD3629AA0D3",
   "config" : {
     "data" : "admin.InitiateDataFromQueueData"
@@ -15,7 +15,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 256, "y" : 224 }
+        "at" : { "x" : 256, "y" : 256 }
       },
       "connect" : [
         { "id" : "f2", "to" : "f24" }
@@ -24,7 +24,7 @@
       "id" : "f1",
       "type" : "TaskEnd",
       "visual" : {
-        "at" : { "x" : 1456, "y" : 96 }
+        "at" : { "x" : 1520, "y" : 128 }
       }
     }, {
       "id" : "f3",
@@ -33,39 +33,15 @@
       "config" : {
         "javaClass" : "ch.ivyteam.ivy.process.eventstart.beans.TimerBean",
         "userConfig" : {
-          "time" : "999"
+          "time" : "999999999999999999"
         },
         "link" : "eventLink.ivp"
       },
       "visual" : {
-        "at" : { "x" : 104, "y" : 96 }
+        "at" : { "x" : 104, "y" : 128 }
       },
       "connect" : [
         { "id" : "f5", "to" : "f24" }
-      ]
-    }, {
-      "id" : "f4",
-      "type" : "Script",
-      "name" : "Prepare for next step",
-      "config" : {
-        "output" : {
-          "code" : [
-            "import ch.ivyteam.ivy.workflow.query.CaseQuery;",
-            "in.selectedKey = in.keys.get(0);",
-            "",
-            "// Find running case",
-            "CaseQuery query = CaseQuery.create().businessCases().where().customField().stringField(\"MyKey\").isEqual(in.selectedKey);",
-            "int totalRunningCases = query.executor().count();",
-            "in.isExistedCase = totalRunningCases > 0;"
-          ]
-        },
-        "sudo" : true
-      },
-      "visual" : {
-        "at" : { "x" : 456, "y" : 96 }
-      },
-      "connect" : [
-        { "id" : "f6", "to" : "f7" }
       ]
     }, {
       "id" : "f7",
@@ -77,43 +53,12 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 608, "y" : 96 },
+        "at" : { "x" : 592, "y" : 128 },
         "labelOffset" : { "y" : -16 }
       },
       "connect" : [
         { "id" : "f8", "to" : "f14", "color" : "default" },
-        { "id" : "f10", "to" : "f9", "via" : [ { "x" : 608, "y" : 256 } ] }
-      ]
-    }, {
-      "id" : "f9",
-      "type" : "Script",
-      "name" : "Print log",
-      "config" : {
-        "output" : {
-          "code" : "ivy.log.warn(\"Dummy skip turn\");"
-        }
-      },
-      "visual" : {
-        "at" : { "x" : 896, "y" : 256 }
-      },
-      "connect" : [
-        { "id" : "f11", "to" : "f19", "via" : [ { "x" : 1208, "y" : 256 } ] }
-      ]
-    }, {
-      "id" : "f12",
-      "type" : "Script",
-      "name" : "Trigger a signal",
-      "config" : {
-        "output" : {
-          "code" : "ivy.wf.signals().send(\"mortgate:purchase\");"
-        },
-        "sudo" : true
-      },
-      "visual" : {
-        "at" : { "x" : 896, "y" : 96 }
-      },
-      "connect" : [
-        { "id" : "f13", "to" : "f16", "color" : "default" }
+        { "id" : "f12", "to" : "S20", "via" : [ { "x" : 592, "y" : 288 } ] }
       ]
     }, {
       "id" : "f14",
@@ -121,23 +66,22 @@
       "name" : "is existed case?",
       "config" : {
         "conditions" : {
-          "f18" : "in.isExistedCase",
-          "f15" : ""
+          "f18" : "in.isExistedCase"
         }
       },
       "visual" : {
-        "at" : { "x" : 752, "y" : 96 },
+        "at" : { "x" : 736, "y" : 128 },
         "labelOffset" : { "x" : 8, "y" : -16 }
       },
       "connect" : [
-        { "id" : "f15", "to" : "f12", "color" : "default" },
-        { "id" : "f18", "to" : "f16", "via" : [ { "x" : 752, "y" : 176 }, { "x" : 1056, "y" : 176 } ] }
+        { "id" : "f18", "to" : "f16", "via" : [ { "x" : 736, "y" : 208 }, { "x" : 1120, "y" : 208 } ] },
+        { "id" : "f32", "to" : "S10", "color" : "default" }
       ]
     }, {
       "id" : "f16",
       "type" : "Alternative",
       "visual" : {
-        "at" : { "x" : 1056, "y" : 96 }
+        "at" : { "x" : 1120, "y" : 128 }
       },
       "connect" : [
         { "id" : "f17", "to" : "f19", "color" : "default" }
@@ -152,7 +96,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1208, "y" : 96 }
+        "at" : { "x" : 1272, "y" : 128 }
       },
       "connect" : [
         { "id" : "f20", "to" : "f21", "color" : "default" }
@@ -168,11 +112,11 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1360, "y" : 96 }
+        "at" : { "x" : 1424, "y" : 128 }
       },
       "connect" : [
         { "id" : "f22", "to" : "f1", "color" : "default" },
-        { "id" : "f23", "to" : "f4", "via" : [ { "x" : 1360, "y" : 32 }, { "x" : 456, "y" : 32 } ] }
+        { "id" : "f23", "to" : "S30", "via" : [ { "x" : 1424, "y" : 32 }, { "x" : 448, "y" : 32 } ] }
       ]
     }, {
       "id" : "f24",
@@ -189,10 +133,236 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 256, "y" : 96 }
+        "at" : { "x" : 256, "y" : 128 }
       },
       "connect" : [
-        { "id" : "f25", "to" : "f4", "color" : "default" }
+        { "id" : "f28", "to" : "S30", "color" : "default" }
+      ]
+    }, {
+      "id" : "S20",
+      "type" : "ScriptBpmnElement",
+      "name" : "Print console log",
+      "elements" : [ {
+          "id" : "S20-f9",
+          "type" : "Script",
+          "name" : "Print log",
+          "config" : {
+            "output" : {
+              "code" : "ivy.log.warn(\"Dummy skip turn\");"
+            }
+          },
+          "visual" : {
+            "at" : { "x" : 352, "y" : 160 }
+          },
+          "connect" : [
+            { "id" : "S20-f1", "to" : "S20-g1" }
+          ]
+        }, {
+          "id" : "S20-f30",
+          "type" : "TaskSwitchEvent",
+          "name" : "Print log",
+          "config" : {
+            "task" : {
+              "name" : "Print log",
+              "responsible" : {
+                "activator" : "SYSTEM"
+              }
+            }
+          },
+          "visual" : {
+            "at" : { "x" : 152, "y" : 160 }
+          },
+          "connect" : [
+            { "id" : "S20-f31", "to" : "S20-f9", "color" : "default" }
+          ]
+        }, {
+          "id" : "S20-g0",
+          "type" : "EmbeddedStart",
+          "name" : "in 1",
+          "visual" : {
+            "at" : { "x" : 64, "y" : 160 },
+            "labelOffset" : { "x" : 3, "y" : 23 }
+          },
+          "parentConnector" : "f12",
+          "connect" : [
+            { "id" : "S20-f0", "to" : "S20-f30" }
+          ]
+        }, {
+          "id" : "S20-g1",
+          "type" : "EmbeddedEnd",
+          "name" : "out 1",
+          "visual" : {
+            "at" : { "x" : 480, "y" : 160 },
+            "labelOffset" : { "x" : 3, "y" : 23 }
+          },
+          "parentConnector" : "f13"
+        } ],
+      "visual" : {
+        "at" : { "x" : 928, "y" : 288 }
+      },
+      "connect" : [
+        { "id" : "f13", "to" : "f19", "via" : [ { "x" : 1272, "y" : 288 } ] }
+      ]
+    }, {
+      "id" : "S10",
+      "type" : "ServiceBpmnElement",
+      "name" : "Trigger a signal start",
+      "elements" : [ {
+          "id" : "S10-f28",
+          "type" : "TaskSwitchEvent",
+          "name" : "Triger signal",
+          "config" : {
+            "task" : {
+              "name" : "Trigger sigmal",
+              "responsible" : {
+                "activator" : "SYSTEM"
+              }
+            }
+          },
+          "visual" : {
+            "at" : { "x" : 152, "y" : 160 }
+          },
+          "connect" : [
+            { "id" : "S10-f29", "to" : "S10-f12", "color" : "default" }
+          ]
+        }, {
+          "id" : "S10-f12",
+          "type" : "Script",
+          "name" : "Trigger a signal",
+          "config" : {
+            "output" : {
+              "code" : "ivy.wf.signals().send(\"mortgate:purchase\");"
+            },
+            "sudo" : true
+          },
+          "visual" : {
+            "at" : { "x" : 280, "y" : 160 }
+          },
+          "connect" : [
+            { "id" : "S10-f1", "to" : "S10-g1", "color" : "default" }
+          ]
+        }, {
+          "id" : "S10-g0",
+          "type" : "EmbeddedStart",
+          "name" : "in 1",
+          "visual" : {
+            "at" : { "x" : 64, "y" : 160 },
+            "labelOffset" : { "x" : 3, "y" : 23 }
+          },
+          "parentConnector" : "f32",
+          "connect" : [
+            { "id" : "S10-f0", "to" : "S10-f28" }
+          ]
+        }, {
+          "id" : "S10-g1",
+          "type" : "EmbeddedEnd",
+          "name" : "out 1",
+          "visual" : {
+            "at" : { "x" : 416, "y" : 160 },
+            "labelOffset" : { "x" : 3, "y" : 23 }
+          },
+          "parentConnector" : "f33"
+        } ],
+      "visual" : {
+        "at" : { "x" : 928, "y" : 128 }
+      },
+      "connect" : [
+        { "id" : "f33", "to" : "f16" }
+      ]
+    }, {
+      "id" : "S30",
+      "type" : "EmbeddedProcess",
+      "name" : "Prepare data for proceeding",
+      "elements" : [ {
+          "id" : "S30-f11",
+          "type" : "Alternative",
+          "visual" : {
+            "at" : { "x" : 176, "y" : 256 }
+          },
+          "connect" : [
+            { "id" : "S30-f15", "to" : "S30-f9", "color" : "default" }
+          ]
+        }, {
+          "id" : "S30-f9",
+          "type" : "TaskSwitchEvent",
+          "name" : "Proceed next queue task",
+          "config" : {
+            "task" : {
+              "name" : "Proceed next queue task",
+              "responsible" : {
+                "activator" : "SYSTEM"
+              }
+            }
+          },
+          "visual" : {
+            "at" : { "x" : 312, "y" : 256 }
+          },
+          "connect" : [
+            { "id" : "S30-f10", "to" : "S30-f4", "color" : "default" }
+          ]
+        }, {
+          "id" : "S30-f4",
+          "type" : "Script",
+          "name" : "Prepare for next step",
+          "config" : {
+            "output" : {
+              "code" : [
+                "import ch.ivyteam.ivy.workflow.query.CaseQuery;",
+                "in.selectedKey = in.keys.get(0);",
+                "",
+                "// Find running case",
+                "CaseQuery query = CaseQuery.create().businessCases().where().customField().stringField(\"MyKey\").isEqual(in.selectedKey);",
+                "int totalRunningCases = query.executor().count();",
+                "in.isExistedCase = totalRunningCases > 0;"
+              ]
+            },
+            "sudo" : true
+          },
+          "visual" : {
+            "at" : { "x" : 472, "y" : 256 }
+          },
+          "connect" : [
+            { "id" : "S30-f2", "to" : "S30-g2" }
+          ]
+        }, {
+          "id" : "S30-g0",
+          "type" : "EmbeddedStart",
+          "name" : "in 1",
+          "visual" : {
+            "at" : { "x" : 64, "y" : 256 },
+            "labelOffset" : { "x" : 3, "y" : 23 }
+          },
+          "parentConnector" : "f28",
+          "connect" : [
+            { "id" : "S30-f0", "to" : "S30-f11" }
+          ]
+        }, {
+          "id" : "S30-g2",
+          "type" : "EmbeddedEnd",
+          "name" : "out 1",
+          "visual" : {
+            "at" : { "x" : 640, "y" : 256 },
+            "labelOffset" : { "x" : 3, "y" : 23 }
+          },
+          "parentConnector" : "f30"
+        }, {
+          "id" : "S30-g3",
+          "type" : "EmbeddedStart",
+          "name" : "in 2",
+          "visual" : {
+            "at" : { "x" : 176, "y" : 128 },
+            "labelOffset" : { "x" : 3, "y" : 23 }
+          },
+          "parentConnector" : "f23",
+          "connect" : [
+            { "id" : "S30-f3", "to" : "S30-f11", "color" : "default" }
+          ]
+        } ],
+      "visual" : {
+        "at" : { "x" : 448, "y" : 128 }
+      },
+      "connect" : [
+        { "id" : "f30", "to" : "f7" }
       ]
     } ]
 }

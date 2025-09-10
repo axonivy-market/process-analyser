@@ -53,27 +53,45 @@ function updateUrlForIframe() {
   window.frames[DIAGRAM_IFRAME_ID].src = url;
 }
 
-async function getDiagramData() {
+async function getFullDiagramData() {
   await returnToFirstLayer();
-  await setIframeResolution(
-    FULL_HD_RESOLUTION_WIDTH,
-    FULL_HD_RESOLUTION_HEIGHT
-  );
+  //await setIframeResolution(2000, 2000);
+
+  await centerizeIframeImage();
   await wait(DEFAULT_SLEEP_TIME_IN_MS);
   await centerizeIframeImage();
-  await captureScreenFromIframe();
-  await setIframeResolution(DEFAULT_IFRAME_WIDTH, DEFAULT_IFRAME_HEIGHT);
+  await captureScreenFromIframe(true);
+  // await setIframeResolution(DEFAULT_IFRAME_WIDTH, DEFAULT_IFRAME_HEIGHT);
 }
 
-async function captureScreenFromIframe() {
-  const iframe = queryObjectById(DIAGRAM_IFRAME_ID)[0];
+async function getCurrentViewPortOfDiagramData() {
+  //await returnToFirstLayer();
+  //await setIframeResolution(2000, 2000);
+
+  // await centerizeIframeImage();
+  await wait(DEFAULT_SLEEP_TIME_IN_MS);
+  // await centerizeIframeImage();
+  await captureScreenFromIframe(false);
+  // await setIframeResolution(DEFAULT_IFRAME_WIDTH, DEFAULT_IFRAME_HEIGHT);
+}
+
+async function captureScreenFromIframe(shouldResizeFrame) {
   await hideViewPortBar(true);
   await updateMissingCssForChildSelector();
 
-  await html2canvas(iframe.contentWindow.document.body, {
-    width: 1920,
-    height: 1080,
-    scale: 1,
+  const iframe = document.querySelector("[id$='process-analytic-viewer']");
+  const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+  const body = iframeDoc.body;
+
+  const contentWidth = body.scrollWidth;
+  const contentHeight = body.scrollHeight;
+  if (shouldResizeFrame) {
+    iframe.style.width = "2000px";
+    iframe.style.height = "2000px";
+  }
+
+  await html2canvas(body, {
+    scale: 2,
     allowTaint: true,
   })
     .then((canvas) => {
@@ -84,6 +102,11 @@ async function captureScreenFromIframe() {
       link.href = encodedImg;
       link.download = `${imageName}.jpeg`;
       link.click();
+
+      if (shouldResizeFrame) {
+        iframe.style.width = contentWidth + "px";
+        iframe.style.height = contentHeight + "px";
+      }
     })
     .catch((err) => {
       console.error("Error capturing iframe content:", err);
@@ -96,9 +119,9 @@ async function updateMissingCssForChildSelector() {
     .find(CHILD_DIV_FROM_NODE_ELEMENT_SELECTOR)
     .css({
       "align-items": "center",
-      "display": "flex",
+      display: "flex",
       "justify-content": "center",
-      "height": "100%",
+      height: "100%",
     });
   getContentsById(DIAGRAM_IFRAME_ID)
     .find(NODE_WITH_ICON_BESIDE_SELECTOR)
@@ -154,7 +177,8 @@ function getJumpOutBtn() {
 }
 
 function removeExecutedClass() {
-  getProcessDiagramIframe().find(EXECUTED_CLASS_CSS_SELECTOR)
+  getProcessDiagramIframe()
+    .find(EXECUTED_CLASS_CSS_SELECTOR)
     .removeClass(EXECUTED_CLASS);
 }
 
@@ -182,7 +206,7 @@ function getPidQueryParamValue(url) {
 
 function loadIframe(recheckIndicator) {
   var iframe = document.getElementById(DIAGRAM_IFRAME_ID);
-  
+
   if (recheckIndicator) {
     const iframeDoc = iframe.contentDocument;
     if (iframeDoc.readyState == COMPLETE) {
@@ -197,4 +221,65 @@ function loadIframe(recheckIndicator) {
   recheckFrameTimer = setTimeout(function () {
     loadIframe(true);
   }, 500);
+}
+
+// 1. Helper: copy computed styles inline
+function inlineComputedStyles(svg) {
+  const clone = svg.cloneNode(true);
+
+  const allElements = clone.querySelectorAll("*");
+  allElements.forEach((el) => {
+    const computed = window.getComputedStyle(el);
+    let style = "";
+    for (const key of computed) {
+      style += `${key}:${computed.getPropertyValue(key)};`;
+    }
+    el.setAttribute("style", style);
+  });
+
+  return clone;
+}
+function replaceForeignObjects(svg) {
+  const foList = svg.querySelectorAll("foreignObject");
+  foList.forEach((fo) => {
+    const div = fo.querySelector("div");
+    if (div) {
+      const text = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "text"
+      );
+      text.setAttribute("x", fo.getAttribute("x") || 0);
+      text.setAttribute("y", fo.getAttribute("y") || 14);
+      text.textContent = div.textContent;
+      fo.parentNode.replaceChild(text, fo);
+    }
+  });
+}
+// 2. Export as JPEG at given scale (e.g., 2 = 200%)
+function exportSVGToJPEG(svgElement, scale = 2, filename = "image.jpg") {
+  if (svgElement === undefined) {
+    const iframe = document.querySelector("iframe");
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+    svgElement = iframeDoc.querySelector("svg.sprotty-graph");
+  }
+  const inlineSVG = inlineComputedStyles(svgElement);
+  //replaceForeignObjects(svgElement);
+
+  const serializer = new XMLSerializer();
+  const source = serializer.serializeToString(inlineSVG);
+  console.warn("svg : " + source);
+
+  document.getElementById(
+    "process-analytics-form:process-analytic-viewer-panel:svgData"
+  ).value = inlineSVG.outerHTML;
+  exportSvg();
+}
+
+function openViewerInNewTab() {
+  var url = $("[id$='process-analytic-viewer']").prop("src");
+  if (url) {
+    window.open(url, "_blank");
+  } else {
+    alert("Viewer URL not found");
+  }
 }
