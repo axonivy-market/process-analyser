@@ -160,25 +160,29 @@ public class ProcessUtils {
     List<Process> processes = new ArrayList<>();
     for (var pmv : getProcessModelVersionsInCurrentApp()) {
       List<IProcessStart> processStarts = getProcessStartsForPMV(pmv);
-      getProcessesInCurrentPMV(pmv).forEach(processFile -> {
+      // Index process starts by processFileId for fast lookup
+      Map<String, List<IProcessStart>> startsByProcessId = processStarts.stream()
+        .collect(Collectors.groupingBy(start -> PIDUtils.getId(start.pid(), true)));
+
+      for (var processFile : getProcessesInCurrentPMV(pmv)) {
         String processFileId = processFile.getIdentifier();
         var process = new Process(processFileId, processFile.getName(), new ArrayList<>());
         process.setPmvId(pmv.getId());
         process.setPmvName(pmv.getName());
         process.setPmv(pmv);
         process.setProjectRelativePath(processFile.getResource().getProjectRelativePath().toString());
-        for (var start : processStarts) {
-          if (processFileId.contentEquals(PIDUtils.getId(start.pid(), true))) {
-            var taskStart = start.getTaskStart();
-            StartElement startElement = new StartElement();
-            startElement.setPid(PIDUtils.getId(taskStart.getProcessElementId()));
-            startElement.setTaskStartId(taskStart.getId());
-            ProcessStartFactory.extractDisplayNameAndType(start, startElement);
-            process.getStartElements().add(startElement);
-          }
+
+        List<IProcessStart> starts = startsByProcessId.getOrDefault(processFileId, Collections.emptyList());
+        for (var start : starts) {
+          var taskStart = start.getTaskStart();
+          StartElement startElement = new StartElement();
+          startElement.setPid(PIDUtils.getId(taskStart.getProcessElementId()));
+          startElement.setTaskStartId(taskStart.getId());
+          ProcessStartFactory.extractDisplayNameAndType(start, startElement);
+          process.getStartElements().add(startElement);
         }
         processes.add(process);
-      });
+      }
     }
     return processes;
   }
