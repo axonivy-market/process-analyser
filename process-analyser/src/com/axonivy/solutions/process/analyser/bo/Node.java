@@ -150,7 +150,7 @@ public class Node {
 
   @Override
   public String toString() {
-    final var pattern = "Node{ id: %s / inCommingPathIds: %s / outGoingPathIds: %s / isTaskSwitchGateway: %s / targetNodeId: %s / medianDuration: %2d / frequency: %d}";
+    final var pattern = "Node: { id: %s / inCommingPathIds: %s / outGoingPathIds: %s / isTaskSwitchGateway: %s / targetNodeId: %s / medianDuration: %2d / frequency: %d}";
     return pattern.formatted(id, inCommingPathIds, outGoingPathIds, isTaskSwitchGateway, targetNodeId, medianDuration, frequency);
   }
 }

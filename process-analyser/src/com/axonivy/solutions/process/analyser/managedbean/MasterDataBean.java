@@ -2,7 +2,6 @@ package com.axonivy.solutions.process.analyser.managedbean;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +19,7 @@ import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 public class MasterDataBean implements Serializable {
 
   private static final long serialVersionUID = 1L;
-  private Map<String, List<Process>> processesMap = new HashMap<>();
+  private Map<String, List<Process>> processesMap;
 
   @PostConstruct
   public void init() {

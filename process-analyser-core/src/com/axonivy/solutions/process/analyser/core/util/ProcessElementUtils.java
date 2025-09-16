@@ -1,5 +1,23 @@
 package com.axonivy.solutions.process.analyser.core.util;
 
+import static com.axonivy.solutions.process.analyser.core.enums.ElementType.ALTERNATIVE;
+import static com.axonivy.solutions.process.analyser.core.enums.ElementType.CALL_SUB_END;
+import static com.axonivy.solutions.process.analyser.core.enums.ElementType.CALL_SUB_START;
+import static com.axonivy.solutions.process.analyser.core.enums.ElementType.ELEMENT;
+import static com.axonivy.solutions.process.analyser.core.enums.ElementType.EMBEDDED_END;
+import static com.axonivy.solutions.process.analyser.core.enums.ElementType.EMBEDDED_PROCESS_ELEMENT;
+import static com.axonivy.solutions.process.analyser.core.enums.ElementType.EMBEDDED_START;
+import static com.axonivy.solutions.process.analyser.core.enums.ElementType.REQUEST_START;
+import static com.axonivy.solutions.process.analyser.core.enums.ElementType.REST_CLIENT_CALL;
+import static com.axonivy.solutions.process.analyser.core.enums.ElementType.SCRIPT;
+import static com.axonivy.solutions.process.analyser.core.enums.ElementType.SCRIPT_BPMN_ELEMENT;
+import static com.axonivy.solutions.process.analyser.core.enums.ElementType.SERVICE_BPMN_ELEMENT;
+import static com.axonivy.solutions.process.analyser.core.enums.ElementType.SIGNAL_START_EVENT;
+import static com.axonivy.solutions.process.analyser.core.enums.ElementType.SUB_PROCESS_CALL;
+import static com.axonivy.solutions.process.analyser.core.enums.ElementType.TASK_END;
+import static com.axonivy.solutions.process.analyser.core.enums.ElementType.TASK_SWITCH_EVENT;
+import static com.axonivy.solutions.process.analyser.core.enums.ElementType.TASK_SWITCH_GATEWAY;
+
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -30,7 +48,6 @@ import ch.ivyteam.ivy.process.model.element.event.start.RequestStart;
 import ch.ivyteam.ivy.process.model.element.event.start.SignalStartEvent;
 import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
 import ch.ivyteam.ivy.process.model.element.gateway.TaskSwitchGateway;
-import static com.axonivy.solutions.process.analyser.core.enums.ElementType.*;
 @SuppressWarnings("restriction")
 public class ProcessElementUtils {
 
@@ -44,17 +61,15 @@ public class ProcessElementUtils {
     List<ProcessElement> processElements = ProcessUtils.getProcessElementsFrom(processId, pmv);
     removeAnotherStartElementsBySelectedStartPID(processElements, startElementPID);
     return processElements.stream()
-        .map(p -> mapToNameOrPID(p))
+        .map(element -> buildElementDisplayName(element))
         .toList();
   }
 
-  private static ElementDisplayName mapToNameOrPID(ProcessElement processElement) {
+  private static ElementDisplayName buildElementDisplayName(ProcessElement processElement) {
+    String pid = PIDUtils.getId(processElement.getPid());
     ElementType type = determineElementType(processElement);
-    var displayName = StringUtils.isBlank(processElement.getName()) ? PIDUtils.getId(processElement.getPid())
-        : processElement.getName();
-    var elementDisplayName = new ElementDisplayName();
-    elementDisplayName.setDisplayName(displayName);
-    elementDisplayName.setPid(PIDUtils.getId(processElement.getPid()));
+    var displayName = StringUtils.defaultIfBlank(processElement.getName(), pid);
+    var elementDisplayName = new ElementDisplayName(pid, displayName);
     elementDisplayName.setElementType(type);
     return elementDisplayName;
   }
@@ -87,13 +102,13 @@ public class ProcessElementUtils {
       return;
     }
 
-    List<ProcessElement> anotherStartElements = processElements.stream()
+    List<ProcessElement> remainingStartElementOnProcess = processElements.stream()
         .filter(filterProcessStartElement())
-        .filter(e -> !PIDUtils.getId(e.getPid()).equals(startElementPID))
+        .filter(element -> !PIDUtils.getId(element.getPid()).equals(startElementPID))
         .toList();
-    for (var startElement : anotherStartElements) {
-      boolean foundStartPoint = processElements.stream().anyMatch(
-          processElement -> PIDUtils.equalsPID(processElement.getPid(), startElement.getPid()));
+    for (var startElement : remainingStartElementOnProcess) {
+      boolean foundStartPoint = processElements.stream()
+          .anyMatch(element -> PIDUtils.equalsPID(element.getPid(), startElement.getPid()));
       if (foundStartPoint) {
         processElements.remove(startElement);
       }

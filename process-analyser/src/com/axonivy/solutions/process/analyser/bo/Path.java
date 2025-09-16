@@ -67,7 +67,7 @@ public class Path {
 
   @Override
   public String toString() {
-    final var pattern = "Path{ StartPathId: %s, EndPathId: %s, NodesInPath: %s}";
+    final var pattern = "Path: { StartPathId: %s / EndPathId: %s / NodesInPath: %s}";
     return pattern.formatted(startPathId, endPathId, nodesInPath);
   }
 }

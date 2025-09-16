@@ -11,6 +11,7 @@ import ch.ivyteam.ivy.workflow.internal.element.StartElement;
 import ch.ivyteam.ivy.workflow.internal.element.StartEventElement;
 import ch.ivyteam.ivy.workflow.internal.ws.WebServiceProcessStartElement;
 import ch.ivyteam.ivy.workflow.signal.impl.StartSignalEventElement;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.SLASH;
 
 @SuppressWarnings("restriction")
 public class ProcessStartFactory {
@@ -47,13 +48,17 @@ public class ProcessStartFactory {
   }
 
   private static String getStartName(AbstractStartElement startElement) {
-    if (startElement == null) {
-      return StringUtils.EMPTY;
-    }
-    var requestPaths = startElement.getRequestPath().split(ProcessAnalyticsConstants.SLASH);
-    var defaultName = requestPaths[requestPaths.length - 1];
-    var localeName = startElement.names().current();
+    if (startElement != null) {
+      var localeName = startElement.names().current();
+      if (StringUtils.isNoneBlank(localeName)) {
+        return localeName;
+      }
 
-    return StringUtils.isBlank(localeName) ? defaultName : localeName;
+      if (StringUtils.contains(startElement.getRequestPath(), SLASH)) {
+        var requestPaths = StringUtils.split(startElement.getRequestPath(), SLASH);
+        return requestPaths[requestPaths.length - 1];
+      }
+    }
+    return StringUtils.EMPTY;
   }
 }

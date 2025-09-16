@@ -41,11 +41,17 @@ public class NodeFrequencyResolver {
   }
 
   /**
-   * The updateFrequencyForNodes does: Loops the tasks of case then detects which
-   * is the target created by the selected task Then, found the shorten path from
-   * start point to target point Turn up frequency for found node id
-   * 
-   * @param cases is list of cases created from selected process
+   * Updates the frequency values of nodes based on the execution paths found in
+   * the given cases.
+   * For each provided case, this method iterates through all
+   * associated tasks, identifies the shortest path in the process from the task's
+   * start to its end, and increments the frequency for each node encountered
+   * along that path.
+   * After processing all cases and tasks, it recalculates the
+   * relative values for all nodes.
+   *
+   * @param cases the list of cases created from the selected process; if
+   *              {@code null} or empty, the method returns immediately
    */
   public void updateFrequencyByCases(List<ICase> cases) {
     if (CollectionUtils.isEmpty(cases)) {

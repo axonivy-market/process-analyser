@@ -52,7 +52,7 @@ public class TaskPath {
 
   @Override
   public String toString() {
-    final var pattern = "TaskPath{ taskUUID: %s, NodesInPath: %s, Paths: %s}";
+    final var pattern = "TaskPath: { taskUUID: %s / NodesInPath: %s / Paths: %s}";
     return pattern.formatted(taskUUID, nodesInPath, paths);
   }
 }

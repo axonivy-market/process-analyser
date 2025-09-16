@@ -87,7 +87,7 @@ public class ProcessViewerBuilder {
   }
 
   private ProcessViewerBuilder addQueryParam(ViewerParam param, String value) {
-    queryParams.compute(param, (nam, val) -> {
+    queryParams.compute(param, (key, val) -> {
       return StringUtils.isBlank(val) ? value : val.concat(AND).concat(value);
     });
     return this;

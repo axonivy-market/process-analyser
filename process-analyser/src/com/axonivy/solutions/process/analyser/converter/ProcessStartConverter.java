@@ -32,11 +32,14 @@ public class ProcessStartConverter implements Converter {
       String[] data = value.split(KEY_SEPARATOR);
       var masterDataBean = FacesContexts.evaluateValueExpression("#{masterDataBean}", MasterDataBean.class);
       List<Process> processElements = masterDataBean.getAvailableProcesses(data[0]);
-      var foundProcess = processElements.stream().filter(element -> element.getId().equals(data[1]))
+      var foundProcess = processElements.stream()
+          .filter(element -> element.getId().equals(data[1]))
           .findAny();
-      var foundStartElement = foundProcess.stream().map(Process::getStartElements).flatMap(List::stream)
-          .filter(start -> start.getPid().equals(data[2])).findAny();
-      ProcessAnalyser processAnalyser = new ProcessAnalyser();
+      var foundStartElement = foundProcess.stream()
+          .map(Process::getStartElements).flatMap(List::stream)
+          .filter(start -> start.getPid().equals(data[2]))
+          .findAny();
+      var processAnalyser = new ProcessAnalyser();
       processAnalyser.setProcess(foundProcess.orElse(null));
       processAnalyser.setStartElement(foundStartElement.orElse(null));
       return processAnalyser;
@@ -53,13 +56,10 @@ public class ProcessStartConverter implements Converter {
     if (value instanceof ProcessAnalyser) {
       var processAnalyser = ((ProcessAnalyser) value);
       var process = processAnalyser.getProcess();
-      if (process == null) {
-        return null;
+      if (process != null) {
+        var startElement = Optional.ofNullable(processAnalyser.getStartElement()).map(StartElement::getPid).orElse("");
+        return PROCESS_ID_PATTERN.formatted(process.getPmvName(), process.getId(), startElement);
       }
-      var startElement = Optional.ofNullable(processAnalyser.getStartElement()).map(StartElement::getPid).orElse("");
-      return PROCESS_ID_PATTERN.formatted(process.getPmvName(),
-          process.getId(),
-          startElement);
     }
     throw new ConverterException("Unexpected value type: " + value.getClass().getName());
   }

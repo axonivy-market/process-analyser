@@ -69,10 +69,4 @@ public class AlternativePath {
   public void setNumberOfRetries(int numberOfRetries) {
     this.numberOfRetries = numberOfRetries;
   }
-
-  @Override
-  public String toString() {
-    final var pattern = "AlternativePath{precedingFlowIds: %s / nodeIdsInPath: %s / taskSwitchEventIdOnPath: %s / numberOfRetries: %d}";
-    return pattern.formatted(precedingFlowIds, nodeIdsInPath, taskSwitchEventIdOnPath, numberOfRetries);
-  }
 }

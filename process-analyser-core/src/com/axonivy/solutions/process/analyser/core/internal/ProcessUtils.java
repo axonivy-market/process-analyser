@@ -189,7 +189,7 @@ public class ProcessUtils {
 
   private static List<IProcess> getProcessesInCurrentPMV(IProcessModelVersion pmv) {
     return IProcessManager.instance().getProjectDataModelFor(pmv).getProcesses().stream()
-        .filter(p -> p.getKind() == ProcessKind.NORMAL || p.getKind() == ProcessKind.WEB_SERVICE)
+        .filter(process -> process.getKind() == ProcessKind.NORMAL || process.getKind() == ProcessKind.WEB_SERVICE)
         .toList();
   }
 

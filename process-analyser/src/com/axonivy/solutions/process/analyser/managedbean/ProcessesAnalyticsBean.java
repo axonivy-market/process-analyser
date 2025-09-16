@@ -1,5 +1,9 @@
 package com.axonivy.solutions.process.analyser.managedbean;
 
+import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartEventElement;
+import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartSignalEventElement;
+import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.WebServiceProcessStartElement;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,6 +36,7 @@ import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewCompo
 import com.axonivy.solutions.process.analyser.core.bo.Process;
 import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
+import com.axonivy.solutions.process.analyser.core.enums.StartElementType;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
@@ -47,6 +52,7 @@ import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
+
 
 @ManagedBean
 @ViewScoped
@@ -136,13 +142,13 @@ public class ProcessesAnalyticsBean {
     List<SelectItem> processStartsSelection = new ArrayList<>();
     processesMap.get(selectedModule).forEach(process -> {
       var processStart = new ProcessAnalyser(process);
-      SelectItemGroup group = new SelectItemGroup(process.getName());
+      var group = new SelectItemGroup(process.getName());
       group.setValue(processStart);
       List<SelectItem> startElementsSelection = new ArrayList<>();
       for (var startElement : process.getStartElements()) {
         var processStartElement = new ProcessAnalyser(process, startElement);
         String displayName = getStartElementDisplayName(startElement);
-        SelectItem item = new SelectItem(processStartElement, displayName);
+        var item = new SelectItem(processStartElement, displayName);
         startElementsSelection.add(item);
       }
       group.setSelectItems(startElementsSelection.stream().toArray(SelectItem[]::new));
@@ -155,10 +161,10 @@ public class ProcessesAnalyticsBean {
   private String getStartElementDisplayName(StartElement start) {
     final var enumCmsURI = "/Enums/StartElementType/%s/name";
     String cmsUrl = switch (start.getType()) {
-      case StartElement -> enumCmsURI.formatted("StartElement");
-      case StartEventElement -> enumCmsURI.formatted("StartEventElement");
-      case StartSignalEventElement -> enumCmsURI.formatted("StartSignalEventElement");
-      case WebServiceProcessStartElement -> enumCmsURI.formatted("WebServiceProcessStartElement");
+      case StartElement -> enumCmsURI.formatted(StartElementType.StartElement.name());
+      case StartEventElement -> enumCmsURI.formatted(StartEventElement.name());
+      case StartSignalEventElement -> enumCmsURI.formatted(StartSignalEventElement.name());
+      case WebServiceProcessStartElement -> enumCmsURI.formatted(WebServiceProcessStartElement.name());
       default -> start.getName();
     };
     return Ivy.cms().co(cmsUrl, List.of(start.getName()));
