@@ -10,6 +10,7 @@
     <module>${project.name}-core</module>
     <module>${project.name}</module>
     <module>${project.name}-demo</module>
+    <module>${project.name}-test</module>
     <module>${project.name}-product</module>
   </modules>
 
