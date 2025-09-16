@@ -2,15 +2,9 @@
   "$schema" : "https://json-schema.axonivy.com/process/12.0.0/process.json",
   "id" : "198A2D16EA164504",
   "config" : {
-    "data" : "com.axonivy.solutions.process.analyser.demo.MortgagePurchasePropertyData"
+    "data" : "com.axonivy.solutions.process.analyser.demo.Data"
   },
   "elements" : [ {
-      "id" : "f1",
-      "type" : "TaskEnd",
-      "visual" : {
-        "at" : { "x" : 2160, "y" : 160 }
-      }
-    }, {
       "id" : "f3",
       "type" : "SignalStartEvent",
       "name" : "mortgate:purchase",
@@ -56,120 +50,7 @@
         "at" : { "x" : 664, "y" : 160 }
       },
       "connect" : [
-        { "id" : "f22", "to" : "f119" }
-      ]
-    }, {
-      "id" : "f23",
-      "type" : "TaskSwitchGateway",
-      "config" : {
-        "tasks" : [ {
-            "id" : "TaskA"
-          }, {
-            "id" : "TaskB"
-          }, {
-            "id" : "TaskC"
-          } ]
-      },
-      "visual" : {
-        "at" : { "x" : 864, "y" : 288 }
-      },
-      "connect" : [
-        { "id" : "f26", "to" : "f25", "condition" : "ivp==\"TaskA.ivp\"" },
-        { "id" : "f38", "to" : "f37", "condition" : "ivp==\"TaskB.ivp\"" },
-        { "id" : "f48", "to" : "f139", "via" : [ { "x" : 864, "y" : 160 } ], "condition" : "ivp==\"TaskC.ivp\"" }
-      ]
-    }, {
-      "id" : "f25",
-      "type" : "Alternative",
-      "config" : {
-        "conditions" : {
-          "f46" : "true"
-        }
-      },
-      "visual" : {
-        "at" : { "x" : 864, "y" : 416 }
-      },
-      "connect" : [
-        { "id" : "f46", "to" : "f120", "via" : [ { "x" : 864, "y" : 512 } ] },
-        { "id" : "f47", "to" : "f41", "via" : [ { "x" : 1600, "y" : 416 } ] }
-      ]
-    }, {
-      "id" : "f36",
-      "type" : "Alternative",
-      "visual" : {
-        "at" : { "x" : 1800, "y" : 160 }
-      },
-      "connect" : [
-        { "id" : "f60", "to" : "f107" }
-      ]
-    }, {
-      "id" : "f37",
-      "type" : "Alternative",
-      "config" : {
-        "conditions" : {
-          "f39" : "true"
-        }
-      },
-      "visual" : {
-        "at" : { "x" : 1048, "y" : 288 }
-      },
-      "connect" : [
-        { "id" : "f39", "to" : "f121" },
-        { "id" : "f99", "to" : "f134", "via" : [ { "x" : 1048, "y" : 368 }, { "x" : 1272, "y" : 368 } ] }
-      ]
-    }, {
-      "id" : "f41",
-      "type" : "Alternative",
-      "visual" : {
-        "at" : { "x" : 1600, "y" : 288 }
-      },
-      "connect" : [
-        { "id" : "f43", "to" : "f144" }
-      ]
-    }, {
-      "id" : "f51",
-      "type" : "Alternative",
-      "config" : {
-        "conditions" : {
-          "f52" : "true"
-        }
-      },
-      "visual" : {
-        "at" : { "x" : 1600, "y" : 160 }
-      },
-      "connect" : [
-        { "id" : "f52", "to" : "f106", "color" : "default" },
-        { "id" : "f56", "to" : "f139", "via" : [ { "x" : 1600, "y" : 96 }, { "x" : 944, "y" : 96 } ] }
-      ]
-    }, {
-      "id" : "f53",
-      "type" : "Alternative",
-      "config" : {
-        "conditions" : {
-          "f54" : "true"
-        }
-      },
-      "visual" : {
-        "at" : { "x" : 1392, "y" : 160 }
-      },
-      "connect" : [
-        { "id" : "f54", "to" : "f108", "color" : "default" },
-        { "id" : "f55", "to" : "f51", "via" : [ { "x" : 1392, "y" : 216 }, { "x" : 1600, "y" : 216 } ] }
-      ]
-    }, {
-      "id" : "f63",
-      "type" : "Alternative",
-      "config" : {
-        "conditions" : {
-          "f64" : "true"
-        }
-      },
-      "visual" : {
-        "at" : { "x" : 2032, "y" : 160 }
-      },
-      "connect" : [
-        { "id" : "f64", "to" : "f1" },
-        { "id" : "f98", "to" : "f144", "via" : [ { "x" : 2032, "y" : 392 }, { "x" : 1696, "y" : 392 } ] }
+        { "id" : "f22", "to" : "f0" }
       ]
     }, {
       "id" : "f100",
@@ -187,60 +68,6 @@
       },
       "connect" : [
         { "id" : "f101", "to" : "f124", "color" : "default" }
-      ]
-    }, {
-      "id" : "f105",
-      "type" : "TaskSwitchEvent",
-      "visual" : {
-        "at" : { "x" : 1800, "y" : 288 }
-      },
-      "connect" : [
-        { "id" : "f143", "to" : "f36", "color" : "default" }
-      ]
-    }, {
-      "id" : "f106",
-      "type" : "TaskSwitchEvent",
-      "visual" : {
-        "at" : { "x" : 1696, "y" : 160 }
-      },
-      "connect" : [
-        { "id" : "f138", "to" : "f36", "color" : "default" }
-      ]
-    }, {
-      "id" : "f107",
-      "type" : "TaskSwitchEvent",
-      "visual" : {
-        "at" : { "x" : 1904, "y" : 160 }
-      },
-      "connect" : [
-        { "id" : "f142", "to" : "f63", "color" : "default" }
-      ]
-    }, {
-      "id" : "f108",
-      "type" : "TaskSwitchEvent",
-      "visual" : {
-        "at" : { "x" : 1488, "y" : 160 }
-      },
-      "connect" : [
-        { "id" : "f141", "to" : "f51" }
-      ]
-    }, {
-      "id" : "f109",
-      "type" : "TaskSwitchEvent",
-      "visual" : {
-        "at" : { "x" : 1048, "y" : 160 }
-      },
-      "connect" : [
-        { "id" : "f136", "to" : "f53", "color" : "default" }
-      ]
-    }, {
-      "id" : "f110",
-      "type" : "TaskSwitchEvent",
-      "visual" : {
-        "at" : { "x" : 1392, "y" : 288 }
-      },
-      "connect" : [
-        { "id" : "f133", "to" : "f41", "color" : "default" }
       ]
     }, {
       "id" : "f117",
@@ -273,42 +100,6 @@
         { "id" : "f127", "to" : "f123", "color" : "default" }
       ]
     }, {
-      "id" : "f119",
-      "type" : "TaskSwitchEvent",
-      "visual" : {
-        "at" : { "x" : 768, "y" : 160 }
-      },
-      "connect" : [
-        { "id" : "f129", "to" : "f23", "via" : [ { "x" : 768, "y" : 288 } ], "color" : "default", "var" : "in1" }
-      ]
-    }, {
-      "id" : "f120",
-      "type" : "TaskSwitchEvent",
-      "visual" : {
-        "at" : { "x" : 944, "y" : 512 }
-      },
-      "connect" : [
-        { "id" : "f130", "to" : "f122", "color" : "default" }
-      ]
-    }, {
-      "id" : "f121",
-      "type" : "TaskSwitchEvent",
-      "visual" : {
-        "at" : { "x" : 1160, "y" : 288 }
-      },
-      "connect" : [
-        { "id" : "f132", "to" : "f134", "color" : "default" }
-      ]
-    }, {
-      "id" : "f122",
-      "type" : "TaskSwitchEvent",
-      "visual" : {
-        "at" : { "x" : 1160, "y" : 512 }
-      },
-      "connect" : [
-        { "id" : "f131", "to" : "f41", "via" : [ { "x" : 1600, "y" : 512 } ], "color" : "default" }
-      ]
-    }, {
       "id" : "f123",
       "type" : "TaskSwitchEvent",
       "visual" : {
@@ -333,32 +124,11 @@
         { "id" : "f125", "to" : "f15", "color" : "default" }
       ]
     }, {
-      "id" : "f134",
-      "type" : "Alternative",
+      "id" : "f0",
+      "type" : "TaskEnd",
       "visual" : {
-        "at" : { "x" : 1272, "y" : 288 }
-      },
-      "connect" : [
-        { "id" : "f135", "to" : "f110", "color" : "default" }
-      ]
-    }, {
-      "id" : "f139",
-      "type" : "Alternative",
-      "visual" : {
-        "at" : { "x" : 944, "y" : 160 }
-      },
-      "connect" : [
-        { "id" : "f140", "to" : "f109", "color" : "default" }
-      ]
-    }, {
-      "id" : "f144",
-      "type" : "Alternative",
-      "visual" : {
-        "at" : { "x" : 1696, "y" : 288 }
-      },
-      "connect" : [
-        { "id" : "f145", "to" : "f105" }
-      ]
+        "at" : { "x" : 760, "y" : 160 }
+      }
     } ],
   "layout" : {
     "lanes" : [ {

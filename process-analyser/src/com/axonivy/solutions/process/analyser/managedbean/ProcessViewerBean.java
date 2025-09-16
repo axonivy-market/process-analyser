@@ -7,6 +7,7 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PF;
 
@@ -17,6 +18,8 @@ import com.axonivy.solutions.process.analyser.core.bo.Process;
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessViewerBuilder;
 import com.axonivy.solutions.process.analyser.core.util.ProcessElementUtils;
+
+import ch.ivyteam.ivy.environment.Ivy;
 
 @ManagedBean
 @ViewScoped
@@ -45,9 +48,19 @@ public class ProcessViewerBean implements Serializable {
   }
 
   private void unifySelectionData() {
-    availableProcessElements = ProcessElementUtils.listAllProcessElementAsRawPID(selectedProcess.getPmv(),
+    List<ElementDisplayName> elementDisplayNames = ProcessElementUtils.listAllProcessElementAsRawPID(selectedProcess.getPmv(),
         selectedProcess.getId(), selectedStartElement);
+    availableProcessElements = createFriendlyNameForElement(elementDisplayNames);
     selectedItem = selectedStartElement;
+  }
+
+  private List<ElementDisplayName> createFriendlyNameForElement(List<ElementDisplayName> elementDisplayNames) {
+    final var cmsPattern = "/Enums/ElementType/%s/name";
+    CollectionUtils.emptyIfNull(elementDisplayNames).forEach(element -> {
+      String cmsURL = cmsPattern.formatted(element.getElementType().name());
+      element.setDisplayName(Ivy.cms().co(cmsURL, List.of(element.getDisplayName())));
+    });
+    return elementDisplayNames;
   }
 
   public boolean shouldRenderBpmnFrame() {

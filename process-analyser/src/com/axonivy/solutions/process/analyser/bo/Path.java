@@ -64,4 +64,10 @@ public class Path {
   public void setNodesInPath(List<String> nodesInPath) {
     this.nodesInPath = nodesInPath;
   }
+
+  @Override
+  public String toString() {
+    final var pattern = "Path{ StartPathId: %s, EndPathId: %s, NodesInPath: %s}";
+    return pattern.formatted(startPathId, endPathId, nodesInPath);
+  }
 }

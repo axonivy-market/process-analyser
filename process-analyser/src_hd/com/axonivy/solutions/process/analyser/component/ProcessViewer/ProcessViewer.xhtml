@@ -47,11 +47,13 @@
           <h:panelGroup id="toolbar-group" styleClass="grid formgrid ui-fluid">
             <h:panelGroup styleClass="col-12 flex justify-content-between flex-row">
               <h:outputText value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/ViewerConfig')}" />
-              <p:commandButton icon="ui-icon pi pi-refresh"
+              <p:commandButton icon="ui-icon pi pi-check"
+                styleClass="w-auto"
                 actionListener="#{processViewerBean.refreshBpmnIFrame()}"
                 partialSubmit="true" process="toolbar-group"
                 update="@this viewer-panel viewer-group-resize process-analytics-form"
-                title="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/Refresh')}" />
+                title="#{ivy.cms.co('/Labels/Apply')}"
+                value="#{ivy.cms.co('/Labels/Apply')}" />
             </h:panelGroup>
             <h:panelGroup styleClass="ui-fluid col-12 mb-2">
               <p:tooltip for="focus-item-label" trackMouse="true"

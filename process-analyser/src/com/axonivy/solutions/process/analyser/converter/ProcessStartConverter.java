@@ -18,7 +18,7 @@ import com.axonivy.solutions.process.analyser.utils.FacesContexts;
 @FacesConverter("processStartConverter")
 public class ProcessStartConverter implements Converter {
   
-  private static final String KEY_SEPERATOR = ":::";
+  private static final String KEY_SEPARATOR = ":::";
 
   // Pattern contains: Module:::Process:::Start
   private static final String PROCESS_ID_PATTERN = "%s:::%s:::%s";
@@ -29,7 +29,7 @@ public class ProcessStartConverter implements Converter {
       return null;
     }
     try {
-      String[] data = value.split(KEY_SEPERATOR);
+      String[] data = value.split(KEY_SEPARATOR);
       var masterDataBean = FacesContexts.evaluateValueExpression("#{masterDataBean}", MasterDataBean.class);
       List<Process> processElements = masterDataBean.getAvailableProcesses(data[0]);
       var foundProcess = processElements.stream().filter(element -> element.getId().equals(data[1]))

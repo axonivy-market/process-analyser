@@ -2,24 +2,20 @@ package com.axonivy.solutions.process.analyser.core.internal;
 
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.AND;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.SLASH;
-import static com.axonivy.solutions.process.analyser.core.constants.ViewerConstants.APP;
-import static com.axonivy.solutions.process.analyser.core.constants.ViewerConstants.FACES;
-import static com.axonivy.solutions.process.analyser.core.constants.ViewerConstants.FILE;
-import static com.axonivy.solutions.process.analyser.core.constants.ViewerConstants.HIGHLIGHT;
-import static com.axonivy.solutions.process.analyser.core.constants.ViewerConstants.PMV;
-import static com.axonivy.solutions.process.analyser.core.constants.ViewerConstants.PROCESS_MINER_FILE;
-import static com.axonivy.solutions.process.analyser.core.constants.ViewerConstants.SELECT;
-import static com.axonivy.solutions.process.analyser.core.constants.ViewerConstants.SERVER;
-import static com.axonivy.solutions.process.analyser.core.constants.ViewerConstants.VIEW;
-import static com.axonivy.solutions.process.analyser.core.constants.ViewerConstants.ZOOM;
+import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.*;
 
 import java.net.URI;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.lang3.StringUtils;
+
+import com.axonivy.solutions.process.analyser.core.enums.ViewerParam;
 
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.application.IProcessModel;
@@ -28,7 +24,8 @@ import ch.ivyteam.ivy.security.ISecurityContext;
 
 public class ProcessViewerBuilder {
 
-  private final Map<String, String> queryParams = new HashMap<>();
+  private static final String PARAM_TEMPLATE = "{%s}";
+  private final Map<ViewerParam, String> queryParams = new HashMap<>();
   private final String contextPath;
 
   public ProcessViewerBuilder() {
@@ -69,23 +66,28 @@ public class ProcessViewerBuilder {
 
   public URI toURI() {
     var uriBuilder = UriBuilder.fromPath(contextPath)
-        .path(FACES)
-        .path(VIEW)
+        .path(FACES.getValue())
+        .path(VIEW.getValue())
         .path(IProcessModel.current().getName())
-        .path(PROCESS_MINER_FILE);
-    for (var queryParam : queryParams.entrySet()) {
-      uriBuilder = uriBuilder.queryParam(queryParam.getKey(), queryParam.getValue());
+        .path(PROCESS_MINER_FILE.getValue());
+    // Build URI with template e.g /uri/param={param}
+    List<String> queryParamKeys = queryParams.keySet().stream()
+        .sorted(Comparator.comparingInt(ViewerParam::ordinal))
+        .map(ViewerParam::getValue).toList();
+    for (var queryParam : queryParamKeys) {
+      uriBuilder = uriBuilder.queryParam(queryParam, PARAM_TEMPLATE.formatted(queryParam));
     }
-    return uriBuilder.build();
+    return uriBuilder.buildFromMap(queryParams.entrySet().stream()
+        .collect(Collectors.toMap(entry -> entry.getKey().getValue(), Map.Entry::getValue)));
   }
 
-  private ProcessViewerBuilder setQueryParam(String name, String value) {
-    queryParams.put(name, value);
+  private ProcessViewerBuilder setQueryParam(ViewerParam param, String value) {
+    queryParams.put(param, value);
     return this;
   }
 
-  private ProcessViewerBuilder addQueryParam(String name, String value) {
-    queryParams.compute(name, (nam, val) -> {
+  private ProcessViewerBuilder addQueryParam(ViewerParam param, String value) {
+    queryParams.compute(param, (nam, val) -> {
       return StringUtils.isBlank(val) ? value : val.concat(AND).concat(value);
     });
     return this;

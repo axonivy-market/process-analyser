@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.Path;
@@ -57,6 +58,7 @@ public class NodeFrequencyResolver {
         updateFrequencyForNodeById(nodes, nodeIdsInPath);
       }
     });
+    NodeResolver.updateRelativeValueForNodes(nodes);
   }
 
   /**
@@ -165,11 +167,15 @@ public class NodeFrequencyResolver {
 
     List<SequenceFlow> nextOutgoingFlows = getNextOutgoingFlows(nextElement);
     var isAlternative = ProcessUtils.isAlternativeInstance(nextElement);
+    String nextElementPid = ProcessUtils.getElementPid(nextElement);
     // If next element is task switch, then finish current path and create new path
     if (isAlternative || nextOutgoingFlows.size() > 1) {
-      String nextElementPid = ProcessUtils.getElementPid(nextElement);
       finishCurrentPathAndOpenNewPathForNextFlows(targetPid, path, subProcessCalls, taskPath, nextElementPid,
           nextOutgoingFlows);
+    } else if (ProcessUtils.isProcessPathEndElement(nextElement)) {
+      path.setStatus(PathStatus.NOT_FOUND);
+      path.setEndPathId(nextElementPid);
+      return;
     } else {
       followNodes(targetPid, path, nextOutgoingFlows.get(0), subProcessCalls, taskPath);
     }
@@ -182,13 +188,20 @@ public class NodeFrequencyResolver {
     path.setEndPathId(nextElementPid);
 
     for (var outgoing : nextOutgoingFlows) {
-      if (taskPath.isFinished()) {
+      var startNewPath = new Path(nextElementPid, new ArrayList<>());
+      // Find existing path before adding - otherwise return
+      if (taskPath.isFinished() || isVisitedPath(startNewPath, taskPath, outgoing)) {
         return;
       }
-      var startNewPath = new Path(nextElementPid, new ArrayList<>());
       taskPath.getPaths().add(startNewPath);
       followNodes(targetPid, startNewPath, outgoing, subProcessCalls, taskPath);
     }
+  }
+
+  private static boolean isVisitedPath(Path startNewPath, TaskPath taskPath, SequenceFlow firstOutgoing) {
+    return taskPath.getPaths().stream().filter(path -> path.getStatus() != null)
+        .filter(path -> path.getStartPathId().equals(startNewPath.getStartPathId()))
+        .anyMatch(path -> path.getNodesInPath().getFirst().equals(ProcessUtils.getElementPid(firstOutgoing)));
   }
 
   private static ProcessElement findProcessElementStartedTask(String taskStartProcessElementId,
@@ -203,14 +216,17 @@ public class NodeFrequencyResolver {
   }
 
   private static void collectNodeIdsFromStartPathIdInFoundPaths(List<Path> paths, List<String> nodesInPath,
-      String startPathId) {
-    for (var path : paths) {
-      if (path.getEndPathId().contentEquals(startPathId)) {
-        nodesInPath.addAll(0, path.getNodesInPath());
-        startPathId = path.getStartPathId();
-        collectNodeIdsFromStartPathIdInFoundPaths(paths, nodesInPath, startPathId);
-      }
+      final String startPathId) {
+    if (CollectionUtils.isEmpty(paths)) {
+      return;
     }
+
+    paths.stream().filter(path -> path.getEndPathId().equals(startPathId)).findFirst().ifPresent(path -> {
+      nodesInPath.addAll(0, path.getNodesInPath());
+      var unifiedPaths = paths.stream()
+          .filter(availablePath -> !availablePath.getStartPathId().equals(path.getStartPathId())).toList();
+      collectNodeIdsFromStartPathIdInFoundPaths(unifiedPaths, nodesInPath, path.getStartPathId());
+    });
   }
 
   private static ProcessElement getNextElementForSubToSub(ProcessElement destinationElement,
@@ -238,8 +254,16 @@ public class NodeFrequencyResolver {
       path.setStatus(PathStatus.NOT_FOUND);
       path.setEndPathId(processElementId);
       return true;
+    } else if (isEndOfLoop(processElementId, path)) {
+      path.setStatus(PathStatus.END_LOOP);
+      path.setEndPathId(processElementId);
+      return true;
     }
     return false;
+  }
+
+  private static boolean isEndOfLoop(String processElementId, Path path) {
+    return StringUtils.equalsAnyIgnoreCase(processElementId, path.getStartPathId());
   }
 
   private static ProcessElement getNestedSubElement(ProcessElement element, List<ProcessElement> subProcessCalls) {

@@ -7,6 +7,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.solutions.process.analyser.core.bo.ElementDisplayName;
+import com.axonivy.solutions.process.analyser.core.enums.ElementType;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 
 import ch.ivyteam.ivy.application.IProcessModelVersion;
@@ -29,7 +30,7 @@ import ch.ivyteam.ivy.process.model.element.event.start.RequestStart;
 import ch.ivyteam.ivy.process.model.element.event.start.SignalStartEvent;
 import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
 import ch.ivyteam.ivy.process.model.element.gateway.TaskSwitchGateway;
-
+import static com.axonivy.solutions.process.analyser.core.enums.ElementType.*;
 @SuppressWarnings("restriction")
 public class ProcessElementUtils {
 
@@ -48,34 +49,35 @@ public class ProcessElementUtils {
   }
 
   private static ElementDisplayName mapToNameOrPID(ProcessElement processElement) {
-    String typeLabel = determineElementType(processElement);
+    ElementType type = determineElementType(processElement);
     var displayName = StringUtils.isBlank(processElement.getName()) ? PIDUtils.getId(processElement.getPid())
-        : typeLabel.concat(processElement.getName());
+        : processElement.getName();
     var elementDisplayName = new ElementDisplayName();
     elementDisplayName.setDisplayName(displayName);
     elementDisplayName.setPid(PIDUtils.getId(processElement.getPid()));
+    elementDisplayName.setElementType(type);
     return elementDisplayName;
   }
 
-  private static String determineElementType(ProcessElement processElement) {
+  private static ElementType determineElementType(ProcessElement processElement) {
     return switch (processElement) {
-      case RequestStart requestStart -> "Request start: ";
-      case SignalStartEvent signalStart -> "Signal start: ";
-      case TaskEnd taskEnd -> "Task end: ";
-      case Alternative alternative -> "Alternative: ";
-      case Script script -> "Script: ";
-      case ScriptBpmnElement script -> "Script Bpmn: ";
-      case ServiceBpmnElement service -> "Service Bpmn: ";
-      case EmbeddedProcessElement embeddedProcess -> "Embedded process: ";
-      case EmbeddedStart embedddedStart -> "Embedded start: ";
-      case EmbeddedEnd embedddedEnd -> "Embedded end: ";
-      case CallSubStart callSubStart -> "Call Sub start: ";
-      case CallSubEnd callSubEnd -> "Call Sub end: ";
-      case SubProcessCall subProcessCall -> "Sub process call: ";
-      case TaskSwitchEvent taskSwitchEvent -> "Task: ";
-      case TaskSwitchGateway taskSwitchGateway -> "Task gateway";
-      case RestClientCall restClientCall -> "Rest client call: ";
-      default -> "Element: ";
+      case RequestStart requestStart -> REQUEST_START;
+      case SignalStartEvent signalStart -> SIGNAL_START_EVENT;
+      case TaskEnd taskEnd -> TASK_END;
+      case Alternative alternative -> ALTERNATIVE;
+      case Script script -> SCRIPT;
+      case ScriptBpmnElement script -> SCRIPT_BPMN_ELEMENT;
+      case ServiceBpmnElement service -> SERVICE_BPMN_ELEMENT;
+      case EmbeddedProcessElement embeddedProcess -> EMBEDDED_PROCESS_ELEMENT;
+      case EmbeddedStart embedddedStart -> EMBEDDED_START;
+      case EmbeddedEnd embedddedEnd -> EMBEDDED_END;
+      case CallSubStart callSubStart -> CALL_SUB_START;
+      case CallSubEnd callSubEnd -> CALL_SUB_END;
+      case SubProcessCall subProcessCall -> SUB_PROCESS_CALL;
+      case TaskSwitchEvent taskSwitchEvent -> TASK_SWITCH_EVENT;
+      case TaskSwitchGateway taskSwitchGateway -> TASK_SWITCH_GATEWAY;
+      case RestClientCall restClientCall -> REST_CLIENT_CALL;
+      default -> ELEMENT;
     };
   }
 

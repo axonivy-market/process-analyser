@@ -15,13 +15,14 @@ const NODE_WITH_ICON_BESIDE_SELECTOR =
 const FULL_HD_RESOLUTION_WIDTH = "1920px";
 const FULL_HD_RESOLUTION_HEIGHT = "1080px";
 const DEFAULT_IFRAME_WIDTH = "100%";
-const DEFAULT_IFRAME_HEIGHT = "400px";
+const DEFAULT_IFRAME_HEIGHT = "100%";
 const EXECUTED_CLASS = "executed";
 const EXECUTED_CLASS_CSS_SELECTOR = "." + EXECUTED_CLASS;
 const EXECUTION_BADGE_CSS_SELECTOR = ".execution-badge";
 const COMPLETE = "complete";
 const PID_QUERY_PARAM_NAME = "pid";
 const SUB_PROCESS_CALL_PID = "subProcessCallPid";
+const MINING_URL_PARAM = "&miningUrl=";
 
 function getCenterizeButton() {
   return queryObjectById(DIAGRAM_IFRAME_ID)
@@ -49,49 +50,39 @@ function updateUrlForIframe() {
   const dataUrl = queryObjectByIdInForm(HIDDEN_IMAGE_ID).attr("src");
   const encodedDataUrl = encodeURIComponent(dataUrl);
   const currentViewerUrl = window.frames[DIAGRAM_IFRAME_ID].src;
-  const url = currentViewerUrl + "&miningUrl=" + encodedDataUrl;
+  let url;
+  if (currentViewerUrl.includes(MINING_URL_PARAM)) {
+    // If miningUrl param already exists, replace it
+    url = currentViewerUrl.replace(MINING_URL_PARAM, MINING_URL_PARAM + encodedDataUrl);
+  } else {
+    // If miningUrl param doesn't exist, add it
+    url = currentViewerUrl + MINING_URL_PARAM + encodedDataUrl;
+  }
   window.frames[DIAGRAM_IFRAME_ID].src = url;
 }
 
 async function getFullDiagramData() {
-  await returnToFirstLayer();
-  //await setIframeResolution(2000, 2000);
-
-  await centerizeIframeImage();
   await wait(DEFAULT_SLEEP_TIME_IN_MS);
+  await returnToFirstLayer();
+  await setIframeResolution(FULL_HD_RESOLUTION_WIDTH, FULL_HD_RESOLUTION_HEIGHT);
   await centerizeIframeImage();
-  await captureScreenFromIframe(true);
-  // await setIframeResolution(DEFAULT_IFRAME_WIDTH, DEFAULT_IFRAME_HEIGHT);
+  await captureScreenFromIframe();
+  await setIframeResolution(DEFAULT_IFRAME_HEIGHT, DEFAULT_IFRAME_WIDTH);
 }
 
 async function getCurrentViewPortOfDiagramData() {
-  //await returnToFirstLayer();
-  //await setIframeResolution(2000, 2000);
-
-  // await centerizeIframeImage();
-  await wait(DEFAULT_SLEEP_TIME_IN_MS);
-  // await centerizeIframeImage();
-  await captureScreenFromIframe(false);
-  // await setIframeResolution(DEFAULT_IFRAME_WIDTH, DEFAULT_IFRAME_HEIGHT);
+  await captureScreenFromIframe();
 }
 
-async function captureScreenFromIframe(shouldResizeFrame) {
+async function captureScreenFromIframe() {
   await hideViewPortBar(true);
   await updateMissingCssForChildSelector();
 
   const iframe = document.querySelector("[id$='process-analytic-viewer']");
   const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-  const body = iframeDoc.body;
 
-  const contentWidth = body.scrollWidth;
-  const contentHeight = body.scrollHeight;
-  if (shouldResizeFrame) {
-    iframe.style.width = "2000px";
-    iframe.style.height = "2000px";
-  }
-
-  await html2canvas(body, {
-    scale: 2,
+  await html2canvas(iframeDoc.body, {
+    scale: 1,
     allowTaint: true,
   })
     .then((canvas) => {
@@ -102,11 +93,6 @@ async function captureScreenFromIframe(shouldResizeFrame) {
       link.href = encodedImg;
       link.download = `${imageName}.jpeg`;
       link.click();
-
-      if (shouldResizeFrame) {
-        iframe.style.width = contentWidth + "px";
-        iframe.style.height = contentHeight + "px";
-      }
     })
     .catch((err) => {
       console.error("Error capturing iframe content:", err);
@@ -130,8 +116,8 @@ async function updateMissingCssForChildSelector() {
 
 async function setIframeResolution(width, height) {
   const iframe = queryObjectById(DIAGRAM_IFRAME_ID)[0];
-  iframe.width = width;
-  iframe.height = height;
+  iframe.style.width = width;
+  iframe.style.height = height;
 }
 
 async function returnToFirstLayer() {
@@ -223,58 +209,6 @@ function loadIframe(recheckIndicator) {
   }, 500);
 }
 
-// 1. Helper: copy computed styles inline
-function inlineComputedStyles(svg) {
-  const clone = svg.cloneNode(true);
-
-  const allElements = clone.querySelectorAll("*");
-  allElements.forEach((el) => {
-    const computed = window.getComputedStyle(el);
-    let style = "";
-    for (const key of computed) {
-      style += `${key}:${computed.getPropertyValue(key)};`;
-    }
-    el.setAttribute("style", style);
-  });
-
-  return clone;
-}
-function replaceForeignObjects(svg) {
-  const foList = svg.querySelectorAll("foreignObject");
-  foList.forEach((fo) => {
-    const div = fo.querySelector("div");
-    if (div) {
-      const text = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "text"
-      );
-      text.setAttribute("x", fo.getAttribute("x") || 0);
-      text.setAttribute("y", fo.getAttribute("y") || 14);
-      text.textContent = div.textContent;
-      fo.parentNode.replaceChild(text, fo);
-    }
-  });
-}
-// 2. Export as JPEG at given scale (e.g., 2 = 200%)
-function exportSVGToJPEG(svgElement, scale = 2, filename = "image.jpg") {
-  if (svgElement === undefined) {
-    const iframe = document.querySelector("iframe");
-    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-    svgElement = iframeDoc.querySelector("svg.sprotty-graph");
-  }
-  const inlineSVG = inlineComputedStyles(svgElement);
-  //replaceForeignObjects(svgElement);
-
-  const serializer = new XMLSerializer();
-  const source = serializer.serializeToString(inlineSVG);
-  console.warn("svg : " + source);
-
-  document.getElementById(
-    "process-analytics-form:process-analytic-viewer-panel:svgData"
-  ).value = inlineSVG.outerHTML;
-  exportSvg();
-}
-
 function openViewerInNewTab() {
   var url = $("[id$='process-analytic-viewer']").prop("src");
   if (url) {
@@ -283,3 +217,16 @@ function openViewerInNewTab() {
     alert("Viewer URL not found");
   }
 }
+
+// Color picker popup handling
+document.addEventListener("click", function (event) {
+  var colorPickerWrapper = document.getElementById("color-picker-wrapper");
+  var colorPickerComponent = document.getElementById("process-analytics-form:color-picker-component:color-picker");
+  if (!colorPickerWrapper || !colorPickerComponent) {
+    return;
+  }
+  var colorPickerWidget = PF("colorPickerWidget");
+  if (colorPickerWidget && !colorPickerWrapper.contains(event.target)) {
+    colorPickerWrapper.style.display = "none";
+  }
+});

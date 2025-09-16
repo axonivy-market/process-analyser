@@ -49,4 +49,10 @@ public class TaskPath {
   public void setPaths(List<Path> paths) {
     this.paths = paths;
   }
+
+  @Override
+  public String toString() {
+    final var pattern = "TaskPath{ taskUUID: %s, NodesInPath: %s, Paths: %s}";
+    return pattern.formatted(taskUUID, nodesInPath, paths);
+  }
 }

@@ -24,7 +24,7 @@ public class BaseSetup {
   protected static final String TEST_APPLICATION_NAME = "test";
   protected static final String TEST_MODULE_NAME = "process-analyser-test";
   protected static final String SELECTED_STARTABLE_ID = "SupportHR.p.json";
-  protected static final String TEST_IFRAME_SOURCE_URL = "/test/faces/view/process-analyser-test/process-miner.xhtml?server=localhost:8080&app=test&pmv=HRTest&file=/processes/"
+  protected static final String TEST_IFRAME_SOURCE_URL = "/test/faces/view/process-analyser-test/process-miner.xhtml?server=localhost%3A8080&app=test&pmv=HRTest&file=%2Fprocesses%2F"
       + SELECTED_STARTABLE_ID;
   protected static final String SELECTED_PROJECT_PATH = "/processes/SupportHR.p.json";
   protected static final String SELECTED_MODULE_URL = "HRTest";

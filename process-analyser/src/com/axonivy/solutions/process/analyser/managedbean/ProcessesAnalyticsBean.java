@@ -1,20 +1,11 @@
 package com.axonivy.solutions.process.analyser.managedbean;
 
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COLOR_SEGMENT_ATTRIBUTE;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_REGEX;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_SIGN;
-import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.DURATION_COLOR;
-import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.DURATION_TEXT_COLOR;
-import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.FREQUENCY_COLOR;
-import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.FREQUENCY_TEXT_COLOR;
-import static com.axonivy.solutions.process.analyser.enums.KpiType.FREQUENCY;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
@@ -23,7 +14,6 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 
@@ -46,7 +36,6 @@ import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
 import com.axonivy.solutions.process.analyser.service.IvyTaskOccurrenceService;
-import com.axonivy.solutions.process.analyser.utils.ColorUtils;
 import com.axonivy.solutions.process.analyser.utils.DateUtils;
 import com.axonivy.solutions.process.analyser.utils.FacesContexts;
 import com.axonivy.solutions.process.analyser.utils.JacksonUtils;
@@ -56,7 +45,6 @@ import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.cm.ContentObject;
 import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.environment.Ivy;
-import ch.ivyteam.ivy.security.IUser;
 import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 
@@ -83,17 +71,15 @@ public class ProcessesAnalyticsBean {
   private double minValue;
   private double maxValue;
   private List<SelectItem> kpiTypes;
-  private List<String> colorSegments;
-  private List<String> textColors;
-  private String selectedColor;
-  private int selectedIndex = -1;
   private MasterDataBean masterDataBean;
   private ProcessViewerBean viewerBean;
+  private ColorPickerBean colorPickerBean;
 
   @PostConstruct
   private void init() {
     masterDataBean = FacesContexts.evaluateValueExpression("#{masterDataBean}", MasterDataBean.class);
     viewerBean = FacesContexts.evaluateValueExpression("#{processViewerBean}", ProcessViewerBean.class);
+    colorPickerBean = FacesContexts.evaluateValueExpression("#{colorPickerBean}", ColorPickerBean.class);
     processesMap = masterDataBean.getProcessesMap();
     setNodes(new ArrayList<>());
     processMiningDataJsonFile = ContentManagement.cms(IApplication.current()).root().child()
@@ -140,10 +126,7 @@ public class ProcessesAnalyticsBean {
   }
 
   public List<Process> getAvailableProcesses() {
-    if (StringUtils.isBlank(selectedModule)) {
-      return new ArrayList<>();
-    }
-    return processesMap.get(selectedModule);
+    return masterDataBean.getAvailableProcesses(selectedModule);
   }
 
   public List<SelectItem> getAvailableProcessStarts() {
@@ -171,24 +154,20 @@ public class ProcessesAnalyticsBean {
 
   private String getStartElementDisplayName(StartElement start) {
     final var enumCmsURI = "/Enums/StartElementType/%s/name";
-    return switch (start.getType()) {
-      case StartElement ->
-        Ivy.cms().co(enumCmsURI.formatted("StartElement"), List.of(start.getName()));
-      case StartEventElement ->
-        Ivy.cms().co(enumCmsURI.formatted("StartEventElement"), List.of(start.getName()));
-      case StartSignalEventElement ->
-        Ivy.cms().co(enumCmsURI.formatted("StartSignalEventElement"), List.of(start.getName()));
-      case WebServiceProcessStartElement ->
-        Ivy.cms().co(enumCmsURI.formatted("WebServiceProcessStartElement"), List.of(start.getName()));
+    String cmsUrl = switch (start.getType()) {
+      case StartElement -> enumCmsURI.formatted("StartElement");
+      case StartEventElement -> enumCmsURI.formatted("StartEventElement");
+      case StartSignalEventElement -> enumCmsURI.formatted("StartSignalEventElement");
+      case WebServiceProcessStartElement -> enumCmsURI.formatted("WebServiceProcessStartElement");
       default -> start.getName();
     };
+    return Ivy.cms().co(cmsUrl, List.of(start.getName()));
   }
 
   public void prepareForExportingJPEG(boolean isResetView) {
     if (isResetView) {
       viewerBean.resetViewerSelection();
-    } else {
-      viewerBean.refreshBpmnIFrame();
+      PF.current().ajax().update(ProcessAnalyticViewComponentId.getDiagramAndStatisticComponentIds());
     }
   }
 
@@ -206,21 +185,18 @@ public class ProcessesAnalyticsBean {
     resetStatisticValue();
   }
 
-  public void onProcessSelect() throws Exception {
+  public void onProcessSelect() {
     resetStatisticValue();
     if (selectedProcessAnalyser != null) {
-      updateDiagramAndStatistic();
       getCaseAndTaskCustomFields();
-      renderNodesForKPIType();
+      refreshAnalyserReportToView();
     }
   }
 
-  public void onKpiTypeSelect() throws Exception {
-    selectedIndex = -1;
-    selectedColor = null;
-    getBackgroundAndTextColors();
-    updateDiagramAndStatistic();
-    renderNodesForKPIType();
+  public void onKpiTypeSelect() {
+    colorPickerBean.initBean(selectedKpiType);
+    colorPickerBean.getBackgroundAndTextColors();
+    refreshAnalyserReportToView();
   }
 
   private void resetStatisticValue() {
@@ -276,11 +252,10 @@ public class ProcessesAnalyticsBean {
     PF.current().ajax().update(groupIdsToUpdate);
   }
 
-  public void onCustomfieldUnselect() throws Exception {
+  public void onCustomfieldUnselect() {
     onCustomFieldSelect();
-    updateDiagramAndStatistic();
     updateCustomFilterPanel();
-    renderNodesForKPIType();
+    refreshAnalyserReportToView();
   }
 
   public double getMinValue(String fieldName) {
@@ -305,54 +280,12 @@ public class ProcessesAnalyticsBean {
         Arrays.asList(numberValue.get(0), numberValue.get(1)));
   }
 
-  public void onSegmentClick(ActionEvent event) {
-    selectedIndex = (Integer) event.getComponent().getAttributes().get(COLOR_SEGMENT_ATTRIBUTE);
-    selectedColor = colorSegments.get(selectedIndex);
-  }
-
-  public void onColorChange() throws Exception {
-    colorSegments = ColorUtils.generateGradientFromRgb(selectedColor, GRADIENT_COLOR_LEVELS);
-    textColors = ColorUtils.getAccessibleTextColors(colorSegments);
-    updateColorProperties();
+  public void refreshAnalyserReportToView() {
     updateDiagramAndStatistic();
     renderNodesForKPIType();
   }
 
-  public String getCalulatedCellColor(Double value) {
-    return ColorUtils.calculateColorFromList(value, colorSegments);
-  }
-
-  public String getAccessibleTextColor(Double value) {
-    return ColorUtils.getAccessibleTextColor(getCalulatedCellColor(value));
-  }
-
-  private void updateColorProperties() {
-    IUser user = Ivy.session().getSessionUser();
-    String colorKey = getColorPropertyKey();
-    String textKey = getTextColorPropertyKey();
-
-    user.setProperty(colorKey, String.join(HYPHEN_SIGN, colorSegments));
-    user.setProperty(textKey, String.join(HYPHEN_SIGN, textColors));
-  }
-
-  private void getBackgroundAndTextColors() {
-    IUser user = Ivy.session().getSessionUser();
-    String colorKey = getColorPropertyKey();
-    String textKey = getTextColorPropertyKey();
-
-    String colorProperty = user.getProperty(colorKey);
-    String textProperty = user.getProperty(textKey);
-
-    if (colorProperty != null && textProperty != null) {
-      colorSegments = Arrays.asList(colorProperty.split(HYPHEN_REGEX));
-      textColors = Arrays.asList(textProperty.split(HYPHEN_REGEX));
-    } else {
-      colorSegments = ColorUtils.generateColorSegments(selectedKpiType);
-      textColors = ColorUtils.getAccessibleTextColors(colorSegments);
-    }
-  }
-
-  public void updateDataOnChangingFilter() throws Exception {
+  public void updateDataOnChangingFilter() {
     var parameterMap = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
     String from = parameterMap.get(ProcessAnalyticsConstants.FROM);
     String to = parameterMap.get(ProcessAnalyticsConstants.TO);
@@ -360,11 +293,10 @@ public class ProcessesAnalyticsBean {
     timeIntervalFilter.setTo(DateUtils.parseDateFromString(to));
     resetStatisticValue();
     getCaseAndTaskCustomFields();
-    updateDiagramAndStatistic();
-    renderNodesForKPIType();
+    refreshAnalyserReportToView();
   }
 
-  public void updateDiagramAndStatistic() throws Exception {
+  public void updateDiagramAndStatistic() {
     if (isDiagramAndStatisticRenderable()) {
       viewerBean.init(selectedProcessAnalyser);
       loadNodes();
@@ -377,49 +309,55 @@ public class ProcessesAnalyticsBean {
   private void loadNodes() {
     analyzedNode = new ArrayList<>();
     selectedPid = selectedProcessAnalyser.getProcess().getId();
-    if (StringUtils.isNoneBlank(selectedModule) && selectedProcessAnalyser != null && ObjectUtils.allNotNull(selectedKpiType, selectedProcessAnalyser)) {
+    initializingProcessMiningData();
+
+    if (haveMandatoryFieldsBeenFilled()) {
       Long taskStartId = selectedProcessAnalyser.getStartElement().getTaskStartId();
       List<ICase> cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId,
           timeIntervalFilter, selectedCustomFilters);
       if (CollectionUtils.isNotEmpty(cases)) {
-        processMiningData = new ProcessMiningData();
-        processMiningData.setProcessId(selectedProcessAnalyser.getProcess().getId());
-        processMiningData.setProcessName(selectedProcessAnalyser.getProcess().getName());
-        processMiningData.setKpiType(selectedKpiType);
-        TimeFrame timeFrame = new TimeFrame(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo());
-        processMiningData.setTimeFrame(timeFrame);
         analyzedNode = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(selectedProcessAnalyser, selectedKpiType, cases);
         processMiningData.setNodes(analyzedNode);
         processMiningData.setNumberOfInstances(cases.size());
-        processMiningData.setColors(colorSegments);
-        processMiningData.setTextColors(textColors);
       }
     }
     updateDataTableWithNodesPrefix(ProcessUtils.getProcessPidFromElement(selectedPid));
   }
 
-  private void updateProcessMiningDataJson() throws Exception {
-    if (processMiningData == null) {
-      List<Node> nodes = new ArrayList<>();
-      nodes.add(new Node());
-      processMiningData = new ProcessMiningData();
-      processMiningData.setProcessName(selectedProcessAnalyser.getProcess().getName());
-      processMiningData.setTimeFrame(new TimeFrame(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo()));
-      processMiningData.setColors(colorSegments);
-      processMiningData.setTextColors(textColors);
-      processMiningData.setNodes(nodes);
-    }
+  private boolean haveMandatoryFieldsBeenFilled() {
+    return StringUtils.isNoneBlank(selectedModule)
+        && ObjectUtils.allNotNull(selectedKpiType, selectedProcessAnalyser);
+  }
+
+  private void updateProcessMiningDataJson() {
     String jsonString = JacksonUtils.convertObjectToJSONString(processMiningData);
     processMiningDataJsonFile.value().get(ProcessAnalyticsConstants.EN_CMS_LOCALE).write().string(jsonString);
+  }
+
+  private void initializingProcessMiningData() {
+    if (processMiningData == null) {
+      Optional.ofNullable(selectedProcessAnalyser.getProcess()).ifPresent(selectedProcess -> {
+        List<Node> nodes = new ArrayList<>();
+        nodes.add(new Node());
+        processMiningData = new ProcessMiningData();
+        processMiningData.setProcessId(selectedProcess.getId());
+        processMiningData.setProcessName(selectedProcess.getName());
+        processMiningData.setKpiType(selectedKpiType);
+        processMiningData.setTimeFrame(new TimeFrame(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo()));
+        processMiningData.setColors(colorPickerBean.getColorSegments());
+        processMiningData.setTextColors(colorPickerBean.getTextColors());
+        processMiningData.setNodes(nodes);
+      });
+    }
   }
 
   public String generateNameOfExcelFile() {
     String formattedKpiTypeName = selectedKpiType.getCmsName()
         .replaceAll(ProcessAnalyticsConstants.SPACE_DASH_REGEX, ProcessAnalyticsConstants.UNDERSCORE)
         .replaceAll(ProcessAnalyticsConstants.MULTIPLE_UNDERSCORES_REGEX, ProcessAnalyticsConstants.UNDERSCORE);
-    return selectedProcessAnalyser != null
-        ? String.format(ProcessAnalyticsConstants.ANALYSIS_EXCEL_FILE_PATTERN, formattedKpiTypeName, selectedProcessAnalyser)
-        : StringUtils.EMPTY;
+    var startName = Optional.ofNullable(selectedProcessAnalyser).map(ProcessAnalyser::getStartElement)
+        .map(StartElement::getName).orElse(StringUtils.EMPTY);
+    return String.format(ProcessAnalyticsConstants.ANALYSIS_EXCEL_FILE_PATTERN, formattedKpiTypeName, startName);
   }
 
   public void renderNodesForKPIType() {
@@ -438,12 +376,12 @@ public class ProcessesAnalyticsBean {
     return ProcessesMonitorUtils.isDuration(selectedKpiType);
   }
 
-  private String getColorPropertyKey() {
-    return FREQUENCY == selectedKpiType ? FREQUENCY_COLOR : DURATION_COLOR;
+  public String getCalulatedCellColor(Double value) {
+    return colorPickerBean.getCalulatedCellColor(value);
   }
 
-  private String getTextColorPropertyKey() {
-    return FREQUENCY == selectedKpiType ? FREQUENCY_TEXT_COLOR : DURATION_TEXT_COLOR;
+  public String getAccessibleTextColor(Double value) {
+    return colorPickerBean.getAccessibleTextColor(value);
   }
 
   public ProcessAnalyser getSelectedProcessAnalyser() {
@@ -552,38 +490,6 @@ public class ProcessesAnalyticsBean {
 
   public List<SelectItem> getKpiTypes() {
     return kpiTypes;
-  }
-
-  public List<String> getColorSegments() {
-    return colorSegments;
-  }
-
-  public void setColorSegments(List<String> colorSegments) {
-    this.colorSegments = colorSegments;
-  }
-
-  public List<String> getTextColors() {
-    return textColors;
-  }
-
-  public void setTextColors(List<String> textColors) {
-    this.textColors = textColors;
-  }
-
-  public String getSelectedColor() {
-    return selectedColor;
-  }
-
-  public void setSelectedColor(String selectedColor) {
-    this.selectedColor = selectedColor;
-  }
-
-  public int getSelectedIndex() {
-    return selectedIndex;
-  }
-
-  public void setSelectedIndex(int selectedIndex) {
-    this.selectedIndex = selectedIndex;
   }
 
   public List<Node> getFilteredNodes() {

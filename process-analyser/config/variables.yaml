@@ -7,5 +7,7 @@
 # '<project>/Config/_<environment>/variables.yaml
 #
 Variables:
-  # Maximum query results per query task
-  maxQueryResults: "10000"
+  market:
+    processAnalyzer:
+      # Maximum query results per query task
+      maxQueryResults: "10000"

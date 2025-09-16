@@ -13,8 +13,9 @@
         <h:outputStylesheet library="css" name="process-analyser.css" />
 
       <h:form id="process-analytics-form" styleClass="card">
-        <p:remoteCommand name="updateDataTable"
-          action="#{processesAnalyticsBean.updateDataTable}" update="data-statistics"/>
+        <p:remoteCommand id="update-data-table-cmd" name="updateDataTable"
+          action="#{processesAnalyticsBean.updateDataTable}" update="data-statistics"
+          process="@this" partialSubmit="true"/>
         <p:graphicImage id="hidden-image" library="ivy-cms"
           name="#{processesAnalyticsBean.miningUrl}" />
         <p:panelGrid columns="2" layout="grid" styleClass="ui-fluid"
@@ -24,8 +25,9 @@
           </h:panelGroup>
 
           <p:commandButton id="show-statistic-btn"
+            icon="pi pi-chart-line"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/ShowStatistic')}"
-            styleClass="show-statistic-btn"
+            styleClass="show-statistic-btn w-auto"
             update="process-analytics-form"
             actionListener="#{processesAnalyticsBean.updateDiagramAndStatistic}"
             disabled="#{processesAnalyticsBean.showStatisticBtnDisabled}" />
@@ -71,7 +73,8 @@
               value="#{processesAnalyticsBean.selectedKpiType}" converter="kpiTypeConverter">
               <f:selectItems value="#{processesAnalyticsBean.kpiTypes}" />
               <p:ajax event="itemSelect"
-                listener="#{processesAnalyticsBean.onKpiTypeSelect}" update="color-bar-segment color-picker-panel"/>
+                listener="#{processesAnalyticsBean.onKpiTypeSelect}" update="process-analytics-form:color-picker-component:color-container"
+                process="@this" partialSubmit="true"/>
             </p:cascadeSelect>
           </h:panelGroup>
         </p:panelGrid>
@@ -96,45 +99,10 @@
           process="#{processesAnalyticsBean.selectedProcessAnalyser}"
           componentsToUpdate="@this"/>
 
-        <h:panelGroup layout="block" styleClass="color-container">
-          <p:outputPanel id="color-bar-segment">
-            <h:panelGroup layout="block" styleClass="duration-container" rendered="#{processesAnalyticsBean.selectedKpiType != null}">
-              <h:panelGroup class="duration-labels" rendered="#{'FREQUENCY' eq processesAnalyticsBean.selectedKpiType}">
-                <h:outputText styleClass="duration-label left"
-                  value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/LowExecution')}" escape="false" />
-                <h:outputText styleClass="duration-label right"
-                  value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/HighExecution')}" escape="false" />
-              </h:panelGroup>
-
-              <h:panelGroup class="duration-labels" rendered="#{'FREQUENCY' ne processesAnalyticsBean.selectedKpiType}">
-                <h:outputText styleClass="duration-label left"
-                  value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/LowDuration')}" escape="false" />
-                <h:outputText styleClass="duration-label right"
-                  value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/HighDuration')}" escape="false" />
-              </h:panelGroup>
-
-              <div class="duration-bar">
-                <ui:repeat value="#{processesAnalyticsBean.colorSegments}" var="color" varStatus="status">
-                  <p:commandLink actionListener="#{processesAnalyticsBean.onSegmentClick}"
-                    update="process-analytics-form:color-picker-panel" styleClass="segment" style="background-color: #{color};"
-                    oncomplete="PF('colorPickerWidget').show();" ondblclick="return;">
-                    <f:attribute name="segmentIndex" value="#{status.index}" />
-                  </p:commandLink>
-                </ui:repeat>
-              </div>
-            </h:panelGroup>
-          </p:outputPanel>
-
-          <p:outputPanel id="color-picker-panel" styleClass="color-picker-panel">
-            <div id="color-picker-wrapper">
-              <p:colorPicker id="inline" mode="inline" value="#{processesAnalyticsBean.selectedColor}"
-                rendered="#{processesAnalyticsBean.selectedIndex >= 0}" widgetVar="colorPickerWidget" theme="large" format="rgb"
-                alpha="false">
-                <p:ajax event="change" listener="#{processesAnalyticsBean.onColorChange}" update="process-analytics-form:color-bar-segment" />
-              </p:colorPicker>
-            </div>
-          </p:outputPanel>
-        </h:panelGroup>
+        <ic:com.axonivy.solutions.process.analyser.component.ColorPicker id="color-picker-component"
+          kpiType="#{processesAnalyticsBean.selectedKpiType}"
+          onColorChange="#{processesAnalyticsBean.refreshAnalyserReportToView()}"
+          componentToUpdate="@this" />
 
         <hr />
 
@@ -198,9 +166,8 @@
               update="action-btn-group process-analytics-form:process-analytic-viewer-panel:viewer-group" icon="pi pi-desktop"
               oncomplete="getFullDiagramData(); return true;" />
             <p:menuitem value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/CaptureCurrentView')}"
-              actionListener="#{processesAnalyticsBean.prepareForExportingJPEG(false)}"
               process="@this" partialSubmit="true"
-              update="@this action-btn-group" icon="pi pi-th-large"
+              update="action-btn-group" icon="pi pi-th-large"
               oncomplete="getCurrentViewPortOfDiagramData(); return true;" />
           </p:menuButton>
           <p:commandButton icon="pi pi-upload" styleClass="action-button"

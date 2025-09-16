@@ -80,6 +80,23 @@ public class NodeResolver {
     }};
   }
 
+  public static void updateRelativeValueForNodes(List<Node> nodes) {
+    if (CollectionUtils.isEmpty(nodes)) {
+      return;
+    }
+
+    int maxFrequency = 1;
+    for (Node node : nodes) {
+      if (node.getFrequency() > maxFrequency) {
+        maxFrequency = node.getFrequency();
+      }
+    }
+
+    for (Node node : nodes) {
+      node.setRelativeValue((float) node.getFrequency() / maxFrequency);
+    }
+  }
+
   public static Node convertSequenceFlowToNode(SequenceFlow flow) {
     Node node = createNode(ProcessUtils.getElementPid(flow), flow.getName(), NodeType.ARROW);
     node.setTargetNodeId(flow.getTarget().getPid().toString());
