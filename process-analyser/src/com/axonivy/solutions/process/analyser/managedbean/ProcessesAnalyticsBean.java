@@ -341,20 +341,18 @@ public class ProcessesAnalyticsBean {
   }
 
   private void initializingProcessMiningData() {
-    if (processMiningData == null) {
-      Optional.ofNullable(selectedProcessAnalyser.getProcess()).ifPresent(selectedProcess -> {
-        List<Node> nodes = new ArrayList<>();
-        nodes.add(new Node());
-        processMiningData = new ProcessMiningData();
-        processMiningData.setProcessId(selectedProcess.getId());
-        processMiningData.setProcessName(selectedProcess.getName());
-        processMiningData.setKpiType(selectedKpiType);
-        processMiningData.setTimeFrame(new TimeFrame(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo()));
-        processMiningData.setColors(colorPickerBean.getColorSegments());
-        processMiningData.setTextColors(colorPickerBean.getTextColors());
-        processMiningData.setNodes(nodes);
-      });
-    }
+    Optional.ofNullable(selectedProcessAnalyser.getProcess()).ifPresent(selectedProcess -> {
+      List<Node> nodes = new ArrayList<>();
+      nodes.add(new Node());
+      processMiningData = new ProcessMiningData();
+      processMiningData.setProcessId(selectedProcess.getId());
+      processMiningData.setProcessName(selectedProcess.getName());
+      processMiningData.setKpiType(selectedKpiType);
+      processMiningData.setTimeFrame(new TimeFrame(timeIntervalFilter.getFrom(), timeIntervalFilter.getTo()));
+      processMiningData.setColors(colorPickerBean.getColorSegments());
+      processMiningData.setTextColors(colorPickerBean.getTextColors());
+      processMiningData.setNodes(nodes);
+    });
   }
 
   public String generateNameOfExcelFile() {

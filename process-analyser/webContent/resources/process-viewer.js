@@ -1,5 +1,6 @@
 const DIAGRAM_IFRAME_ID = "process-analytic-viewer";
 const FIT_TO_SCREEN_BUTTON_ID = "fitToScreenBtn";
+const CENTER_BUTTON_ID = "centerBtn";
 const DEFAULT_SLEEP_TIME_IN_MS = 500;
 const SPROTTY_VIEWPORT_BAR_ID = "sprotty_ivy-viewport-bar";
 const HIDDEN_CLASS = "hidden";
@@ -27,7 +28,7 @@ const MINING_URL_PARAM = "&miningUrl=";
 function getCenterizeButton() {
   return queryObjectById(DIAGRAM_IFRAME_ID)
     .contents()
-    .find(buildIdRef(FIT_TO_SCREEN_BUTTON_ID))[0];
+    .find(buildIdRef(CENTER_BUTTON_ID))[0];
 }
 
 function buildIdRef(id) {
@@ -65,6 +66,7 @@ async function getFullDiagramData() {
   await wait(DEFAULT_SLEEP_TIME_IN_MS);
   await returnToFirstLayer();
   await setIframeResolution(FULL_HD_RESOLUTION_WIDTH, FULL_HD_RESOLUTION_HEIGHT);
+  await wait(DEFAULT_SLEEP_TIME_IN_MS);
   await centerizeIframeImage();
   await captureScreenFromIframe();
   await setIframeResolution(DEFAULT_IFRAME_HEIGHT, DEFAULT_IFRAME_WIDTH);
