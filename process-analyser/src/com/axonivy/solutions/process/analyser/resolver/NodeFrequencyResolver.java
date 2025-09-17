@@ -5,6 +5,7 @@ import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnaly
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,6 +27,8 @@ import ch.ivyteam.ivy.process.model.element.event.end.CallSubEnd;
 import ch.ivyteam.ivy.process.model.element.event.end.EmbeddedEnd;
 import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.ITask;
+import ch.ivyteam.ivy.workflow.ITaskElement;
+import ch.ivyteam.ivy.workflow.ITaskSwitchEvent;
 
 @SuppressWarnings("restriction")
 public class NodeFrequencyResolver {
@@ -59,7 +62,8 @@ public class NodeFrequencyResolver {
     }
 
     cases.forEach(ivyCase -> {
-      for (var task : ivyCase.tasks().all()) {
+      List<ITask> finishedTasks = ivyCase.tasks().all().stream().filter(ITask::isPersistent).toList();
+      for (var task : finishedTasks) {
         List<String> nodeIdsInPath = findShortestWayFromTaskStartToEnd(task, processElements);
         updateFrequencyForNodeById(nodes, nodeIdsInPath);
       }
@@ -92,8 +96,8 @@ public class NodeFrequencyResolver {
    * @return foundNodeIdsInPath: list of nodes related to the found way
    */
   private static List<String> findShortestWayFromTaskStartToEnd(ITask task, List<ProcessElement> processElements) {
-    var taskStartPid = task.getStartSwitchEvent().getTaskElement().getProcessElementId();
-    var taskEndPid = task.getEndSwitchEvent().getTaskElement().getProcessElementId();
+    var taskStartPid = extractTaskSwitchEventElementPid(task.getStartSwitchEvent());
+    var taskEndPid = extractTaskSwitchEventElementPid(task.getEndSwitchEvent());
 
     List<String> foundNodeIdsInPath = new ArrayList<>();
     var firstPath = new Path(new ArrayList<>());
@@ -130,6 +134,11 @@ public class NodeFrequencyResolver {
     foundNodeIdsInPath.add(0, taskStartPid);
     foundNodeIdsInPath.remove(taskEndPid);
     return foundNodeIdsInPath;
+  }
+
+  private static String extractTaskSwitchEventElementPid(ITaskSwitchEvent taskSwitchEvent) {
+    return Optional.ofNullable(taskSwitchEvent).map(ITaskSwitchEvent::getTaskElement)
+        .map(ITaskElement::getProcessElementId).orElse(null);
   }
 
   /**
@@ -288,7 +297,7 @@ public class NodeFrequencyResolver {
       ProcessElement processElement) {
     var processElementId = ProcessUtils.getElementPid(processElement);
     path.getNodesInPath().add(processElementId);
-    if (processElementId.contentEquals(targetProcessElementId)) {
+    if (StringUtils.equals(processElementId, targetProcessElementId)) {
       path.setStatus(PathStatus.FOUND);
       path.setEndPathId(processElementId);
       return true;

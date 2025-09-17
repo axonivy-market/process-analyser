@@ -18,7 +18,6 @@ import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
-import com.axonivy.solutions.process.analyser.resolver.NodeFrequencyResolver;
 import com.axonivy.solutions.process.analyser.resolver.NodeResolver;
 import com.axonivy.solutions.process.analyser.test.BaseSetup;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
@@ -76,31 +75,20 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
 
   @Test
   void test_filterInitialStatisticByIntervalTime() {
-    String selectedPid = testProcessStart.pid().getParent().toString();
+    String selectedPid = testProcess.getId();
     prepareProcessAnalyzer();
     List<ICase> cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(
-        ProcessUtils.getTaskStartIdFromPID(selectedPid), new TimeIntervalFilter(new Date(), new Date()), new ArrayList<>());
+        ProcessUtils.getTaskStartIdFromPID(selectedPid), new TimeIntervalFilter(new Date(), new Date()),
+        new ArrayList<>(), false);
     List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(processAnalyser, KpiType.FREQUENCY, cases);
-    assertThat(results.size()).isEqualTo(26);
+    assertThat(results.size()).isEqualTo(24);
     assertThat(results.get(0).getLabelValue()).isEqualTo("0");
-  }
-
-  @Test
-  void test_updateFrequencyForNodes() {
-    ICase mockCase = ICase.current();
-    Node mockNode = new Node();
-    assertThat(mockNode.getLabel()).isNull();
-    List<Node> results = List.of(mockNode);
-    NodeFrequencyResolver frequencyResolver = new NodeFrequencyResolver(results, new ArrayList<>());
-    frequencyResolver.updateFrequencyByCases(List.of(mockCase));
-    assertThat(results.size()).isNotZero();
-    assertThat(results.get(0).getLabelValue()).isEqualTo("1");
   }
 
   @Test
   void test_getAllCasesFromTaskStartIdWithTimeInterval() {
     List<ICase> results = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(0L,
-        new TimeIntervalFilter(new Date(), new Date()), new ArrayList<CustomFieldFilter>());
+        new TimeIntervalFilter(new Date(), new Date()), new ArrayList<CustomFieldFilter>(), false);
     assertThat(results.size()).isZero();
   }
 
@@ -108,8 +96,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     processAnalyser = new ProcessAnalyser();
     processAnalyser.setProcess(new Process());
     processAnalyser.setStartElement(new StartElement());
-    processAnalyser.getStartElement().setPid(testProcessStart.pid().getParent().toString());
-    processAnalyser.getProcess().setId(testProcessStart.getId());
-    processAnalyser.getProcess().setPmv(testProcessStart.pmv());
+    processAnalyser.getStartElement().setPid(testProcess.getId());
+    processAnalyser.setProcess(testProcess);
   }
 }

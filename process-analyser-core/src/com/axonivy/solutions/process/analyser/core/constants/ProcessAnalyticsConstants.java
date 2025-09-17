@@ -13,6 +13,7 @@ public class ProcessAnalyticsConstants {
   public static final String FROM = "from";
   public static final String TO = "to";
   public static final String AND = "&";
+  public static final String SEMI_COLONS = ";";
   public static final String COMMA = ",";
   public static final String HASHTAG = "#";
   public static final String COMMA_CONNECT_PATTERN = ", ";

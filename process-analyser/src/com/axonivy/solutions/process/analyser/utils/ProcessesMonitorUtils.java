@@ -188,12 +188,14 @@ public class ProcessesMonitorUtils {
    * For custom fields of type NUMBER or TIMESTAMP, ensure exactly two values are
    * provided. For STRING type fields, iterate over each value to build individual
    * sub-queries. If no customFieldValues are found, subQuery will be ignored
+   * @param isIncludingRunningCases 
    **/
   public static List<ICase> getAllCasesFromTaskStartIdWithTimeInterval(Long taskStartId,
-      TimeIntervalFilter timeIntervalFilter, List<CustomFieldFilter> customFilters) {
-    CaseQuery query = CaseQuery.create().where().state().isEqual(CaseState.DONE).and().taskStartId()
-        .isEqual(taskStartId).and().startTimestamp().isGreaterOrEqualThan(timeIntervalFilter.getFrom()).and()
-        .startTimestamp().isLowerOrEqualThan(timeIntervalFilter.getTo());
+      TimeIntervalFilter timeIntervalFilter, List<CustomFieldFilter> customFilters, boolean isIncludingRunningCases) {
+    var caseQuery = CaseQuery.create();
+    caseQuery.where().and(buildCaseStateQuery(isIncludingRunningCases))
+      .and(buildTaskStartIdQuery(taskStartId))
+      .and(buildStartTimestampQuery(timeIntervalFilter));
 
     List<CustomFieldFilter> validCustomFilters = getValidCustomFilters(customFilters);
     if (ObjectUtils.isNotEmpty(validCustomFilters)) {
@@ -205,9 +207,27 @@ public class ProcessesMonitorUtils {
 
         allCustomFieldsQuery.where().and(customFieldQuery);
       }
-      query.where().andOverall(allCustomFieldsQuery);
+      caseQuery.where().andOverall(allCustomFieldsQuery);
     }
-    return Ivy.wf().getCaseQueryExecutor().getResults(query);
+    return Ivy.wf().getCaseQueryExecutor().getResults(caseQuery);
+  }
+
+  private static CaseQuery buildStartTimestampQuery(TimeIntervalFilter timeIntervalFilter) {
+    return CaseQuery.create().where().startTimestamp().isGreaterOrEqualThan(timeIntervalFilter.getFrom())
+        .and()
+        .startTimestamp().isLowerOrEqualThan(timeIntervalFilter.getTo());
+  }
+
+  private static CaseQuery buildTaskStartIdQuery(Long taskStartId) {
+    return CaseQuery.create().where().taskStartId().isEqual(taskStartId);
+  }
+
+  private static CaseQuery buildCaseStateQuery(boolean isIncludingRunningCases) {
+    var query = CaseQuery.create();
+    if (!isIncludingRunningCases) {
+      query.where().state().isEqual(CaseState.DONE);
+    }
+    return query;
   }
 
   private static List<CustomFieldFilter> getValidCustomFilters(List<CustomFieldFilter> customFilters) {

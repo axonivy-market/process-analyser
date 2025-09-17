@@ -1,6 +1,7 @@
 package com.axonivy.solutions.process.analyser.core.internal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -50,8 +51,10 @@ import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
 @SuppressWarnings("restriction")
 public class ProcessUtils {
-  private ProcessUtils() {
-  }
+
+  static final String SKIP_PROJECTS_VARIABLE = "market.processAnalyzer.skipProjects";
+
+  private ProcessUtils() { }
 
   public static String getElementPid(BaseElement baseElement) {
     return Optional.ofNullable(baseElement).map(BaseElement::getPid).map(PID::toString).orElse(StringUtils.EMPTY);
@@ -201,10 +204,14 @@ public class ProcessUtils {
   }
 
   private static Predicate<? super IProcessModelVersion> isPMVNeedToRecordStatistic() {
+    String configSkipProjects = StringUtils.trim(Ivy.var().get(SKIP_PROJECTS_VARIABLE));
+    String[] skipPMVs = Arrays.asList(StringUtils.split(configSkipProjects, ProcessAnalyticsConstants.SEMI_COLONS))
+        .stream().filter(StringUtils::isNoneBlank).toArray(String[]::new);
     return pmv -> {
       String pmName = pmv.getProcessModel().getName();
       return !(StringUtils.equals(pmName, ProcessAnalyticsConstants.PROCESS_ANALYSER_PMV_NAME)
-          || StringUtils.contains(pmName, ProcessAnalyticsConstants.PORTAL_PMV_SUFFIX));
+          || StringUtils.contains(pmName, ProcessAnalyticsConstants.PORTAL_PMV_SUFFIX)
+          || StringUtils.equalsAnyIgnoreCase(pmName, skipPMVs));
     };
   }
 

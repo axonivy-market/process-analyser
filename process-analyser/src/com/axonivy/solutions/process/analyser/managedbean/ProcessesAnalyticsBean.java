@@ -53,7 +53,6 @@ import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 
-
 @ManagedBean
 @ViewScoped
 public class ProcessesAnalyticsBean {
@@ -74,6 +73,7 @@ public class ProcessesAnalyticsBean {
   private List<CustomFieldFilter> selectedCustomFilters;
   private List<String> selectedCustomFieldNames;
   private boolean isFilterDropdownVisible;
+  private boolean isIncludingRunningCases;
   private double minValue;
   private double maxValue;
   private List<SelectItem> kpiTypes;
@@ -320,7 +320,7 @@ public class ProcessesAnalyticsBean {
     if (haveMandatoryFieldsBeenFilled()) {
       Long taskStartId = selectedProcessAnalyser.getStartElement().getTaskStartId();
       List<ICase> cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId,
-          timeIntervalFilter, selectedCustomFilters);
+          timeIntervalFilter, selectedCustomFilters, isIncludingRunningCases);
       if (CollectionUtils.isNotEmpty(cases)) {
         analyzedNode = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(selectedProcessAnalyser, selectedKpiType, cases);
         processMiningData.setNodes(analyzedNode);
@@ -502,5 +502,13 @@ public class ProcessesAnalyticsBean {
 
   public void setFilteredNodes(List<Node> filteredNodes) {
     this.filteredNodes = filteredNodes;
+  }
+
+  public boolean isIncludingRunningCases() {
+    return isIncludingRunningCases;
+  }
+
+  public void setIncludingRunningCases(boolean isIncludingRunningCases) {
+    this.isIncludingRunningCases = isIncludingRunningCases;
   }
 }

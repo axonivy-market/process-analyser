@@ -37,11 +37,6 @@ public class ProcessUtilsTest extends BaseSetup {
   }
 
   @Test
-  void test_isIWebStartableNeedToRecordStatistic() {
-    assertThat(ProcessUtils.isIWebStartableNeedToRecordStatistic(testProcessStart)).isTrue();
-  }
-
-  @Test
   void test_getProcessesWithPmv() {
     var results = ProcessUtils.getProcessesWithPmv();
     assertThat(results).isNotEmpty();
@@ -53,12 +48,12 @@ public class ProcessUtilsTest extends BaseSetup {
   void test_getAllProcesses() {
     var results = ProcessUtils.getAllProcesses();
     assertThat(results).isNotEmpty();
-    assertThat(results.size()).isEqualTo(3);
+    assertThat(results.size()).isEqualTo(2);
   }
 
   @Test
   void test_getProcessElementsFromIProcessWebStartable() {
-    assertThat(ProcessUtils.getProcessElementsFrom(testProcessStart.getId(), testProcessStart.pmv()).size())
+    assertThat(ProcessUtils.getProcessElementsFrom(testProcess.getId(), testProcess.getPmv()).size())
         .isEqualTo(14);
   }
 

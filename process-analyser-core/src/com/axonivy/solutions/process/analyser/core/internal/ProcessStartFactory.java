@@ -1,8 +1,9 @@
 package com.axonivy.solutions.process.analyser.core.internal;
 
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.SLASH;
+
 import org.apache.commons.lang3.StringUtils;
 
-import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
 import com.axonivy.solutions.process.analyser.core.enums.StartElementType;
 
 import ch.ivyteam.ivy.workflow.IProcessStart;
@@ -11,7 +12,6 @@ import ch.ivyteam.ivy.workflow.internal.element.StartElement;
 import ch.ivyteam.ivy.workflow.internal.element.StartEventElement;
 import ch.ivyteam.ivy.workflow.internal.ws.WebServiceProcessStartElement;
 import ch.ivyteam.ivy.workflow.signal.impl.StartSignalEventElement;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.SLASH;
 
 @SuppressWarnings("restriction")
 public class ProcessStartFactory {

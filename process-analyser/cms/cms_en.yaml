@@ -14,6 +14,7 @@ Dialogs:
               ExportExcel: Export Excel
               ExportJPEG: Export JPEG
               From: From
+              IncludingRunningCases: Including running cases?
               LargeTimeInterval: Setting a very large time interval may cause performance issues.
               Title: Process Analytics
               To: To
@@ -67,40 +68,40 @@ Dialogs:
                 ZoomTooltip: Determine the zoom level that suits your needs.
 Enums:
   ElementType:
-    REQUEST_START:
-      name: 'Request start: {0}'
-    SIGNAL_START_EVENT:
-      name: 'Signal start event: {0}'
-    TASK_END:
-      name: 'Task end: {0}'
     ALTERNATIVE:
       name: 'Alternative: {0}'
+    CALL_SUB_END:
+      name: 'Call sub end: {0}'
+    CALL_SUB_START:
+      name: 'Call sub start: {0}'
+    ELEMENT:
+      name: 'Element: {0}'
+    EMBEDDED_END:
+      name: 'Embedded end: {0}'
+    EMBEDDED_PROCESS_ELEMENT:
+      name: 'Embedded process element: {0}'
+    EMBEDDED_START:
+      name: 'Embedded start: {0}'
+    REQUEST_START:
+      name: 'Request start: {0}'
+    REST_CLIENT_CALL:
+      name: 'REST client call: {0}'
     SCRIPT:
       name: 'Script: {0}'
     SCRIPT_BPMN_ELEMENT:
       name: 'Script BPMN element: {0}'
     SERVICE_BPMN_ELEMENT:
       name: 'Service BPMN element: {0}'
-    EMBEDDED_PROCESS_ELEMENT:
-      name: 'Embedded process element: {0}'
-    EMBEDDED_START:
-      name: 'Embedded start: {0}'
-    EMBEDDED_END:
-      name: 'Embedded end: {0}'
-    CALL_SUB_START:
-      name: 'Call sub start: {0}'
-    CALL_SUB_END:
-      name: 'Call sub end: {0}'
+    SIGNAL_START_EVENT:
+      name: 'Signal start event: {0}'
     SUB_PROCESS_CALL:
       name: 'Sub process call: {0}'
+    TASK_END:
+      name: 'Task end: {0}'
     TASK_SWITCH_EVENT:
       name: 'Task switch event: {0}'
     TASK_SWITCH_GATEWAY:
       name: 'Task switch gateway: {0}'
-    REST_CLIENT_CALL:
-      name: 'REST client call: {0}'
-    ELEMENT:
-      name: 'Element: {0}'
   KpiType:
     DURATION:
       name: Duration
