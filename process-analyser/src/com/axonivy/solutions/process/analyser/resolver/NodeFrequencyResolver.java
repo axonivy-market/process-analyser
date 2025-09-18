@@ -228,7 +228,7 @@ public class NodeFrequencyResolver {
 
     // Continue recursion with the (only) outgoing flow.
     if (!nextOutgoingFlows.isEmpty()) {
-      followNodes(targetPid, path, nextOutgoingFlows.get(0), subProcessCalls, taskPath);
+      followNodes(targetPid, path, nextOutgoingFlows.getFirst(), subProcessCalls, taskPath);
     }
   }
 

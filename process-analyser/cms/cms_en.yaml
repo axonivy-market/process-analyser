@@ -14,7 +14,8 @@ Dialogs:
               ExportExcel: Export Excel
               ExportJPEG: Export JPEG
               From: From
-              IncludingRunningCases: Including running cases?
+              IncludeRunningCases: Include running cases
+              IncludeRunningCasesTooltip: By default, only closed cases are evaluated. Use this button to also include running cases in the evaluation.
               LargeTimeInterval: Setting a very large time interval may cause performance issues.
               Title: Process Analytics
               To: To

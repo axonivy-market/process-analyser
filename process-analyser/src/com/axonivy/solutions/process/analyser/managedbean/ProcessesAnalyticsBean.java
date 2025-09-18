@@ -131,31 +131,40 @@ public class ProcessesAnalyticsBean {
     return group;
   }
 
-  public List<Process> getAvailableProcesses() {
-    return masterDataBean.getAvailableProcesses(selectedModule);
-  }
-
   public List<SelectItem> getAvailableProcessStarts() {
     if (StringUtils.isBlank(selectedModule)) {
       return new ArrayList<>();
     }
     List<SelectItem> processStartsSelection = new ArrayList<>();
-    processesMap.get(selectedModule).forEach(process -> {
-      var processStart = new ProcessAnalyser(process);
-      var group = new SelectItemGroup(process.getName());
-      group.setValue(processStart);
-      List<SelectItem> startElementsSelection = new ArrayList<>();
-      for (var startElement : process.getStartElements()) {
-        var processStartElement = new ProcessAnalyser(process, startElement);
-        String displayName = getStartElementDisplayName(startElement);
-        var item = new SelectItem(processStartElement, displayName);
-        startElementsSelection.add(item);
-      }
-      group.setSelectItems(startElementsSelection.stream().toArray(SelectItem[]::new));
-      processStartsSelection.add(group);
-    });
+    processesMap.get(selectedModule).stream()
+        .filter(process -> CollectionUtils.isNotEmpty(process.getStartElements()))
+        .forEach(process -> {
+          if (process.getStartElements().size() == 1) {
+            var item = createNewProcessItemForDropdown(process, process.getStartElements().getFirst());
+            var processNameAndStartElement = process.getName().concat(ProcessAnalyticsConstants.SLASH).concat(item.getLabel());
+            item.setLabel(processNameAndStartElement);
+            processStartsSelection.add(item);
+            return;
+          }
+
+          var processStart = new ProcessAnalyser(process);
+          var group = new SelectItemGroup(process.getName());
+          group.setValue(processStart);
+          SelectItem[] startElementsSelection = process.getStartElements().stream()
+              .map(startElement -> createNewProcessItemForDropdown(process, startElement))
+              .toArray(SelectItem[]::new);
+          group.setSelectItems(startElementsSelection);
+          processStartsSelection.add(group);
+        });
 
     return processStartsSelection;
+  }
+
+  private SelectItem createNewProcessItemForDropdown(Process process, StartElement startElement) {
+    var processStartElement = new ProcessAnalyser(process, startElement);
+    String displayName = getStartElementDisplayName(startElement);
+    var description = process.getName().concat(ProcessAnalyticsConstants.SLASH).concat(displayName);
+    return new SelectItem(processStartElement, displayName, description);
   }
 
   private String getStartElementDisplayName(StartElement start) {

@@ -21,9 +21,11 @@ Key features:
 
 ![demo processes](images/demo-processes.png)
 
-- To view the result, start the Process Analyzer and select the PMV that matches the desired process and KPI type, then click the **"Show Statistic"** button. This will display a raw data visualized process diagram alongside an analyzed statistics table. *(In this version, the data is limited to **"DONE"** cases with fewer than **TWO** alternative elements in their process.)*
+- To view the result, start the Process Analyzer and select the PMV that matches the desired process and KPI type, then click the **"Show Statistic"** button. This will display a raw data visualized process diagram alongside an analyzed statistics table.
 
 ![show statistic demo](images/show-statistic.gif)
+![show statistic demo](images/show-statistic-for-running-cases-on-new-tab.gif)
+![show statistic demo](images/expand-viewer.gif)
 
 - To gain deeper insights, additional filter criteria have been included: 
   1) **Time interval filter:** By default, this filter includes all **"DONE"** cases with a start timestamp that falls within the specified time range.
@@ -34,6 +36,7 @@ Key features:
 - For reporting purposes, users can export an Excel file containing analyzed data or a FullHD diagram with KPI values directly via the two buttons located at the bottom-right corner of the UI.
 
 ![downoad and export demo](images/download-and-export.png)
+![show statistic demo](images/capture-images.gif)
 
   3) **Custom color bar:** Customize the color of each KPI value using a gradient from light to dark, representing the progression from lower to higher values.
 ![color map demo](images/color-custom.png)

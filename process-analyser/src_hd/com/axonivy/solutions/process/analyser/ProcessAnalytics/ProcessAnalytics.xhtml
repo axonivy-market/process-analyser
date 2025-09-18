@@ -34,12 +34,14 @@
                 disabled="#{processesAnalyticsBean.showStatisticBtnDisabled}" />
 
             <div class="grid mr-4 grid align-items-center line-height-4 mt-1">
-              <p:outputLabel for="include-running-cases" value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/IncludingRunningCases')}"
+              <p:outputLabel id="include-running-cases-label" for="include-running-cases" value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/IncludeRunningCases')}"
                 styleClass="p-2" />
               <p:toggleSwitch id="include-running-cases" onIcon="pi pi-check" offIcon="pi pi-times"
                 value="#{processesAnalyticsBean.includingRunningCases}">
                 <p:ajax listener="#{processesAnalyticsBean.updateDiagramAndStatistic}" update="process-analytics-form"/>
               </p:toggleSwitch>
+              <p:tooltip for="include-running-cases-label"
+                value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/IncludeRunningCasesTooltip')}"/>
             </div>
           </h:panelGroup>
         </p:panelGrid>
@@ -48,7 +50,7 @@
         </p:outputPanel>
 
         <p:panelGrid id="search-fields" columns="3"
-          styleClass="ui-fluid mb-3" layout="flex"
+          styleClass="ui-fluid" layout="flex"
           columnClasses="ui-g-4, ui-g-4, ui-g-4">
           <h:panelGroup styleClass="ui-g field" layout="block">
             <p:outputLabel for="moduleDropdown"
@@ -91,7 +93,7 @@
         </p:panelGrid>
 
         <h:panelGroup id="time-interval-group"
-          styleClass="field col-12 grid formgrid align-items-start p-0 m-0 mb-3 field"
+          styleClass="field col-12 grid formgrid align-items-start p-0 m-0 field"
           layout="block">
           <ui:include src="TimeIntervalFilter.xhtml" />
           <p:remoteCommand id="filter-data-by-interval-rc"
