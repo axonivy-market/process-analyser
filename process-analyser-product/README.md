@@ -4,41 +4,49 @@ Axon Ivy’s Process Analyser Tool enables comprehensive insights into your work
 
 Key features:
 
-- **Visualize Process Diagrams**
-  : A clear and intuitive representation of your processes is provided through dynamic diagrams, which you are already familiar with from Axon Ivy.
-- **Statistics at a Glance**
-  : Visualize workflow usage and duration directly on the diagram.
-- **Time-Based Analysis**
-  : Filter and analyze data for specific time intervalls.
-- **Custom Attribute Filtering**
-  : Utilize process-specific attributes (custom-field from task/case) to filter and refine your analysis for deeper insights.
-- **Flexible Process Selection**
-  : Well integrated with any process from the same security context to leverage the tool's robust features.
-- **Export Capabilities**
-  : Export diagram and detailed Excel reports with frequency/duration statistics.
+- **Visualize Process Diagrams**  
+  A clear and intuitive representation of your processes is provided through dynamic diagrams, which you are already familiar with from Axon Ivy.
+
+- **Statistics at a Glance**  
+  Visualize workflow usage and duration directly on the diagram.
+
+- **Time-Based Analysis**  
+  Filter and analyze data for specific time intervalls.
+
+- **Custom Attribute Filtering**  
+  Utilize process-specific attributes (custom-field from task/case) to filter and refine your analysis for deeper insights.
+
+- **Flexible Process Selection**  
+  Well integrated with any process from the same security context to leverage the tool's robust features.
+
+- **Export Capabilities**  
+  Export diagram and detailed Excel reports with frequency/duration statistics.
 
 ![process analyzer](images/process-analyser-full-page.png)
 
 ## Demo
 
-- In the first step, to enable the Process Analyzer to collect data, you need to run and complete at least one of the demo processes.
+In the first step, to enable the Process Analyzer to collect data, you need to run and complete at least one of the demo processes.
 
 ![demo processes](images/demo-processes.png)
 
-- To view the result, start the Process Analyzer and select the PMV that matches the desired process and KPI type, then click the **"Show Statistic"** button. This will display a raw data visualized process diagram alongside an analyzed statistics table.
+### Show Statistic
+
+To view the result, start the Process Analyzer and select the PMV that matches the desired process and KPI type, then click the **"Show Statistic"** button. This will display a raw data visualized process diagram alongside an analyzed statistics table.
 
 ![show statistic demo](images/show-statistic.gif)
 
-- To provide more comprehensive insights, the following additional filter criteria have been introduced:
+### Filter and configuration options
+
+- **Filter:** To provide more comprehensive insights, the following additional filter criteria have been introduced:
+
   1. **Include running cases** By default, only closed cases are evaluated. Use this button to also include running cases in the evaluation.
   2. **Time interval filter:** This filter includes all cases whose start timestamps fall within the specified time range.
   3. **Custom filter:** This option allows users to filter cases based on custom field values (from the case or task) that match the specified conditions.
 
 ![filter data demo](images/filter-data.gif)
 
-- **Mining Viewer Configuration Options**
-
-  The mining viewer offers the following configuration options:
+- **Mining Viewer Configuration Options:** The mining viewer offers the following configuration options:
 
   1. **Configure Viewer:** Select a focus element to automatically center it within the viewing area.
   2. **Zoom Level:** You can specify a zoom value to adjust the diagram to fit your screen, as an alternative to using Ctrl + mouse scroll.
