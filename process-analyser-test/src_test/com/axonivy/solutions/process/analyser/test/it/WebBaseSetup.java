@@ -54,11 +54,14 @@ public class WebBaseSetup {
     // Find 1st option (index = 1 to avoid choosing default initial option of null)
     SelenideElement targetElement = $$(dropdownListCssSelector + " li").stream()
         .filter(item -> labelText.equals(item.text())).findAny()
-        .orElseThrow(() -> new AssertionError(
-            String.join(StringUtils.SPACE, "Dropdown item with text", labelText, "not found!")))
+        .orElseThrow(() -> new AssertionError(getDropdownItemNotFoundMessage(labelText)))
         .shouldBe(visible, Duration.ofSeconds(DEFAULT_TIMEOUT_DURATION));
     targetElement.click();
     $(dropdownCssSelector + dropdownLabelSuffix).shouldBe(Condition.text(labelText),
         Duration.ofSeconds(DEFAULT_TIMEOUT_DURATION));
+  }
+
+  protected String getDropdownItemNotFoundMessage(String optionName) {
+    return String.join(StringUtils.SPACE, "Dropdown item with text", optionName, "not found!");
   }
 }
