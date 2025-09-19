@@ -67,16 +67,11 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     var selectionPanel = $(PROCESS_DROPDOWN_CSS_SELECTOR + CASCADE_DROPDOWN_LIST_SUFFIX).shouldBe(visible, DEFAULT_DURATION);
 
     // Find 1st option (index = 1 to avoid choosing default initial option of null)
-    SelenideElement targetElement = selectionPanel.$$(" li").stream().filter(item -> PROCESS_FILE.equals(item.text()))
-        .findAny().orElse(null);
+    var processFileAndStartName = PROCESS_FILE.concat("/").concat("Start: ").concat(startElementName);
+    SelenideElement targetElement = selectionPanel.$$(" li").stream()
+        .filter(item -> processFileAndStartName.equals(item.text())).findAny()
+        .orElseThrow(() -> new AssertionError(getDropdownItemNotFoundMessage(processFileAndStartName)))
+        .shouldBe(visible, DEFAULT_DURATION);
     targetElement.click();
-
-    // Find the sub selection and click on start element by name
-    var startElement = targetElement.find(By.cssSelector("ul.ui-cascadeselect-sublist"))
-        .$$(By.cssSelector("li.ui-cascadeselect-item")).stream()
-          .filter(element -> element.getText().contains(startElementName)).findAny()
-          .orElseThrow(() -> new AssertionError(String.join(StringUtils.SPACE, "Dropdown item with text", startElementName, "not found!")))
-          .shouldBe(visible, DEFAULT_DURATION);
-    startElement.click();
   }
 }
