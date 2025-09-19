@@ -11,13 +11,13 @@ Key features:
   Visualize workflow usage and duration directly on the diagram.
 
 - **Time-Based Analysis**  
-  Filter and analyze data for specific time intervalls.
+  Filter and analyze data for specific time intervals.
 
 - **Custom Attribute Filtering**  
   Utilize process-specific attributes (custom-field from task/case) to filter and refine your analysis for deeper insights.
 
 - **Flexible Process Selection**  
-  Well integrated with any process from the same security context to leverage the tool's robust features.
+  Well integrated with any processes from the same security context to leverage the tool's robust features.
 
 - **Export Capabilities**  
   Export diagram and detailed Excel reports with frequency/duration statistics.
