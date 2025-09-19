@@ -7,5 +7,9 @@
 # '<project>/Config/_<environment>/variables.yaml
 #
 Variables:
-  # Maximum query results per query task
-  maxQueryResults: "10000"
+  market:
+    processAnalyzer:
+      # Maximum query results per query task
+      maxQueryResults: "10000"
+      # Specifies a list of projects that are not displayed in the project selection drop-down list, separated by semicolons.
+      skipProjects: ""

@@ -1,12 +1,13 @@
 const DIAGRAM_IFRAME_ID = "process-analytic-viewer";
 const FIT_TO_SCREEN_BUTTON_ID = "fitToScreenBtn";
+const CENTER_BUTTON_ID = "centerBtn";
 const DEFAULT_SLEEP_TIME_IN_MS = 500;
 const SPROTTY_VIEWPORT_BAR_ID = "sprotty_ivy-viewport-bar";
 const HIDDEN_CLASS = "hidden";
 const CHILD_DIV_FROM_NODE_ELEMENT_SELECTOR = ".node-child-label > div";
 const DEFAULT_IMAGE_TYPE = "image/jpeg";
 const ANCHOR_TAG = "a";
-const CURRENT_PROCESS_LABEL = "processDropdown_label";
+const CURRENT_PROCESS_LABEL = "process-dropdown";
 const HIDDEN_IMAGE_ID = "hidden-image";
 const JUMP_OUT_BTN_CLASS = "ivy-jump-out";
 const IVY_PROCESS_EXTENSION = ".ivp";
@@ -15,18 +16,19 @@ const NODE_WITH_ICON_BESIDE_SELECTOR =
 const FULL_HD_RESOLUTION_WIDTH = "1920px";
 const FULL_HD_RESOLUTION_HEIGHT = "1080px";
 const DEFAULT_IFRAME_WIDTH = "100%";
-const DEFAULT_IFRAME_HEIGHT = "400px";
+const DEFAULT_IFRAME_HEIGHT = "100%";
 const EXECUTED_CLASS = "executed";
 const EXECUTED_CLASS_CSS_SELECTOR = "." + EXECUTED_CLASS;
 const EXECUTION_BADGE_CSS_SELECTOR = ".execution-badge";
 const COMPLETE = "complete";
 const PID_QUERY_PARAM_NAME = "pid";
 const SUB_PROCESS_CALL_PID = "subProcessCallPid";
+const MINING_URL_PARAM = "&miningUrl=";
 
 function getCenterizeButton() {
   return queryObjectById(DIAGRAM_IFRAME_ID)
     .contents()
-    .find(buildIdRef(FIT_TO_SCREEN_BUTTON_ID))[0];
+    .find(buildIdRef(CENTER_BUTTON_ID))[0];
 }
 
 function buildIdRef(id) {
@@ -49,30 +51,39 @@ function updateUrlForIframe() {
   const dataUrl = queryObjectByIdInForm(HIDDEN_IMAGE_ID).attr("src");
   const encodedDataUrl = encodeURIComponent(dataUrl);
   const currentViewerUrl = window.frames[DIAGRAM_IFRAME_ID].src;
-  const url = currentViewerUrl + "&miningUrl=" + encodedDataUrl;
+  let url;
+  if (currentViewerUrl.includes(MINING_URL_PARAM)) {
+    // If miningUrl param already exists, replace it
+    url = currentViewerUrl.replace(MINING_URL_PARAM, MINING_URL_PARAM + encodedDataUrl);
+  } else {
+    // If miningUrl param doesn't exist, add it
+    url = currentViewerUrl + MINING_URL_PARAM + encodedDataUrl;
+  }
   window.frames[DIAGRAM_IFRAME_ID].src = url;
 }
 
-async function getDiagramData() {
+async function getFullDiagramData() {
+  await wait(DEFAULT_SLEEP_TIME_IN_MS);
   await returnToFirstLayer();
-  await setIframeResolution(
-    FULL_HD_RESOLUTION_WIDTH,
-    FULL_HD_RESOLUTION_HEIGHT
-  );
+  await setIframeResolution(FULL_HD_RESOLUTION_WIDTH, FULL_HD_RESOLUTION_HEIGHT);
   await wait(DEFAULT_SLEEP_TIME_IN_MS);
   await centerizeIframeImage();
   await captureScreenFromIframe();
-  await setIframeResolution(DEFAULT_IFRAME_WIDTH, DEFAULT_IFRAME_HEIGHT);
+  await setIframeResolution(DEFAULT_IFRAME_HEIGHT, DEFAULT_IFRAME_WIDTH);
+}
+
+async function getCurrentViewPortOfDiagramData() {
+  await captureScreenFromIframe();
 }
 
 async function captureScreenFromIframe() {
-  const iframe = queryObjectById(DIAGRAM_IFRAME_ID)[0];
   await hideViewPortBar(true);
   await updateMissingCssForChildSelector();
 
-  await html2canvas(iframe.contentWindow.document.body, {
-    width: 1920,
-    height: 1080,
+  const iframe = document.querySelector("[id$='process-analytic-viewer']");
+  const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+  await html2canvas(iframeDoc.body, {
     scale: 1,
     allowTaint: true,
   })
@@ -96,9 +107,9 @@ async function updateMissingCssForChildSelector() {
     .find(CHILD_DIV_FROM_NODE_ELEMENT_SELECTOR)
     .css({
       "align-items": "center",
-      "display": "flex",
+      display: "flex",
       "justify-content": "center",
-      "height": "100%",
+      height: "100%",
     });
   getContentsById(DIAGRAM_IFRAME_ID)
     .find(NODE_WITH_ICON_BESIDE_SELECTOR)
@@ -107,8 +118,8 @@ async function updateMissingCssForChildSelector() {
 
 async function setIframeResolution(width, height) {
   const iframe = queryObjectById(DIAGRAM_IFRAME_ID)[0];
-  iframe.width = width;
-  iframe.height = height;
+  iframe.style.width = width;
+  iframe.style.height = height;
 }
 
 async function returnToFirstLayer() {
@@ -154,7 +165,8 @@ function getJumpOutBtn() {
 }
 
 function removeExecutedClass() {
-  getProcessDiagramIframe().find(EXECUTED_CLASS_CSS_SELECTOR)
+  getProcessDiagramIframe()
+    .find(EXECUTED_CLASS_CSS_SELECTOR)
     .removeClass(EXECUTED_CLASS);
 }
 
@@ -182,7 +194,7 @@ function getPidQueryParamValue(url) {
 
 function loadIframe(recheckIndicator) {
   var iframe = document.getElementById(DIAGRAM_IFRAME_ID);
-  
+
   if (recheckIndicator) {
     const iframeDoc = iframe.contentDocument;
     if (iframeDoc.readyState == COMPLETE) {
@@ -198,3 +210,25 @@ function loadIframe(recheckIndicator) {
     loadIframe(true);
   }, 500);
 }
+
+function openViewerInNewTab() {
+  var url = $("[id$='process-analytic-viewer']").prop("src");
+  if (url) {
+    window.open(url, "_blank");
+  } else {
+    alert("Viewer URL not found");
+  }
+}
+
+// Color picker popup handling
+document.addEventListener("click", function (event) {
+  var colorPickerWrapper = document.getElementById("color-picker-wrapper");
+  var colorPickerComponent = document.getElementById("process-analytics-form:color-picker-component:color-picker");
+  if (!colorPickerWrapper || !colorPickerComponent) {
+    return;
+  }
+  var colorPickerWidget = PF("colorPickerWidget");
+  if (colorPickerWidget && !colorPickerWrapper.contains(event.target)) {
+    colorPickerWrapper.style.display = "none";
+  }
+});
