@@ -206,7 +206,8 @@ public class ProcessUtils {
   private static Predicate<? super IProcessModelVersion> isPMVNeedToRecordStatistic() {
     String configSkipProjects = StringUtils.trim(Ivy.var().get(SKIP_PROJECTS_VARIABLE));
     String[] skipPMVs = Arrays.asList(StringUtils.split(configSkipProjects, ProcessAnalyticsConstants.SEMI_COLONS))
-        .stream().filter(StringUtils::isNoneBlank).toArray(String[]::new);
+        .stream().filter(StringUtils::isNoneBlank)
+        .map(String::trim).toArray(String[]::new);
     return pmv -> {
       String pmName = pmv.getProcessModel().getName();
       return !(StringUtils.equals(pmName, ProcessAnalyticsConstants.PROCESS_ANALYSER_PMV_NAME)
