@@ -1,7 +1,7 @@
 package com.axonivy.solutions.process.analyser.enums;
 
 public enum IvyVariable {
-  MAX_QUERY_RESULTS("maxQueryResults");
+  MAX_QUERY_RESULTS("market.processAnalyzer.maxQueryResults");
 
   private String variableName;
 
