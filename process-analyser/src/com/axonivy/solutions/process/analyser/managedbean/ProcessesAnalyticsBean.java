@@ -74,6 +74,7 @@ public class ProcessesAnalyticsBean {
   private List<String> selectedCustomFieldNames;
   private boolean isFilterDropdownVisible;
   private boolean isIncludingRunningCases;
+  private boolean isMergeProcessStarts;
   private double minValue;
   private double maxValue;
   private List<SelectItem> kpiTypes;
@@ -139,7 +140,7 @@ public class ProcessesAnalyticsBean {
     processesMap.get(selectedModule).stream()
         .filter(process -> CollectionUtils.isNotEmpty(process.getStartElements()))
         .forEach(process -> {
-          if (process.getStartElements().size() == 1) {
+          if (process.getStartElements().size() == 1 && !isMergeProcessStarts) {
             var item = createNewProcessItemForDropdown(process, process.getStartElements().getFirst());
             var processNameAndStartElement = process.getName().concat(ProcessAnalyticsConstants.SLASH).concat(item.getLabel());
             item.setLabel(processNameAndStartElement);
@@ -148,13 +149,18 @@ public class ProcessesAnalyticsBean {
           }
 
           var processStart = new ProcessAnalyser(process);
-          var group = new SelectItemGroup(process.getName());
-          group.setValue(processStart);
-          SelectItem[] startElementsSelection = process.getStartElements().stream()
-              .map(startElement -> createNewProcessItemForDropdown(process, startElement))
-              .toArray(SelectItem[]::new);
-          group.setSelectItems(startElementsSelection);
-          processStartsSelection.add(group);
+          if (isMergeProcessStarts) {
+            var processItem = new SelectItem(new ProcessAnalyser(process), process.getName(), process.getName());
+            processStartsSelection.add(processItem);
+          } else {
+            var group = new SelectItemGroup(process.getName());
+            group.setValue(processStart);
+            SelectItem[] startElementsSelection;
+            startElementsSelection = process.getStartElements().stream()
+                .map(startElement -> createNewProcessItemForDropdown(process, startElement)).toArray(SelectItem[]::new);
+            group.setSelectItems(startElementsSelection);
+            processStartsSelection.add(group);
+          }
         });
 
     return processStartsSelection;
@@ -327,9 +333,20 @@ public class ProcessesAnalyticsBean {
     initializingProcessMiningData();
 
     if (haveMandatoryFieldsBeenFilled()) {
-      Long taskStartId = selectedProcessAnalyser.getStartElement().getTaskStartId();
-      List<ICase> cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId,
-          timeIntervalFilter, selectedCustomFilters, isIncludingRunningCases);
+      List<ICase> cases = new ArrayList<>();
+      if (isMergeProcessStarts) {
+        List<Long> taskStartIds =
+            selectedProcessAnalyser.getProcess().getStartElements().stream().map(StartElement::getTaskStartId).toList();
+
+        for (Long taskStartId : taskStartIds) {
+          cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter,
+              selectedCustomFilters, isIncludingRunningCases);
+        }
+      } else {
+        Long taskStartId = selectedProcessAnalyser.getStartElement().getTaskStartId();
+        cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter,
+            selectedCustomFilters, isIncludingRunningCases);
+      }
       if (CollectionUtils.isNotEmpty(cases)) {
         analyzedNode = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(selectedProcessAnalyser, selectedKpiType, cases);
         processMiningData.setNodes(analyzedNode);
@@ -519,5 +536,13 @@ public class ProcessesAnalyticsBean {
 
   public void setIncludingRunningCases(boolean isIncludingRunningCases) {
     this.isIncludingRunningCases = isIncludingRunningCases;
+  }
+
+  public boolean isMergeProcessStarts() {
+    return isMergeProcessStarts;
+  }
+
+  public void setMergeProcessStarts(boolean isMergeProcessStarts) {
+    this.isMergeProcessStarts = isMergeProcessStarts;
   }
 }
