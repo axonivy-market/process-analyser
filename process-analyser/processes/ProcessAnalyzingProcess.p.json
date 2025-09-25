@@ -13,7 +13,10 @@
         "request" : {
           "name" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/name\")%>",
           "description" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/description\")%>",
-          "category" : "ProcessAnalyser"
+          "category" : "ProcessAnalyser",
+          "customFields" : [
+            { "name" : "isDashboardProcess", "value" : "true" }
+          ]
         }
       },
       "visual" : {
