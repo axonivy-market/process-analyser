@@ -15,7 +15,8 @@
           "description" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/description\")%>",
           "category" : "ProcessAnalyser",
           "customFields" : [
-            { "name" : "embedInFrame", "value" : "false" }
+            { "name" : "embedInFrame", "value" : "false" },
+            { "name" : "isDashboardProcess", "value" : "true" }
           ]
         }
       },
