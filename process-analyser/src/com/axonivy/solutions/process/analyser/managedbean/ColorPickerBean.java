@@ -38,17 +38,21 @@ public class ColorPickerBean implements Serializable {
 
   public void initBean(KpiType selectedKpiType, String selectedMap) {
     this.selectedKpiType = selectedKpiType;
-    if ("Heatmap".equalsIgnoreCase(selectedMap)) {
-      this.colorSegments = ColorUtils.generateHeatmapColors(10);
-      this.textColors = ColorUtils.getAccessibleTextColors(colorSegments);
-      updateColorProperties();
-    } else {
-      this.colorSegments = new ArrayList<>();
-      this.textColors = new ArrayList<>();
-    }
+    this.colorSegments = new ArrayList<>();
+    this.textColors = new ArrayList<>();
     if (selectedKpiType != null) {
       resetSelection();
-      getBackgroundAndTextColors();
+      Ivy.log().info("colorpicker bean "+selectedMap);
+      if ("Heatmap".equalsIgnoreCase(selectedMap)) {
+        this.colorSegments = ColorUtils.generateHeatmapColors(GRADIENT_COLOR_LEVELS);
+        this.textColors = ColorUtils.getAccessibleTextColors(colorSegments);
+        Ivy.log().info(textColors);
+//        updateColorProperties();
+      } else {
+        Ivy.log().info("size"+colorSegments.size());
+        getBackgroundAndTextColors();
+        Ivy.log().info("size"+colorSegments.getLast());
+      }
     }
   }
   public void onSegmentClick(ActionEvent event) {
@@ -77,6 +81,7 @@ public class ColorPickerBean implements Serializable {
 
     user.setProperty(colorKey, String.join(HYPHEN_SIGN, colorSegments));
     user.setProperty(textKey, String.join(HYPHEN_SIGN, textColors));
+    Ivy.log().fatal(user.getProperty(colorKey) + " " + user.getProperty(textKey));
   }
 
   public void getBackgroundAndTextColors() {
@@ -99,6 +104,7 @@ public class ColorPickerBean implements Serializable {
   public void resetSelection() {
     selectedIndex = -1;
     selectedColor = null;
+    
   }
   public boolean isRenderedColorPicker() {
     return selectedIndex >= 0;

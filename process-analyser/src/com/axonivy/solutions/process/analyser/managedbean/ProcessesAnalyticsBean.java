@@ -99,6 +99,7 @@ public class ProcessesAnalyticsBean {
     selectedCustomFilters = new ArrayList<>();
     selectedCustomFieldNames = new ArrayList<>();
     initKpiTypes();
+    selectedMap = availableColorMaps.getFirst();
   }
 
   public void updateDataTable() {
@@ -208,11 +209,6 @@ public class ProcessesAnalyticsBean {
       getCaseAndTaskCustomFields();
       refreshAnalyserReportToView();
     }
-  }
-
-  public void onColorModeSelect(String selectedMap) {
-    this.selectedMap =selectedMap;
-    onKpiTypeSelect();
   }
 
   public void onKpiTypeSelect() {
