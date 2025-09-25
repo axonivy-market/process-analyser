@@ -36,16 +36,21 @@ public class ColorPickerBean implements Serializable {
   private String selectedColor;
   private int selectedIndex = -1;
 
-  public void initBean(KpiType selectedKpiType) {
-    this.colorSegments = new ArrayList<>();
-    this.textColors = new ArrayList<>();
+  public void initBean(KpiType selectedKpiType, String selectedMap) {
     this.selectedKpiType = selectedKpiType;
+    if ("Heatmap".equalsIgnoreCase(selectedMap)) {
+      this.colorSegments = ColorUtils.generateHeatmapColors(10);
+      this.textColors = ColorUtils.getAccessibleTextColors(colorSegments);
+      updateColorProperties();
+    } else {
+      this.colorSegments = new ArrayList<>();
+      this.textColors = new ArrayList<>();
+    }
     if (selectedKpiType != null) {
       resetSelection();
       getBackgroundAndTextColors();
     }
   }
-
   public void onSegmentClick(ActionEvent event) {
     selectedIndex = (Integer) event.getComponent().getAttributes().get(COLOR_SEGMENT_ATTRIBUTE);
     selectedColor = colorSegments.get(selectedIndex);

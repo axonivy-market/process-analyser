@@ -49,9 +49,9 @@
             <br />
         </p:outputPanel>
 
-        <p:panelGrid id="search-fields" columns="3"
+        <p:panelGrid id="search-fields" columns="4"
           styleClass="ui-fluid" layout="flex"
-          columnClasses="ui-g-4, ui-g-4, ui-g-4">
+          columnClasses="ui-g-3, ui-g-3, ui-g-3, ui-g-3">
           <h:panelGroup styleClass="ui-g field" layout="block">
             <p:outputLabel for="moduleDropdown"
               value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectProject')}" />
@@ -83,13 +83,33 @@
               value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectKPI')}" />
             <p:cascadeSelect id="kpiDropdown" style="width: 100%"
               placeholder="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectKPI')}"
-              value="#{processesAnalyticsBean.selectedKpiType}" converter="kpiTypeConverter">
+              value="#{processesAnalyticsBean.selectedKpiType}"
+              converter="kpiTypeConverter">
               <f:selectItems value="#{processesAnalyticsBean.kpiTypes}" />
               <p:ajax event="itemSelect"
-                listener="#{processesAnalyticsBean.onKpiTypeSelect}" update="process-analytics-form:color-picker-component:color-container"
-                process="@this" partialSubmit="true"/>
+                listener="#{processesAnalyticsBean.onKpiTypeSelect}"
+                update="process-analytics-form:color-picker-component:color-container"
+                process="@this" partialSubmit="true" />
             </p:cascadeSelect>
           </h:panelGroup>
+          <h:panelGroup styleClass="ui-g field" layout="block">
+            <p:outputLabel for="colorModeDropdown"
+              value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectColorMode')}" />
+
+            <p:selectOneMenu id="colorModeDropdown"
+              value="#{processesAnalyticsBean.selectedMap}"
+              style="width:100%">
+              <f:selectItems
+                value="#{processesAnalyticsBean.availableColorMaps}"
+                var="heatmap" itemValue="#{heatmap}"
+                itemLabel="#{heatmap}" />
+              <p:ajax event="change"
+                listener="#{processesAnalyticsBean.onKpiTypeSelect}"
+                update="process-analytics-form:color-picker-component:color-container"
+                process="@this" partialSubmit="true" />
+            </p:selectOneMenu>
+          </h:panelGroup>
+
         </p:panelGrid>
 
         <h:panelGroup id="time-interval-group"
@@ -115,7 +135,8 @@
         <ic:com.axonivy.solutions.process.analyser.component.ColorPicker id="color-picker-component"
           kpiType="#{processesAnalyticsBean.selectedKpiType}"
           onColorChange="#{processesAnalyticsBean.refreshAnalyserReportToView()}"
-          componentToUpdate="@this" />
+          componentToUpdate="@this" 
+          selectedMap= "#{processesAnalyticsBean.selectedMap}"/>
 
         <hr />
 

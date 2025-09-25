@@ -1,5 +1,12 @@
 package com.axonivy.solutions.process.analyser.utils;
 
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COMMA;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.DARK_TEXT_COLOR;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HASHTAG;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.LIGHT_TEXT_COLOR;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.NON_DIGIT_COMMA_REGEX;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.RGB_PREFIX;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -9,14 +16,7 @@ import org.apache.logging.log4j.util.Strings;
 
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
 import com.axonivy.solutions.process.analyser.enums.KpiColor;
-import com.axonivy.solutions.process.analyser.enums.KpiType;
-
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COMMA;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.DARK_TEXT_COLOR;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HASHTAG;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.LIGHT_TEXT_COLOR;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.NON_DIGIT_COMMA_REGEX;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.RGB_PREFIX;;
+import com.axonivy.solutions.process.analyser.enums.KpiType;;
 
 public class ColorUtils {
   public static List<String> generateColorSegments(KpiType selectedKpiType) {
@@ -101,5 +101,27 @@ public class ColorUtils {
     // 0.299 * r + 0.587 * g + 0.114 * b:
     // Luminance formula for determine dark and light color
     return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.5 ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR;
+  }
+
+  public static List<String> generateHeatmapColors(int steps) {
+    List<String> heatmapColors = new ArrayList<>();
+    int halfSteps = steps / 2;
+
+    for (int i = 0; i < halfSteps; i++) {
+      float t = (float) i / (halfSteps - 1);
+      int r = Math.round(0 + t * 255);
+      int g = 255;
+      int b = 0;
+      heatmapColors.add(String.format(ProcessAnalyticsConstants.RGB_FORMAT, r, g, b));
+    }
+
+    for (int i = 1; i < halfSteps; i++) {
+      float t = (float) i / (halfSteps - 1);
+      int r = 255;
+      int g = Math.round(255 - t * 255);
+      int b = 0;
+      heatmapColors.add(String.format(ProcessAnalyticsConstants.RGB_FORMAT, r, g, b));
+    }
+    return heatmapColors;
   }
 }

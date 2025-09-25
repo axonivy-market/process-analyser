@@ -37,9 +37,10 @@ Dialogs:
               None: None
               NumberRange: '{0} - {1}'
               PageHeader: Process Monitor Page
-              PleaseSelectKPI: Please select a KPI
-              PleaseSelectProcess: Please select a process
-              PleaseSelectProject: Please select a project
+              PleaseSelectColorMode: Color Mode
+              PleaseSelectKPI: KPI
+              PleaseSelectProcess: Process
+              PleaseSelectProject: Project
               Process: Process
               ProcessInformation: Process Information
               ProcessViewer: Process Viewer

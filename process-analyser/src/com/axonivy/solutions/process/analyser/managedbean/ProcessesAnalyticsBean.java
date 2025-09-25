@@ -80,6 +80,8 @@ public class ProcessesAnalyticsBean {
   private MasterDataBean masterDataBean;
   private ProcessViewerBean viewerBean;
   private ColorPickerBean colorPickerBean;
+  private String selectedMap;
+  private List<String> availableColorMaps = Arrays.asList("Heatmap", "Color chooser");
 
   @PostConstruct
   private void init() {
@@ -208,8 +210,13 @@ public class ProcessesAnalyticsBean {
     }
   }
 
+  public void onColorModeSelect(String selectedMap) {
+    this.selectedMap =selectedMap;
+    onKpiTypeSelect();
+  }
+
   public void onKpiTypeSelect() {
-    colorPickerBean.initBean(selectedKpiType);
+    colorPickerBean.initBean(selectedKpiType, selectedMap);
     colorPickerBean.getBackgroundAndTextColors();
     refreshAnalyserReportToView();
   }
@@ -519,5 +526,17 @@ public class ProcessesAnalyticsBean {
 
   public void setIncludingRunningCases(boolean isIncludingRunningCases) {
     this.isIncludingRunningCases = isIncludingRunningCases;
+  }
+
+  public String getSelectedMap() {
+    return selectedMap;
+  }
+
+  public void setSelectedMap(String selectedMap) {
+    this.selectedMap = selectedMap;
+  }
+ 
+  public List<String> getAvailableColorMaps() {
+    return availableColorMaps;
   }
 }

@@ -7,13 +7,15 @@
   <cc:attribute name="kpiType" required="true"/>
   <cc:attribute name="componentToUpdate" default="@this"/>
   <cc:attribute name="onColorChange" method-signature="void onColorChange()"/>
+  <cc:attribute name="selectedMap" ></cc:attribute>
 </cc:interface>
 
 <cc:implementation>
   <c:set var="kpiType" value="#{cc.attrs.kpiType}"/>
   <c:set var="isFrequecyKpi" value="#{kpiType eq 'FREQUENCY'}"/>
-  <f:event listener="#{colorPickerBean.initBean(kpiType)}" type="preRenderComponent"/>
-
+  <c:set var="selectedMap" value="#{cc.attrs.selectedMap}"/>
+  <f:event listener="#{colorPickerBean.initBean(kpiType, selectedMap)}" type="preRenderComponent"/>
+  
   <p:remoteCommand id="on-color-change-cmd" name="onColorChange"
     process="@this" update="#{cc.attrs.componentToUpdate}" partialSubmit="true"
     actionListener="#{cc.attrs.onColorChange}"/>
@@ -46,16 +48,20 @@
       </h:panelGroup>
     </p:outputPanel>
 
-    <p:outputPanel id="color-picker-panel" styleClass="color-picker-panel">
+    <p:outputPanel id="color-picker-panel"
+      styleClass="color-picker-panel">
+
       <div id="color-picker-wrapper">
-        <p:colorPicker id="color-picker" mode="inline" value="#{colorPickerBean.selectedColor}"
-          rendered="#{colorPickerBean.isRenderedColorPicker()}"
-          widgetVar="colorPickerWidget" theme="large"
-          format="rgb" alpha="false">
-          <p:ajax event="change" listener="#{colorPickerBean.onColorChange()}"
-            update="color-bar-segment"
-            process="@this" partialSubmit="true" delay="500"
-            global="false" onsuccess="onColorChange()"/>
+        <p:colorPicker id="color-picker" mode="inline"
+          value="#{colorPickerBean.selectedColor}"
+          rendered="#{selectedMap eq 'Color chooser' and colorPickerBean.isRenderedColorPicker()}"
+          widgetVar="colorPickerWidget" theme="large" format="rgb"
+          alpha="false">
+          <p:ajax event="change"
+            listener="#{colorPickerBean.onColorChange()}"
+            update="color-bar-segment" process="@this"
+            partialSubmit="true" delay="500" global="false"
+            onsuccess="onColorChange()" />
         </p:colorPicker>
       </div>
     </p:outputPanel>
