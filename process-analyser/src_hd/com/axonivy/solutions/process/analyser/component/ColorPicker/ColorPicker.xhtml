@@ -40,9 +40,13 @@
               style="background-color: #{color};"
               oncomplete="PF('colorPickerWidget').show();"
               ondblclick="return false;"
-              process="@this" partialSubmit="true">
+              process="@this" partialSubmit="true"
+              rendered="#{selectedColorMode ne 'Heatmap'}">
               <f:attribute name="segmentIndex" value="#{status.index}" />
             </p:commandLink>
+            <h:outputText styleClass="segment"
+                  style="background-color: #{color};"
+                  rendered="#{selectedColorMode eq 'Heatmap'}" />
           </ui:repeat>
         </div>
       </h:panelGroup>

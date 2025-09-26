@@ -28,6 +28,8 @@ public class ColorUtilsTest extends BaseSetup {
   protected static final String EXTREME_DARK_BLUE_GRAY = "rgb(10, 20, 30)";
 
   private static final String RGB_LIGHT_COLOR = "rgb(247, 246, 245)";
+  private static final String GREEN_TO_YELLOW_PATTERN = "rgb\\(\\d+, 255, 0\\)";
+  private static final String YELLOW_TO_RED_PATTERN   = "rgb\\(255, \\d+, 0\\)";
 
   @Test
   void test_generateColorSegments_withFrequencyKpi() {
@@ -158,11 +160,11 @@ public class ColorUtilsTest extends BaseSetup {
     int halfSteps = steps / 2;
     for (int i = 0; i < halfSteps; i++) {
       String color = heatmapColors.get(i);
-      assertThat(color).matches("rgb\\(\\d+, 255, 0\\)");
+      assertThat(color).matches(GREEN_TO_YELLOW_PATTERN); 
     }
     for (int i = halfSteps; i < expectedSize; i++) {
       String color = heatmapColors.get(i);
-      assertThat(color).matches("rgb\\(255, \\d+, 0\\)");
+      assertThat(color).matches(YELLOW_TO_RED_PATTERN);
     }
   }
 }
