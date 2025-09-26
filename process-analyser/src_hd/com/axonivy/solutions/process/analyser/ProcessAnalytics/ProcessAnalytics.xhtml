@@ -131,7 +131,7 @@
               var="heatmap" itemValue="#{heatmap}"
               itemLabel="#{heatmap}" />
             <p:ajax event="change"
-              listener="#{processesAnalyticsBean.onKpiTypeSelect}"
+              listener="#{processesAnalyticsBean.onColorModeChange}"
               process="@this"
               update="process-analytics-form:color-picker-component:color-container"
               partialSubmit="true" />

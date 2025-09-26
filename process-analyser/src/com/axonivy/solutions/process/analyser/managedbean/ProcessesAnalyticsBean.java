@@ -213,7 +213,6 @@ public class ProcessesAnalyticsBean {
 
   public void onKpiTypeSelect() {
     colorPickerBean.initBean(selectedKpiType, selectedMap);
-    colorPickerBean.getBackgroundAndTextColors();
     refreshAnalyserReportToView();
   }
 
@@ -322,6 +321,19 @@ public class ProcessesAnalyticsBean {
       PF.current().executeScript(ProcessAnalyticsConstants.UPDATE_IFRAME_SOURCE_METHOD_CALL);
       PF.current().ajax().update(ProcessAnalyticViewComponentId.getDiagramAndStatisticComponentIds());
     }
+  }
+  
+  public void onColorModeChange() {
+    if (this.selectedKpiType == null) {
+      return;
+    }
+
+    if("Heatmap".equals(selectedMap)) {
+      colorPickerBean.onChooseHeatMapMode();
+    } else {
+      colorPickerBean.onChooseColorChooserMode();
+    }
+    refreshAnalyserReportToView();
   }
 
   private void loadNodes() {
