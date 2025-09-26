@@ -86,6 +86,25 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
   }
 
   @Test
+  void test_filterInitialStatisticByIntervalTime_withMergeToggle() {
+    processAnalyser = new ProcessAnalyser();
+    processAnalyser.setProcess(testProcess);
+    processAnalyser.setStartElement(null);
+
+    List<ICase> allCases = new ArrayList<>();
+    for (StartElement startElement : testProcess.getStartElements()) {
+      allCases.addAll(ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(startElement.getTaskStartId(),
+          new TimeIntervalFilter(new Date(), new Date()), new ArrayList<>(), false));
+    }
+
+    List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(
+        processAnalyser, KpiType.FREQUENCY, allCases);
+
+    assertThat(results).isNotEmpty();
+    assertThat(results.size()).isGreaterThanOrEqualTo(24);
+  }
+
+  @Test
   void test_getAllCasesFromTaskStartIdWithTimeInterval() {
     List<ICase> results = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(0L,
         new TimeIntervalFilter(new Date(), new Date()), new ArrayList<CustomFieldFilter>(), false);
