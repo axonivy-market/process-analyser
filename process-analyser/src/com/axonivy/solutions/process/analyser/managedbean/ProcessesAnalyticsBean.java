@@ -80,7 +80,8 @@ public class ProcessesAnalyticsBean {
   private MasterDataBean masterDataBean;
   private ProcessViewerBean viewerBean;
   private ColorPickerBean colorPickerBean;
-  private String selectedMap;
+  private String selectedColorMode;
+  
   private List<String> availableColorMaps = Arrays.asList("Heatmap", "Color chooser");
 
   @PostConstruct
@@ -99,7 +100,7 @@ public class ProcessesAnalyticsBean {
     selectedCustomFilters = new ArrayList<>();
     selectedCustomFieldNames = new ArrayList<>();
     initKpiTypes();
-    selectedMap = availableColorMaps.getFirst();
+    selectedColorMode = availableColorMaps.getFirst();
   }
 
   public void updateDataTable() {
@@ -212,7 +213,7 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onKpiTypeSelect() {
-    colorPickerBean.initBean(selectedKpiType, selectedMap);
+    colorPickerBean.initBean(selectedKpiType, selectedColorMode);
     refreshAnalyserReportToView();
   }
 
@@ -328,7 +329,7 @@ public class ProcessesAnalyticsBean {
       return;
     }
 
-    if("Heatmap".equals(selectedMap)) {
+    if("Heatmap".equals(selectedColorMode)) {
       colorPickerBean.onChooseHeatMapMode();
     } else {
       colorPickerBean.onChooseColorChooserMode();
@@ -535,16 +536,16 @@ public class ProcessesAnalyticsBean {
   public void setIncludingRunningCases(boolean isIncludingRunningCases) {
     this.isIncludingRunningCases = isIncludingRunningCases;
   }
-
-  public String getSelectedMap() {
-    return selectedMap;
-  }
-
-  public void setSelectedMap(String selectedMap) {
-    this.selectedMap = selectedMap;
-  }
  
   public List<String> getAvailableColorMaps() {
     return availableColorMaps;
+  }
+
+  public String getSelectedColorMode() {
+    return selectedColorMode;
+  }
+
+  public void setSelectedColorMode(String selectedColorMode) {
+    this.selectedColorMode = selectedColorMode;
   }
 }

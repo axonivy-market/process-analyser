@@ -7,14 +7,14 @@
   <cc:attribute name="kpiType" required="true"/>
   <cc:attribute name="componentToUpdate" default="@this"/>
   <cc:attribute name="onColorChange" method-signature="void onColorChange()"/>
-  <cc:attribute name="selectedMap" ></cc:attribute>
+  <cc:attribute name="selectedColorMode" ></cc:attribute>
 </cc:interface>
 
 <cc:implementation>
   <c:set var="kpiType" value="#{cc.attrs.kpiType}"/>
   <c:set var="isFrequecyKpi" value="#{kpiType eq 'FREQUENCY'}"/>
-  <c:set var="selectedMap" value="#{cc.attrs.selectedMap}"/>
-  <f:event listener="#{colorPickerBean.initBean(kpiType, selectedMap)}" type="preRenderComponent"/>
+  <c:set var="selectedColorMode" value="#{cc.attrs.selectedColorMode}"/>
+  <f:event listener="#{colorPickerBean.initBean(kpiType, selectedColorMode)}" type="preRenderComponent"/>
   
   <p:remoteCommand id="on-color-change-cmd" name="onColorChange"
     process="@this" update="#{cc.attrs.componentToUpdate}" partialSubmit="true"
@@ -53,7 +53,7 @@
       <div id="color-picker-wrapper">
         <p:colorPicker id="color-picker" mode="inline"
           value="#{colorPickerBean.selectedColor}"
-          rendered="#{selectedMap eq 'Color chooser' and colorPickerBean.isRenderedColorPicker()}"
+          rendered="#{selectedColorMode eq 'Color chooser' and colorPickerBean.isRenderedColorPicker()}"
           widgetVar="colorPickerWidget" theme="large" format="rgb"
           alpha="false">
           <p:ajax event="change"

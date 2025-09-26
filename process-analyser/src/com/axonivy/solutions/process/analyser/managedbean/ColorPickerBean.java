@@ -38,13 +38,13 @@ public class ColorPickerBean implements Serializable {
   private String selectedColor;
   private int selectedIndex = -1;
 
-  public void initBean(KpiType selectedKpiType, String selectedMap) {
+  public void initBean(KpiType selectedKpiType, String selectedColorMode) {
     this.selectedKpiType = selectedKpiType;
     this.colorSegments = new ArrayList<>();
     this.textColors = new ArrayList<>();
     if (selectedKpiType != null) {
       resetSelection();
-      if ("Heatmap".equalsIgnoreCase(selectedMap)) {
+      if ("Heatmap".equalsIgnoreCase(selectedColorMode)) {
         onChooseHeatMapMode();
       } else {
         onChooseColorChooserMode();
