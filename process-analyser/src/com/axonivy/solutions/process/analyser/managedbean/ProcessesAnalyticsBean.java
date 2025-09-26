@@ -337,10 +337,13 @@ public class ProcessesAnalyticsBean {
       if (isMergeProcessStarts) {
         List<Long> taskStartIds =
             selectedProcessAnalyser.getProcess().getStartElements().stream().map(StartElement::getTaskStartId).toList();
-
+        List<ICase> subCases = new ArrayList<>();
         for (Long taskStartId : taskStartIds) {
-          cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter,
+          subCases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter,
               selectedCustomFilters, isIncludingRunningCases);
+          if (CollectionUtils.isNotEmpty(subCases)) {
+            cases.addAll(subCases);
+          }
         }
       } else {
         Long taskStartId = selectedProcessAnalyser.getStartElement().getTaskStartId();
@@ -544,5 +547,12 @@ public class ProcessesAnalyticsBean {
 
   public void setMergeProcessStarts(boolean isMergeProcessStarts) {
     this.isMergeProcessStarts = isMergeProcessStarts;
+    resetSelection();
+  }
+  
+  private void resetSelection() {
+    selectedProcessAnalyser = null;
+    getAvailableProcessStarts();
+    PF.current().ajax().update("process-selection-group");
   }
 }

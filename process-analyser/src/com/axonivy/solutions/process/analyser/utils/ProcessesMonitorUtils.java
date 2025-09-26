@@ -2,6 +2,7 @@ package com.axonivy.solutions.process.analyser.utils;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -20,6 +21,7 @@ import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
+import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.core.util.ProcessElementUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
@@ -48,6 +50,16 @@ public class ProcessesMonitorUtils {
     if (Objects.isNull(processAnalyser)) {
       return Collections.emptyList();
     }
+
+    if (processAnalyser.getStartElement() == null) {
+      List<Node> mergedNodes = new ArrayList<>();
+      for (StartElement startElement : processAnalyser.getProcess().getStartElements()) {
+        var startElementAnalyser = new ProcessAnalyser(processAnalyser.getProcess(), startElement);
+        mergedNodes.addAll(filterInitialStatisticByIntervalTime(startElementAnalyser, analysisType, cases));
+      }
+      return mergedNodes;
+    }
+
     String startElementPID = processAnalyser.getStartElement().getPid();
     String processId = processAnalyser.getProcess().getId();
     var pmv = processAnalyser.getProcess().getPmv();
