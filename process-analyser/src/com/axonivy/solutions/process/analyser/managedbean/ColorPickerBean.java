@@ -4,6 +4,8 @@ import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnaly
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_REGEX;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_SIGN;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COLOR_MAP_HEATMAP;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COLOR_MAP_COLOR_CHOOSER;
 import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.DURATION_COLOR;
 import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.DURATION_TEXT_COLOR;
 import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.FREQUENCY_COLOR;
@@ -44,7 +46,7 @@ public class ColorPickerBean implements Serializable {
     this.textColors = new ArrayList<>();
     if (selectedKpiType != null) {
       resetSelection();
-      if ("Heatmap".equalsIgnoreCase(selectedColorMode)) {
+      if (COLOR_MAP_HEATMAP.equalsIgnoreCase(selectedColorMode)) {
         onChooseHeatMapMode();
       } else {
         onChooseColorChooserMode();
@@ -161,5 +163,17 @@ public class ColorPickerBean implements Serializable {
 
   public void setSelectedIndex(int selectedIndex) {
     this.selectedIndex = selectedIndex;
+  }
+  
+  public String getColorMapHeatmap() {
+    return COLOR_MAP_HEATMAP;
+  }
+  
+  public String getColorMapColorChooser() {
+    return COLOR_MAP_COLOR_CHOOSER;
+  }
+  
+  public boolean isNotHeatmapMode(String selectedColorMode) {
+    return !COLOR_MAP_HEATMAP.equalsIgnoreCase(selectedColorMode);
   }
 }

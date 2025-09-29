@@ -3,6 +3,8 @@ package com.axonivy.solutions.process.analyser.managedbean;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartEventElement;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartSignalEventElement;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.WebServiceProcessStartElement;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COLOR_MAP_HEATMAP;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COLOR_MAP_COLOR_CHOOSER;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,7 +84,7 @@ public class ProcessesAnalyticsBean {
   private ColorPickerBean colorPickerBean;
   private String selectedColorMode;
   
-  private List<String> availableColorMaps = Arrays.asList("Heatmap", "Color chooser");
+  private List<String> availableColorMaps = Arrays.asList(COLOR_MAP_HEATMAP, COLOR_MAP_COLOR_CHOOSER);
 
   @PostConstruct
   private void init() {
@@ -329,7 +331,7 @@ public class ProcessesAnalyticsBean {
       return;
     }
 
-    if("Heatmap".equals(selectedColorMode)) {
+    if(COLOR_MAP_HEATMAP.equals(selectedColorMode)) {
       colorPickerBean.onChooseHeatMapMode();
     } else {
       colorPickerBean.onChooseColorChooserMode();

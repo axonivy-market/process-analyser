@@ -16,7 +16,7 @@ import org.apache.logging.log4j.util.Strings;
 
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
 import com.axonivy.solutions.process.analyser.enums.KpiColor;
-import com.axonivy.solutions.process.analyser.enums.KpiType;;
+import com.axonivy.solutions.process.analyser.enums.KpiType;
 
 public class ColorUtils {
   public static List<String> generateColorSegments(KpiType selectedKpiType) {
@@ -103,20 +103,31 @@ public class ColorUtils {
     return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.5 ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR;
   }
 
+  /**
+   * Generates a list of heatmap color strings in RGB format.
+   * <p>
+   * The generated colors transition from green to yellow to red,
+   * suitable for visualizing heatmaps. The number of colors generated
+   * is determined by the {@code steps} parameter.
+   * </p>
+   *
+   * @param steps the total number of colors to generate for the heatmap
+   * @return a list of color strings formatted according to {@code ProcessAnalyticsConstants.RGB_FORMAT}
+   */
   public static List<String> generateHeatmapColors(int steps) {
     List<String> heatmapColors = new ArrayList<>();
     int halfSteps = steps / 2;
 
     for (int i = 0; i < halfSteps; i++) {
       float t = (float) i / (halfSteps - 1);
-      int r = Math.round(0 + t * 255);
+      int r = Math.round(t * 255);
       int g = 255;
       int b = 0;
       heatmapColors.add(String.format(ProcessAnalyticsConstants.RGB_FORMAT, r, g, b));
     }
 
-    for (int i = 1; i < halfSteps; i++) {
-      float t = (float) i / (halfSteps - 1);
+    for (int i = 0; i < steps - halfSteps; i++) {
+      float t = (float) i / (steps - halfSteps - 1);
       int r = 255;
       int g = Math.round(255 - t * 255);
       int b = 0;
