@@ -2,7 +2,6 @@ package com.axonivy.solutions.process.analyser.utils;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -21,7 +20,6 @@ import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
-import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.core.util.ProcessElementUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
@@ -50,16 +48,25 @@ public class ProcessesMonitorUtils {
     if (Objects.isNull(processAnalyser)) {
       return Collections.emptyList();
     }
+    return (processAnalyser.getStartElement() == null) ? filterForMergedStarts(processAnalyser, analysisType, cases)
+        : filterForSingleStart(processAnalyser, analysisType, cases);
+  }
 
-    if (processAnalyser.getStartElement() == null) {
-      List<Node> mergedNodes = new ArrayList<>();
-      for (StartElement startElement : processAnalyser.getProcess().getStartElements()) {
-        var startElementAnalyser = new ProcessAnalyser(processAnalyser.getProcess(), startElement);
-        mergedNodes.addAll(filterInitialStatisticByIntervalTime(startElementAnalyser, analysisType, cases));
-      }
-      return mergedNodes;
+  private static List<Node> filterForMergedStarts(ProcessAnalyser processAnalyser, KpiType analysisType,
+      List<ICase> cases) {
+    var pmv = processAnalyser.getProcess().getPmv();
+    String processId = processAnalyser.getProcess().getId();
+    List<ProcessElement> processElements = ProcessUtils.getProcessElementsFrom(processId, pmv);
+
+    if (isDuration(analysisType)) {
+      processElements = ProcessUtils.getTaskStart(processElements);
     }
 
+    return buildNodesAndApplyKpi(processElements, analysisType, cases);
+  }
+
+  private static List<Node> filterForSingleStart(ProcessAnalyser processAnalyser, KpiType analysisType,
+      List<ICase> cases) {
     String startElementPID = processAnalyser.getStartElement().getPid();
     String processId = processAnalyser.getProcess().getId();
     var pmv = processAnalyser.getProcess().getPmv();
@@ -68,8 +75,15 @@ public class ProcessesMonitorUtils {
     if (isDuration(analysisType)) {
       processElements = ProcessUtils.getTaskStart(processElements);
     }
+
+    return buildNodesAndApplyKpi(processElements, analysisType, cases);
+  }
+
+  private static List<Node> buildNodesAndApplyKpi(List<ProcessElement> processElements, KpiType analysisType,
+      List<ICase> cases) {
     List<SequenceFlow> sequenceFlows = ProcessUtils.getSequenceFlowsFrom(processElements);
     List<Node> nodes = NodeResolver.convertToNodes(processElements, sequenceFlows);
+
     if (isFrequency(analysisType)) {
       var nodeFrequencyResolver = new NodeFrequencyResolver(nodes, processElements);
       nodeFrequencyResolver.updateFrequencyByCases(cases);
@@ -77,6 +91,7 @@ public class ProcessesMonitorUtils {
     } else if (isDuration(analysisType)) {
       updateDurationForNodes(nodes, cases, analysisType);
     }
+
     return NodeResolver.updateNodeByAnalysisType(nodes, analysisType);
   }
 
