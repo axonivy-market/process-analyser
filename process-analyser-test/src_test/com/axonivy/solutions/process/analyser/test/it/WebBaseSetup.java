@@ -15,10 +15,11 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 
 public class WebBaseSetup {
-  private final String ANALYZING_PROCESS_PATH = "process-analyser/1910BF871CE43293/startAnalytic.ivp";
-  private final String LOGIN_URL = "/process-analyser-test/1973F53724EE655A/login.ivp?username=Developer&password=Developer";
-  private final String CHANGE_LANGUAGE_LOCALE = "/process-analyser-test/1973F53724EE655A/changeLocale.ivp?locale=";
-  private final int DEFAULT_TIMEOUT_DURATION = 2;
+  protected static final String ANALYZING_PROCESS_PATH = "process-analyser/1910BF871CE43293/startAnalytic.ivp";
+  protected static final String LOGIN_URL = "/process-analyser-test/1973F53724EE655A/login.ivp?username=Developer&password=Developer";
+  protected static final String CHANGE_LANGUAGE_LOCALE = "/process-analyser-test/1973F53724EE655A/changeLocale.ivp?locale=";
+  protected static final int DEFAULT_TIMEOUT_DURATION = 2;
+  protected static final Duration DEFAULT_DURATION = Duration.ofSeconds(DEFAULT_TIMEOUT_DURATION);
 
   protected void startAnalyzingProcess() {
     open(EngineUrl.createProcessUrl(ANALYZING_PROCESS_PATH));
@@ -53,11 +54,14 @@ public class WebBaseSetup {
     // Find 1st option (index = 1 to avoid choosing default initial option of null)
     SelenideElement targetElement = $$(dropdownListCssSelector + " li").stream()
         .filter(item -> labelText.equals(item.text())).findAny()
-        .orElseThrow(() -> new AssertionError(
-            String.join(StringUtils.SPACE, "Dropdown item with text", labelText, "not found!")))
+        .orElseThrow(() -> new AssertionError(getDropdownItemNotFoundMessage(labelText)))
         .shouldBe(visible, Duration.ofSeconds(DEFAULT_TIMEOUT_DURATION));
     targetElement.click();
     $(dropdownCssSelector + dropdownLabelSuffix).shouldBe(Condition.text(labelText),
         Duration.ofSeconds(DEFAULT_TIMEOUT_DURATION));
+  }
+
+  protected String getDropdownItemNotFoundMessage(String optionName) {
+    return String.join(StringUtils.SPACE, "Dropdown item with text", optionName, "not found!");
   }
 }

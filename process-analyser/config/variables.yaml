@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://json-schema.axonivy.com/app/12.0.0/variables.json
+# yaml-language-server: $schema=https://json-schema.axonivy.com/app/13.1.0/variables.json
 # == Variables ==
 #
 # You can define here your project Variables.
@@ -7,5 +7,9 @@
 # '<project>/Config/_<environment>/variables.yaml
 #
 Variables:
-  # Maximum query results per query task
-  maxQueryResults: "10000"
+  market:
+    processAnalyzer:
+      # Maximum query results per query task
+      maxQueryResults: "10000"
+      # Specifies a list of projects that are not displayed in the project selection drop-down list, separated by semicolons.
+      skipProjects: ""

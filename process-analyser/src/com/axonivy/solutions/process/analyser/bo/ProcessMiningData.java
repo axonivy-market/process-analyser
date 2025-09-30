@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ProcessMiningData {
   @JsonIgnore
   private String processId;
@@ -15,6 +17,8 @@ public class ProcessMiningData {
   private int numberOfInstances;
   private List<String> colors;
   private List<String> textColors;
+  
+  public ProcessMiningData() {}
 
   public String getProcessId() {
     return processId;

@@ -1,0 +1,6 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/data-class/13.1.0/data-class.json",
+  "simpleName" : "ProcessViewerData",
+  "namespace" : "com.axonivy.solutions.process.analyser.component.ProcessViewer",
+  "isBusinessCaseData" : false
+}

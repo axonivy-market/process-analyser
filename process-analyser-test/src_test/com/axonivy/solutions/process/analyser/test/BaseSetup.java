@@ -6,14 +6,13 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.axonivy.solutions.process.analyser.core.bo.Process;
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 
 import ch.ivyteam.ivy.process.model.NodeElement;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
-import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
-import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 
 @SuppressWarnings("restriction")
 public class BaseSetup {
@@ -21,12 +20,13 @@ public class BaseSetup {
   protected static final String TEST_PROCESS_ELEMENT_START_PID = "193485C5ABDFEA93-f0";
   protected static final String TEST_FLOW_PID_FROM_START_ELEMENT = "193485C5ABDFEA93-f2";
   protected static final String TEST_PROCESS_RAW_PID = "193485C5ABDFEA93";
-  protected static final String TEST_PROCESS_NAME = "Test process";
+  protected static final String TEST_PROCESS_NAME = "TestProcess";
   protected static final String TEST_APPLICATION_NAME = "test";
   protected static final String TEST_MODULE_NAME = "process-analyser-test";
   protected static final String SELECTED_STARTABLE_ID = "SupportHR.p.json";
-  protected static final String TEST_IFRAME_SOURCE_URL = "/test/faces/view/process-analyser-test/process-miner.xhtml?server=localhost:8080&app=test&pmv=HRTest&file=/processes/"
+  protected static final String TEST_IFRAME_SOURCE_URL = "/test/faces/view/process-analyser-test/process-miner.xhtml?server=localhost%3A8080&app=test&pmv=HRTest&file=%2Fprocesses%2F"
       + SELECTED_STARTABLE_ID;
+  protected static final String SELECTED_PROJECT_PATH = "/processes/SupportHR.p.json";
   protected static final String SELECTED_MODULE_URL = "HRTest";
   protected static final String OUTER_FLOW_TO_SUB_PID = "193485C5ABDFEA93-f16";
   protected static final String SUB_PROCESS_START = "193485C5ABDFEA93-S10-g0";
@@ -35,7 +35,7 @@ public class BaseSetup {
   protected static final String REST_CALL_PID = "193485C5ABDFEA93-f3";
   protected static final String MULTI_INCOMINGS_ELEMENT_PID = "193485C5ABDFEA93-f14";
 
-  protected static IProcessWebStartable testProcessStart;
+  protected static Process testProcess;
   protected static ProcessElement startProcessElement;
   protected static List<ProcessElement> testProcessElements;
   protected static SequenceFlow flowFromStartElement;
@@ -48,9 +48,9 @@ public class BaseSetup {
   protected static ProcessElement multiIncomingsElement;
 
   protected static void prepareData() {
-    testProcessStart = (IProcessWebStartable) ProcessUtils.getAllProcesses().stream()
+    testProcess = ProcessUtils.getAllProcesses().stream()
         .filter(start -> StringUtils.contains(start.getName(), TEST_PROCESS_NAME)).findAny().orElse(null);
-    testProcessElements = ProcessUtils.getProcessElementsFrom(testProcessStart);
+    testProcessElements = ProcessUtils.getProcessElementsFrom(testProcess.getId(), testProcess.getPmv());
     multiIncomingsElement = getProcessElementByPid(MULTI_INCOMINGS_ELEMENT_PID);
     subProcessElement = getProcessElementByPid(EMBEDDED_PID);
     subProcessCall = getProcessElementByPid(REST_CALL_PID);
