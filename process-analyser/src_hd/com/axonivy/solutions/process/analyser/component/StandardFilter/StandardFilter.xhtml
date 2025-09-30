@@ -5,12 +5,11 @@
   xmlns:c="http://java.sun.com/jsp/jstl/core">
 <cc:interface>
   <cc:attribute name="managedBean" required="true" />
-  <cc:attribute name="rendered" required="true" />
 </cc:interface>
 <cc:implementation>
   <c:set var="managedBean" value="#{cc.attrs.managedBean}" />
   <c:set var="isWidgetMode" value="#{cc.attrs.managedBean.isWidgetMode}" />
-  <h:panelGroup layout="block" rendered="#{not isWidgetMode}">
+  <h:panelGroup layout="block">
     <p:panelGrid columns="2" layout="grid" styleClass="ui-fluid"
       columnClasses="ui-g-6 pl-0, ui-g-6 pr-0 mr-0 grid align-items-center flex-row-reverse">
       <h:panelGroup layout="block" styleClass="flex align-items-center h-full">
@@ -86,53 +85,6 @@
         actionListener="#{managedBean.updateDataOnChangingFilter()}" process="@this" partialSubmit="true" />
     </h:panelGroup>
   </h:panelGroup>
-  <h:panelGroup layout="block" rendered="#{isWidgetMode}">
-    <div class="grid mr-4 grid align-items-center line-height-4 mt-1">
-      <p:outputLabel id="include-running-cases-label" for="@next"
-        value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/IncludeRunningCases')}"
-        styleClass="p-2" />
-      <p:toggleSwitch id="include-running-cases" onIcon="pi pi-check" offIcon="pi pi-times"
-        value="#{managedBean.includingRunningCases}">
-        <p:ajax listener="#{managedBean.updateDiagramAndStatistic}" update="process-analytics-form" />
-      </p:toggleSwitch>
-      <p:tooltip for="include-running-cases-label"
-        value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/IncludeRunningCasesTooltip')}" />
-    </div>
-    <h:panelGroup styleClass="ui-g field" layout="block">
-      <p:outputLabel for="@next"
-        value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectProject')}" />
-      <p:selectOneMenu id="moduleDropdown" value="#{managedBean.selectedModule}">
-        <f:selectItem
-          itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectProject')}"
-          itemValue="#{null}" noSelectionOption="true" />
-        <f:selectItems value="#{managedBean.availableModules}" var="module" itemLabel="#{module}" itemValue="#{module}" />
-        <p:ajax event="change" partialSubmit="true" process="@this" listener="#{managedBean.onModuleSelect}" />
-      </p:selectOneMenu>
-    </h:panelGroup>
-    <h:panelGroup id="process-selection-group" styleClass="ui-g field" layout="block">
-      <p:outputLabel for="@next"
-        value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectProcess')}" />
-      <p:cascadeSelect id="process-dropdown" value="#{managedBean.selectedProcessAnalyser}"
-        placeholder="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectProcess')}"
-        converter="processStartConverter" styleClass="w-full">
-        <f:selectItems value="#{managedBean.availableProcessStarts}" />
-        <p:ajax partialSubmit="true" process="@this" listener="#{managedBean.onProcessSelect}" />
-      </p:cascadeSelect>
-    </h:panelGroup>
-
-    <h:panelGroup styleClass="ui-g field" layout="block">
-      <p:outputLabel for="@next"
-        value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectKPI')}" />
-      <p:cascadeSelect id="kpiDropdown" style="width: 100%"
-        placeholder="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectKPI')}"
-        value="#{managedBean.selectedKpiType}" converter="kpiTypeConverter">
-        <f:selectItems value="#{managedBean.kpiTypes}" />
-        <p:ajax event="itemSelect" listener="#{managedBean.onKpiTypeSelect}"
-          update="process-analytics-form:color-picker-component:color-container" process="@this" partialSubmit="true" />
-      </p:cascadeSelect>
-    </h:panelGroup>
-  </h:panelGroup>
-
 </cc:implementation>
 
 </html>
