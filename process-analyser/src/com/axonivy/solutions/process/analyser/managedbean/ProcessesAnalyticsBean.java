@@ -80,12 +80,14 @@ public class ProcessesAnalyticsBean {
   private MasterDataBean masterDataBean;
   private ProcessViewerBean viewerBean;
   private ColorPickerBean colorPickerBean;
+  private Boolean isWidgetMode;
 
   @PostConstruct
   private void init() {
     masterDataBean = FacesContexts.evaluateValueExpression("#{masterDataBean}", MasterDataBean.class);
     viewerBean = FacesContexts.evaluateValueExpression("#{processViewerBean}", ProcessViewerBean.class);
     colorPickerBean = FacesContexts.evaluateValueExpression("#{colorPickerBean}", ColorPickerBean.class);
+    isWidgetMode = FacesContexts.evaluateValueExpression("#{data.isWidgetMode}", Boolean.class);
     processesMap = masterDataBean.getProcessesMap();
     setNodes(new ArrayList<>());
     processMiningDataJsonFile = ContentManagement.cms(IApplication.current()).root().child()
@@ -97,6 +99,7 @@ public class ProcessesAnalyticsBean {
     selectedCustomFilters = new ArrayList<>();
     selectedCustomFieldNames = new ArrayList<>();
     initKpiTypes();
+    Ivy.log().warn(isWidgetMode);
   }
 
   public void updateDataTable() {
@@ -519,5 +522,13 @@ public class ProcessesAnalyticsBean {
 
   public void setIncludingRunningCases(boolean isIncludingRunningCases) {
     this.isIncludingRunningCases = isIncludingRunningCases;
+  }
+
+  public Boolean getIsWidgetMode() {
+    return isWidgetMode;
+  }
+
+  public void setIsWidgetMode(Boolean isWidgetMode) {
+    this.isWidgetMode = isWidgetMode;
   }
 }

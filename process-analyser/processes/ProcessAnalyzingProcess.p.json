@@ -10,6 +10,11 @@
       "name" : "startAnalytic.ivp",
       "config" : {
         "signature" : "startAnalytic",
+        "input" : {
+          "map" : {
+            "out.isWidgetMode" : "true"
+          }
+        },
         "request" : {
           "name" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/name\")%>",
           "description" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/description\")%>",
@@ -31,7 +36,12 @@
       "type" : "DialogCall",
       "name" : "Processes Analytics",
       "config" : {
-        "dialog" : "com.axonivy.solutions.process.analyser.ProcessAnalytics:start()"
+        "dialog" : "com.axonivy.solutions.process.analyser.ProcessAnalytics:start(Boolean)",
+        "call" : {
+          "map" : {
+            "param.isWidgetMode" : "in.isWidgetMode"
+          }
+        }
       },
       "visual" : {
         "at" : { "x" : 224, "y" : 208 }
@@ -45,5 +55,23 @@
       "visual" : {
         "at" : { "x" : 352, "y" : 208 }
       }
+    }, {
+      "id" : "f3",
+      "type" : "RequestStart",
+      "name" : "start",
+      "config" : {
+        "signature" : "start",
+        "input" : {
+          "map" : {
+            "out.isWidgetMode" : "false"
+          }
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 96, "y" : 344 }
+      },
+      "connect" : [
+        { "id" : "f4", "to" : "f1", "via" : [ { "x" : 224, "y" : 344 } ] }
+      ]
     } ]
 }
