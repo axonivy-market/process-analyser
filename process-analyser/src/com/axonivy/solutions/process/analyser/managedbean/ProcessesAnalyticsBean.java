@@ -50,6 +50,7 @@ import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.cm.ContentObject;
 import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.environment.Ivy;
+import ch.ivyteam.ivy.security.IUser;
 import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 
@@ -99,7 +100,6 @@ public class ProcessesAnalyticsBean {
     selectedCustomFilters = new ArrayList<>();
     selectedCustomFieldNames = new ArrayList<>();
     initKpiTypes();
-    Ivy.log().warn(isWidgetMode);
   }
 
   public void updateDataTable() {
@@ -198,12 +198,17 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onModuleSelect() {
+    if (isWidgetMode) {
+      
+    }
     selectedProcessAnalyser = null;
     PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP);
     resetStatisticValue();
   }
 
   public void onProcessSelect() {
+    IUser user = Ivy.session().getSessionUser();
+    user.setProperty(WIDGET_SELECTED_PROCESS_NAME, SUB_PROCESS_CALL_PID_PARAM_NAME);
     resetStatisticValue();
     if (selectedProcessAnalyser != null) {
       getCaseAndTaskCustomFields();
