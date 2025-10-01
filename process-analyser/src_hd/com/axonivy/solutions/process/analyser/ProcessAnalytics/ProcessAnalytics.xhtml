@@ -125,8 +125,7 @@
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectColorMode')}" />
           <p:selectOneMenu id="colorModeDropdown"
             value="#{processesAnalyticsBean.selectedColorMode}"
-            styleClass="color-mode-dropdown w-8rem"
-            converter="colorModeConverter">
+            styleClass="color-mode-dropdown w-8rem">
             <f:selectItems
               value="#{processesAnalyticsBean.colorModes}"
               var="colorMode" itemValue="#{colorMode}"

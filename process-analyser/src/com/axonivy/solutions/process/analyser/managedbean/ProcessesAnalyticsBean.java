@@ -82,7 +82,7 @@ public class ProcessesAnalyticsBean {
   private ProcessViewerBean viewerBean;
   private ColorPickerBean colorPickerBean;
   private ColorMode selectedColorMode;
-  private List<ColorMode> colorModes = Arrays.asList(ColorMode.HEATMAP, ColorMode.CUSTOM);
+  private List<ColorMode> colorModes = Arrays.asList(ColorMode.values());
 
   @PostConstruct
   private void init() {
@@ -100,7 +100,7 @@ public class ProcessesAnalyticsBean {
     selectedCustomFilters = new ArrayList<>();
     selectedCustomFieldNames = new ArrayList<>();
     initKpiTypes();
-    selectedColorMode = colorModes.getFirst();
+    selectedColorMode = colorModes.get(0);
   }
 
   public void updateDataTable() {
