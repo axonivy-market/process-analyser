@@ -575,12 +575,11 @@ public class ProcessesAnalyticsBean {
 
   public void setMergeProcessStarts(boolean isMergeProcessStarts) {
     this.isMergeProcessStarts = isMergeProcessStarts;
-    resetSelection();
+    resetProcessSelection();
   }
   
-  private void resetSelection() {
+  private void resetProcessSelection() {
     selectedProcessAnalyser = null;
-    getAvailableProcessStarts();
-    PF.current().ajax().update("process-selection-group");
+    PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP);
   }
 }
