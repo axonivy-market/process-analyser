@@ -9,7 +9,7 @@
   </parent>
   <groupId>com.axonivy.solutions.process.analyser</groupId>
   <artifactId>process-analyser-test</artifactId>
-  <version>13.1.2-SNAPSHOT</version>
+  <version>13.1.3-SNAPSHOT</version>
   <packaging>iar-integration-test</packaging>
   <dependencies>
     <dependency>
