@@ -48,6 +48,25 @@ public class ProcessesMonitorUtils {
     if (Objects.isNull(processAnalyser)) {
       return Collections.emptyList();
     }
+    return (processAnalyser.getStartElement() == null) ? filterForMergedStarts(processAnalyser, analysisType, cases)
+        : filterForSingleStart(processAnalyser, analysisType, cases);
+  }
+
+  private static List<Node> filterForMergedStarts(ProcessAnalyser processAnalyser, KpiType analysisType,
+      List<ICase> cases) {
+    var pmv = processAnalyser.getProcess().getPmv();
+    String processId = processAnalyser.getProcess().getId();
+    List<ProcessElement> processElements = ProcessUtils.getProcessElementsFrom(processId, pmv);
+
+    if (isDuration(analysisType)) {
+      processElements = ProcessUtils.getTaskStart(processElements);
+    }
+
+    return buildNodesAndApplyKpi(processElements, analysisType, cases);
+  }
+
+  private static List<Node> filterForSingleStart(ProcessAnalyser processAnalyser, KpiType analysisType,
+      List<ICase> cases) {
     String startElementPID = processAnalyser.getStartElement().getPid();
     String processId = processAnalyser.getProcess().getId();
     var pmv = processAnalyser.getProcess().getPmv();
@@ -56,8 +75,15 @@ public class ProcessesMonitorUtils {
     if (isDuration(analysisType)) {
       processElements = ProcessUtils.getTaskStart(processElements);
     }
+
+    return buildNodesAndApplyKpi(processElements, analysisType, cases);
+  }
+
+  private static List<Node> buildNodesAndApplyKpi(List<ProcessElement> processElements, KpiType analysisType,
+      List<ICase> cases) {
     List<SequenceFlow> sequenceFlows = ProcessUtils.getSequenceFlowsFrom(processElements);
     List<Node> nodes = NodeResolver.convertToNodes(processElements, sequenceFlows);
+
     if (isFrequency(analysisType)) {
       var nodeFrequencyResolver = new NodeFrequencyResolver(nodes, processElements);
       nodeFrequencyResolver.updateFrequencyByCases(cases);
@@ -65,6 +91,7 @@ public class ProcessesMonitorUtils {
     } else if (isDuration(analysisType)) {
       updateDurationForNodes(nodes, cases, analysisType);
     }
+
     return NodeResolver.updateNodeByAnalysisType(nodes, analysisType);
   }
 

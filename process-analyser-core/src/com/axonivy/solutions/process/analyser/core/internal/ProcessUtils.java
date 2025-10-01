@@ -176,6 +176,11 @@ public class ProcessUtils {
         process.setProjectRelativePath(processFile.getResource().getProjectRelativePath().toString());
 
         List<IProcessStart> starts = startsByProcessId.getOrDefault(processFileId, Collections.emptyList());
+
+        if (CollectionUtils.isEmpty(starts)) {
+          continue;
+        }
+
         for (var start : starts) {
           var taskStart = start.getTaskStart();
           StartElement startElement = new StartElement();

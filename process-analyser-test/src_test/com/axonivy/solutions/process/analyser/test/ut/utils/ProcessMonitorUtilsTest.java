@@ -86,6 +86,55 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
   }
 
   @Test
+  void test_filterInitialStatisticByIntervalTime_withMergeToggle() {
+    processAnalyser = new ProcessAnalyser();
+    processAnalyser.setProcess(testProcess);
+    processAnalyser.setStartElement(null);
+
+    List<ICase> allCases = new ArrayList<>();
+    for (StartElement startElement : testProcess.getStartElements()) {
+      allCases.addAll(ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(startElement.getTaskStartId(),
+          new TimeIntervalFilter(new Date(), new Date()), new ArrayList<>(), false));
+    }
+
+    List<Node> results =
+        ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(processAnalyser, KpiType.FREQUENCY, allCases);
+
+    assertThat(results).isNotEmpty();
+    assertThat(results.size()).isGreaterThanOrEqualTo(24);
+  }
+
+  @Test
+  void test_filterInitialStatisticByIntervalTime_duration_singleStart() {
+    String selectedPid = testProcess.getId();
+    prepareProcessAnalyzer();
+    List<ICase> cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(
+        ProcessUtils.getTaskStartIdFromPID(selectedPid), new TimeIntervalFilter(new Date(), new Date()),
+        new ArrayList<>(), false);
+    List<Node> results =
+        ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(processAnalyser, KpiType.DURATION_OVERALL, cases);
+    assertThat(results).isNotEmpty();
+    assertThat(results.get(0).getLabelValue()).endsWith("s");
+  }
+
+  @Test
+  void test_filterInitialStatisticByIntervalTime_duration_merged() {
+    processAnalyser = new ProcessAnalyser();
+    processAnalyser.setProcess(testProcess);
+    processAnalyser.setStartElement(null);
+
+    List<ICase> allCases = new ArrayList<>();
+    for (StartElement startElement : testProcess.getStartElements()) {
+      allCases.addAll(ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(startElement.getTaskStartId(),
+          new TimeIntervalFilter(new Date(), new Date()), new ArrayList<>(), false));
+    }
+    List<Node> results =
+        ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(processAnalyser, KpiType.DURATION_OVERALL, allCases);
+    assertThat(results).isNotEmpty();
+    assertThat(results.get(0).getLabelValue()).endsWith("s");
+  }
+
+  @Test
   void test_getAllCasesFromTaskStartIdWithTimeInterval() {
     List<ICase> results = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(0L,
         new TimeIntervalFilter(new Date(), new Date()), new ArrayList<CustomFieldFilter>(), false);
