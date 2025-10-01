@@ -6,6 +6,7 @@ import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnaly
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.LIGHT_TEXT_COLOR;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.NON_DIGIT_COMMA_REGEX;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.RGB_PREFIX;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.DEFAULT_COLOR_MAX;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,8 +69,8 @@ public class ColorUtils {
 
   private static int adjustColor(int baseValue, float adjustmentFactor, boolean shouldDarken) {
     int value = shouldDarken ? Math.round(baseValue * (1 - adjustmentFactor))
-        : Math.round(baseValue + (255 - baseValue) * adjustmentFactor);
-    return Math.max(0, Math.min(255, value));
+        : Math.round(baseValue + (DEFAULT_COLOR_MAX - baseValue) * adjustmentFactor);
+    return Math.max(0, Math.min(DEFAULT_COLOR_MAX, value));
   }
 
   public static List<String> getAccessibleTextColors(List<String> colors) {
@@ -100,7 +101,7 @@ public class ColorUtils {
     }
     // 0.299 * r + 0.587 * g + 0.114 * b:
     // Luminance formula for determine dark and light color
-    return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.5 ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR;
+    return (0.299 * r + 0.587 * g + 0.114 * b) / DEFAULT_COLOR_MAX > 0.5 ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR;
   }
 
   /**
@@ -120,16 +121,16 @@ public class ColorUtils {
 
     for (int i = 0; i < halfSteps; i++) {
       float t = (float) i / (halfSteps - 1);
-      int r = Math.round(t * 255);
-      int g = 255;
+      int r = Math.round(t * DEFAULT_COLOR_MAX);
+      int g = DEFAULT_COLOR_MAX;
       int b = 0;
       heatmapColors.add(String.format(ProcessAnalyticsConstants.RGB_FORMAT, r, g, b));
     }
 
     for (int i = 0; i < steps - halfSteps; i++) {
       float t = (float) i / (steps - halfSteps - 1);
-      int r = 255;
-      int g = Math.round(255 - t * 255);
+      int r = DEFAULT_COLOR_MAX;
+      int g = Math.round(DEFAULT_COLOR_MAX - t * DEFAULT_COLOR_MAX);
       int b = 0;
       heatmapColors.add(String.format(ProcessAnalyticsConstants.RGB_FORMAT, r, g, b));
     }

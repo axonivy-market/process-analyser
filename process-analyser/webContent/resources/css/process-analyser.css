@@ -121,16 +121,3 @@ h3 {
 .ui-resizable-proxy {
    border: 2px dotted #00F;
 }
-
-.color-mode-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  width: 100%;
-}
-
-.color-mode-dropdown {
-  padding-bottom: 10px;
-  justify-content: flex-start;
-  width: 250px;
-}

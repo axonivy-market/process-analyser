@@ -4,8 +4,6 @@ import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnaly
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_REGEX;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_SIGN;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COLOR_MAP_HEATMAP;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COLOR_MAP_COLOR_CHOOSER;
 import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.DURATION_COLOR;
 import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.DURATION_TEXT_COLOR;
 import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.FREQUENCY_COLOR;
@@ -23,6 +21,7 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.collections4.CollectionUtils;
 
+import com.axonivy.solutions.process.analyser.enums.ColorMode;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.utils.ColorUtils;
 
@@ -40,23 +39,27 @@ public class ColorPickerBean implements Serializable {
   private String selectedColor;
   private int selectedIndex = -1;
 
-  public void initBean(KpiType selectedKpiType, String selectedColorMode) {
+  public void initBean(KpiType selectedKpiType, ColorMode selectedColorMode) {
     this.selectedKpiType = selectedKpiType;
     this.colorSegments = new ArrayList<>();
     this.textColors = new ArrayList<>();
     if (selectedKpiType != null) {
       resetSelection();
-      if (COLOR_MAP_HEATMAP.equalsIgnoreCase(selectedColorMode)) {
+      if (selectedColorMode != null && selectedColorMode.isHeatmap()) {
         onChooseHeatMapMode();
       } else {
         onChooseColorChooserMode();
       }
     }
   }
-  
+
   public void onChooseHeatMapMode() {
     this.colorSegments = ColorUtils.generateHeatmapColors(GRADIENT_COLOR_LEVELS);
     this.textColors = ColorUtils.getAccessibleTextColors(colorSegments);
+  }
+
+  public boolean checkRenderCondition(ColorMode selectedColorMode) {
+    return selectedColorMode != null && selectedColorMode.isCustom() && isRenderedColorPicker();
   }
 
   public void onSegmentClick(ActionEvent event) {
@@ -80,12 +83,11 @@ public class ColorPickerBean implements Serializable {
 
   private void updateColorProperties() {
     IUser user = Ivy.session().getSessionUser();
-    String colorKey = getColorPropertyKey();
-    String textKey = getTextColorPropertyKey();
-
     if (CollectionUtils.isEmpty(colorSegments) || CollectionUtils.isEmpty(textColors)) {
       return;
     }
+    String colorKey = getColorPropertyKey();
+    String textKey = getTextColorPropertyKey();
 
     user.setProperty(colorKey, String.join(HYPHEN_SIGN, colorSegments));
     user.setProperty(textKey, String.join(HYPHEN_SIGN, textColors));
@@ -163,17 +165,5 @@ public class ColorPickerBean implements Serializable {
 
   public void setSelectedIndex(int selectedIndex) {
     this.selectedIndex = selectedIndex;
-  }
-  
-  public String getColorMapHeatmap() {
-    return COLOR_MAP_HEATMAP;
-  }
-  
-  public String getColorMapColorChooser() {
-    return COLOR_MAP_COLOR_CHOOSER;
-  }
-  
-  public boolean isNotHeatmapMode(String selectedColorMode) {
-    return !COLOR_MAP_HEATMAP.equalsIgnoreCase(selectedColorMode);
   }
 }

@@ -20,7 +20,7 @@ import ch.ivyteam.ivy.environment.IvyTest;
 @IvyTest
 public class ColorUtilsTest extends BaseSetup {
   protected static final String PURE_BLACK = "rgb(0, 0, 0)";
-  protected static final String PURE_WHITE = "rgb(255, 255, 255)";
+  protected static final String PURE_WHITE = "rgb(DEFAULT_COLOR_MAX, DEFAULT_COLOR_MAX, DEFAULT_COLOR_MAX)";
   protected static final String LIGHT_GRAY = "rgb(250, 250, 250)";
   protected static final String NEUTRAL_GRAY = "rgb(217, 217, 217)";
   protected static final String MEDIUM_GRAY = "rgb(128, 128, 128)";
@@ -28,8 +28,8 @@ public class ColorUtilsTest extends BaseSetup {
   protected static final String EXTREME_DARK_BLUE_GRAY = "rgb(10, 20, 30)";
 
   private static final String RGB_LIGHT_COLOR = "rgb(247, 246, 245)";
-  private static final String GREEN_TO_YELLOW_PATTERN = "rgb\\(\\d+, 255, 0\\)";
-  private static final String YELLOW_TO_RED_PATTERN   = "rgb\\(255, \\d+, 0\\)";
+  private static final String GREEN_TO_YELLOW_PATTERN = "rgb\\(\\d+, DEFAULT_COLOR_MAX, 0\\)";
+  private static final String YELLOW_TO_RED_PATTERN   = "rgb\\(DEFAULT_COLOR_MAX, \\d+, 0\\)";
 
   @Test
   void test_generateColorSegments_withFrequencyKpi() {
@@ -138,8 +138,8 @@ public class ColorUtilsTest extends BaseSetup {
     List<String> heatmapColors = ColorUtils.generateHeatmapColors(steps);
     int expectedSize = steps - 1; 
     assertThat(heatmapColors).hasSize(expectedSize);
-    assertThat(heatmapColors.get(0)).isEqualTo("rgb(0, 255, 0)");
-    assertThat(heatmapColors.get(expectedSize - 1)).isEqualTo("rgb(255, 0, 0)");
+    assertThat(heatmapColors.get(0)).isEqualTo("rgb(0, DEFAULT_COLOR_MAX, 0)");
+    assertThat(heatmapColors.get(expectedSize - 1)).isEqualTo("rgb(DEFAULT_COLOR_MAX, 0, 0)");
   }
 
   @Test
@@ -147,7 +147,7 @@ public class ColorUtilsTest extends BaseSetup {
     int steps = 2;
     List<String>heatmapColors = ColorUtils.generateHeatmapColors(steps);
     assertThat(heatmapColors).hasSize(1);
-    assertThat(heatmapColors.get(0)).isEqualTo("rgb(0, 255, 0)");
+    assertThat(heatmapColors.get(0)).isEqualTo("rgb(0, DEFAULT_COLOR_MAX, 0)");
   }
 
   @Test

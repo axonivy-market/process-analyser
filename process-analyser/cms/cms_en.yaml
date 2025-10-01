@@ -39,7 +39,6 @@ Dialogs:
               PageHeader: Process Monitor Page
               PleaseSelectColorMode: Color Mode
               PleaseSelectKPI: KPI
-              PleaseSelectProcess: Process
               PleaseSelectProject: Project
               Process: Process
               ProcessInformation: Process Information
@@ -69,6 +68,11 @@ Dialogs:
                 Zoom: Zoom
                 ZoomTooltip: Determine the zoom level that suits your needs.
 Enums:
+  ColorMode:
+    CUSTOM:
+      name: Custom
+    HEATMAP:
+      name: HeatMap
   ElementType:
     ALTERNATIVE:
       name: 'Alternative: {0}'

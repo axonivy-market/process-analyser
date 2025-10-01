@@ -3,8 +3,6 @@ package com.axonivy.solutions.process.analyser.managedbean;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartEventElement;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartSignalEventElement;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.WebServiceProcessStartElement;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COLOR_MAP_HEATMAP;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COLOR_MAP_COLOR_CHOOSER;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +38,7 @@ import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
 import com.axonivy.solutions.process.analyser.core.enums.StartElementType;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
+import com.axonivy.solutions.process.analyser.enums.ColorMode;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
 import com.axonivy.solutions.process.analyser.service.IvyTaskOccurrenceService;
@@ -82,9 +81,8 @@ public class ProcessesAnalyticsBean {
   private MasterDataBean masterDataBean;
   private ProcessViewerBean viewerBean;
   private ColorPickerBean colorPickerBean;
-  private String selectedColorMode;
-  
-  private List<String> availableColorMaps = Arrays.asList(COLOR_MAP_HEATMAP, COLOR_MAP_COLOR_CHOOSER);
+  private ColorMode selectedColorMode;
+  private List<ColorMode> colorModes = Arrays.asList(ColorMode.HEATMAP, ColorMode.CUSTOM);
 
   @PostConstruct
   private void init() {
@@ -102,7 +100,7 @@ public class ProcessesAnalyticsBean {
     selectedCustomFilters = new ArrayList<>();
     selectedCustomFieldNames = new ArrayList<>();
     initKpiTypes();
-    selectedColorMode = availableColorMaps.getFirst();
+    selectedColorMode = colorModes.getFirst();
   }
 
   public void updateDataTable() {
@@ -331,7 +329,7 @@ public class ProcessesAnalyticsBean {
       return;
     }
 
-    if(COLOR_MAP_HEATMAP.equals(selectedColorMode)) {
+    if(selectedColorMode.isHeatmap()) {
       colorPickerBean.onChooseHeatMapMode();
     } else {
       colorPickerBean.onChooseColorChooserMode();
@@ -538,16 +536,20 @@ public class ProcessesAnalyticsBean {
   public void setIncludingRunningCases(boolean isIncludingRunningCases) {
     this.isIncludingRunningCases = isIncludingRunningCases;
   }
- 
-  public List<String> getAvailableColorMaps() {
-    return availableColorMaps;
-  }
 
-  public String getSelectedColorMode() {
+  public ColorMode getSelectedColorMode() {
     return selectedColorMode;
   }
 
-  public void setSelectedColorMode(String selectedColorMode) {
+  public void setSelectedColorMode(ColorMode selectedColorMode) {
     this.selectedColorMode = selectedColorMode;
+  }
+
+  public List<ColorMode> getColorModes() {
+    return colorModes;
+  }
+
+  public void setColorModes(List<ColorMode> colorModes) {
+    this.colorModes = colorModes;
   }
 }

@@ -41,12 +41,12 @@
               oncomplete="PF('colorPickerWidget').show();"
               ondblclick="return false;"
               process="@this" partialSubmit="true"
-              rendered="#{colorPickerBean.isNotHeatmapMode(selectedColorMode)}">
+              rendered="#{selectedColorMode.custom}">
               <f:attribute name="segmentIndex" value="#{status.index}" />
             </p:commandLink>
             <h:outputText styleClass="segment"
                   style="background-color: #{color};"
-                  rendered="#{selectedColorMode eq 'Heatmap'}" />
+                  rendered="#{selectedColorMode.heatmap}" />
           </ui:repeat>
         </div>
       </h:panelGroup>
@@ -57,7 +57,7 @@
       <div id="color-picker-wrapper">
         <p:colorPicker id="color-picker" mode="inline"
           value="#{colorPickerBean.selectedColor}"
-          rendered="#{colorPickerBean.isNotHeatmapMode(selectedColorMode) and colorPickerBean.isRenderedColorPicker()}"
+          rendered="#{colorPickerBean.checkRenderCondition(selectedColorMode)}"
           widgetVar="colorPickerWidget" theme="large" format="rgb"
           alpha="false">
           <p:ajax event="change"
