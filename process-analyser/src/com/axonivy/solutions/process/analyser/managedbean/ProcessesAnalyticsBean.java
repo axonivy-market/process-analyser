@@ -292,6 +292,7 @@ public class ProcessesAnalyticsBean {
     });
     setFilterDropdownVisible(!selectedCustomFieldNames.isEmpty());
     updateCustomFilterPanel();
+    refreshAnalyserReportToView();
   }
 
   private void updateCustomFilterPanel() {
@@ -349,6 +350,7 @@ public class ProcessesAnalyticsBean {
       viewerBean.init(selectedProcessAnalyser);
       loadNodes();
       updateProcessMiningDataJson();
+      renderNodesForKPIType();
       PF.current().executeScript(ProcessAnalyticsConstants.UPDATE_IFRAME_SOURCE_METHOD_CALL);
       PF.current().ajax().update(ProcessAnalyticViewComponentId.getDiagramAndStatisticComponentIds());
     }
@@ -364,9 +366,8 @@ public class ProcessesAnalyticsBean {
       if (isMergeProcessStarts) {
         List<Long> taskStartIds =
             selectedProcessAnalyser.getProcess().getStartElements().stream().map(StartElement::getTaskStartId).toList();
-        List<ICase> subCases = new ArrayList<>();
         for (Long taskStartId : taskStartIds) {
-          subCases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter,
+          List<ICase> subCases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter,
               selectedCustomFilters, isIncludingRunningCases);
           if (CollectionUtils.isNotEmpty(subCases)) {
             cases.addAll(subCases);
