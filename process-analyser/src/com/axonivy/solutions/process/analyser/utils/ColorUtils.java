@@ -2,11 +2,11 @@ package com.axonivy.solutions.process.analyser.utils;
 
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COMMA;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.DARK_TEXT_COLOR;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.DEFAULT_COLOR_MAX;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HASHTAG;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.LIGHT_TEXT_COLOR;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.NON_DIGIT_COMMA_REGEX;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.RGB_PREFIX;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.DEFAULT_COLOR_MAX;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,38 +102,5 @@ public class ColorUtils {
     // 0.299 * r + 0.587 * g + 0.114 * b:
     // Luminance formula for determine dark and light color
     return (0.299 * r + 0.587 * g + 0.114 * b) / DEFAULT_COLOR_MAX > 0.5 ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR;
-  }
-
-  /**
-   * Generates a list of heatmap color strings in RGB format.
-   * <p>
-   * The generated colors transition from green to yellow to red,
-   * suitable for visualizing heatmaps. The number of colors generated
-   * is determined by the {@code steps} parameter.
-   * </p>
-   *
-   * @param steps the total number of colors to generate for the heatmap
-   * @return a list of color strings formatted according to {@code ProcessAnalyticsConstants.RGB_FORMAT}
-   */
-  public static List<String> generateHeatmapColors(int steps) {
-    List<String> heatmapColors = new ArrayList<>();
-    int halfSteps = steps / 2;
-
-    for (int i = 0; i < halfSteps; i++) {
-      float t = (float) i / (halfSteps - 1);
-      int r = Math.round(t * DEFAULT_COLOR_MAX);
-      int g = DEFAULT_COLOR_MAX;
-      int b = 0;
-      heatmapColors.add(String.format(ProcessAnalyticsConstants.RGB_FORMAT, r, g, b));
-    }
-
-    for (int i = 0; i < steps - halfSteps; i++) {
-      float t = (float) i / (steps - halfSteps - 1);
-      int r = DEFAULT_COLOR_MAX;
-      int g = Math.round(DEFAULT_COLOR_MAX - t * DEFAULT_COLOR_MAX);
-      int b = 0;
-      heatmapColors.add(String.format(ProcessAnalyticsConstants.RGB_FORMAT, r, g, b));
-    }
-    return heatmapColors;
   }
 }

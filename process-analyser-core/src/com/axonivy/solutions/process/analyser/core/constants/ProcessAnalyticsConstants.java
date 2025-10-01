@@ -1,5 +1,8 @@
 package com.axonivy.solutions.process.analyser.core.constants;
 
+import java.util.Arrays;
+import java.util.List;
+
 import ch.ivyteam.ivy.process.rdm.IProcess;
 
 public class ProcessAnalyticsConstants {
@@ -41,4 +44,9 @@ public class ProcessAnalyticsConstants {
   public static final String LIGHT_TEXT_COLOR = "#FFFFFF";
   public static final String DARK_TEXT_COLOR = "#000000";
   public static final int DEFAULT_COLOR_MAX = 255;
+  
+  public static final List<String> HEATMAP_COLORS = Arrays.asList(
+      "rgb(0,150,0)", "rgb(0,200,0)", "rgb(64,225,0)", "rgb(100,255,0)", "rgb(200,255,0)", "rgb(255,255,0)",
+      "rgb(255,200,0)", "rgb(255,100,0)", "rgb(255,64,0)", "rgb(200,0,0)", "rgb(175,0,0)"
+  );
 }

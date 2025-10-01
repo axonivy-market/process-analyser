@@ -131,40 +131,4 @@ public class ColorUtilsTest extends BaseSetup {
     assertThat(gradient.get(0)).isEqualTo(PURE_WHITE);
     assertThat(gradient.get(steps - 1)).startsWith("rgb(3");
   }
-
-  @Test
-  void test_generateHeatmapColors_withDefaultSteps() {
-    int steps = 10;
-    List<String> heatmapColors = ColorUtils.generateHeatmapColors(steps);
-    int expectedSize = steps - 1; 
-    assertThat(heatmapColors).hasSize(expectedSize);
-    assertThat(heatmapColors.get(0)).isEqualTo("rgb(0, DEFAULT_COLOR_MAX, 0)");
-    assertThat(heatmapColors.get(expectedSize - 1)).isEqualTo("rgb(DEFAULT_COLOR_MAX, 0, 0)");
-  }
-
-  @Test
-  void test_generateHeatmapColors_withSmallSteps() {
-    int steps = 2;
-    List<String>heatmapColors = ColorUtils.generateHeatmapColors(steps);
-    assertThat(heatmapColors).hasSize(1);
-    assertThat(heatmapColors.get(0)).isEqualTo("rgb(0, DEFAULT_COLOR_MAX, 0)");
-  }
-
-  @Test
-  void test_generateHeatmapColors_colorTransition() {
-    int steps = 6;
-    List<String> heatmapColors = ColorUtils.generateHeatmapColors(steps);
-    int expectedSize = steps - 1; 
-    assertThat(heatmapColors).hasSize(expectedSize);
-    
-    int halfSteps = steps / 2;
-    for (int i = 0; i < halfSteps; i++) {
-      String color = heatmapColors.get(i);
-      assertThat(color).matches(GREEN_TO_YELLOW_PATTERN); 
-    }
-    for (int i = halfSteps; i < expectedSize; i++) {
-      String color = heatmapColors.get(i);
-      assertThat(color).matches(YELLOW_TO_RED_PATTERN);
-    }
-  }
 }
