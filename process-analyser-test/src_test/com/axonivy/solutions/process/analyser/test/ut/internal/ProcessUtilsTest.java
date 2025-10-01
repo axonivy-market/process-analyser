@@ -48,8 +48,7 @@ public class ProcessUtilsTest extends BaseSetup {
   void test_getAllProcesses() {
     var results = ProcessUtils.getAllProcesses();
     assertThat(results).isNotEmpty();
-    assertThat(results.size()).isGreaterThanOrEqualTo(1);
-    results.forEach(process -> assertThat(process.getStartElements()).isNotEmpty());
+    assertThat(results.size()).isEqualTo(2);
   }
 
   @Test

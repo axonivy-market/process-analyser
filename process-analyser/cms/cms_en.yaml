@@ -43,7 +43,7 @@ Dialogs:
               PleaseSelectProject: Please select a project
               Process: Process
               ProcessInformation: Process Information
-              ProcessTooltip: By default analysis of processes is seperated by process starts (i.e. automatic vs. manual start)
+              ProcessTooltip: By default analysis of processes is separated by process starts (i.e. automatic vs. manual start)
               ProcessViewer: Process Viewer
               RelativeValue: Relative Value
               RequireMessage: Please select a process

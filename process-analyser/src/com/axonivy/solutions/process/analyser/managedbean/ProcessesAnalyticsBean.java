@@ -132,38 +132,65 @@ public class ProcessesAnalyticsBean {
     return group;
   }
 
+  /**
+   * Returns a list of selectable process start options for the current module.
+   * 
+   * - If no module is selected, returns an empty list.
+   * - In "merge process starts" mode, each process is a single {@link SelectItem}.
+   * - Otherwise, processes with one start element create a single item,
+   *   and processes with multiple start elements create a {@link SelectItemGroup}.
+   *
+   * @return list of available process starts for the selected module
+   */
   public List<SelectItem> getAvailableProcessStarts() {
     if (StringUtils.isBlank(selectedModule)) {
       return new ArrayList<>();
     }
     List<SelectItem> processStartsSelection = new ArrayList<>();
-    processesMap.get(selectedModule).stream()
-        .filter(process -> CollectionUtils.isNotEmpty(process.getStartElements()))
+    processesMap.get(selectedModule).stream().filter(process -> CollectionUtils.isNotEmpty(process.getStartElements()))
         .forEach(process -> {
-          if (process.getStartElements().size() == 1 && !isMergeProcessStarts) {
-            var item = createNewProcessItemForDropdown(process, process.getStartElements().getFirst());
-            var processNameAndStartElement = process.getName().concat(ProcessAnalyticsConstants.SLASH).concat(item.getLabel());
-            item.setLabel(processNameAndStartElement);
-            processStartsSelection.add(item);
-            return;
-          }
-
-          var processStart = new ProcessAnalyser(process);
           if (isMergeProcessStarts) {
-            var processItem = new SelectItem(new ProcessAnalyser(process), process.getName(), process.getName());
-            processStartsSelection.add(processItem);
+            addMergeProcessStart(process, processStartsSelection);
           } else {
-            var group = new SelectItemGroup(process.getName());
-            group.setValue(processStart);
-            SelectItem[] startElementsSelection;
-            startElementsSelection = process.getStartElements().stream()
-                .map(startElement -> createNewProcessItemForDropdown(process, startElement)).toArray(SelectItem[]::new);
-            group.setSelectItems(startElementsSelection);
-            processStartsSelection.add(group);
+            handleProcessStarts(process, processStartsSelection);
           }
         });
 
     return processStartsSelection;
+  }
+
+  private void addMergeProcessStart(Process process, List<SelectItem> processStartsSelection) {
+    var processItem = new SelectItem(new ProcessAnalyser(process), process.getName(), process.getName());
+    processStartsSelection.add(processItem);
+  }
+
+  private void handleProcessStarts(Process process, List<SelectItem> processStartsSelection) {
+    if (process.getStartElements().size() == 1) {
+      addSingleStartElement(process, processStartsSelection);
+    } else {
+      addMultipleStartElements(process, processStartsSelection);
+    }
+  }
+
+  private void addSingleStartElement(Process process, List<SelectItem> processStartsSelection) {
+    var startElement = process.getStartElements().getFirst();
+    var item = createNewProcessItemForDropdown(process, startElement);
+
+    var processNameAndStartElement = process.getName().concat(ProcessAnalyticsConstants.SLASH).concat(item.getLabel());
+    item.setLabel(processNameAndStartElement);
+
+    processStartsSelection.add(item);
+  }
+
+  private void addMultipleStartElements(Process process, List<SelectItem> processStartsSelection) {
+    var group = new SelectItemGroup(process.getName());
+    group.setValue(new ProcessAnalyser(process));
+
+    SelectItem[] startElementsSelection = process.getStartElements().stream()
+        .map(startElement -> createNewProcessItemForDropdown(process, startElement)).toArray(SelectItem[]::new);
+
+    group.setSelectItems(startElementsSelection);
+    processStartsSelection.add(group);
   }
 
   private SelectItem createNewProcessItemForDropdown(Process process, StartElement startElement) {
