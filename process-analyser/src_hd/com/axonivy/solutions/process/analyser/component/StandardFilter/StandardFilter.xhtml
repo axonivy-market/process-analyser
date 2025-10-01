@@ -55,14 +55,33 @@
       </h:panelGroup>
 
       <h:panelGroup id="process-selection-group" styleClass="ui-g field" layout="block">
-        <p:outputLabel for="@next"
-          value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectProcess')}" />
-        <p:cascadeSelect id="process-dropdown" value="#{managedBean.selectedProcessAnalyser}"
-          placeholder="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectProcess')}"
-          converter="processStartConverter" styleClass="w-full">
-          <f:selectItems value="#{managedBean.availableProcessStarts}" />
-          <p:ajax partialSubmit="true" process="@this" listener="#{managedBean.onProcessSelect}" />
-        </p:cascadeSelect>
+        <p:outputLabel
+          value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectProcess')}">
+          <p:outputLabel id="header-tooltip">
+            <i class="ui-icon pi pi-info-circle ml-1" />
+          </p:outputLabel>
+          <p:tooltip for="header-tooltip" trackMouse="true"
+            value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/ProcessTooltip')}" />
+        </p:outputLabel>
+
+        <c:if test="#{!processesAnalyticsBean.mergeProcessStarts}">
+          <p:cascadeSelect id="process-dropdown" value="#{processesAnalyticsBean.selectedProcessAnalyser}"
+            placeholder="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectProcess')}"
+            converter="processStartConverter" styleClass="w-full">
+            <f:selectItems value="#{processesAnalyticsBean.availableProcessStarts}" />
+            <p:ajax partialSubmit="true" process="@this" listener="#{processesAnalyticsBean.onProcessSelect}" />
+          </p:cascadeSelect>
+        </c:if>
+
+        <c:if test="#{processesAnalyticsBean.mergeProcessStarts}">
+          <p:selectOneMenu value="#{processesAnalyticsBean.selectedProcessAnalyser}" converter="processStartConverter">
+            <f:selectItem
+              itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectProcess')}"
+              itemValue="#{null}" noSelectionOption="true" />
+            <f:selectItems value="#{processesAnalyticsBean.availableProcessStarts}" />
+            <p:ajax event="change" listener="#{processesAnalyticsBean.onProcessSelect}" />
+          </p:selectOneMenu>
+        </c:if>
       </h:panelGroup>
 
       <h:panelGroup styleClass="ui-g field" layout="block">
