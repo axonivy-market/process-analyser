@@ -74,6 +74,7 @@ public class ProcessesAnalyticsBean {
   private List<String> selectedCustomFieldNames;
   private boolean isFilterDropdownVisible;
   private boolean isIncludingRunningCases;
+  private boolean isMergeProcessStarts;
   private double minValue;
   private double maxValue;
   private List<SelectItem> kpiTypes;
@@ -131,33 +132,65 @@ public class ProcessesAnalyticsBean {
     return group;
   }
 
+  /**
+   * Returns a list of selectable process start options for the current module.
+   * 
+   * - If no module is selected, returns an empty list.
+   * - In "merge process starts" mode, each process is a single {@link SelectItem}.
+   * - Otherwise, processes with one start element create a single item,
+   *   and processes with multiple start elements create a {@link SelectItemGroup}.
+   *
+   * @return list of available process starts for the selected module
+   */
   public List<SelectItem> getAvailableProcessStarts() {
     if (StringUtils.isBlank(selectedModule)) {
       return new ArrayList<>();
     }
     List<SelectItem> processStartsSelection = new ArrayList<>();
-    processesMap.get(selectedModule).stream()
-        .filter(process -> CollectionUtils.isNotEmpty(process.getStartElements()))
+    processesMap.get(selectedModule).stream().filter(process -> CollectionUtils.isNotEmpty(process.getStartElements()))
         .forEach(process -> {
-          if (process.getStartElements().size() == 1) {
-            var item = createNewProcessItemForDropdown(process, process.getStartElements().getFirst());
-            var processNameAndStartElement = process.getName().concat(ProcessAnalyticsConstants.SLASH).concat(item.getLabel());
-            item.setLabel(processNameAndStartElement);
-            processStartsSelection.add(item);
-            return;
+          if (isMergeProcessStarts) {
+            addMergeProcessStart(process, processStartsSelection);
+          } else {
+            handleProcessStarts(process, processStartsSelection);
           }
-
-          var processStart = new ProcessAnalyser(process);
-          var group = new SelectItemGroup(process.getName());
-          group.setValue(processStart);
-          SelectItem[] startElementsSelection = process.getStartElements().stream()
-              .map(startElement -> createNewProcessItemForDropdown(process, startElement))
-              .toArray(SelectItem[]::new);
-          group.setSelectItems(startElementsSelection);
-          processStartsSelection.add(group);
         });
 
     return processStartsSelection;
+  }
+
+  private void addMergeProcessStart(Process process, List<SelectItem> processStartsSelection) {
+    var processItem = new SelectItem(new ProcessAnalyser(process), process.getName(), process.getName());
+    processStartsSelection.add(processItem);
+  }
+
+  private void handleProcessStarts(Process process, List<SelectItem> processStartsSelection) {
+    if (process.getStartElements().size() == 1) {
+      addSingleStartElement(process, processStartsSelection);
+    } else {
+      addMultipleStartElements(process, processStartsSelection);
+    }
+  }
+
+  private void addSingleStartElement(Process process, List<SelectItem> processStartsSelection) {
+    var startElement = process.getStartElements().getFirst();
+    var item = createNewProcessItemForDropdown(process, startElement);
+
+    var processNameAndStartElement = process.getName().concat(ProcessAnalyticsConstants.SLASH).concat(item.getLabel());
+    item.setLabel(processNameAndStartElement);
+
+    processStartsSelection.add(item);
+  }
+
+  private void addMultipleStartElements(Process process, List<SelectItem> processStartsSelection) {
+    var group = new SelectItemGroup(process.getName());
+    group.setValue(new ProcessAnalyser(process));
+
+    SelectItem[] startElementsSelection = process.getStartElements().stream()
+        .map(startElement -> createNewProcessItemForDropdown(process, startElement)).toArray(SelectItem[]::new);
+
+    group.setSelectItems(startElementsSelection);
+    processStartsSelection.add(group);
   }
 
   private SelectItem createNewProcessItemForDropdown(Process process, StartElement startElement) {
@@ -259,6 +292,7 @@ public class ProcessesAnalyticsBean {
     });
     setFilterDropdownVisible(!selectedCustomFieldNames.isEmpty());
     updateCustomFilterPanel();
+    refreshAnalyserReportToView();
   }
 
   private void updateCustomFilterPanel() {
@@ -316,6 +350,7 @@ public class ProcessesAnalyticsBean {
       viewerBean.init(selectedProcessAnalyser);
       loadNodes();
       updateProcessMiningDataJson();
+      renderNodesForKPIType();
       PF.current().executeScript(ProcessAnalyticsConstants.UPDATE_IFRAME_SOURCE_METHOD_CALL);
       PF.current().ajax().update(ProcessAnalyticViewComponentId.getDiagramAndStatisticComponentIds());
     }
@@ -327,9 +362,22 @@ public class ProcessesAnalyticsBean {
     initializingProcessMiningData();
 
     if (haveMandatoryFieldsBeenFilled()) {
-      Long taskStartId = selectedProcessAnalyser.getStartElement().getTaskStartId();
-      List<ICase> cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId,
-          timeIntervalFilter, selectedCustomFilters, isIncludingRunningCases);
+      List<ICase> cases = new ArrayList<>();
+      if (isMergeProcessStarts) {
+        List<Long> taskStartIds =
+            selectedProcessAnalyser.getProcess().getStartElements().stream().map(StartElement::getTaskStartId).toList();
+        for (Long taskStartId : taskStartIds) {
+          List<ICase> subCases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter,
+              selectedCustomFilters, isIncludingRunningCases);
+          if (CollectionUtils.isNotEmpty(subCases)) {
+            cases.addAll(subCases);
+          }
+        }
+      } else {
+        Long taskStartId = selectedProcessAnalyser.getStartElement().getTaskStartId();
+        cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter,
+            selectedCustomFilters, isIncludingRunningCases);
+      }
       if (CollectionUtils.isNotEmpty(cases)) {
         analyzedNode = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(selectedProcessAnalyser, selectedKpiType, cases);
         processMiningData.setNodes(analyzedNode);
@@ -519,5 +567,19 @@ public class ProcessesAnalyticsBean {
 
   public void setIncludingRunningCases(boolean isIncludingRunningCases) {
     this.isIncludingRunningCases = isIncludingRunningCases;
+  }
+
+  public boolean isMergeProcessStarts() {
+    return isMergeProcessStarts;
+  }
+
+  public void setMergeProcessStarts(boolean isMergeProcessStarts) {
+    this.isMergeProcessStarts = isMergeProcessStarts;
+    resetProcessSelection();
+  }
+  
+  private void resetProcessSelection() {
+    selectedProcessAnalyser = null;
+    PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP);
   }
 }
