@@ -1,5 +1,6 @@
 package com.axonivy.solutions.process.analyser.managedbean;
 
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_SIGN;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartEventElement;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartSignalEventElement;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.WebServiceProcessStartElement;
@@ -36,6 +37,7 @@ import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewCompo
 import com.axonivy.solutions.process.analyser.core.bo.Process;
 import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
+import com.axonivy.solutions.process.analyser.core.constants.UserProperty;
 import com.axonivy.solutions.process.analyser.core.enums.StartElementType;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
@@ -100,6 +102,29 @@ public class ProcessesAnalyticsBean {
     selectedCustomFilters = new ArrayList<>();
     selectedCustomFieldNames = new ArrayList<>();
     initKpiTypes();
+    if (isWidgetMode) {
+      initSelectedValueFromUserProperty();
+    }
+  }
+
+  private void initSelectedValueFromUserProperty() {
+    IUser currentUser = Ivy.session().getSessionUser();
+    selectedModule = currentUser.getProperty(UserProperty.WIDGET_SELECTED_MODULE);
+    String selectedProcessAnalyzerId = currentUser.getProperty(UserProperty.WIDGET_SELECTED_PROCESS_NAME);
+    String selectedKpiTypeName = currentUser.getProperty(UserProperty.WIDGET_SELECTED_KPI);
+    String[] parts = selectedProcessAnalyzerId.split(HYPHEN_SIGN, 2);
+    if (parts.length == 2) {
+      String selectedProcessId = parts[0];
+      String selectedStartPid = parts[1];
+      var selectedProcess = processesMap.get(selectedModule).stream()
+          .filter(process -> StringUtils.equals(process.getId(), selectedProcessId)).findAny().orElse(null);
+      var selectedProcessStart = selectedProcess.getStartElements().stream()
+          .filter(start -> StringUtils.equals(start.getPid(), selectedStartPid)).findAny().orElse(null);
+      selectedProcessAnalyser = new ProcessAnalyser(selectedProcess, selectedProcessStart);
+    }
+    if (StringUtils.isNotBlank(selectedKpiTypeName)) {
+      selectedKpiType = KpiType.valueOf(selectedKpiTypeName);
+    }
   }
 
   public void updateDataTable() {
@@ -199,7 +224,7 @@ public class ProcessesAnalyticsBean {
 
   public void onModuleSelect() {
     if (isWidgetMode) {
-      
+      updateUserProperty(UserProperty.WIDGET_SELECTED_MODULE, selectedModule);
     }
     selectedProcessAnalyser = null;
     PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP);
@@ -207,8 +232,11 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onProcessSelect() {
-    IUser user = Ivy.session().getSessionUser();
-    user.setProperty(WIDGET_SELECTED_PROCESS_NAME, SUB_PROCESS_CALL_PID_PARAM_NAME);
+    if (isWidgetMode) {
+      String selectedProcessWithStart =
+          String.join(HYPHEN_SIGN, selectedProcessAnalyser.getProcess().getId(), selectedProcessAnalyser.getStartElement().getPid());
+      updateUserProperty(UserProperty.WIDGET_SELECTED_PROCESS_NAME, selectedProcessWithStart);
+    }
     resetStatisticValue();
     if (selectedProcessAnalyser != null) {
       getCaseAndTaskCustomFields();
@@ -217,9 +245,17 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onKpiTypeSelect() {
+    if (isWidgetMode) {
+      updateUserProperty(UserProperty.WIDGET_SELECTED_KPI, selectedKpiType.name());
+    }
     colorPickerBean.initBean(selectedKpiType);
     colorPickerBean.getBackgroundAndTextColors();
     refreshAnalyserReportToView();
+  }
+
+  private void updateUserProperty(String key, String value) {
+    IUser user = Ivy.session().getSessionUser();
+    user.setProperty(key, value);
   }
 
   private void resetStatisticValue() {
