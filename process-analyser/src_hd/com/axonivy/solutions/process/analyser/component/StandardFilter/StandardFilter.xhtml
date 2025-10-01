@@ -33,6 +33,15 @@
           <p:tooltip for="include-running-cases-label"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/IncludeRunningCasesTooltip')}" />
         </div>
+        <div class="grid mr-4 grid align-items-center line-height-4 mt-1">
+          <p:outputLabel id="merge-process-starts-label" for="merge-process-starts"
+            value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/MergeProcessStarts')}"
+            styleClass="p-2" />
+          <p:toggleSwitch id="merge-process-starts" onIcon="pi pi-check" offIcon="pi pi-times"
+            value="#{processesAnalyticsBean.mergeProcessStarts}">
+            <p:ajax listener="#{processesAnalyticsBean.updateDiagramAndStatistic}" update="process-analytics-form" />
+          </p:toggleSwitch>
+        </div>
       </h:panelGroup>
     </p:panelGrid>
     <p:outputPanel>
