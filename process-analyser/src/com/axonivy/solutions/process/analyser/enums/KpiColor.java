@@ -6,7 +6,7 @@ import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsCon
 import com.axonivy.solutions.process.analyser.utils.ColorUtils;
 
 public enum KpiColor implements HasCmsName {
-  FREQUENCY("rgb(70, 180, 100)"), DURATION("rgb(DEFAULT_COLOR_MAX, 206, 123)");
+  FREQUENCY("rgb(70, 180, 100)"), DURATION("rgb(255, 206, 123)");
 
   private final String baseColor;
   private final List<String> colors;
