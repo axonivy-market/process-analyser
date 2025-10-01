@@ -110,17 +110,19 @@ public class ProcessesAnalyticsBean {
   private void initSelectedValueFromUserProperty() {
     IUser currentUser = Ivy.session().getSessionUser();
     selectedModule = currentUser.getProperty(UserProperty.WIDGET_SELECTED_MODULE);
-    String selectedProcessAnalyzerId = currentUser.getProperty(UserProperty.WIDGET_SELECTED_PROCESS_NAME);
     String selectedKpiTypeName = currentUser.getProperty(UserProperty.WIDGET_SELECTED_KPI);
-    String[] parts = selectedProcessAnalyzerId.split(HYPHEN_SIGN, 2);
-    if (parts.length == 2) {
-      String selectedProcessId = parts[0];
-      String selectedStartPid = parts[1];
-      var selectedProcess = processesMap.get(selectedModule).stream()
-          .filter(process -> StringUtils.equals(process.getId(), selectedProcessId)).findAny().orElse(null);
-      var selectedProcessStart = selectedProcess.getStartElements().stream()
-          .filter(start -> StringUtils.equals(start.getPid(), selectedStartPid)).findAny().orElse(null);
-      selectedProcessAnalyser = new ProcessAnalyser(selectedProcess, selectedProcessStart);
+    String selectedProcessAnalyzerId = currentUser.getProperty(UserProperty.WIDGET_SELECTED_PROCESS_NAME);
+    if (StringUtils.isNotBlank(selectedProcessAnalyzerId)) {
+      String[] parts = selectedProcessAnalyzerId.split(HYPHEN_SIGN, 2);
+      if (parts.length == 2) {
+        String selectedProcessId = parts[0];
+        String selectedStartPid = parts[1];
+        var selectedProcess = processesMap.get(selectedModule).stream()
+            .filter(process -> StringUtils.equals(process.getId(), selectedProcessId)).findAny().orElse(null);
+        var selectedProcessStart = selectedProcess.getStartElements().stream()
+            .filter(start -> StringUtils.equals(start.getPid(), selectedStartPid)).findAny().orElse(null);
+        selectedProcessAnalyser = new ProcessAnalyser(selectedProcess, selectedProcessStart);
+      }
     }
     if (StringUtils.isNotBlank(selectedKpiTypeName)) {
       selectedKpiType = KpiType.valueOf(selectedKpiTypeName);

@@ -20,8 +20,7 @@
           "description" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/description\")%>",
           "category" : "ProcessAnalyser",
           "customFields" : [
-            { "name" : "embedInFrame", "value" : "false" },
-            { "name" : "isDashboardProcess", "value" : "true" }
+            { "name" : "embedInFrame", "value" : "false" }
           ]
         }
       },
@@ -56,22 +55,31 @@
         "at" : { "x" : 352, "y" : 208 }
       }
     }, {
-      "id" : "f3",
+      "id" : "f5",
       "type" : "RequestStart",
-      "name" : "start",
+      "name" : "startAnalyticWidget.ivp",
       "config" : {
-        "signature" : "start",
+        "signature" : "startAnalyticWidget",
         "input" : {
           "map" : {
-            "out.isWidgetMode" : "false"
+            "out.isWidgetMode" : "true"
           }
+        },
+        "request" : {
+          "name" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/name\")%>",
+          "description" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/description\")%>",
+          "category" : "ProcessAnalyser",
+          "customFields" : [
+            { "name" : "embedInFrame", "value" : "false" },
+            { "name" : "isDashboardProcess", "value" : "true" }
+          ]
         }
       },
       "visual" : {
-        "at" : { "x" : 96, "y" : 344 }
+        "at" : { "x" : 96, "y" : 416 }
       },
       "connect" : [
-        { "id" : "f4", "to" : "f1", "via" : [ { "x" : 224, "y" : 344 } ] }
+        { "id" : "f3", "to" : "f1", "via" : [ { "x" : 224, "y" : 416 } ] }
       ]
     } ]
 }
