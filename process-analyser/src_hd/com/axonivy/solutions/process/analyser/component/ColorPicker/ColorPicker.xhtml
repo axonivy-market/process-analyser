@@ -15,7 +15,6 @@
   <c:set var="isFrequecyKpi" value="#{kpiType eq 'FREQUENCY'}"/>
   <c:set var="selectedColorMode" value="#{cc.attrs.selectedColorMode}"/>
   <f:event listener="#{colorPickerBean.initBean(kpiType, selectedColorMode)}" type="preRenderComponent"/>
-  
   <p:remoteCommand id="on-color-change-cmd" name="onColorChange"
     process="@this" update="#{cc.attrs.componentToUpdate}" partialSubmit="true"
     actionListener="#{cc.attrs.onColorChange}"/>
@@ -53,7 +52,6 @@
     </p:outputPanel>
 
     <p:outputPanel id="color-picker-panel" styleClass="color-picker-panel">
-
       <div id="color-picker-wrapper">
         <p:colorPicker id="color-picker" mode="inline"
           value="#{colorPickerBean.selectedColor}"

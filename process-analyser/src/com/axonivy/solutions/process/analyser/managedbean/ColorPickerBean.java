@@ -114,7 +114,6 @@ public class ColorPickerBean implements Serializable {
   public void resetSelection() {
     selectedIndex = -1;
     selectedColor = null;
-    
   }
   public boolean isRenderedColorPicker() {
     return selectedIndex >= 0;
