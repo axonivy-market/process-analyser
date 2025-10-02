@@ -18,8 +18,7 @@ public enum HeatmapColor {
   ORANGE_YELLOW("rgb(255,200,0)"),
   ORANGE("rgb(255,100,0)"),
   RED_ORANGE("rgb(255,64,0)"),
-  RED("rgb(200,0,0)"),
-  DARK_RED("rgb(175,0,0)");
+  RED("rgb(200,0,0)");
 
   private final String rgbValue;
 
