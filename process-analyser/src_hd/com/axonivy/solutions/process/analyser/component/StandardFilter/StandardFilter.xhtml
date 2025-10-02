@@ -5,10 +5,12 @@
   xmlns:c="http://java.sun.com/jsp/jstl/core">
 <cc:interface>
   <cc:attribute name="managedBean" required="true" />
+  <cc:attribute name="isWidgetMode" default="false" />
+  
 </cc:interface>
 <cc:implementation>
   <c:set var="managedBean" value="#{cc.attrs.managedBean}" />
-  <c:set var="isWidgetMode" value="#{cc.attrs.managedBean.isWidgetMode}" />
+  <c:set var="isWidgetMode" value="#{cc.attrs.isWidgetMode}" />
   <h:panelGroup layout="block">
     <p:panelGrid columns="2" layout="grid" styleClass="ui-fluid" rendered="#{!isWidgetMode}"
       columnClasses="ui-g-6 pl-0, ui-g-6 pr-0 mr-0 grid align-items-center flex-row-reverse">
