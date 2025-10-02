@@ -10,7 +10,7 @@
   <c:set var="managedBean" value="#{cc.attrs.managedBean}" />
   <c:set var="isWidgetMode" value="#{cc.attrs.managedBean.isWidgetMode}" />
   <h:panelGroup layout="block">
-    <p:panelGrid columns="2" layout="grid" styleClass="ui-fluid"
+    <p:panelGrid columns="2" layout="grid" styleClass="ui-fluid" rendered="#{!isWidgetMode}"
       columnClasses="ui-g-6 pl-0, ui-g-6 pr-0 mr-0 grid align-items-center flex-row-reverse">
       <h:panelGroup layout="block" styleClass="flex align-items-center h-full">
         <h3>#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/Title')}</h3>
@@ -21,39 +21,19 @@
           value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/ShowStatistic')}"
           styleClass="show-statistic-btn w-auto" update="process-analytics-form"
           actionListener="#{managedBean.updateDiagramAndStatistic}" disabled="#{managedBean.showStatisticBtnDisabled}" />
-
-        <div class="grid mr-4 grid align-items-center line-height-4 mt-1">
-          <p:outputLabel id="include-running-cases-label" for="@next"
-            value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/IncludeRunningCases')}"
-            styleClass="p-2" />
-          <p:toggleSwitch id="include-running-cases" onIcon="pi pi-check" offIcon="pi pi-times"
-            value="#{managedBean.includingRunningCases}">
-            <p:ajax listener="#{managedBean.updateDiagramAndStatistic}" update="process-analytics-form" />
-          </p:toggleSwitch>
-          <p:tooltip for="include-running-cases-label"
-            value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/IncludeRunningCasesTooltip')}" />
-        </div>
-        <div class="grid mr-4 grid align-items-center line-height-4 mt-1">
-          <p:outputLabel id="merge-process-starts-label" for="merge-process-starts"
-            value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/MergeProcessStarts')}"
-            styleClass="p-2" />
-          <p:toggleSwitch id="merge-process-starts" onIcon="pi pi-check" offIcon="pi pi-times"
-            value="#{managedBean.mergeProcessStarts}">
-            <p:ajax listener="#{managedBean.updateDiagramAndStatistic}" update="process-analytics-form" />
-          </p:toggleSwitch>
-        </div>
+        <ic:com.axonivy.solutions.process.analyser.component.AdditionalFeatures
+          componentsToUpdate="process-analytics-form" managedBean="#{managedBean}"
+          containerClasses="grid mr-4 grid align-items-center line-height-4 mt-1" />
       </h:panelGroup>
     </p:panelGrid>
-    <p:outputPanel>
-      <br />
-    </p:outputPanel>
 
-    <p:panelGrid id="search-fields" columns="3" styleClass="ui-fluid" layout="flex"
-      columnClasses="ui-g-4, ui-g-4, ui-g-4">
-      <h:panelGroup styleClass="ui-g field" layout="block">
-        <p:outputLabel for="@next"
-          value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectProject')}" />
-        <p:selectOneMenu id="moduleDropdown" value="#{managedBean.selectedModule}">
+    <div id="search-fields" class="col-12 px-0 mx-0 grid formgrid ui-fluid">
+      <h:panelGroup styleClass="col-4 p-0 m-0 pr-2" layout="block">
+        <div class="mb-2">
+          <p:outputLabel for="@next"
+            value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectProject')}" />
+        </div>
+        <p:selectOneMenu id="moduleDropdown" value="#{managedBean.selectedModule}" styleClass="w-full">
           <f:selectItem
             itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectProject')}"
             itemValue="#{null}" noSelectionOption="true" />
@@ -63,15 +43,17 @@
         </p:selectOneMenu>
       </h:panelGroup>
 
-      <h:panelGroup id="process-selection-group" styleClass="ui-g field" layout="block">
-        <p:outputLabel
-          value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectProcess')}">
-          <p:outputLabel id="header-tooltip">
-            <i class="ui-icon pi pi-info-circle ml-1" />
+      <h:panelGroup id="process-selection-group" styleClass="col-4 p-0 m-0 px-1" layout="block">
+        <div class="mb-2">
+          <p:outputLabel for="@next"
+            value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectProcess')}">
+            <p:outputLabel id="header-tooltip">
+              <i class="ui-icon pi pi-info-circle ml-1" />
+            </p:outputLabel>
+            <p:tooltip for="header-tooltip" trackMouse="true"
+              value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/ProcessTooltip')}" />
           </p:outputLabel>
-          <p:tooltip for="header-tooltip" trackMouse="true"
-            value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/ProcessTooltip')}" />
-        </p:outputLabel>
+        </div>
 
         <c:if test="#{!managedBean.mergeProcessStarts}">
           <p:cascadeSelect id="process-dropdown" value="#{managedBean.selectedProcessAnalyser}"
@@ -83,7 +65,8 @@
         </c:if>
 
         <c:if test="#{managedBean.mergeProcessStarts}">
-          <p:selectOneMenu value="#{managedBean.selectedProcessAnalyser}" converter="processStartConverter">
+          <p:selectOneMenu value="#{managedBean.selectedProcessAnalyser}" converter="processStartConverter"
+            styleClass="w-full">
             <f:selectItem
               itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectProcess')}"
               itemValue="#{null}" noSelectionOption="true" />
@@ -93,9 +76,11 @@
         </c:if>
       </h:panelGroup>
 
-      <h:panelGroup styleClass="ui-g field" layout="block">
-        <p:outputLabel for="@next"
-          value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectKPI')}" />
+      <h:panelGroup styleClass="col-4 p-0 m-0 pl-2" layout="block">
+        <div class="mb-2">
+          <p:outputLabel for="@next"
+            value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectKPI')}" />
+        </div>
         <p:cascadeSelect id="kpiDropdown" style="width: 100%"
           placeholder="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectKPI')}"
           value="#{managedBean.selectedKpiType}" converter="kpiTypeConverter">
@@ -104,7 +89,7 @@
             update="process-analytics-form:color-picker-component:color-container" process="@this" partialSubmit="true" />
         </p:cascadeSelect>
       </h:panelGroup>
-    </p:panelGrid>
+    </div>
 
     <h:panelGroup id="time-interval-group" styleClass="field col-12 grid formgrid align-items-start p-0 m-0 field"
       layout="block">
