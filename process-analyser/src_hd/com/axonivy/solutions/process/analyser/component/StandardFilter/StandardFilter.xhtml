@@ -6,7 +6,6 @@
 <cc:interface>
   <cc:attribute name="managedBean" required="true" />
   <cc:attribute name="isWidgetMode" default="false" />
-  
 </cc:interface>
 <cc:implementation>
   <c:set var="managedBean" value="#{cc.attrs.managedBean}" />
@@ -17,7 +16,6 @@
       <h:panelGroup layout="block" styleClass="flex align-items-center h-full">
         <h3>#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/Title')}</h3>
       </h:panelGroup>
-
       <h:panelGroup>
         <p:commandButton id="show-statistic-btn" icon="pi pi-chart-line"
           value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/ShowStatistic')}"
@@ -28,9 +26,9 @@
           containerClasses="grid mr-4 grid align-items-center line-height-4 mt-1" />
       </h:panelGroup>
     </p:panelGrid>
-
-    <div id="search-fields" class="col-12 px-0 mx-0 grid formgrid ui-fluid">
-      <h:panelGroup styleClass="col-4 p-0 m-0 pr-2" layout="block">
+    <h:panelGroup id="search-fields"
+      styleClass="col-12 px-0 mx-0 grid formgrid ui-fluid #{isWidgetMode? 'flex-column': 'flex-row'}">
+      <h:panelGroup styleClass="#{isWidgetMode? 'col': 'col-4'} p-0 m-0 pr-2" layout="block">
         <div class="mb-2">
           <p:outputLabel for="@next"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectProject')}" />
@@ -44,8 +42,8 @@
           <p:ajax event="change" partialSubmit="true" process="@this" listener="#{managedBean.onModuleSelect}" />
         </p:selectOneMenu>
       </h:panelGroup>
-
-      <h:panelGroup id="process-selection-group" styleClass="col-4 p-0 m-0 px-1" layout="block">
+      <h:panelGroup id="process-selection-group" styleClass="#{isWidgetMode? 'col': 'col-4'} p-0 m-0 px-1"
+        layout="block">
         <div class="mb-2">
           <p:outputLabel for="@next"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectProcess')}">
@@ -56,7 +54,6 @@
               value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/ProcessTooltip')}" />
           </p:outputLabel>
         </div>
-
         <c:if test="#{!managedBean.mergeProcessStarts}">
           <p:cascadeSelect id="process-dropdown" value="#{managedBean.selectedProcessAnalyser}"
             placeholder="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectProcess')}"
@@ -65,7 +62,6 @@
             <p:ajax partialSubmit="true" process="@this" listener="#{managedBean.onProcessSelect}" />
           </p:cascadeSelect>
         </c:if>
-
         <c:if test="#{managedBean.mergeProcessStarts}">
           <p:selectOneMenu value="#{managedBean.selectedProcessAnalyser}" converter="processStartConverter"
             styleClass="w-full">
@@ -77,8 +73,7 @@
           </p:selectOneMenu>
         </c:if>
       </h:panelGroup>
-
-      <h:panelGroup styleClass="col-4 p-0 m-0 pl-2" layout="block">
+      <h:panelGroup styleClass="#{isWidgetMode? 'col': 'col-4'} p-0 m-0 pl-2" layout="block">
         <div class="mb-2">
           <p:outputLabel for="@next"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectKPI')}" />
@@ -91,11 +86,12 @@
             update="process-analytics-form:color-picker-component:color-container" process="@this" partialSubmit="true" />
         </p:cascadeSelect>
       </h:panelGroup>
-    </div>
-
+    </h:panelGroup>
     <h:panelGroup id="time-interval-group" styleClass="field col-12 grid formgrid align-items-start p-0 m-0 field"
       layout="block">
-      <ui:include src="TimeIntervalFilter.xhtml" />
+      <ui:include src="TimeIntervalFilter.xhtml">
+        <ui:param name="isWidgetMode" value="#{isWidgetMode}" />
+      </ui:include>
       <p:remoteCommand id="filter-data-by-interval-rc" name="filterDataByIntervalRC"
         actionListener="#{managedBean.updateDataOnChangingFilter()}" process="@this" partialSubmit="true" />
     </h:panelGroup>
