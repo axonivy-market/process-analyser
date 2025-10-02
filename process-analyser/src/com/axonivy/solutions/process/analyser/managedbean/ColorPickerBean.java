@@ -21,8 +21,8 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.collections4.CollectionUtils;
 
-import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
 import com.axonivy.solutions.process.analyser.enums.ColorMode;
+import com.axonivy.solutions.process.analyser.enums.HeatmapColor;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.utils.ColorUtils;
 
@@ -55,7 +55,7 @@ public class ColorPickerBean implements Serializable {
   }
 
   public void onChooseHeatMapMode() {
-    this.colorSegments = ProcessAnalyticsConstants.HEATMAP_COLORS;
+    this.colorSegments = HeatmapColor.getAllColors();
     this.textColors = ColorUtils.getAccessibleTextColors(colorSegments);
   }
 

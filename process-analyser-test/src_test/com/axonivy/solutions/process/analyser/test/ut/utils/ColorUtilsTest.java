@@ -28,8 +28,6 @@ public class ColorUtilsTest extends BaseSetup {
   protected static final String EXTREME_DARK_BLUE_GRAY = "rgb(10, 20, 30)";
 
   private static final String RGB_LIGHT_COLOR = "rgb(247, 246, 245)";
-  private static final String GREEN_TO_YELLOW_PATTERN = "rgb\\(\\d+, DEFAULT_COLOR_MAX, 0\\)";
-  private static final String YELLOW_TO_RED_PATTERN   = "rgb\\(DEFAULT_COLOR_MAX, \\d+, 0\\)";
 
   @Test
   void test_generateColorSegments_withFrequencyKpi() {
