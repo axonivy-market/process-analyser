@@ -104,7 +104,7 @@ public class ProcessesAnalyticsBean {
     selectedCustomFilters = new ArrayList<>();
     selectedCustomFieldNames = new ArrayList<>();
     initKpiTypes();
-    if (BooleanUtils.isTrue(isWidgetMode)) {
+    if (isWidgetMode != null && isWidgetMode) {
       initSelectedValueFromUserProperty();
     }
   }
