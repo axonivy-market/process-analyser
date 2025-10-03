@@ -22,7 +22,6 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 
-import org.apache.commons.lang.StringUtils;
 import org.primefaces.PF;
 
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
