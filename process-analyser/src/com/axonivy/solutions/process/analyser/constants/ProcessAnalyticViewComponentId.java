@@ -4,7 +4,7 @@ import java.util.List;
 
 public class ProcessAnalyticViewComponentId {
   private static final String FORM = "process-analytics-form";
-  private static final String ID_SECTION_SEPARATOR = ":";
+  public static final String ID_SECTION_SEPARATOR = ":";
   public static final String STANDARD_FILTER_PANEL_GROUP = "standard-filter-panel-group";
   public static final String PROCESS_SELECTION_GROUP =
       FORM + ID_SECTION_SEPARATOR + STANDARD_FILTER_PANEL_GROUP + ID_SECTION_SEPARATOR + "process-selection-group";

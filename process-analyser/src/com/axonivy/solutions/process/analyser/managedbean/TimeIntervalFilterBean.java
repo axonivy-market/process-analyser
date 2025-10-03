@@ -20,11 +20,14 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
 
+import org.apache.commons.lang.StringUtils;
 import org.primefaces.PF;
 
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.enums.TimeIntervalType;
+import com.axonivy.solutions.process.analyser.utils.FacesContexts;
 
 import ch.ivyteam.ivy.environment.Ivy;
 
@@ -37,7 +40,7 @@ public class TimeIntervalFilterBean implements Serializable {
   private static final String FILTER_DATA_BY_INTERVAL_RC_PARAMS_PATTERN =
       "[{name:'from', value:'%s'}, {name:'to', value:'%s'}]";
   private static final String FILTER_DATA_BY_INTERVAL_RC = "filterDataByIntervalRC(%s);";
-  private static final String CUSTOM_DATE_TO_ID = "process-analytics-form:custom-date-to";
+  private static final String CUSTOM_DATE_TO_ID_SUFFIX_PATTERN = "%s:custom-date-to";
 
   private TimeIntervalType selectedType;
   private String currentTime;
@@ -60,14 +63,15 @@ public class TimeIntervalFilterBean implements Serializable {
     unifyFilterAndRefreshData();
   }
 
-  public void onSelectDateTime() {
+  public void onSelectDateTime(AjaxBehaviorEvent event) {
     if (filter == null || filter.getFrom() == null || filter.getTo() == null) {
       return;
     }
     if (filter.getFrom().after(filter.getTo())) {
       var message = new FacesMessage(FacesMessage.SEVERITY_ERROR, null,
           Ivy.cms().co("/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/FromToDateValidationMessage"));
-      FacesContext.getCurrentInstance().addMessage(CUSTOM_DATE_TO_ID, message);
+      String clientId = CUSTOM_DATE_TO_ID_SUFFIX_PATTERN.formatted(FacesContexts.extractRootComponentClientId(event));
+      FacesContext.getCurrentInstance().addMessage(clientId, message);
       FacesContext.getCurrentInstance().validationFailed();
       return;
     }

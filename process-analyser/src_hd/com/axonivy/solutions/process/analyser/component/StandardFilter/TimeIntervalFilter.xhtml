@@ -29,7 +29,7 @@
       <p:datePicker value="#{timeIntervalFilterBean.filter.from}" id="custom-date-from"
         validatorMessage="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/FromToDateValidationMessage')}"
         showIcon="true" showTime="true" timeInput="true" pattern="#{timeIntervalFilterBean.timePattern}">
-        <p:ajax listener="#{timeIntervalFilterBean.onSelectDateTime()}" update="process-time-interval" process="@this"
+        <p:ajax listener="#{timeIntervalFilterBean.onSelectDateTime}" update="process-time-interval" process="@this"
           partialSubmit="true" />
       </p:datePicker>
     </h:panelGroup>
@@ -41,7 +41,7 @@
         validatorMessage="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/FromToDateValidationMessage')}"
         showIcon="true" showTime="true" timeInput="true" mindate="#{timeIntervalFilterBean.filter.from}"
         pattern="#{timeIntervalFilterBean.timePattern}">
-        <p:ajax listener="#{timeIntervalFilterBean.onSelectDateTime()}" update="process-time-interval" process="@this"
+        <p:ajax listener="#{timeIntervalFilterBean.onSelectDateTime}" update="process-time-interval" process="@this"
           partialSubmit="true" />
       </p:datePicker>
     </h:panelGroup>
