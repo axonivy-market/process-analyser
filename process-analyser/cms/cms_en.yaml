@@ -38,9 +38,9 @@ Dialogs:
               None: None
               NumberRange: '{0} - {1}'
               PageHeader: Process Monitor Page
-              PleaseSelectKPI: Please select a KPI
-              PleaseSelectProcess: Please select a process
-              PleaseSelectProject: Please select a project
+              PleaseSelectColorMode: Color Mode
+              PleaseSelectKPI: KPI
+              PleaseSelectProject: Project
               Process: Process
               ProcessInformation: Process Information
               ProcessTooltip: By default analysis of processes is separated by process starts (i.e. automatic vs. manual start)
@@ -70,6 +70,11 @@ Dialogs:
                 Zoom: Zoom
                 ZoomTooltip: Determine the zoom level that suits your needs.
 Enums:
+  ColorMode:
+    CUSTOM:
+      name: Custom
+    HEATMAP:
+      name: HeatMap
   ElementType:
     ALTERNATIVE:
       name: 'Alternative: {0}'
