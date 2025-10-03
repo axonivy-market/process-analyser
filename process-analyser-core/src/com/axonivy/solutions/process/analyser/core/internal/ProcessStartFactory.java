@@ -2,6 +2,8 @@ package com.axonivy.solutions.process.analyser.core.internal;
 
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.SLASH;
 
+import java.util.Locale;
+
 import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.solutions.process.analyser.core.enums.StartElementType;
@@ -49,7 +51,7 @@ public class ProcessStartFactory {
 
   private static String getStartName(AbstractStartElement startElement) {
     if (startElement != null) {
-      var localeName = startElement.names().current();
+      var localeName = startElement.getName();
       if (StringUtils.isNoneBlank(localeName)) {
         return localeName;
       }
