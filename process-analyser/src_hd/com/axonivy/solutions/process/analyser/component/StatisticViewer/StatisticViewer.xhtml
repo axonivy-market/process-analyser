@@ -6,7 +6,6 @@
 <cc:interface>
   <cc:attribute name="managedBean" required="true" />
 </cc:interface>
-
 <cc:implementation>
   <c:set var="managedBean" value="#{cc.attrs.managedBean}" />
   <h:panelGroup id="data-statistics" layout="block" rendered="#{not managedBean.isWidgetMode}">
@@ -51,7 +50,5 @@
     </p:dataTable>
     <br />
   </h:panelGroup>
-
 </cc:implementation>
-
 </html>
