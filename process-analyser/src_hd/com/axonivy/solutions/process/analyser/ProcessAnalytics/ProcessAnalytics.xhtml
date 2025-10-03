@@ -4,7 +4,8 @@
   xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
   xmlns:ic="http://ivyteam.ch/jsf/component"
   xmlns:p="http://primefaces.org/ui"
-  xmlns:pe="http://primefaces.org/ui/extensions">
+  xmlns:pe="http://primefaces.org/ui/extensions"
+  xmlns:c="http://java.sun.com/jsp/jstl/core">
 <h:body>
   <ui:composition template="/layouts/frame-10-full-width.xhtml">
     <ui:define name="title">#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Title')}</ui:define>
@@ -38,10 +39,19 @@
                 styleClass="p-2" />
               <p:toggleSwitch id="include-running-cases" onIcon="pi pi-check" offIcon="pi pi-times"
                 value="#{processesAnalyticsBean.includingRunningCases}">
-                <p:ajax listener="#{processesAnalyticsBean.updateDiagramAndStatistic}" update="process-analytics-form"/>
+                <p:ajax listener="#{processesAnalyticsBean.updateDiagramAndStatistic}" update="process-analytics-form" />
               </p:toggleSwitch>
               <p:tooltip for="include-running-cases-label"
                 value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/IncludeRunningCasesTooltip')}"/>
+            </div>
+
+             <div class="grid mr-4 grid align-items-center line-height-4 mt-1">
+              <p:outputLabel id="merge-process-starts-label" for="merge-process-starts" value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/MergeProcessStarts')}"
+                styleClass="p-2" />
+              <p:toggleSwitch id="merge-process-starts" onIcon="pi pi-check" offIcon="pi pi-times"
+                value="#{processesAnalyticsBean.mergeProcessStarts}">
+                <p:ajax listener="#{processesAnalyticsBean.updateDiagramAndStatistic}" update="process-analytics-form" />
+              </p:toggleSwitch>
             </div>
           </h:panelGroup>
         </p:panelGrid>
@@ -68,14 +78,35 @@
           </h:panelGroup>
 
           <h:panelGroup id="process-selection-group" styleClass="ui-g field" layout="block">
-            <p:outputLabel for="process-dropdown"
-              value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Process')}" />
+            <p:outputLabel
+              value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Process')}">
+              <p:outputLabel id="header-tooltip">
+                <i class="ui-icon pi pi-info-circle ml-1" />
+              </p:outputLabel>
+              <p:tooltip for="header-tooltip" trackMouse="true"
+                value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/ProcessTooltip')}" />
+            </p:outputLabel>
+
+            <c:if test="#{!processesAnalyticsBean.mergeProcessStarts}">
             <p:cascadeSelect id="process-dropdown" value="#{processesAnalyticsBean.selectedProcessAnalyser}"
               placeholder="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectProcess')}"
               converter="processStartConverter" styleClass="w-full">
               <f:selectItems value="#{processesAnalyticsBean.availableProcessStarts}" />
               <p:ajax partialSubmit="true" process="@this" listener="#{processesAnalyticsBean.onProcessSelect}" />
             </p:cascadeSelect>
+            </c:if>
+
+            <c:if test="#{processesAnalyticsBean.mergeProcessStarts}">
+              <p:selectOneMenu value="#{processesAnalyticsBean.selectedProcessAnalyser}" converter="processStartConverter">
+                <f:selectItem
+                  itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectProcess')}"
+                  itemValue="#{null}" noSelectionOption="true" />
+                <f:selectItems
+                  value="#{processesAnalyticsBean.availableProcessStarts}" />
+                <p:ajax event="change"
+                  listener="#{processesAnalyticsBean.onProcessSelect}" />
+              </p:selectOneMenu>
+            </c:if>
           </h:panelGroup>
 
           <h:panelGroup styleClass="ui-g field" layout="block">

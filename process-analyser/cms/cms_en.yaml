@@ -17,6 +17,7 @@ Dialogs:
               IncludeRunningCases: Include running cases
               IncludeRunningCasesTooltip: By default, only closed cases are evaluated. Use this button to also include running cases in the evaluation.
               LargeTimeInterval: Setting a very large time interval may cause performance issues.
+              MergeProcessStarts: Merge Process Starts
               Title: Process Analytics
               To: To
             ProcessesMonitor:
@@ -42,6 +43,7 @@ Dialogs:
               PleaseSelectProject: Project
               Process: Process
               ProcessInformation: Process Information
+              ProcessTooltip: By default analysis of processes is separated by process starts (i.e. automatic vs. manual start)
               ProcessViewer: Process Viewer
               RelativeValue: Relative Value
               RequireMessage: Please select a process
