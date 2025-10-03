@@ -1,5 +1,6 @@
 package com.axonivy.solutions.process.analyser.managedbean;
 
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_SIGN;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartEventElement;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartSignalEventElement;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.WebServiceProcessStartElement;
@@ -22,6 +23,7 @@ import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PF;
@@ -36,6 +38,7 @@ import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewCompo
 import com.axonivy.solutions.process.analyser.core.bo.Process;
 import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
+import com.axonivy.solutions.process.analyser.core.constants.UserProperty;
 import com.axonivy.solutions.process.analyser.core.enums.StartElementType;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
@@ -50,6 +53,7 @@ import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.cm.ContentObject;
 import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.environment.Ivy;
+import ch.ivyteam.ivy.security.IUser;
 import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 
@@ -81,12 +85,14 @@ public class ProcessesAnalyticsBean {
   private MasterDataBean masterDataBean;
   private ProcessViewerBean viewerBean;
   private ColorPickerBean colorPickerBean;
+  private Boolean isWidgetMode;
 
   @PostConstruct
   private void init() {
     masterDataBean = FacesContexts.evaluateValueExpression("#{masterDataBean}", MasterDataBean.class);
     viewerBean = FacesContexts.evaluateValueExpression("#{processViewerBean}", ProcessViewerBean.class);
     colorPickerBean = FacesContexts.evaluateValueExpression("#{colorPickerBean}", ColorPickerBean.class);
+    isWidgetMode = FacesContexts.evaluateValueExpression("#{data.isWidgetMode}", Boolean.class);
     processesMap = masterDataBean.getProcessesMap();
     setNodes(new ArrayList<>());
     processMiningDataJsonFile = ContentManagement.cms(IApplication.current()).root().child()
@@ -98,6 +104,31 @@ public class ProcessesAnalyticsBean {
     selectedCustomFilters = new ArrayList<>();
     selectedCustomFieldNames = new ArrayList<>();
     initKpiTypes();
+    if (isWidgetMode != null && isWidgetMode) {
+      initSelectedValueFromUserProperty();
+    }
+  }
+
+  private void initSelectedValueFromUserProperty() {
+    IUser currentUser = Ivy.session().getSessionUser();
+    selectedModule = currentUser.getProperty(UserProperty.WIDGET_SELECTED_MODULE);
+    String selectedKpiTypeName = currentUser.getProperty(UserProperty.WIDGET_SELECTED_KPI);
+    String selectedProcessAnalyzerId = currentUser.getProperty(UserProperty.WIDGET_SELECTED_PROCESS_NAME);
+    if (StringUtils.isNotBlank(selectedProcessAnalyzerId)) {
+      String[] parts = selectedProcessAnalyzerId.split(HYPHEN_SIGN, 2);
+      if (parts.length == 2) {
+        String selectedProcessId = parts[0];
+        String selectedStartPid = parts[1];
+        var selectedProcess = processesMap.get(selectedModule).stream()
+            .filter(process -> StringUtils.equals(process.getId(), selectedProcessId)).findAny().orElse(null);
+        var selectedProcessStart = selectedProcess.getStartElements().stream()
+            .filter(start -> StringUtils.equals(start.getPid(), selectedStartPid)).findAny().orElse(null);
+        selectedProcessAnalyser = new ProcessAnalyser(selectedProcess, selectedProcessStart);
+      }
+    }
+    if (StringUtils.isNotBlank(selectedKpiTypeName)) {
+      selectedKpiType = KpiType.valueOf(selectedKpiTypeName);
+    }
   }
 
   public void updateDataTable() {
@@ -228,12 +259,20 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onModuleSelect() {
+    if (isWidgetMode) {
+      updateUserProperty(UserProperty.WIDGET_SELECTED_MODULE, selectedModule);
+    }
     selectedProcessAnalyser = null;
     PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP);
     resetStatisticValue();
   }
 
   public void onProcessSelect() {
+    if (isWidgetMode) {
+      String selectedProcessWithStart =
+          String.join(HYPHEN_SIGN, selectedProcessAnalyser.getProcess().getId(), selectedProcessAnalyser.getStartElement().getPid());
+      updateUserProperty(UserProperty.WIDGET_SELECTED_PROCESS_NAME, selectedProcessWithStart);
+    }
     resetStatisticValue();
     if (selectedProcessAnalyser != null) {
       getCaseAndTaskCustomFields();
@@ -242,9 +281,17 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onKpiTypeSelect() {
+    if (isWidgetMode) {
+      updateUserProperty(UserProperty.WIDGET_SELECTED_KPI, selectedKpiType.name());
+    }
     colorPickerBean.initBean(selectedKpiType);
     colorPickerBean.getBackgroundAndTextColors();
     refreshAnalyserReportToView();
+  }
+
+  private void updateUserProperty(String key, String value) {
+    IUser user = Ivy.session().getSessionUser();
+    user.setProperty(key, value);
   }
 
   private void resetStatisticValue() {
@@ -567,6 +614,14 @@ public class ProcessesAnalyticsBean {
 
   public void setIncludingRunningCases(boolean isIncludingRunningCases) {
     this.isIncludingRunningCases = isIncludingRunningCases;
+  }
+
+  public Boolean getIsWidgetMode() {
+    return isWidgetMode;
+  }
+
+  public void setIsWidgetMode(Boolean isWidgetMode) {
+    this.isWidgetMode = isWidgetMode;
   }
 
   public boolean isMergeProcessStarts() {
