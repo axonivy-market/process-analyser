@@ -2,8 +2,6 @@ package com.axonivy.solutions.process.analyser.core.internal;
 
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.SLASH;
 
-import java.util.Locale;
-
 import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.solutions.process.analyser.core.enums.StartElementType;
