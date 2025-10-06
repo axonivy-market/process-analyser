@@ -26,8 +26,10 @@
       <f:facet name="actions">
         <h:panelGroup styleClass="flex flex-row-reverse">
           <p:commandLink id="open-viewer-on-new-tab-link"
-            styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default" onclick="openViewerInNewTab()"
-            update="@none" disabled="#{!processViewerBean.shouldRenderBpmnFrame()}" process="@this" partialSubmit="true"
+            styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
+            onclick="openViewerInNewTab()"
+            update="@none" disabled="#{!processViewerBean.shouldRenderBpmnFrame()}"
+            process="@this" partialSubmit="true"
             immediate="true">
             <h:outputText styleClass="ui-icon pi pi-external-link" />
           </p:commandLink>
