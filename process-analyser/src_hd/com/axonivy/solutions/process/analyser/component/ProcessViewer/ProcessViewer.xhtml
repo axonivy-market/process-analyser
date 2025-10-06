@@ -16,8 +16,7 @@
       toggleTitle="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/ToggleTooltip')}"
       styleClass="viewer-group">
       <f:facet name="header">
-        <h:outputText id="header"
-          value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/MiningData')}" />
+        <h:outputText id="header" value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/MiningData')}" />
         <p:outputLabel for="header" id="header-tooltip">
           <i class="ui-icon pi pi-info-circle ml-1" />
         </p:outputLabel>
@@ -56,12 +55,14 @@
         <p:overlayPanel for="config-viewer-link" styleClass="toolbar-overlay-panel" my="right bottom" at="right top">
           <h:panelGroup id="toolbar-group" styleClass="grid formgrid ui-fluid">
             <h:panelGroup styleClass="col-12 flex justify-content-between flex-row">
-              <h:outputText
-                value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/ViewerConfig')}" />
-              <p:commandButton icon="ui-icon pi pi-check" styleClass="w-auto"
-                actionListener="#{processViewerBean.refreshBpmnIFrame()}" partialSubmit="true" process="toolbar-group"
+              <h:outputText value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/ViewerConfig')}" />
+              <p:commandButton icon="ui-icon pi pi-check"
+                styleClass="w-auto"
+                actionListener="#{processViewerBean.refreshBpmnIFrame()}"
+                partialSubmit="true" process="toolbar-group"
                 update="@this viewer-panel viewer-group-resize process-analytics-form"
-                title="#{ivy.cms.co('/Labels/Apply')}" value="#{ivy.cms.co('/Labels/Apply')}" />
+                title="#{ivy.cms.co('/Labels/Apply')}"
+                value="#{ivy.cms.co('/Labels/Apply')}" />
             </h:panelGroup>
             <h:panelGroup styleClass="ui-fluid col-12 mb-2">
               <p:tooltip for="focus-item-label" trackMouse="true"
@@ -81,27 +82,23 @@
             <h:panelGroup id="zoom-group" styleClass="col-12 grid formgrid">
               <p:tooltip for="zoom-label" trackMouse="true"
                 value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/ZoomTooltip')}" />
-              <p:outputLabel id="zoom-label" for="zoom"
-                value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/Zoom')}"
+              <p:outputLabel id="zoom-label" for="zoom" value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/Zoom')}"
                 styleClass="col-12">
                 <i class="ui-icon pi pi-info-circle ml-1" />
               </p:outputLabel>
               <p:inputNumber id="zoom" decimalPlaces="0" minValue="0" value="#{processViewerBean.selectedZoom}"
-                symbol="%" symbolPosition="s" maxValue="1000" styleClass="col-12" inputStyleClass="viewer-config-zoom"
-                onkeypress="return false;">
+                symbol="%" symbolPosition="s" maxValue="1000" styleClass="col-12" inputStyleClass="viewer-config-zoom" onkeypress="return false;">
               </p:inputNumber>
             </h:panelGroup>
           </h:panelGroup>
         </p:overlayPanel>
-
       </f:facet>
       <h:panelGroup rendered="#{processViewerBean.shouldRenderBpmnFrame()}">
         <iframe id="process-analytic-viewer" src="#{processViewerBean.bpmnIframeSourceUrl}" width="100%" height="100%"
           class="process-analytic-viewer" onload="loadIframe(false)" />
       </h:panelGroup>
       <h:panelGroup rendered="#{!processViewerBean.shouldRenderBpmnFrame()}" styleClass="col mb-2" layout="block">
-        <h:outputText
-          value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/EmptyDataMessage')}" />
+        <h:outputText value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/EmptyDataMessage')}" />
       </h:panelGroup>
     </p:panel>
     <p:resizable id="viewer-group-resize" for="viewer-panel" animate="true" ghost="true" grid="20" handles="s"
