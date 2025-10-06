@@ -41,6 +41,7 @@ import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsCon
 import com.axonivy.solutions.process.analyser.core.constants.UserProperty;
 import com.axonivy.solutions.process.analyser.core.enums.StartElementType;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
+import com.axonivy.solutions.process.analyser.enums.ColorMode;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
 import com.axonivy.solutions.process.analyser.service.IvyTaskOccurrenceService;
@@ -86,6 +87,8 @@ public class ProcessesAnalyticsBean {
   private ProcessViewerBean viewerBean;
   private ColorPickerBean colorPickerBean;
   private Boolean isWidgetMode;
+  private ColorMode selectedColorMode;
+  private List<ColorMode> colorModes = Arrays.asList(ColorMode.values());
 
   @PostConstruct
   private void init() {
@@ -104,6 +107,7 @@ public class ProcessesAnalyticsBean {
     selectedCustomFilters = new ArrayList<>();
     selectedCustomFieldNames = new ArrayList<>();
     initKpiTypes();
+    selectedColorMode = colorModes.get(0);
     if (isWidgetMode != null && isWidgetMode) {
       initSelectedValueFromUserProperty();
     }
@@ -165,7 +169,7 @@ public class ProcessesAnalyticsBean {
 
   /**
    * Returns a list of selectable process start options for the current module.
-   * 
+   *
    * - If no module is selected, returns an empty list.
    * - In "merge process starts" mode, each process is a single {@link SelectItem}.
    * - Otherwise, processes with one start element create a single item,
@@ -284,7 +288,7 @@ public class ProcessesAnalyticsBean {
     if (isWidgetMode) {
       updateUserProperty(UserProperty.WIDGET_SELECTED_KPI, selectedKpiType.name());
     }
-    colorPickerBean.initBean(selectedKpiType);
+    colorPickerBean.initBean(selectedKpiType, selectedColorMode);
     colorPickerBean.getBackgroundAndTextColors();
     refreshAnalyserReportToView();
   }
@@ -401,6 +405,19 @@ public class ProcessesAnalyticsBean {
       PF.current().executeScript(ProcessAnalyticsConstants.UPDATE_IFRAME_SOURCE_METHOD_CALL);
       PF.current().ajax().update(ProcessAnalyticViewComponentId.getDiagramAndStatisticComponentIds());
     }
+  }
+
+  public void onColorModeChange() {
+    if (this.selectedKpiType == null) {
+      return;
+    }
+
+    if(selectedColorMode.isHeatmap()) {
+      colorPickerBean.onChooseHeatMapMode();
+    } else {
+      colorPickerBean.onChooseColorChooserMode();
+    }
+    refreshAnalyserReportToView();
   }
 
   private void loadNodes() {
@@ -632,9 +649,25 @@ public class ProcessesAnalyticsBean {
     this.isMergeProcessStarts = isMergeProcessStarts;
     resetProcessSelection();
   }
-  
+
   private void resetProcessSelection() {
     selectedProcessAnalyser = null;
     PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP);
+  }
+
+  public ColorMode getSelectedColorMode() {
+    return selectedColorMode;
+  }
+
+  public void setSelectedColorMode(ColorMode selectedColorMode) {
+    this.selectedColorMode = selectedColorMode;
+  }
+
+  public List<ColorMode> getColorModes() {
+    return colorModes;
+  }
+
+  public void setColorModes(List<ColorMode> colorModes) {
+    this.colorModes = colorModes;
   }
 }

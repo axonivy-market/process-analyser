@@ -20,7 +20,7 @@ import ch.ivyteam.ivy.environment.IvyTest;
 @IvyTest
 public class ColorUtilsTest extends BaseSetup {
   protected static final String PURE_BLACK = "rgb(0, 0, 0)";
-  protected static final String PURE_WHITE = "rgb(255, 255, 255)";
+  protected static final String PURE_WHITE = "rgb(DEFAULT_COLOR_MAX, DEFAULT_COLOR_MAX, DEFAULT_COLOR_MAX)";
   protected static final String LIGHT_GRAY = "rgb(250, 250, 250)";
   protected static final String NEUTRAL_GRAY = "rgb(217, 217, 217)";
   protected static final String MEDIUM_GRAY = "rgb(128, 128, 128)";

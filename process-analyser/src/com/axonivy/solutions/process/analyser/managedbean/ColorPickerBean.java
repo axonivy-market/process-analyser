@@ -19,6 +19,10 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.collections4.CollectionUtils;
+
+import com.axonivy.solutions.process.analyser.enums.ColorMode;
+import com.axonivy.solutions.process.analyser.enums.HeatmapColor;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.utils.ColorUtils;
 
@@ -36,14 +40,27 @@ public class ColorPickerBean implements Serializable {
   private String selectedColor;
   private int selectedIndex = -1;
 
-  public void initBean(KpiType selectedKpiType) {
+  public void initBean(KpiType selectedKpiType, ColorMode selectedColorMode) {
+    this.selectedKpiType = selectedKpiType;
     this.colorSegments = new ArrayList<>();
     this.textColors = new ArrayList<>();
-    this.selectedKpiType = selectedKpiType;
     if (selectedKpiType != null) {
       resetSelection();
-      getBackgroundAndTextColors();
+      if (selectedColorMode != null && selectedColorMode.isHeatmap()) {
+        onChooseHeatMapMode();
+      } else {
+        onChooseColorChooserMode();
+      }
     }
+  }
+
+  public void onChooseHeatMapMode() {
+    this.colorSegments = HeatmapColor.getAllColors();
+    this.textColors = ColorUtils.getAccessibleTextColors(colorSegments);
+  }
+
+  public boolean checkRenderCondition(ColorMode selectedColorMode) {
+    return selectedColorMode != null && selectedColorMode.isCustom() && isRenderedColorPicker();
   }
 
   public void onSegmentClick(ActionEvent event) {
@@ -67,6 +84,9 @@ public class ColorPickerBean implements Serializable {
 
   private void updateColorProperties() {
     IUser user = Ivy.session().getSessionUser();
+    if (CollectionUtils.isEmpty(colorSegments) || CollectionUtils.isEmpty(textColors)) {
+      return;
+    }
     String colorKey = getColorPropertyKey();
     String textKey = getTextColorPropertyKey();
 
@@ -74,7 +94,7 @@ public class ColorPickerBean implements Serializable {
     user.setProperty(textKey, String.join(HYPHEN_SIGN, textColors));
   }
 
-  public void getBackgroundAndTextColors() {
+  public void onChooseColorChooserMode() {
     IUser user = Ivy.session().getSessionUser();
     String colorKey = getColorPropertyKey();
     String textKey = getTextColorPropertyKey();

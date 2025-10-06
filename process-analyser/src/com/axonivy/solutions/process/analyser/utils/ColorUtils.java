@@ -1,5 +1,13 @@
 package com.axonivy.solutions.process.analyser.utils;
 
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COMMA;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.DARK_TEXT_COLOR;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.DEFAULT_COLOR_MAX;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HASHTAG;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.LIGHT_TEXT_COLOR;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.NON_DIGIT_COMMA_REGEX;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.RGB_PREFIX;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -10,13 +18,6 @@ import org.apache.logging.log4j.util.Strings;
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
 import com.axonivy.solutions.process.analyser.enums.KpiColor;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
-
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COMMA;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.DARK_TEXT_COLOR;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HASHTAG;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.LIGHT_TEXT_COLOR;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.NON_DIGIT_COMMA_REGEX;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.RGB_PREFIX;;
 
 public class ColorUtils {
   public static List<String> generateColorSegments(KpiType selectedKpiType) {
@@ -68,8 +69,8 @@ public class ColorUtils {
 
   private static int adjustColor(int baseValue, float adjustmentFactor, boolean shouldDarken) {
     int value = shouldDarken ? Math.round(baseValue * (1 - adjustmentFactor))
-        : Math.round(baseValue + (255 - baseValue) * adjustmentFactor);
-    return Math.max(0, Math.min(255, value));
+        : Math.round(baseValue + (DEFAULT_COLOR_MAX - baseValue) * adjustmentFactor);
+    return Math.max(0, Math.min(DEFAULT_COLOR_MAX, value));
   }
 
   public static List<String> getAccessibleTextColors(List<String> colors) {
@@ -100,6 +101,6 @@ public class ColorUtils {
     }
     // 0.299 * r + 0.587 * g + 0.114 * b:
     // Luminance formula for determine dark and light color
-    return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.5 ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR;
+    return (0.299 * r + 0.587 * g + 0.114 * b) / DEFAULT_COLOR_MAX > 0.5 ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR;
   }
 }
