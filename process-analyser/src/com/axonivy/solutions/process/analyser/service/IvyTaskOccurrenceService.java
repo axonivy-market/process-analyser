@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
@@ -110,18 +111,21 @@ public class IvyTaskOccurrenceService {
         tasks = Ivy.wf().getTaskQueryExecutor().getResults(taskQuery, startIndex, maxQueryResults);
         startIndex += maxQueryResults;
       } while (maxQueryResults == tasks.size());
+      return getCaseAndTaskCustomFields(tasks, customFieldsByType);
+    });
+  }
 
+  public static List<CustomFieldFilter> getCaseAndTaskCustomFields(List<ITask> tasks, List<CustomFieldFilter> customFieldsByType) {
+    if (CollectionUtils.isNotEmpty(tasks)) {
       for (ITask task : tasks) {
         List<ICustomField<?>> allCustomFieldsFromCases = new ArrayList<>();
         allCustomFieldsFromCases.addAll(task.getCase().getBusinessCase().customFields().all());
         allCustomFieldsFromCases.addAll(task.getCase().customFields().all());
-
         addCustomFieldsToCustomFieldsByType(task.customFields().all(), false, customFieldsByType);
         addCustomFieldsToCustomFieldsByType(allCustomFieldsFromCases, true, customFieldsByType);
       }
-
-      return customFieldsByType;
-    });
+    }
+    return customFieldsByType;
   }
 
   private static void addCustomFieldsToCustomFieldsByType(List<ICustomField<?>> customFields,
