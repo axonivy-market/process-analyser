@@ -38,6 +38,8 @@
           <p:commandLink id="config-viewer-link" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
             disabled="#{ not (processViewerBean.shouldRenderBpmnFrame() or managedBean.isWidgetMode)}" process="@this"
             partialSubmit="true" immediate="true">
+            <p:tooltip for="config-viewer-link" trackMouse="true"
+          value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/ConfigViewerTooltip')}"/>
             <h:outputText styleClass="ui-icon pi pi-cog" />
           </p:commandLink>
           <p:commandLink id="config-filter-link" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
