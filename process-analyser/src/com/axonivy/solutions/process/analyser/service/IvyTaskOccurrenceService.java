@@ -115,6 +115,14 @@ public class IvyTaskOccurrenceService {
     });
   }
 
+  /**
+   * Retrieves all custom fields from the provided list of tasks and their associated cases/business cases,
+   * and adds them to the given list of custom field filters.
+   *
+   * @param tasks the list of tasks from which to extract custom fields
+   * @param customFieldsByType the list to which found custom field filters will be added
+   * @return the updated list of custom field filters containing all found custom fields
+   */
   public static List<CustomFieldFilter> getCaseAndTaskCustomFields(List<ITask> tasks, List<CustomFieldFilter> customFieldsByType) {
     if (CollectionUtils.isNotEmpty(tasks)) {
       for (ITask task : tasks) {
