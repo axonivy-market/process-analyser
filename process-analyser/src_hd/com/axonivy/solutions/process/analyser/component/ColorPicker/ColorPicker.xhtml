@@ -12,7 +12,7 @@
 
 <cc:implementation>
   <c:set var="kpiType" value="#{cc.attrs.kpiType}"/>
-  <c:set var="isFrequecyKpi" value="#{kpiType eq 'FREQUENCY'}"/>
+  <c:set var="isFrequencyKpi" value="#{kpiType eq 'FREQUENCY'}"/>
   <c:set var="selectedColorMode" value="#{cc.attrs.selectedColorMode}"/>
   <f:event listener="#{colorPickerBean.initBean(kpiType, selectedColorMode)}" type="preRenderComponent"/>
   <p:remoteCommand id="on-color-change-cmd" name="onColorChange"
@@ -25,10 +25,10 @@
         rendered="#{kpiType ne null}">
         <h:panelGroup styleClass="duration-labels">
           <h:outputText styleClass="duration-label left"
-            value="#{ivy.cms.co(isFrequecyKpi ? '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/LowExecution' : '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/LowDuration')}"
+            value="#{ivy.cms.co(isFrequencyKpi ? '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/LowExecution' : '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/LowDuration')}"
             escape="false" />
           <h:outputText styleClass="duration-label right"
-            value="#{ivy.cms.co(isFrequecyKpi ? '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/HighExecution' : '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/HighDuration')}"
+            value="#{ivy.cms.co(isFrequencyKpi ? '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/HighExecution' : '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/HighDuration')}"
             escape="false" />
         </h:panelGroup>
 
