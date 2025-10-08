@@ -1,5 +1,5 @@
 {
-  "$schema" : "https://json-schema.axonivy.com/process/12.0.0/process.json",
+  "$schema" : "https://json-schema.axonivy.com/process/13.1.2/process.json",
   "id" : "193485C5ABDFEA93",
   "config" : {
     "data" : "com.axonivy.solutions.process.analyser.test.Data"
@@ -54,7 +54,9 @@
       "config" : {
         "task" : {
           "responsible" : {
-            "activator" : "SYSTEM"
+            "roles" : [
+              "SYSTEM"
+            ]
           }
         }
       },
@@ -71,7 +73,9 @@
         "task" : {
           "name" : "test task 1",
           "responsible" : {
-            "activator" : "SYSTEM"
+            "roles" : [
+              "SYSTEM"
+            ]
           }
         }
       },

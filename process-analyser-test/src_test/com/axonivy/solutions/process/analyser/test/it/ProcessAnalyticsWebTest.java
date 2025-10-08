@@ -6,6 +6,7 @@ import static com.codeborne.selenide.Selenide.$;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
 
 import com.axonivy.ivy.webtest.IvyWebTest;
 import com.codeborne.selenide.SelenideElement;

@@ -1,5 +1,5 @@
 {
-  "$schema" : "https://json-schema.axonivy.com/process/12.0.0/process.json",
+  "$schema" : "https://json-schema.axonivy.com/process/13.1.2/process.json",
   "id" : "198A2CD3629AA0D3",
   "config" : {
     "data" : "admin.InitiateDataFromQueueData"
@@ -165,7 +165,9 @@
             "task" : {
               "name" : "Print log",
               "responsible" : {
-                "activator" : "SYSTEM"
+                "roles" : [
+                  "SYSTEM"
+                ]
               }
             }
           },
@@ -215,7 +217,9 @@
             "task" : {
               "name" : "Trigger sigmal",
               "responsible" : {
-                "activator" : "SYSTEM"
+                "roles" : [
+                  "SYSTEM"
+                ]
               }
             }
           },
@@ -290,7 +294,9 @@
             "task" : {
               "name" : "Proceed next queue task",
               "responsible" : {
-                "activator" : "SYSTEM"
+                "roles" : [
+                  "SYSTEM"
+                ]
               }
             }
           },

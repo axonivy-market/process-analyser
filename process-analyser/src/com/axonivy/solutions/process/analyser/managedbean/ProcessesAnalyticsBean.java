@@ -383,8 +383,8 @@ public class ProcessesAnalyticsBean {
         List<Long> taskStartIds =
             selectedProcessAnalyser.getProcess().getStartElements().stream().map(StartElement::getTaskStartId).toList();
         for (Long taskStartId : taskStartIds) {
-          List<ICase> subCases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter,
-              selectedCustomFilters, isIncludingRunningCases);
+          List<ICase> subCases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId,
+              timeIntervalFilter, selectedCustomFilters, isIncludingRunningCases);
           if (CollectionUtils.isNotEmpty(subCases)) {
             cases.addAll(subCases);
           }

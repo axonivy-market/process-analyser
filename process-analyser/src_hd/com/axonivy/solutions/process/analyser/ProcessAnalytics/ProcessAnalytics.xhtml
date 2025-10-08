@@ -114,8 +114,7 @@
               value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectKPI')}" />
             <p:cascadeSelect id="kpiDropdown" style="width: 100%"
               placeholder="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectKPI')}"
-              value="#{processesAnalyticsBean.selectedKpiType}"
-              converter="kpiTypeConverter">
+              value="#{processesAnalyticsBean.selectedKpiType}" converter="kpiTypeConverter">
               <f:selectItems value="#{processesAnalyticsBean.kpiTypes}" />
               <p:ajax event="itemSelect"
                 listener="#{processesAnalyticsBean.onKpiTypeSelect}"
@@ -236,6 +235,7 @@
               oncomplete="getCurrentViewPortOfDiagramData(); return true;" />
           </p:menuButton>
           <p:commandButton icon="pi pi-upload" styleClass="action-button"
+          	rendered="#{processesAnalyticsBean.nodes.size() > 0}"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/ExportExcel')}">
             <p:dataExporter type="csv" target="node" fileName="#{processesAnalyticsBean.generateNameOfExcelFile()}" />
           </p:commandButton>
@@ -251,6 +251,13 @@
         };
         addCustomTextForEmptyDropdown;
         setInterval(addCustomTextForEmptyDropdown, 500);
+        document.addEventListener('click', function(event) {
+          var colorPicker = document.getElementById('color-picker-wrapper');
+          var colorPickerWidget = PF('colorPickerWidget');
+          if (colorPicker &amp;&amp; colorPickerWidget &amp;&amp; !colorPicker.contains(event.target)) {
+             colorPicker.style.display = "none";
+          }
+        });
       </script>
     </ui:define>
   </ui:composition>
