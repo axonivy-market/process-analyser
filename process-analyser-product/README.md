@@ -32,7 +32,7 @@ In the first step, to enable the Process Analyzer to collect data, you need to r
 
 ### Show Statistic
 
-To view the result, start the Process Analyzer and select the PMV that matches the desired process and KPI type, then click the **"Show Statistic"** button. This will display a raw data visualized process diagram alongside an analyzed statistics table.
+To view the result, start the Process Analyzer and select the PMV that matches the desired process and KPI type. By default, analyses are separated by process starts (automatic vs. manual). Use the Merge Process Starts toggle to view a full analysis of each process. Then a raw data visualized process diagram alongside an analyzed statistics table will be displayed.
 
 ![show statistic demo](images/show-statistic.gif)
 
@@ -63,9 +63,11 @@ To view the result, start the Process Analyzer and select the PMV that matches t
 
 ![downoad and export demo](images/capture-images.gif)
 
-- **Custom color bar:** Customize the color of each KPI value using a gradient from light to dark, representing the progression from lower to higher values.
+- **Color Bar Selection:** illustrates the progression from lower to higher KPI values.
+  1. **Custom Color:** Customize the color of each KPI value using a gradient from light to dark.
+  2. **Heatmap:** Automatically applies a color scale transitioning from green to red.
 
-![color map demo](images/color-custom.png)
+![color map demo](images/color-custom.gif)
 
 ## Setup
 

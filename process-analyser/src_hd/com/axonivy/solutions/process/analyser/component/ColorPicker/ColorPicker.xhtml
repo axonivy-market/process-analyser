@@ -7,13 +7,14 @@
   <cc:attribute name="kpiType" required="true"/>
   <cc:attribute name="componentToUpdate" default="@this"/>
   <cc:attribute name="onColorChange" method-signature="void onColorChange()"/>
+  <cc:attribute name="selectedColorMode"/>
 </cc:interface>
 
 <cc:implementation>
   <c:set var="kpiType" value="#{cc.attrs.kpiType}"/>
-  <c:set var="isFrequecyKpi" value="#{kpiType eq 'FREQUENCY'}"/>
-  <f:event listener="#{colorPickerBean.initBean(kpiType)}" type="preRenderComponent"/>
-
+  <c:set var="isFrequencyKpi" value="#{kpiType eq 'FREQUENCY'}"/>
+  <c:set var="selectedColorMode" value="#{cc.attrs.selectedColorMode}"/>
+  <f:event listener="#{colorPickerBean.initBean(kpiType, selectedColorMode)}" type="preRenderComponent"/>
   <p:remoteCommand id="on-color-change-cmd" name="onColorChange"
     process="@this" update="#{cc.attrs.componentToUpdate}" partialSubmit="true"
     actionListener="#{cc.attrs.onColorChange}"/>
@@ -24,10 +25,10 @@
         rendered="#{kpiType ne null}">
         <h:panelGroup styleClass="duration-labels">
           <h:outputText styleClass="duration-label left"
-            value="#{ivy.cms.co(isFrequecyKpi ? '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/LowExecution' : '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/LowDuration')}"
+            value="#{ivy.cms.co(isFrequencyKpi ? '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/LowExecution' : '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/LowDuration')}"
             escape="false" />
           <h:outputText styleClass="duration-label right"
-            value="#{ivy.cms.co(isFrequecyKpi ? '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/HighExecution' : '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/HighDuration')}"
+            value="#{ivy.cms.co(isFrequencyKpi ? '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/HighExecution' : '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/HighDuration')}"
             escape="false" />
         </h:panelGroup>
 
@@ -38,9 +39,13 @@
               style="background-color: #{color};"
               oncomplete="PF('colorPickerWidget').show();"
               ondblclick="return false;"
-              process="@this" partialSubmit="true">
+              process="@this" partialSubmit="true"
+              rendered="#{selectedColorMode.custom}">
               <f:attribute name="segmentIndex" value="#{status.index}" />
             </p:commandLink>
+            <h:outputText styleClass="segment"
+                  style="background-color: #{color};"
+                  rendered="#{selectedColorMode.heatmap}" />
           </ui:repeat>
         </div>
       </h:panelGroup>
@@ -49,7 +54,7 @@
     <p:outputPanel id="color-picker-panel" styleClass="color-picker-panel">
       <div id="color-picker-wrapper">
         <p:colorPicker id="color-picker" mode="inline" value="#{colorPickerBean.selectedColor}"
-          rendered="#{colorPickerBean.isRenderedColorPicker()}"
+          rendered="#{colorPickerBean.checkRenderCondition(selectedColorMode)}"
           widgetVar="colorPickerWidget" theme="large"
           format="rgb" alpha="false">
           <p:ajax event="change" listener="#{colorPickerBean.onColorChange()}"
