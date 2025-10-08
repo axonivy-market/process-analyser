@@ -26,7 +26,6 @@ import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PF;
@@ -168,7 +167,7 @@ public class ProcessesAnalyticsBean {
 
   /**
    * Returns a list of selectable process start options for the current module.
-   * 
+   *
    * - If no module is selected, returns an empty list.
    * - In "merge process starts" mode, each process is a single {@link SelectItem}.
    * - Otherwise, processes with one start element create a single item,
@@ -287,8 +286,7 @@ public class ProcessesAnalyticsBean {
     if (isWidgetMode) {
       updateUserProperty(UserProperty.WIDGET_SELECTED_KPI, selectedKpiType.name());
     }
-    colorPickerBean.initBean(selectedKpiType);
-    colorPickerBean.getBackgroundAndTextColors();
+    colorPickerBean.initBean(selectedKpiType, colorPickerBean.getSelectedColorMode());
     refreshAnalyserReportToView();
   }
 
@@ -408,23 +406,22 @@ public class ProcessesAnalyticsBean {
 
   public void loadProcessViewerByCase() {
     selectedProcessAnalyser = viewerBean.getProcessAnalyser();
-    if(selectedProcessAnalyser != null) {
-    isIncludingRunningCases = true;
-    selectedKpiType = KpiType.FREQUENCY;
-    var cases = new ArrayList<ICase>();
-    timeIntervalFilter =
-        new TimeIntervalFilter(viewerBean.getSelectedCase().getStartTimestamp(), getDateFromLocalDate(LocalDate.now(), LocalTime.MAX));
-    cases.add(viewerBean.getSelectedCase());
-    initializingProcessMiningData();
-    if (cases.size() > 0) {
-      analyzedNode = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(selectedProcessAnalyser, selectedKpiType, cases);
-      processMiningData.setNodes(analyzedNode);
-      processMiningData.setNumberOfInstances(cases.size());
-    }
-    updateDataTableWithNodesPrefix(ProcessUtils.getProcessPidFromElement(selectedPid));
-    updateProcessMiningDataJson();
-    renderNodesForKPIType();
-    PF.current().executeScript(ProcessAnalyticsConstants.UPDATE_IFRAME_SOURCE_METHOD_CALL);
+    if (selectedProcessAnalyser != null) {
+      isIncludingRunningCases = true;
+      var cases = new ArrayList<ICase>();
+      timeIntervalFilter =
+          new TimeIntervalFilter(viewerBean.getSelectedCase().getStartTimestamp(), getDateFromLocalDate(LocalDate.now(), LocalTime.MAX));
+      cases.add(viewerBean.getSelectedCase());
+      initializingProcessMiningData();
+      if (cases.size() > 0) {
+        analyzedNode = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(selectedProcessAnalyser, selectedKpiType, cases);
+        processMiningData.setNodes(analyzedNode);
+        processMiningData.setNumberOfInstances(cases.size());
+      }
+      updateDataTableWithNodesPrefix(ProcessUtils.getProcessPidFromElement(selectedPid));
+      updateProcessMiningDataJson();
+      renderNodesForKPIType();
+      PF.current().executeScript(ProcessAnalyticsConstants.UPDATE_IFRAME_SOURCE_METHOD_CALL);
     }
   }
 
@@ -657,7 +654,7 @@ public class ProcessesAnalyticsBean {
     this.isMergeProcessStarts = isMergeProcessStarts;
     resetProcessSelection();
   }
-  
+
   private void resetProcessSelection() {
     selectedProcessAnalyser = null;
     PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP);

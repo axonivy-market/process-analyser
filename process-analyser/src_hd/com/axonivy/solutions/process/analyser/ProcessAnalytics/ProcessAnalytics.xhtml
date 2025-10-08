@@ -10,52 +10,70 @@
   <ui:composition template="/layouts/frame-10-full-width.xhtml">
     <ui:define name="title">#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Title')}</ui:define>
     <ui:define name="content">
-      <h:outputScript name="resources/html2canvas.min.js" target="head"/>
-        <h:outputStylesheet library="css" name="process-analyser.css" />
-      <h:form id="process-analytics-form" styleClass="#{processesAnalyticsBean.isWidgetMode ? 'flex-1' : 'card'}">
-        <p:remoteCommand id="update-data-table-cmd" name="updateDataTable"
-          action="#{processesAnalyticsBean.updateDataTable}" update="statistic-viewer:data-statistics" process="@this"
+      <h:outputScript name="resources/html2canvas.min.js" target="head" />
+      <h:outputStylesheet library="css" name="process-analyser.css" />
+      <h:form id="process-analytics-form"
+        styleClass="#{processesAnalyticsBean.isWidgetMode ? 'flex-1' : 'card'}">
+        <p:remoteCommand id="update-data-table-cmd"
+          name="updateDataTable"
+          action="#{processesAnalyticsBean.updateDataTable}"
+          update="statistic-viewer:data-statistics" process="@this"
           partialSubmit="true" />
         <p:graphicImage id="process-mining-url-hidden-image" library="ivy-cms"
           name="#{processesAnalyticsBean.miningUrl}" />
-        <h:panelGroup layout="block" rendered="#{not processesAnalyticsBean.isWidgetMode}">
-          <ic:com.axonivy.solutions.process.analyser.component.StandardFilter id="standard-filter-panel-group"
+        <h:panelGroup layout="block"
+          rendered="#{not processesAnalyticsBean.isWidgetMode}">
+          <ic:com.axonivy.solutions.process.analyser.component.StandardFilter
+            id="standard-filter-panel-group"
             managedBean="#{processesAnalyticsBean}" />
         </h:panelGroup>
-        <h:panelGroup layout="block" styleClass="border-top-1 surface-border my-3"
+        <h:panelGroup layout="block"
+          styleClass="border-top-1 surface-border my-3"
           rendered="#{not processesAnalyticsBean.isWidgetMode}" />
         <ic:com.axonivy.solutions.process.analyser.component.CustomFilter
           id="custom-filter-panel-group"
           managedBean="#{processesAnalyticsBean}" />
-        <ic:com.axonivy.solutions.process.analyser.component.ProcessViewer id="process-analytic-viewer-panel"
+        <ic:com.axonivy.solutions.process.analyser.component.ProcessViewer
+          id="process-analytic-viewer-panel"
           managedBean="#{processesAnalyticsBean}"
-          componentsToUpdate="@this"/>
-        <ic:com.axonivy.solutions.process.analyser.component.ColorPicker id="color-picker-component"
+          componentsToUpdate="@this" />
+        <ic:com.axonivy.solutions.process.analyser.component.ColorPicker
+          id="color-picker-component"
           kpiType="#{processesAnalyticsBean.selectedKpiType}"
           onColorChange="#{processesAnalyticsBean.refreshAnalyserReportToView()}"
-          componentToUpdate="@this" />
-        <h:panelGroup layout="block" styleClass="border-top-1 surface-border my-3"
+          componentToUpdate="@this"
+          selectedColorMode="#{colorPickerBean.selectedColorMode}"
+          onColorModeChange="#{processesAnalyticsBean.refreshAnalyserReportToView()}" />
+        <h:panelGroup layout="block"
+          styleClass="border-top-1 surface-border my-3"
           rendered="#{not processesAnalyticsBean.isWidgetMode}" />
-        <ic:com.axonivy.solutions.process.analyser.component.StatisticViewer id="statistic-viewer"
-          managedBean="#{processesAnalyticsBean}" />
-        <h:panelGroup id="action-btn-group" styleClass="col-12 p-0 inline-flex justify-content-end" layout="block"
+        <ic:com.axonivy.solutions.process.analyser.component.StatisticViewer
+          id="statistic-viewer" managedBean="#{processesAnalyticsBean}" />
+        <h:panelGroup id="action-btn-group"
+          styleClass="col-12 p-0 inline-flex justify-content-end"
+          layout="block"
           rendered="#{not processesAnalyticsBean.isWidgetMode}">
-          <p:menuButton icon="pi pi-upload" styleClass="action-button mr-3"
+          <p:menuButton icon="pi pi-upload"
+            styleClass="action-button mr-3"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/ExportJPEG')}">
             <p:menuitem
               value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/CaptureEntireScreen')}"
-              actionListener="#{processesAnalyticsBean.prepareForExportingJPEG(true)}" process="@this"
-              partialSubmit="true"
+              actionListener="#{processesAnalyticsBean.prepareForExportingJPEG(true)}"
+              process="@this" partialSubmit="true"
               update="action-btn-group process-analytics-form:process-analytic-viewer-panel:viewer-group"
-              icon="pi pi-desktop" oncomplete="getFullDiagramData(); return true;" />
+              icon="pi pi-desktop"
+              oncomplete="getFullDiagramData(); return true;" />
             <p:menuitem
               value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/CaptureCurrentView')}"
-              process="@this" partialSubmit="true" update="action-btn-group" icon="pi pi-th-large"
+              process="@this" partialSubmit="true"
+              update="action-btn-group" icon="pi pi-th-large"
               oncomplete="getCurrentViewPortOfDiagramData(); return true;" />
           </p:menuButton>
-          <p:commandButton icon="pi pi-upload" styleClass="action-button"
+          <p:commandButton icon="pi pi-upload"
+            styleClass="action-button"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/ExportExcel')}">
-            <p:dataExporter type="csv" target="node" fileName="#{processesAnalyticsBean.generateNameOfExcelFile()}" />
+            <p:dataExporter type="csv" target="node"
+              fileName="#{processesAnalyticsBean.generateNameOfExcelFile()}" />
           </p:commandButton>
         </h:panelGroup>
       </h:form>

@@ -10,6 +10,7 @@
   <cc:attribute name="id" required="true" />
   <cc:attribute name="selectedProcessAnalyser" />
   <cc:attribute name="caseId" />
+  <cc:attribute name="kpiType" required="true"/>
 </cc:interface>
 
 <cc:implementation>
@@ -28,26 +29,14 @@
   <p:outputPanel>
     <br />
   </p:outputPanel>
-<!--   <p:panel id="#{cc.attrs.id}"> -->
-  
-    <p:remoteCommand name="reloadCaseAnalyitcs" actionListener="#{caseAnalyticsBean.loadProcessViewerByCase()}" update="#{cc.clientId}:process-analytic-viewer-panel" />
-<!--           partialSubmit="true"/> -->
-<!--        <f:event listener="#{caseAnalyticsBean.loadProcessViewerByCase(cc.attrs.caseId)}" type="preRenderComponent" /> -->
 
   <ic:com.axonivy.solutions.process.analyser.component.ProcessViewer
     id="process-analytic-viewer-panel" hasStandardFilter="false"
     caseId="#{cc.attrs.caseId}" managedBean="#{processesAnalyticsBean}" />
   <ic:com.axonivy.solutions.process.analyser.component.ColorPicker
-      id="color-picker-component" kpiType="FREQUENCY" onColorChange="#{caseAnalyticsBean.loadProcessViewerByCase()}"
-      componentToUpdate="@this" />
-<!--   </p:panel> -->
-
-<!--   //<f:event listener="#{processesAnalyticsBean.loadProcessViewerByCase()}" type="preRenderComponent" /> -->
- <script>
-        PrimeFaces.onPostRender(function() {
-            testtest(); // triggers AJAX call after UI render
-        });
-    </script>
+      id="color-picker-component" kpiType="#{cc.attrs.kpiType}" onColorChange="#{caseAnalyticsBean.loadProcessViewerByCase()}"
+      componentToUpdate="@this" onColorModeChange="#{caseAnalyticsBean.loadProcessViewerByCase()}"/>
+  <ic:com.axonivy.solutions.process.analyser.component.CaseAnalyticsLoadComponent/>
 </cc:implementation>
 
 </html>

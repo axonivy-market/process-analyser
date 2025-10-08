@@ -7,17 +7,21 @@
   <cc:attribute name="kpiType" required="true"/>
   <cc:attribute name="componentToUpdate" default="@this"/>
   <cc:attribute name="onColorChange" method-signature="void onColorChange()"/>
+  <cc:attribute name="onColorModeChange" method-signature="void onColorModeChange()"/>
+  <cc:attribute name="selectedColorMode" default="HEATMAP"/>
 </cc:interface>
 
 <cc:implementation>
   <c:set var="kpiType" value="#{cc.attrs.kpiType}"/>
   <c:set var="isFrequecyKpi" value="#{kpiType eq 'FREQUENCY'}"/>
-  <f:event listener="#{colorPickerBean.initBean(kpiType)}" type="preRenderComponent"/>
-
+  <f:event listener="#{colorPickerBean.initBean(kpiType, cc.attrs.selectedColorMode)}" type="preRenderComponent"/>
   <p:remoteCommand id="on-color-change-cmd" name="onColorChange"
-    process="@this" update="#{cc.attrs.componentToUpdate}" partialSubmit="true"
-    actionListener="#{cc.attrs.onColorChange}"/>
-
+    process="@this" update="#{cc.attrs.componentToUpdate}"
+    partialSubmit="true" actionListener="#{cc.attrs.onColorChange}" />
+  <p:remoteCommand id="on-color-mode-change-cmd"
+    name="onColorModeChange" process="@this"
+    update="#{cc.attrs.componentToUpdate}" partialSubmit="true"
+    actionListener="#{cc.attrs.onColorModeChange}" />
   <h:panelGroup id="color-container" layout="block" styleClass="color-container">
     <p:outputPanel id="color-bar-segment">
       <h:panelGroup layout="block" styleClass="duration-container"
@@ -38,9 +42,13 @@
               style="background-color: #{color};"
               oncomplete="PF('colorPickerWidget').show();"
               ondblclick="return false;"
-              process="@this" partialSubmit="true">
+              process="@this" partialSubmit="true"
+              rendered="#{'CUSTOM' eq colorPickerBean.selectedColorMode}">
               <f:attribute name="segmentIndex" value="#{status.index}" />
             </p:commandLink>
+            <h:outputText styleClass="segment"
+              style="background-color: #{color};"
+              rendered="#{'HEATMAP' eq colorPickerBean.selectedColorMode}" />
           </ui:repeat>
         </div>
       </h:panelGroup>
@@ -48,17 +56,30 @@
 
     <p:outputPanel id="color-picker-panel" styleClass="color-picker-panel">
       <div id="color-picker-wrapper" class="process-analyser-color-picker-wrapper">
-        <p:colorPicker id="color-picker" mode="inline" value="#{colorPickerBean.selectedColor}"
-          rendered="#{colorPickerBean.isRenderedColorPicker()}" styleClass="process-analyser-color-picker"
-          widgetVar="colorPickerWidget" theme="large"
-          format="rgb" alpha="false">
-          <p:ajax event="change" listener="#{colorPickerBean.onColorChange()}"
-            update="color-bar-segment"
-            process="@this" partialSubmit="true" delay="500"
-            global="false" onsuccess="onColorChange()"/>
+        <p:colorPicker id="color-picker" mode="inline"
+          value="#{colorPickerBean.selectedColor}"
+          rendered="#{colorPickerBean.checkRenderCondition(colorPickerBean.selectedColorMode)}" styleClass="process-analyser-color-picker"
+          widgetVar="colorPickerWidget" theme="large" format="rgb"
+          alpha="false">
+          <p:ajax event="change"
+            listener="#{colorPickerBean.onColorChange()}"
+            update="color-bar-segment" process="@this"
+            partialSubmit="true" delay="500" global="false"
+            onsuccess="onColorChange()" />
         </p:colorPicker>
       </div>
     </p:outputPanel>
   </h:panelGroup>
+  <div class="flex align-items-end gap-2 justify-content-end">
+    <p:outputLabel for="colorModeDropdown" styleClass="pb-2 w-6rem"
+      value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectColorMode')}" />
+    <p:selectOneMenu id="colorModeDropdown" value="#{colorPickerBean.selectedColorMode}"
+      styleClass="color-mode-dropdown w-8rem">
+      <f:selectItems value="#{colorPickerBean.colorModes}" var="colorMode" itemValue="#{colorMode}"
+        itemLabel="#{colorMode.cmsName}" />
+      <p:ajax event="change" listener="#{colorPickerBean.onColorModeChange}" process="@this"
+        update="color-container" partialSubmit="true" onsuccess="onColorModeChange()"/>
+    </p:selectOneMenu>
+  </div>
 </cc:implementation>
 </html>
