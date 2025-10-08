@@ -55,7 +55,7 @@
       <div id="color-picker-wrapper">
         <p:colorPicker id="color-picker" mode="inline" value="#{colorPickerBean.selectedColor}"
           rendered="#{colorPickerBean.checkRenderCondition(selectedColorMode)}"
-          widgetVar="colorPickerWidget" theme="large" 
+          widgetVar="colorPickerWidget" theme="large"
           format="rgb" alpha="false">
           <p:ajax event="change" listener="#{colorPickerBean.onColorChange()}"
             update="color-bar-segment"
