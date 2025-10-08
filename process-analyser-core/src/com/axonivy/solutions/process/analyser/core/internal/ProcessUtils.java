@@ -166,27 +166,16 @@ public class ProcessUtils {
       // Index process starts by processFileId for fast lookup
       Map<String, List<IProcessStart>> startsByProcessId = processStarts.stream()
         .collect(Collectors.groupingBy(start -> PIDUtils.getId(start.pid(), true)));
-
       for (var processFile : getProcessesInCurrentPMV(pmv)) {
-        String processFileId = processFile.getIdentifier();
-        var process = new Process(processFileId, processFile.getName(), new ArrayList<>());
-        process.setPmvId(pmv.getId());
-        process.setPmvName(pmv.getName());
-        process.setPmv(pmv);
-        process.setProjectRelativePath(processFile.getResource().getProjectRelativePath().toString());
-
-        List<IProcessStart> starts = startsByProcessId.getOrDefault(processFileId, Collections.emptyList());
+        var process = convertIProcessToProcess(pmv, processFile);
+        List<IProcessStart> starts = startsByProcessId.getOrDefault(processFile.getIdentifier(), Collections.emptyList());
 
         if (CollectionUtils.isEmpty(starts)) {
           continue;
         }
 
         for (var start : starts) {
-          var taskStart = start.getTaskStart();
-          StartElement startElement = new StartElement();
-          startElement.setPid(PIDUtils.getId(taskStart.getProcessElementId()));
-          startElement.setTaskStartId(taskStart.getId());
-          ProcessStartFactory.extractDisplayNameAndType(start, startElement);
+          StartElement startElement = convertToStartELement(start);
           process.getStartElements().add(startElement);
         }
         processes.add(process);
@@ -195,10 +184,37 @@ public class ProcessUtils {
     return processes;
   }
 
+  private static Process convertIProcessToProcess(IProcessModelVersion iPmv, IProcess iProcess) {
+    var process = new Process(iProcess.getIdentifier(), iProcess.getName(), new ArrayList<>());
+    process.setPmvId(iPmv.getId());
+    process.setPmvName(iPmv.getName());
+    process.setPmv(iPmv);
+    process.setProjectRelativePath(iProcess.getResource().getProjectRelativePath().toString());
+    return process;
+  }
+
   private static List<IProcess> getProcessesInCurrentPMV(IProcessModelVersion pmv) {
     return IProcessManager.instance().getProjectDataModelFor(pmv).getProcesses().stream()
         .filter(process -> process.getKind() == ProcessKind.NORMAL || process.getKind() == ProcessKind.WEB_SERVICE)
         .toList();
+  }
+
+  public static Process getProcessByPMVAndProcessStartElementId(IProcessModelVersion pmv, String processStartElementId) {
+    IProcess iProcess = IProcessManager.instance().getProjectDataModelFor(pmv).getProcesses().stream()
+        .filter(process -> (process.getKind() == ProcessKind.NORMAL || process.getKind() == ProcessKind.WEB_SERVICE)
+            && processStartElementId.contains(process.getIdentifier()))
+        .toList().getFirst();
+
+    return iProcess != null ? convertIProcessToProcess(pmv, iProcess) : null;
+  }
+
+  public static StartElement convertToStartELement(IProcessStart processStart) {
+    var taskStart = processStart.getTaskStart();
+    StartElement startElement = new StartElement();
+    startElement.setPid(PIDUtils.getId(taskStart.getProcessElementId()));
+    startElement.setTaskStartId(taskStart.getId());
+    ProcessStartFactory.extractDisplayNameAndType(processStart, startElement);
+    return startElement;
   }
 
   private static List<IProcessModelVersion> getProcessModelVersionsInCurrentApp() {

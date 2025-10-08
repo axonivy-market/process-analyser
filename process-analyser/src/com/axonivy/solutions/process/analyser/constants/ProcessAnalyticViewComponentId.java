@@ -9,7 +9,7 @@ public class ProcessAnalyticViewComponentId {
   public static final String PROCESS_SELECTION_GROUP =
       FORM + ID_SECTION_SEPARATOR + STANDARD_FILTER_PANEL_GROUP + ID_SECTION_SEPARATOR + "process-selection-group";
   public static final String ARROW_STATISTIC = FORM + ID_SECTION_SEPARATOR + "arrow-statistics";
-  public static final String HIDDEN_IMAGE = FORM + ID_SECTION_SEPARATOR + "hidden-image";
+  public static final String HIDDEN_IMAGE = FORM + ID_SECTION_SEPARATOR + "process-mining-url-hidden-image";
   public static final String PROCESS_ANALYTIC_VIEWER_PANEL = FORM + ID_SECTION_SEPARATOR
       + "process-analytic-viewer-panel" + ID_SECTION_SEPARATOR + "viewer-group";
   public static final String SHOW_STATISTIC_BTN =

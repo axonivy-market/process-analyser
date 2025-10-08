@@ -4,7 +4,10 @@ import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnaly
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartEventElement;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartSignalEventElement;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.WebServiceProcessStartElement;
+import static com.axonivy.solutions.process.analyser.utils.DateUtils.getDateFromLocalDate;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -394,12 +397,34 @@ public class ProcessesAnalyticsBean {
 
   public void updateDiagramAndStatistic() {
     if (isDiagramAndStatisticRenderable()) {
-      viewerBean.init(selectedProcessAnalyser);
+      viewerBean.init(selectedProcessAnalyser, null);
       loadNodes();
       updateProcessMiningDataJson();
       renderNodesForKPIType();
       PF.current().executeScript(ProcessAnalyticsConstants.UPDATE_IFRAME_SOURCE_METHOD_CALL);
       PF.current().ajax().update(ProcessAnalyticViewComponentId.getDiagramAndStatisticComponentIds());
+    }
+  }
+
+  public void loadProcessViewerByCase() {
+    selectedProcessAnalyser = viewerBean.getProcessAnalyser();
+    if(selectedProcessAnalyser != null) {
+    isIncludingRunningCases = true;
+    selectedKpiType = KpiType.FREQUENCY;
+    var cases = new ArrayList<ICase>();
+    timeIntervalFilter =
+        new TimeIntervalFilter(viewerBean.getSelectedCase().getStartTimestamp(), getDateFromLocalDate(LocalDate.now(), LocalTime.MAX));
+    cases.add(viewerBean.getSelectedCase());
+    initializingProcessMiningData();
+    if (cases.size() > 0) {
+      analyzedNode = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(selectedProcessAnalyser, selectedKpiType, cases);
+      processMiningData.setNodes(analyzedNode);
+      processMiningData.setNumberOfInstances(cases.size());
+    }
+    updateDataTableWithNodesPrefix(ProcessUtils.getProcessPidFromElement(selectedPid));
+    updateProcessMiningDataJson();
+    renderNodesForKPIType();
+    PF.current().executeScript(ProcessAnalyticsConstants.UPDATE_IFRAME_SOURCE_METHOD_CALL);
     }
   }
 

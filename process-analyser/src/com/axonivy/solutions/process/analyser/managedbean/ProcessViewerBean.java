@@ -1,5 +1,7 @@
 package com.axonivy.solutions.process.analyser.managedbean;
 
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +17,15 @@ import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
 import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
 import com.axonivy.solutions.process.analyser.core.bo.ElementDisplayName;
 import com.axonivy.solutions.process.analyser.core.bo.Process;
+import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
+import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessViewerBuilder;
 import com.axonivy.solutions.process.analyser.core.util.ProcessElementUtils;
+import com.axonivy.solutions.process.analyser.utils.ColorUtils;
 
 import ch.ivyteam.ivy.environment.Ivy;
+import ch.ivyteam.ivy.workflow.ICase;
 
 @ManagedBean
 @ViewScoped
@@ -32,20 +38,44 @@ public class ProcessViewerBean implements Serializable {
   private String selectedItem;
   private Integer selectedZoom = 100;
   private List<ElementDisplayName> availableProcessElements;
+  private ProcessAnalyser processAnalyser;
+  private ICase selectedCase;
 
-  public void init(ProcessAnalyser processAnalyser) {
-    if (processAnalyser == null) {
+  public void init(ProcessAnalyser processAnalyser, Long caseId) {
+    if (processAnalyser == null && caseId == null) {
       return;
     }
-    selectedProcess = processAnalyser.getProcess();
-    selectedStartElement =
-        (processAnalyser.getStartElement() != null) ? processAnalyser.getStartElement().getPid() : null;
+
+    if (processAnalyser != null) {
+      initByProcessAnalyser(processAnalyser);
+    } else {
+      initByCaseId(caseId);
+    }
 
     availableProcessElements = new ArrayList<>();
     if (selectedProcess != null) {
       unifySelectionData();
       updateBpmnIframeSourceUrl(selectedStartElement);
       PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_ANALYTIC_VIEWER_PANEL);
+    }
+  }
+
+  private void initByProcessAnalyser(ProcessAnalyser processAnalyser) {
+    selectedProcess = processAnalyser.getProcess();
+    selectedStartElement = (processAnalyser.getStartElement() != null) ? processAnalyser.getStartElement().getPid() : null;
+  }
+
+  private void initByCaseId(Long caseId) {
+    selectedCase = Ivy.wf().findCase(caseId);
+    if (selectedCase != null) {
+      var processStart = selectedCase.getProcessStart();
+      var process =
+          ProcessUtils.getProcessByPMVAndProcessStartElementId(selectedCase.getProcessModelVersion(), processStart.getProcessElementId());
+      StartElement startElement = ProcessUtils.convertToStartELement(selectedCase.getProcessStart());
+      process.getStartElements().add(startElement);
+      selectedProcess = process;
+      selectedStartElement = processStart.getProcessElementId();
+      processAnalyser = new ProcessAnalyser(selectedProcess, startElement);
     }
   }
 
@@ -123,5 +153,21 @@ public class ProcessViewerBean implements Serializable {
 
   public void setAvailableProcessElements(List<ElementDisplayName> availableProcessElements) {
     this.availableProcessElements = availableProcessElements;
+  }
+
+  public ProcessAnalyser getProcessAnalyser() {
+    return processAnalyser;
+  }
+
+  public void setProcessAnalyser(ProcessAnalyser processAnalyser) {
+    this.processAnalyser = processAnalyser;
+  }
+
+  public ICase getSelectedCase() {
+    return selectedCase;
+  }
+
+  public void setSelectedCase(ICase selectedCase) {
+    this.selectedCase = selectedCase;
   }
 }

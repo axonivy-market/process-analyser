@@ -5,12 +5,16 @@
   xmlns:c="http://java.sun.com/jsp/jstl/core">
 <cc:interface componentType="IvyComponent">
   <cc:attribute name="managedBean" required="true" />
+  <cc:attribute name="caseId" />
+  <cc:attribute name="hasStandardFilter" default="true" />
+  <cc:attribute name="onInit" method-signature="void onInit()"/>
 </cc:interface>
 
 <cc:implementation>
   <c:set var="managedBean" value="#{cc.attrs.managedBean}" />
   <h:outputScript name="resources/process-viewer.js" target="head" />
-  <f:event listener="#{processViewerBean.init(managedBean.selectedProcessAnalyser)}" type="preRenderComponent" />
+  <f:event listener="#{processViewerBean.init(managedBean.selectedProcessAnalyser, cc.attrs.caseId)}" type="preRenderComponent" />
+
   <h:panelGroup id="viewer-group" layout="block">
     <p:panel id="viewer-panel" widgetVar="viewer-panel" toggleable="true" toggleSpeed="500"
       toggleTitle="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/ToggleTooltip')}"
@@ -47,7 +51,8 @@
             componentsToUpdate="process-analytics-form" managedBean="#{managedBean}"
             containerClasses=" grid align-items-center mr-2" rendered="#{managedBean.isWidgetMode}" />
         </h:panelGroup>
-        <p:overlayPanel for="config-filter-link" styleClass="toolbar-overlay-panel" my="right bottom" at="right top">
+        <p:overlayPanel for="config-filter-link" styleClass="toolbar-overlay-panel" my="right bottom" at="right top"
+          rendered="#{cc.attrs.hasStandardFilter}">
           <h:panelGroup styleClass="grid formgrid ui-fluid">
             <ic:com.axonivy.solutions.process.analyser.component.StandardFilter id="standard-filter" managedBean="#{managedBean}"
               isWidgetMode="#{managedBean.isWidgetMode}" />

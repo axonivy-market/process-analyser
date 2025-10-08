@@ -7,8 +7,8 @@ const HIDDEN_CLASS = "hidden";
 const CHILD_DIV_FROM_NODE_ELEMENT_SELECTOR = ".node-child-label > div";
 const DEFAULT_IMAGE_TYPE = "image/jpeg";
 const ANCHOR_TAG = "a";
-const CURRENT_PROCESS_LABEL = "process-dropdown";
-const HIDDEN_IMAGE_ID = "hidden-image";
+const CURRENT_PROCESS_LABEL = "process-analyser-dropdown";
+const HIDDEN_IMAGE_ID = "process-mining-url-hidden-image";
 const JUMP_OUT_BTN_CLASS = "ivy-jump-out";
 const IVY_PROCESS_EXTENSION = ".ivp";
 const NODE_WITH_ICON_BESIDE_SELECTOR =
@@ -44,7 +44,11 @@ function queryObjectById(id) {
 }
 
 function queryObjectByIdInForm(id) {
-  return $(`[id$='process-analytics-form:${id}']`);
+  return $(`[id$=':${id}']`);
+}
+
+function findElementById(id) {
+  return $(`[id$='${id}']`)[0];
 }
 
 function updateUrlForIframe() {
@@ -192,6 +196,10 @@ function getPidQueryParamValue(url) {
   return parseUrl.searchParams.get(PID_QUERY_PARAM_NAME);
 }
 
+function testtest() {
+  reloadCaseAnalyitcs();
+}
+
 function loadIframe(recheckIndicator) {
   var iframe = document.getElementById(DIAGRAM_IFRAME_ID);
 
@@ -202,7 +210,9 @@ function loadIframe(recheckIndicator) {
       clearTimeout(recheckFrameTimer);
       const iframeRootUrl = iframe.contentWindow.location.href;
       const pidValue = getPidQueryParamValue(iframeRootUrl);
-      updateDataTable([{ name: SUB_PROCESS_CALL_PID, value: pidValue }]);
+      if (findElementById(":data-statistics") !== undefined) {
+        updateDataTable([{ name: SUB_PROCESS_CALL_PID, value: pidValue }]);
+      }
       return;
     }
   }
@@ -222,8 +232,8 @@ function openViewerInNewTab() {
 
 // Color picker popup handling
 document.addEventListener("click", function (event) {
-  var colorPickerWrapper = document.getElementById("color-picker-wrapper");
-  var colorPickerComponent = document.getElementById("process-analytics-form:color-picker-component:color-picker");
+  var colorPickerWrapper = findElementById("color-picker-wrapper");
+  var colorPickerComponent = findElementById(":color-picker");
   if (!colorPickerWrapper || !colorPickerComponent) {
     return;
   }

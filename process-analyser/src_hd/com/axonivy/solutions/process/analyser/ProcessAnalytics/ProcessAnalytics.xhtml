@@ -16,7 +16,7 @@
         <p:remoteCommand id="update-data-table-cmd" name="updateDataTable"
           action="#{processesAnalyticsBean.updateDataTable}" update="statistic-viewer:data-statistics" process="@this"
           partialSubmit="true" />
-        <p:graphicImage id="hidden-image" library="ivy-cms"
+        <p:graphicImage id="process-mining-url-hidden-image" library="ivy-cms"
           name="#{processesAnalyticsBean.miningUrl}" />
         <h:panelGroup layout="block" rendered="#{not processesAnalyticsBean.isWidgetMode}">
           <ic:com.axonivy.solutions.process.analyser.component.StandardFilter id="standard-filter-panel-group"
