@@ -117,9 +117,8 @@
               value="#{processesAnalyticsBean.selectedKpiType}" converter="kpiTypeConverter">
               <f:selectItems value="#{processesAnalyticsBean.kpiTypes}" />
               <p:ajax event="itemSelect"
-                listener="#{processesAnalyticsBean.onKpiTypeSelect}"
-                update="process-analytics-form:color-picker-component:color-container"
-                process="@this" partialSubmit="true" />
+                listener="#{processesAnalyticsBean.onKpiTypeSelect}" update="process-analytics-form:color-picker-component:color-container"
+                process="@this" partialSubmit="true"/>
             </p:cascadeSelect>
           </h:panelGroup>
         </p:panelGrid>
