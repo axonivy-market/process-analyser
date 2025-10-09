@@ -107,7 +107,8 @@
           class="process-analytic-viewer" onload="loadIframe(false)" />
       </h:panelGroup>
       <h:panelGroup rendered="#{!processViewerBean.shouldRenderBpmnFrame()}" styleClass="col mb-2" layout="block">
-        <h:outputText value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/EmptyDataMessage')}" />
+        <h:outputText rendered="#{cc.attrs.caseId eq ''}" value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/EmptyDataMessage')}" />
+        <h:outputText rendered="#{cc.attrs.caseId ne ''}" value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/NoExistingCaseIdMessage')}" />
       </h:panelGroup>
     </p:panel>
     <p:resizable id="viewer-group-resize" for="viewer-panel" animate="true" ghost="true" grid="20" handles="s"

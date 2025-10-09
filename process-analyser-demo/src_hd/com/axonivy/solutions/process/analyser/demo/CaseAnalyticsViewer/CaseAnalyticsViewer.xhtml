@@ -11,25 +11,27 @@
     <ui:define name="content">
 
       <h:form id="process-analytics-form">
-        <h:panelGroup
-          styleClass="#{isWidgetMode? 'col': 'col-4'} p-0 m-0 pl-2"
-          layout="block">
+        <h:panelGroup layout="block">
           <div class="mb-2">
-            <p:outputLabel for="@next"
-              value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectKPI')}" />
+            <p:outputLabel for="@next" value="Input Case Id:" />
+            <p:inputNumber id="case-id" decimalPlaces="0" minValue="0"
+              value="#{data.caseId}" maxValue="1000000"
+              styleClass="col-12">
+            </p:inputNumber>
+            <p:commandButton id="show-statistic-btn"
+              icon="pi pi-chart-line"
+              value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/ShowStatistic')}"
+              styleClass="show-statistic-btn w-auto"
+              update="process-analytics-form" />
           </div>
-          <p:cascadeSelect id="kpiDropdown" style="width: 100%"
-            placeholder="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectKPI')}"
-            value="#{processesAnalyticsBean.selectedKpiType}"
-            converter="kpiTypeConverter">
-            <f:selectItems value="#{processesAnalyticsBean.kpiTypes}" />
-            <p:ajax event="itemSelect"
-              update="test-process"
-              process="@this" partialSubmit="true" />
-          </p:cascadeSelect>
+
+
+
         </h:panelGroup>
-        <ic:com.axonivy.solutions.process.analyser.component.CaseAnalytics
-          id="test-process" caseId="1" kpiType="#{processesAnalyticsBean.selectedKpiType}" />
+        <br />
+
+        <ic:com.axonivy.solutions.process.analyser.component.CaseVisualization
+          kpiType="FREQUENCY" id="test-process" caseId="#{data.caseId}" />
         <br />
         <div class="command-btns">
           <p:commandButton id="proceed" actionListener="#{logic.close}"

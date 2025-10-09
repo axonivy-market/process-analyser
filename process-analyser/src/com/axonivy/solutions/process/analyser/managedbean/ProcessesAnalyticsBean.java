@@ -406,18 +406,15 @@ public class ProcessesAnalyticsBean {
 
   public void loadProcessViewerByCase() {
     selectedProcessAnalyser = viewerBean.getProcessAnalyser();
-    if (selectedProcessAnalyser != null) {
+    selectedKpiType = colorPickerBean.getSelectedKpiType();
+    ICase iCase = viewerBean.getSelectedCase();
+    if (selectedProcessAnalyser != null && iCase != null) {
       isIncludingRunningCases = true;
-      var cases = new ArrayList<ICase>();
-      timeIntervalFilter =
-          new TimeIntervalFilter(viewerBean.getSelectedCase().getStartTimestamp(), getDateFromLocalDate(LocalDate.now(), LocalTime.MAX));
-      cases.add(viewerBean.getSelectedCase());
+      timeIntervalFilter = new TimeIntervalFilter(iCase.getStartTimestamp(), getDateFromLocalDate(LocalDate.now(), LocalTime.MAX));
       initializingProcessMiningData();
-      if (cases.size() > 0) {
-        analyzedNode = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(selectedProcessAnalyser, selectedKpiType, cases);
-        processMiningData.setNodes(analyzedNode);
-        processMiningData.setNumberOfInstances(cases.size());
-      }
+      analyzedNode = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(selectedProcessAnalyser, selectedKpiType, List.of(iCase));
+      processMiningData.setNodes(analyzedNode);
+      processMiningData.setNumberOfInstances(1);
       updateDataTableWithNodesPrefix(ProcessUtils.getProcessPidFromElement(selectedPid));
       updateProcessMiningDataJson();
       renderNodesForKPIType();

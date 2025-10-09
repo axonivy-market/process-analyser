@@ -63,6 +63,7 @@ Dialogs:
                 FocusItem: Focus item
                 FocusItemTooltip: Select the element you want the viewer to focus on, and that element will be centered in the viewport.
                 MiningData: Mining data
+                NoExistingCaseIdMessage: Please enter an existing case Id to see mining data
                 OpenOnNewTabTooltip: Open viewer on new tab
                 ResizeTooltip: You can mouse hover to the bottom edge of panel to resize this frame
                 ToggleTooltip: Toggle the Mining panel

@@ -5,12 +5,16 @@
   xmlns:cc="http://xmlns.jcp.org/jsf/composite"
   xmlns:ic="http://ivyteam.ch/jsf/component"
   xmlns:p="http://primefaces.org/ui"
-  xmlns:pe="http://primefaces.org/ui/extensions">
+  xmlns:pe="http://primefaces.org/ui/extensions"
+  xmlns:c="http://java.sun.com/jsp/jstl/core">
 <cc:interface componentType="IvyComponent">
   <cc:attribute name="id" required="true" />
+  <cc:attribute name="titleRendered" default="true" />
+  <cc:attribute name="title"
+    default="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/Title')}" />
   <cc:attribute name="selectedProcessAnalyser" />
   <cc:attribute name="caseId" />
-  <cc:attribute name="kpiType" required="true"/>
+  <cc:attribute name="kpiType" default="FREQUENCY" />
 </cc:interface>
 
 <cc:implementation>
@@ -19,24 +23,25 @@
   <p:graphicImage id="process-mining-url-hidden-image" library="ivy-cms"
     name="#{processesAnalyticsBean.miningUrl}" />
   <p:panelGrid columns="2" layout="grid" styleClass="ui-fluid"
+    rendered="#{cc.attrs.titleRendered}"
     columnClasses="ui-g-6 pl-0, ui-g-6 pr-0 mr-0 grid align-items-center flex-row-reverse">
     <h:panelGroup layout="block"
       styleClass="flex align-items-center h-full">
-      <h3>#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/Title')}</h3>
+      <h3>#{cc.attrs.title}</h3>
     </h:panelGroup>
-
   </p:panelGrid>
-  <p:outputPanel>
-    <br />
-  </p:outputPanel>
+
+  <br />
 
   <ic:com.axonivy.solutions.process.analyser.component.ProcessViewer
     id="process-analytic-viewer-panel" hasStandardFilter="false"
     caseId="#{cc.attrs.caseId}" managedBean="#{processesAnalyticsBean}" />
   <ic:com.axonivy.solutions.process.analyser.component.ColorPicker
-      id="color-picker-component" kpiType="#{cc.attrs.kpiType}" onColorChange="#{caseAnalyticsBean.loadProcessViewerByCase()}"
-      componentToUpdate="@this" onColorModeChange="#{caseAnalyticsBean.loadProcessViewerByCase()}"/>
-  <ic:com.axonivy.solutions.process.analyser.component.CaseAnalyticsLoadComponent/>
+    id="color-picker-component" kpiType="#{cc.attrs.kpiType}"
+    onColorChange="#{caseAnalyticsBean.loadProcessViewerByCase()}"
+    componentToUpdate="@this"
+    onColorModeChange="#{caseAnalyticsBean.loadProcessViewerByCase()}" />
+  <ic:com.axonivy.solutions.process.analyser.component.CaseAnalyticsLoadComponent />
 </cc:implementation>
 
 </html>

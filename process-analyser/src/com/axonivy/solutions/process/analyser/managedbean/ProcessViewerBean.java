@@ -1,7 +1,5 @@
 package com.axonivy.solutions.process.analyser.managedbean;
 
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +20,6 @@ import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsCon
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessViewerBuilder;
 import com.axonivy.solutions.process.analyser.core.util.ProcessElementUtils;
-import com.axonivy.solutions.process.analyser.utils.ColorUtils;
 
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.workflow.ICase;
@@ -42,14 +39,14 @@ public class ProcessViewerBean implements Serializable {
   private ICase selectedCase;
 
   public void init(ProcessAnalyser processAnalyser, Long caseId) {
-    if (processAnalyser == null && caseId == null) {
+    if (processAnalyser == null && (caseId == null || caseId == 0)) {
       return;
     }
 
-    if (processAnalyser != null) {
-      initByProcessAnalyser(processAnalyser);
-    } else {
+    if (caseId != null && caseId != 0) {
       initByCaseId(caseId);
+    } else  {
+      initByProcessAnalyser(processAnalyser);
     }
 
     availableProcessElements = new ArrayList<>();

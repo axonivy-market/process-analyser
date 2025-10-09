@@ -3,7 +3,7 @@
   "id" : "199A93C96F0D9C13",
   "kind" : "HTML_DIALOG",
   "config" : {
-    "data" : "com.axonivy.solutions.process.analyser.component.CaseAnalytics.CaseAnalyticsData"
+    "data" : "com.axonivy.solutions.process.analyser.component.CaseVisualization.CaseVisualizationData"
   },
   "elements" : [ {
       "id" : "f0",
