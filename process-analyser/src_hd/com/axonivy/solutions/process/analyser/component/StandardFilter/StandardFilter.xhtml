@@ -63,7 +63,7 @@
           </p:cascadeSelect>
         </c:if>
         <c:if test="#{managedBean.mergeProcessStarts}">
-          <p:selectOneMenu value="#{managedBean.selectedProcessAnalyser}" converter="processStartConverter"
+          <p:selectOneMenu id="process-dropdown" value="#{managedBean.selectedProcessAnalyser}" converter="processStartConverter"
             styleClass="w-full">
             <f:selectItem
               itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectProcess')}"
