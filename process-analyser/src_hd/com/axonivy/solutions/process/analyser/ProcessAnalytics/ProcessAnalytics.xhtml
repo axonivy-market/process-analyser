@@ -52,27 +52,21 @@
           styleClass="col-12 p-0 inline-flex justify-content-end"
           layout="block"
           rendered="#{not processesAnalyticsBean.isWidgetMode}">
-          <p:menuButton icon="pi pi-upload"
-            styleClass="action-button mr-3"
+          <p:menuButton icon="pi pi-upload" styleClass="action-button mr-3"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/ExportJPEG')}">
-            <p:menuitem
-              value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/CaptureEntireScreen')}"
+            <p:menuitem value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/CaptureEntireScreen')}"
               actionListener="#{processesAnalyticsBean.prepareForExportingJPEG(true)}"
               process="@this" partialSubmit="true"
-              update="action-btn-group process-analytics-form:process-analytic-viewer-panel:viewer-group"
-              icon="pi pi-desktop"
+              update="action-btn-group process-analytics-form:process-analytic-viewer-panel:viewer-group" icon="pi pi-desktop"
               oncomplete="getFullDiagramData(); return true;" />
-            <p:menuitem
-              value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/CaptureCurrentView')}"
+            <p:menuitem value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/CaptureCurrentView')}"
               process="@this" partialSubmit="true"
               update="action-btn-group" icon="pi pi-th-large"
               oncomplete="getCurrentViewPortOfDiagramData(); return true;" />
           </p:menuButton>
-          <p:commandButton icon="pi pi-upload"
-            styleClass="action-button"
+          <p:commandButton icon="pi pi-upload" styleClass="action-button"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/ExportExcel')}">
-            <p:dataExporter type="csv" target="node"
-              fileName="#{processesAnalyticsBean.generateNameOfExcelFile()}" />
+            <p:dataExporter type="csv" target="node" fileName="#{processesAnalyticsBean.generateNameOfExcelFile()}" />
           </p:commandButton>
         </h:panelGroup>
       </h:form>
