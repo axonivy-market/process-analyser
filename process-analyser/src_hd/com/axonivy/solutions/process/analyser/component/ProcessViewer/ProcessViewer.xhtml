@@ -36,7 +36,7 @@
           <p:tooltip for="@previous" trackMouse="true"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/OpenOnNewTabTooltip')}" />
           <p:commandLink id="config-viewer-link" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
-            disabled="#{ not (processViewerBean.shouldRenderBpmnFrame() or managedBean.isWidgetMode)}" process="@this"
+            disabled="#{ not (processViewerBean.shouldRenderBpmnFrame())}" process="@this"
             partialSubmit="true" immediate="true">
             <p:tooltip for="config-viewer-link" trackMouse="true"
           value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/ConfigViewerTooltip')}"/>
