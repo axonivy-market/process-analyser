@@ -294,7 +294,7 @@ public class ProcessesAnalyticsBean {
       persistedConfig.setWidgetSelectedKpi(selectedKpiType.name());
       updateUserProperty();
     }
-    colorPickerBean.initBean(selectedKpiType, selectedColorMode);
+    colorPickerBean.initBean(selectedKpiType, selectedColorMode, persistedConfig);
     refreshAnalyserReportToView();
   }
 
@@ -674,5 +674,13 @@ public class ProcessesAnalyticsBean {
 
   public void setColorModes(List<ColorMode> colorModes) {
     this.colorModes = colorModes;
+  }
+
+  public ProcessViewerConfig getPersistedConfig() {
+    return persistedConfig;
+  }
+
+  public void setPersistedConfig(ProcessViewerConfig persistedConfig) {
+    this.persistedConfig = persistedConfig;
   }
 }

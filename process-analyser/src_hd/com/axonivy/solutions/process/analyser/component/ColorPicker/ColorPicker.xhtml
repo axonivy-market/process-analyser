@@ -4,7 +4,8 @@
   xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions"
   xmlns:c="http://java.sun.com/jsp/jstl/core">
 <cc:interface componentType="IvyComponent">
-  <cc:attribute name="kpiType" required="true"/>
+  <cc:attribute name="kpiType" required="true" />
+  <cc:attribute name="viewerConfig" required="true" />
   <cc:attribute name="componentToUpdate" default="@this"/>
   <cc:attribute name="onColorChange" method-signature="void onColorChange()"/>
   <cc:attribute name="selectedColorMode"/>
@@ -12,9 +13,10 @@
 
 <cc:implementation>
   <c:set var="kpiType" value="#{cc.attrs.kpiType}"/>
+  <c:set var="viewerConfig" value="#{cc.attrs.viewerConfig}"/>
   <c:set var="isFrequecyKpi" value="#{kpiType eq 'FREQUENCY'}"/>
   <c:set var="selectedColorMode" value="#{cc.attrs.selectedColorMode}"/>
-  <f:event listener="#{colorPickerBean.initBean(kpiType, selectedColorMode)}" type="preRenderComponent"/>
+  <f:event listener="#{colorPickerBean.initBean(kpiType, selectedColorMode, viewerConfig)}" type="preRenderComponent"/>
   <p:remoteCommand id="on-color-change-cmd" name="onColorChange"
     process="@this" update="#{cc.attrs.componentToUpdate}" partialSubmit="true"
     actionListener="#{cc.attrs.onColorChange}"/>

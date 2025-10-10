@@ -39,9 +39,11 @@ public class ColorPickerBean implements Serializable {
   private List<String> textColors;
   private String selectedColor;
   private int selectedIndex = -1;
+  private ProcessViewerConfig processViewerConfig;
 
-  public void initBean(KpiType selectedKpiType, ColorMode selectedColorMode) {
+  public void initBean(KpiType selectedKpiType, ColorMode selectedColorMode, ProcessViewerConfig processViewerConfig) {
     this.selectedKpiType = selectedKpiType;
+    this.processViewerConfig = processViewerConfig;
     this.colorSegments = new ArrayList<>();
     this.textColors = new ArrayList<>();
     if (selectedKpiType != null) {
@@ -89,25 +91,21 @@ public class ColorPickerBean implements Serializable {
     }
     String colorValue = String.join(HYPHEN_SIGN, colorSegments);
     String textValue = String.join(HYPHEN_SIGN, textColors);
-    var persistedConfig = ProcessViewerConfig.fromJson(user.getProperty(PERSISTED_CONFIG));
     if (FREQUENCY == selectedKpiType) {
-      persistedConfig.setFrquencyColor(colorValue);
-      persistedConfig.setFrquencyTextColor(textValue);
+      processViewerConfig.setFrquencyColor(colorValue);
+      processViewerConfig.setFrquencyTextColor(textValue);
     } else {
-      persistedConfig.setDurationColor(colorValue);
-      persistedConfig.setDurationTextColor(textValue);
+      processViewerConfig.setDurationColor(colorValue);
+      processViewerConfig.setDurationTextColor(textValue);
     }
-    user.setProperty(PERSISTED_CONFIG, persistedConfig.toJson());
+    user.setProperty(PERSISTED_CONFIG, processViewerConfig.toJson());
   }
 
   public void onChooseColorChooserMode() {
-    IUser user = Ivy.session().getSessionUser();
-    var persistedConfig = ProcessViewerConfig.fromJson(user.getProperty(PERSISTED_CONFIG));
-
-    String colorProperty = FREQUENCY == selectedKpiType ? persistedConfig.getFrquencyColor()
-        : persistedConfig.getDurationColor();
-    String textProperty = FREQUENCY == selectedKpiType ? persistedConfig.getFrquencyTextColor()
-        : persistedConfig.getDurationTextColor();
+    String colorProperty = FREQUENCY == selectedKpiType ? processViewerConfig.getFrquencyColor()
+        : processViewerConfig.getDurationColor();
+    String textProperty = FREQUENCY == selectedKpiType ? processViewerConfig.getFrquencyTextColor()
+        : processViewerConfig.getDurationTextColor();
 
     if (StringUtils.isNoneBlank(colorProperty, textProperty)) {
       colorSegments = Arrays.asList(colorProperty.split(HYPHEN_REGEX));

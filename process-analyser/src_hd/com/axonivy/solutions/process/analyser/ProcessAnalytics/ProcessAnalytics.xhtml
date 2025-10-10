@@ -41,6 +41,7 @@
           id="color-picker-component"
           kpiType="#{processesAnalyticsBean.selectedKpiType}"
           onColorChange="#{processesAnalyticsBean.refreshAnalyserReportToView()}"
+          viewerConfig="#{processesAnalyticsBean.persistedConfig}"
           componentToUpdate="@this"
           selectedColorMode="#{processesAnalyticsBean.selectedColorMode}" />
         <h:panelGroup layout="block"
