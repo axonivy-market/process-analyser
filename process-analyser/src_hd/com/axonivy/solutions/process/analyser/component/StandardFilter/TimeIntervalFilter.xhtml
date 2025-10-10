@@ -10,7 +10,7 @@
       <p:selectOneMenu value="#{timeIntervalFilterBean.selectedType}" id="filter-types">
         <f:selectItems value="#{timeIntervalFilterBean.intervalTypes}" var="type" itemValue="#{type}"
           itemLabel="#{type.getCmsName()}" />
-        <p:ajax listener="#{timeIntervalFilterBean.onSelectType()}" process="@this" partialSubmit="true"
+        <p:ajax listener="#{timeIntervalFilterBean.onSelectType}" process="@this" partialSubmit="true"
           update="process-time-interval" />
       </p:selectOneMenu>
     </h:panelGroup>

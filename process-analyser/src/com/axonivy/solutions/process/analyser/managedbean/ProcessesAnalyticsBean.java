@@ -112,19 +112,19 @@ public class ProcessesAnalyticsBean {
     String persistedPConfigString = Ivy.session().getSessionUser().getProperty(PERSISTED_CONFIG);
     persistedConfig = ProcessViewerConfig.fromJson(persistedPConfigString);
     initKpiTypes();
-    selectedColorMode = colorModes.get(0);
-    if (BooleanUtils.isTrue(isWidgetMode)) {
-      initSelectedValueFromUserProperty();
-    }
+    selectedColorMode = ColorMode.HEATMAP;
+    initSelectedValueFromUserProperty();
   }
 
   private void initSelectedValueFromUserProperty() {
+    if (!isWidgetMode) {
+      return;
+    }
     selectedModule = persistedConfig.getWidgetSelectedModule();
     isMergeProcessStarts = BooleanUtils.isTrue(persistedConfig.getWidgetMergedProcessStart());
     isIncludingRunningCases = BooleanUtils.isTrue(persistedConfig.getWidgetIncludeRunningCase());
     String selectedKpiTypeName = persistedConfig.getWidgetSelectedKpi();
     String selectedProcessAnalyzerId = persistedConfig.getWidgetSelectedProcessAnalyzer();
-    Ivy.log().warn(selectedProcessAnalyzerId);
     if (StringUtils.isNoneBlank(selectedModule, selectedProcessAnalyzerId)) {
       String[] parts = selectedProcessAnalyzerId.split(HYPHEN_SIGN, 2);
       if (parts.length >= 1) {
