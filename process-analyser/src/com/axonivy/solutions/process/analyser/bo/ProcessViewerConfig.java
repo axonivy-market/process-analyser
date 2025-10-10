@@ -1,7 +1,5 @@
 package com.axonivy.solutions.process.analyser.bo;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -16,7 +14,7 @@ public class ProcessViewerConfig {
   private String widgetSelectedProcessAnalyzer;
   private String widgetSelectedKpi;
   private Boolean widgetMergedProcessStart;
-  private String widgetIncludeRunningCase;
+  private Boolean widgetIncludeRunningCase;
   private Boolean widgetHeatMapMode;
 
   private static final ObjectMapper MAPPER = new ObjectMapper().setSerializationInclusion(Include.NON_EMPTY)
@@ -80,11 +78,11 @@ public class ProcessViewerConfig {
     this.widgetMergedProcessStart = widgetMergedProcessStart;
   }
 
-  public String getWidgetIncludeRunningCase() {
+  public Boolean getWidgetIncludeRunningCase() {
     return widgetIncludeRunningCase;
   }
 
-  public void setWidgetIncludeRunningCase(String widgetIncludeRunningCase) {
+  public void setWidgetIncludeRunningCase(Boolean widgetIncludeRunningCase) {
     this.widgetIncludeRunningCase = widgetIncludeRunningCase;
   }
 

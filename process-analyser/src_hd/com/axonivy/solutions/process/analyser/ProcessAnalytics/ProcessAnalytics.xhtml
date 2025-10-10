@@ -43,7 +43,8 @@
           onColorChange="#{processesAnalyticsBean.refreshAnalyserReportToView()}"
           viewerConfig="#{processesAnalyticsBean.persistedConfig}"
           componentToUpdate="@this"
-          selectedColorMode="#{processesAnalyticsBean.selectedColorMode}" />
+          selectedColorMode="#{processesAnalyticsBean.selectedColorMode}"
+          rendered="#{not processesAnalyticsBean.isWidgetMode}" />
         <h:panelGroup layout="block"
           styleClass="border-top-1 surface-border my-3"
           rendered="#{not processesAnalyticsBean.isWidgetMode}" />

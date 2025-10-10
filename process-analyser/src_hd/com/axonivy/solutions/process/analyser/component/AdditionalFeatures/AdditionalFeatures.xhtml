@@ -23,7 +23,7 @@
       <p:toggleSwitch id="include-running-cases" onIcon="pi pi-check"
         offIcon="pi pi-times"
         value="#{managedBean.includingRunningCases}">
-        <p:ajax listener="#{managedBean.updateDiagramAndStatistic}"
+        <p:ajax listener="#{managedBean.onChangeIncludingRunningCases}"
           update="#{cc.attrs.componentsToUpdate}" />
       </p:toggleSwitch>
       <p:tooltip for="@previous"
@@ -35,7 +35,7 @@
         styleClass="p-2" />
       <p:toggleSwitch id="merge-process-starts" onIcon="pi pi-check"
         offIcon="pi pi-times" value="#{managedBean.mergeProcessStarts}">
-        <p:ajax listener="#{managedBean.updateDiagramAndStatistic}"
+        <p:ajax listener="#{managedBean.onChangeMergeProcessStarts}"
           update="#{cc.attrs.componentsToUpdate}" />
       </p:toggleSwitch>
     </div>

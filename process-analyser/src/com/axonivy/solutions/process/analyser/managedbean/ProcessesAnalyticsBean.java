@@ -23,6 +23,7 @@ import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
@@ -112,20 +113,23 @@ public class ProcessesAnalyticsBean {
     persistedConfig = ProcessViewerConfig.fromJson(persistedPConfigString);
     initKpiTypes();
     selectedColorMode = colorModes.get(0);
-    if (isWidgetMode != null && isWidgetMode) {
+    if (BooleanUtils.isTrue(isWidgetMode)) {
       initSelectedValueFromUserProperty();
     }
   }
 
   private void initSelectedValueFromUserProperty() {
     selectedModule = persistedConfig.getWidgetSelectedModule();
+    isMergeProcessStarts = BooleanUtils.isTrue(persistedConfig.getWidgetMergedProcessStart());
+    isIncludingRunningCases = BooleanUtils.isTrue(persistedConfig.getWidgetIncludeRunningCase());
     String selectedKpiTypeName = persistedConfig.getWidgetSelectedKpi();
     String selectedProcessAnalyzerId = persistedConfig.getWidgetSelectedProcessAnalyzer();
-    if (StringUtils.isNotBlank(selectedProcessAnalyzerId)) {
+    Ivy.log().warn(selectedProcessAnalyzerId);
+    if (StringUtils.isNoneBlank(selectedModule, selectedProcessAnalyzerId)) {
       String[] parts = selectedProcessAnalyzerId.split(HYPHEN_SIGN, 2);
-      if (parts.length == 2) {
+      if (parts.length >= 1) {
         String selectedProcessId = parts[0];
-        String selectedStartPid = parts[1];
+        String selectedStartPid = parts.length == 2 ? parts[1] : StringUtils.EMPTY;
         var selectedProcess = processesMap.get(selectedModule).stream()
             .filter(process -> Strings.CS.equals(process.getId(), selectedProcessId)).findAny().orElse(null);
         var selectedProcessStart = selectedProcess.getStartElements().stream()
@@ -266,21 +270,28 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onModuleSelect() {
+    selectedProcessAnalyser = null;
     if (isWidgetMode) {
       persistedConfig.setWidgetSelectedModule(selectedModule);
       updateUserProperty();
+      PF.current().ajax().update(ProcessAnalyticViewComponentId.WIDGET_PROCESS_SELECTION_GROUP);
+      return;
     }
-    selectedProcessAnalyser = null;
     PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP);
     resetStatisticValue();
   }
 
   public void onProcessSelect() {
     if (isWidgetMode) {
-      String selectedProcessWithStart =
-          String.join(HYPHEN_SIGN, selectedProcessAnalyser.getProcess().getId(), selectedProcessAnalyser.getStartElement().getPid());
-      persistedConfig.setWidgetSelectedProcessAnalyzer(selectedProcessWithStart);
+      String selectedProcessId = Optional.ofNullable(selectedProcessAnalyser.getProcess()).map(Process::getId)
+          .orElse(StringUtils.EMPTY);
+      String selectedStartId = Optional.ofNullable(selectedProcessAnalyser.getStartElement()).map(StartElement::getPid)
+          .orElse(StringUtils.EMPTY);
+      String widgetSelectedProcessAnalyzer = isMergeProcessStarts ? selectedProcessId :
+          String.join(HYPHEN_SIGN, selectedProcessId, selectedStartId);
+      persistedConfig.setWidgetSelectedProcessAnalyzer(widgetSelectedProcessAnalyzer);
       updateUserProperty();
+      return;
     }
     resetStatisticValue();
     if (selectedProcessAnalyser != null) {
@@ -293,6 +304,7 @@ public class ProcessesAnalyticsBean {
     if (isWidgetMode) {
       persistedConfig.setWidgetSelectedKpi(selectedKpiType.name());
       updateUserProperty();
+      return;
     }
     colorPickerBean.initBean(selectedKpiType, selectedColorMode, persistedConfig);
     refreshAnalyserReportToView();
@@ -388,6 +400,22 @@ public class ProcessesAnalyticsBean {
   public void refreshAnalyserReportToView() {
     updateDiagramAndStatistic();
     renderNodesForKPIType();
+  }
+
+  public void onChangeIncludingRunningCases() {
+    if (isWidgetMode) {
+      persistedConfig.setWidgetIncludeRunningCase(isIncludingRunningCases);
+      updateUserProperty();
+    }
+    updateDiagramAndStatistic();
+  }
+
+  public void onChangeMergeProcessStarts() {
+    if (isWidgetMode) {
+      persistedConfig.setWidgetMergedProcessStart(isMergeProcessStarts);
+      updateUserProperty();
+    }
+    updateDiagramAndStatistic();
   }
 
   public void updateDataOnChangingFilter() {
