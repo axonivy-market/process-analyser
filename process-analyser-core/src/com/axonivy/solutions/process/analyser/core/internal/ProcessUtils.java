@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import com.axonivy.solutions.process.analyser.core.bo.Process;
 import com.axonivy.solutions.process.analyser.core.bo.StartElement;
@@ -118,7 +119,7 @@ public class ProcessUtils {
     }
     String targetName = SubProcessCall.class.cast(element).getCallTarget().getSignature().getName();
     return getNestedProcessElementsFromSub(element).stream().filter(CallSubStart.class::isInstance)
-        .map(CallSubStart.class::cast).filter(start -> StringUtils.equals(start.getSignature().getName(), targetName))
+        .map(CallSubStart.class::cast).filter(start -> Strings.CS.equals(start.getSignature().getName(), targetName))
         .findAny().orElse(null);
   }
 
@@ -215,9 +216,9 @@ public class ProcessUtils {
         .map(String::trim).toArray(String[]::new);
     return pmv -> {
       String pmName = pmv.getProcessModel().getName();
-      return !(StringUtils.equals(pmName, ProcessAnalyticsConstants.PROCESS_ANALYSER_PMV_NAME)
-          || StringUtils.contains(pmName, ProcessAnalyticsConstants.PORTAL_PMV_SUFFIX)
-          || StringUtils.equalsAnyIgnoreCase(pmName, skipPMVs));
+      return !(Strings.CS.equals(pmName, ProcessAnalyticsConstants.PROCESS_ANALYSER_PMV_NAME)
+          || Strings.CS.contains(pmName, ProcessAnalyticsConstants.PORTAL_PMV_SUFFIX)
+          || Strings.CI.equalsAny(pmName, skipPMVs));
     };
   }
 
@@ -241,8 +242,8 @@ public class ProcessUtils {
 
   public static boolean isIWebStartableNeedToRecordStatistic(IWebStartable process) {
     String pmName = process.pmv().getProcessModel().getName();
-    return !(StringUtils.equals(pmName, ProcessAnalyticsConstants.PROCESS_ANALYSER_PMV_NAME)
-        || StringUtils.contains(pmName, ProcessAnalyticsConstants.PORTAL_PMV_SUFFIX))
+    return !(Strings.CS.equals(pmName, ProcessAnalyticsConstants.PROCESS_ANALYSER_PMV_NAME)
+        || Strings.CS.contains(pmName, ProcessAnalyticsConstants.PORTAL_PMV_SUFFIX))
         && IProcessWebStartable.class.isInstance(process);
   }
 
@@ -288,7 +289,7 @@ public class ProcessUtils {
   @SuppressWarnings("removal")
   public static Long getTaskStartIdFromPID(String rawPid) {
     return Ivy.session().getStartableProcessStarts().stream()
-        .filter(start -> StringUtils.equals(rawPid, start.getProcessElementId())).findFirst().map(IProcessStart::getId)
+        .filter(start -> Strings.CS.equals(rawPid, start.getProcessElementId())).findFirst().map(IProcessStart::getId)
         .orElse(0L);
   }
 
