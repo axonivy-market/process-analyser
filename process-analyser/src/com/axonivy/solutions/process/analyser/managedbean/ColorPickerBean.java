@@ -4,10 +4,6 @@ import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnaly
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_REGEX;
 import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_SIGN;
-import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.DURATION_COLOR;
-import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.DURATION_TEXT_COLOR;
-import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.FREQUENCY_COLOR;
-import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.FREQUENCY_TEXT_COLOR;
 import static com.axonivy.solutions.process.analyser.enums.KpiType.FREQUENCY;
 
 import java.io.Serializable;
@@ -20,7 +16,9 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
+import com.axonivy.solutions.process.analyser.bo.ProcessViewerConfig;
 import com.axonivy.solutions.process.analyser.enums.ColorMode;
 import com.axonivy.solutions.process.analyser.enums.HeatmapColor;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
@@ -34,6 +32,8 @@ import ch.ivyteam.ivy.security.IUser;
 public class ColorPickerBean implements Serializable {
 
   private static final long serialVersionUID = -4814493647451230728L;
+  //TODO: convert to constant
+  private final String PERSISTED_CONFIG = "PERSISTED_CONFIG";
   private KpiType selectedKpiType;
   private List<String> colorSegments;
   private List<String> textColors;
@@ -87,22 +87,29 @@ public class ColorPickerBean implements Serializable {
     if (CollectionUtils.isEmpty(colorSegments) || CollectionUtils.isEmpty(textColors)) {
       return;
     }
-    String colorKey = getColorPropertyKey();
-    String textKey = getTextColorPropertyKey();
-
-    user.setProperty(colorKey, String.join(HYPHEN_SIGN, colorSegments));
-    user.setProperty(textKey, String.join(HYPHEN_SIGN, textColors));
+    String colorValue = String.join(HYPHEN_SIGN, colorSegments);
+    String textValue = String.join(HYPHEN_SIGN, textColors);
+    var persistedConfig = ProcessViewerConfig.fromJson(user.getProperty(PERSISTED_CONFIG));
+    if (FREQUENCY == selectedKpiType) {
+      persistedConfig.setFrquencyColor(colorValue);
+      persistedConfig.setFrquencyTextColor(textValue);
+    } else {
+      persistedConfig.setDurationColor(colorValue);
+      persistedConfig.setDurationTextColor(textValue);
+    }
+    user.setProperty(PERSISTED_CONFIG, persistedConfig.toJson());
   }
 
   public void onChooseColorChooserMode() {
     IUser user = Ivy.session().getSessionUser();
-    String colorKey = getColorPropertyKey();
-    String textKey = getTextColorPropertyKey();
+    var persistedConfig = ProcessViewerConfig.fromJson(user.getProperty(PERSISTED_CONFIG));
 
-    String colorProperty = user.getProperty(colorKey);
-    String textProperty = user.getProperty(textKey);
+    String colorProperty = FREQUENCY == selectedKpiType ? persistedConfig.getFrquencyColor()
+        : persistedConfig.getDurationColor();
+    String textProperty = FREQUENCY == selectedKpiType ? persistedConfig.getFrquencyTextColor()
+        : persistedConfig.getDurationTextColor();
 
-    if (colorProperty != null && textProperty != null) {
+    if (StringUtils.isNoneBlank(colorProperty, textProperty)) {
       colorSegments = Arrays.asList(colorProperty.split(HYPHEN_REGEX));
       textColors = Arrays.asList(textProperty.split(HYPHEN_REGEX));
     } else {
@@ -118,14 +125,6 @@ public class ColorPickerBean implements Serializable {
 
   public boolean isRenderedColorPicker() {
     return selectedIndex >= 0;
-  }
-
-  private String getColorPropertyKey() {
-    return FREQUENCY == selectedKpiType ? FREQUENCY_COLOR : DURATION_COLOR;
-  }
-
-  private String getTextColorPropertyKey() {
-    return FREQUENCY == selectedKpiType ? FREQUENCY_TEXT_COLOR : DURATION_TEXT_COLOR;
   }
 
   public KpiType getSelectedKpiType() {

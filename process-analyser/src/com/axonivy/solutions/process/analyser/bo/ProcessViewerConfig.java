@@ -8,12 +8,12 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ProcessViewerConfig {
-  private List<String> frquencyColor;
+  private String frquencyColor;
   private String frquencyTextColor;
-  private List<String> durationColor;
+  private String durationColor;
   private String durationTextColor;
   private String widgetSelectedModule;
-  private String widgetSelectedProcessName;
+  private String widgetSelectedProcessAnalyzer;
   private String widgetSelectedKpi;
   private Boolean widgetMergedProcessStart;
   private String widgetIncludeRunningCase;
@@ -40,28 +40,12 @@ public class ProcessViewerConfig {
     }
   }
 
-  public List<String> getFrquencyColor() {
-    return frquencyColor;
-  }
-
-  public void setFrquencyColor(List<String> frquencyColor) {
-    this.frquencyColor = frquencyColor;
-  }
-
   public String getFrquencyTextColor() {
     return frquencyTextColor;
   }
 
   public void setFrquencyTextColor(String frquencyTextColor) {
     this.frquencyTextColor = frquencyTextColor;
-  }
-
-  public List<String> getDurationColor() {
-    return durationColor;
-  }
-
-  public void setDurationColor(List<String> durationColor) {
-    this.durationColor = durationColor;
   }
 
   public String getDurationTextColor() {
@@ -78,14 +62,6 @@ public class ProcessViewerConfig {
 
   public void setWidgetSelectedModule(String widgetSelectedModule) {
     this.widgetSelectedModule = widgetSelectedModule;
-  }
-
-  public String getWidgetSelectedProcessName() {
-    return widgetSelectedProcessName;
-  }
-
-  public void setWidgetSelectedProcessName(String widgetSelectedProcessName) {
-    this.widgetSelectedProcessName = widgetSelectedProcessName;
   }
 
   public String getWidgetSelectedKpi() {
@@ -118,5 +94,29 @@ public class ProcessViewerConfig {
 
   public void setWidgetHeatMapMode(Boolean widgetHeatMapMode) {
     this.widgetHeatMapMode = widgetHeatMapMode;
+  }
+
+  public String getWidgetSelectedProcessAnalyzer() {
+    return widgetSelectedProcessAnalyzer;
+  }
+
+  public void setWidgetSelectedProcessAnalyzer(String widgetSelectedProcessAnalyzer) {
+    this.widgetSelectedProcessAnalyzer = widgetSelectedProcessAnalyzer;
+  }
+
+  public String getFrquencyColor() {
+    return frquencyColor;
+  }
+
+  public void setFrquencyColor(String frquencyColor) {
+    this.frquencyColor = frquencyColor;
+  }
+
+  public String getDurationColor() {
+    return durationColor;
+  }
+
+  public void setDurationColor(String durationColor) {
+    this.durationColor = durationColor;
   }
 }

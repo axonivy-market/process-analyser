@@ -32,13 +32,13 @@ import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
 import com.axonivy.solutions.process.analyser.bo.ProcessMiningData;
+import com.axonivy.solutions.process.analyser.bo.ProcessViewerConfig;
 import com.axonivy.solutions.process.analyser.bo.TimeFrame;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
 import com.axonivy.solutions.process.analyser.core.bo.Process;
 import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
-import com.axonivy.solutions.process.analyser.core.constants.UserProperty;
 import com.axonivy.solutions.process.analyser.core.enums.StartElementType;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.ColorMode;
@@ -62,6 +62,7 @@ import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 @ViewScoped
 public class ProcessesAnalyticsBean {
   private static final String SUB_PROCESS_CALL_PID_PARAM_NAME = "subProcessCallPid";
+  private final String PERSISTED_CONFIG = "PERSISTED_CONFIG";
   private Map<String, List<Process>> processesMap = new HashMap<>();
   private ProcessAnalyser selectedProcessAnalyser;
   private String selectedModule;
@@ -88,6 +89,7 @@ public class ProcessesAnalyticsBean {
   private ColorPickerBean colorPickerBean;
   private Boolean isWidgetMode;
   private ColorMode selectedColorMode;
+  private ProcessViewerConfig persistedConfig;
   private List<ColorMode> colorModes = Arrays.asList(ColorMode.values());
 
   @PostConstruct
@@ -97,7 +99,7 @@ public class ProcessesAnalyticsBean {
     colorPickerBean = FacesContexts.evaluateValueExpression("#{colorPickerBean}", ColorPickerBean.class);
     isWidgetMode = FacesContexts.evaluateValueExpression("#{data.isWidgetMode}", Boolean.class);
     processesMap = masterDataBean.getProcessesMap();
-    setNodes(new ArrayList<>());
+    nodes = new ArrayList<>();
     processMiningDataJsonFile = ContentManagement.cms(IApplication.current()).root().child()
         .folder(ProcessAnalyticsConstants.PROCESS_ANALYSER_CMS_PATH).child()
         .file(ProcessAnalyticsConstants.DATA_CMS_PATH, ProcessAnalyticsConstants.JSON_EXTENSION);
@@ -106,6 +108,8 @@ public class ProcessesAnalyticsBean {
     customFieldsByType = new ArrayList<>();
     selectedCustomFilters = new ArrayList<>();
     selectedCustomFieldNames = new ArrayList<>();
+    String persistedPConfigString = Ivy.session().getSessionUser().getProperty(PERSISTED_CONFIG);
+    persistedConfig = ProcessViewerConfig.fromJson(persistedPConfigString);
     initKpiTypes();
     selectedColorMode = colorModes.get(0);
     if (isWidgetMode != null && isWidgetMode) {
@@ -114,10 +118,9 @@ public class ProcessesAnalyticsBean {
   }
 
   private void initSelectedValueFromUserProperty() {
-    IUser currentUser = Ivy.session().getSessionUser();
-    selectedModule = currentUser.getProperty(UserProperty.WIDGET_SELECTED_MODULE);
-    String selectedKpiTypeName = currentUser.getProperty(UserProperty.WIDGET_SELECTED_KPI);
-    String selectedProcessAnalyzerId = currentUser.getProperty(UserProperty.WIDGET_SELECTED_PROCESS_NAME);
+    selectedModule = persistedConfig.getWidgetSelectedModule();
+    String selectedKpiTypeName = persistedConfig.getWidgetSelectedKpi();
+    String selectedProcessAnalyzerId = persistedConfig.getWidgetSelectedProcessAnalyzer();
     if (StringUtils.isNotBlank(selectedProcessAnalyzerId)) {
       String[] parts = selectedProcessAnalyzerId.split(HYPHEN_SIGN, 2);
       if (parts.length == 2) {
@@ -264,7 +267,8 @@ public class ProcessesAnalyticsBean {
 
   public void onModuleSelect() {
     if (isWidgetMode) {
-      updateUserProperty(UserProperty.WIDGET_SELECTED_MODULE, selectedModule);
+      persistedConfig.setWidgetSelectedModule(selectedModule);
+      updateUserProperty();
     }
     selectedProcessAnalyser = null;
     PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP);
@@ -275,7 +279,8 @@ public class ProcessesAnalyticsBean {
     if (isWidgetMode) {
       String selectedProcessWithStart =
           String.join(HYPHEN_SIGN, selectedProcessAnalyser.getProcess().getId(), selectedProcessAnalyser.getStartElement().getPid());
-      updateUserProperty(UserProperty.WIDGET_SELECTED_PROCESS_NAME, selectedProcessWithStart);
+      persistedConfig.setWidgetSelectedProcessAnalyzer(selectedProcessWithStart);
+      updateUserProperty();
     }
     resetStatisticValue();
     if (selectedProcessAnalyser != null) {
@@ -286,15 +291,16 @@ public class ProcessesAnalyticsBean {
 
   public void onKpiTypeSelect() {
     if (isWidgetMode) {
-      updateUserProperty(UserProperty.WIDGET_SELECTED_KPI, selectedKpiType.name());
+      persistedConfig.setWidgetSelectedKpi(selectedKpiType.name());
+      updateUserProperty();
     }
     colorPickerBean.initBean(selectedKpiType, selectedColorMode);
     refreshAnalyserReportToView();
   }
 
-  private void updateUserProperty(String key, String value) {
+  private void updateUserProperty() {
     IUser user = Ivy.session().getSessionUser();
-    user.setProperty(key, value);
+    user.setProperty(PERSISTED_CONFIG, persistedConfig.toJson());
   }
 
   private void resetStatisticValue() {
