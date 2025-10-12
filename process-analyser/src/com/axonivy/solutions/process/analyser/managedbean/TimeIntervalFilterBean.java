@@ -22,6 +22,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.primefaces.PF;
 
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
@@ -45,11 +46,13 @@ public class TimeIntervalFilterBean implements Serializable {
   private String currentTime;
   private TimeIntervalFilter filter;
   private List<Date> selectedDateRange;
+  private Boolean isWidgetMode;
 
   @PostConstruct
   public void initFilter() {
     filter = new TimeIntervalFilter();
     selectedType = TODAY;
+    isWidgetMode = FacesContexts.evaluateValueExpression("#{cc.attrs.isWidgetMode}", Boolean.class);
     unifyFilterAndRefreshData();
   }
 
@@ -99,7 +102,7 @@ public class TimeIntervalFilterBean implements Serializable {
   }
 
   private void updateDataOnChangingFilter() {
-    if (filter == null || filter.getFrom() == null || filter.getTo() == null) {
+    if (filter == null || filter.getFrom() == null || filter.getTo() == null || BooleanUtils.isTrue(isWidgetMode)) {
       return;
     }
 
