@@ -55,7 +55,6 @@ import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.cm.ContentObject;
 import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.environment.Ivy;
-import ch.ivyteam.ivy.security.IUser;
 import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 
@@ -283,12 +282,7 @@ public class ProcessesAnalyticsBean {
 
   public void onProcessSelect() {
     if (isWidgetMode) {
-      String selectedProcessId = Optional.ofNullable(selectedProcessAnalyser.getProcess()).map(Process::getId)
-          .orElse(StringUtils.EMPTY);
-      String selectedStartId = Optional.ofNullable(selectedProcessAnalyser.getStartElement()).map(StartElement::getPid)
-          .orElse(StringUtils.EMPTY);
-      String widgetSelectedProcessAnalyzer = isMergeProcessStarts ? selectedProcessId :
-          String.join(HYPHEN_SIGN, selectedProcessId, selectedStartId);
+      String widgetSelectedProcessAnalyzer = getWidgetSelectedProcessAnalyzerKey();
       persistedConfig.setWidgetSelectedProcessAnalyzer(widgetSelectedProcessAnalyzer);
       updateUserProperty();
       return;
@@ -298,6 +292,16 @@ public class ProcessesAnalyticsBean {
       getCaseAndTaskCustomFields();
       refreshAnalyserReportToView();
     }
+  }
+
+  private String getWidgetSelectedProcessAnalyzerKey() {
+    String selectedProcessId = Optional.ofNullable(selectedProcessAnalyser.getProcess()).map(Process::getId)
+        .orElse(StringUtils.EMPTY);
+    String selectedStartId = Optional.ofNullable(selectedProcessAnalyser.getStartElement()).map(StartElement::getPid)
+        .orElse(StringUtils.EMPTY);
+    String widgetSelectedProcessAnalyzer = isMergeProcessStarts ? selectedProcessId :
+        String.join(HYPHEN_SIGN, selectedProcessId, selectedStartId);
+    return widgetSelectedProcessAnalyzer;
   }
 
   public void onKpiTypeSelect() {
@@ -311,8 +315,7 @@ public class ProcessesAnalyticsBean {
   }
 
   private void updateUserProperty() {
-    IUser user = Ivy.session().getSessionUser();
-    user.setProperty(PERSISTED_CONFIG, persistedConfig.toJson());
+    Ivy.session().getSessionUser().setProperty(PERSISTED_CONFIG, persistedConfig.toJson());
   }
 
   private void resetStatisticValue() {
