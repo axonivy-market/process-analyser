@@ -424,9 +424,11 @@ public class ProcessesAnalyticsBean {
     String to = parameterMap.get(ProcessAnalyticsConstants.TO);
     timeIntervalFilter.setFrom(DateUtils.parseDateFromString(from));
     timeIntervalFilter.setTo(DateUtils.parseDateFromString(to));
-    resetStatisticValue();
-    getCaseAndTaskCustomFields();
-    refreshAnalyserReportToView();
+    if (!isWidgetMode) {
+      resetStatisticValue();
+      getCaseAndTaskCustomFields();
+      refreshAnalyserReportToView();
+    }
   }
 
   public void updateDiagramAndStatistic() {
