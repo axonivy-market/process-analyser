@@ -379,12 +379,13 @@ public class ProcessesAnalyticsBean {
 
     if (haveMandatoryFieldsBeenFilled()) {
       List<ICase> cases = new ArrayList<>();
+      boolean shouldIncludeRunningCasesByKpi = isIncludingRunningCases && !selectedKpiType.isDescendantOf(KpiType.DURATION);
       if (isMergeProcessStarts) {
         List<Long> taskStartIds =
             selectedProcessAnalyser.getProcess().getStartElements().stream().map(StartElement::getTaskStartId).toList();
         for (Long taskStartId : taskStartIds) {
           List<ICase> subCases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId,
-              timeIntervalFilter, selectedCustomFilters, isIncludingRunningCases);
+              timeIntervalFilter, selectedCustomFilters, shouldIncludeRunningCasesByKpi);
           if (CollectionUtils.isNotEmpty(subCases)) {
             cases.addAll(subCases);
           }
@@ -392,7 +393,7 @@ public class ProcessesAnalyticsBean {
       } else {
         Long taskStartId = selectedProcessAnalyser.getStartElement().getTaskStartId();
         cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter,
-            selectedCustomFilters, isIncludingRunningCases);
+            selectedCustomFilters, shouldIncludeRunningCasesByKpi);
       }
       if (CollectionUtils.isNotEmpty(cases)) {
         analyzedNode = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(selectedProcessAnalyser, selectedKpiType, cases);
