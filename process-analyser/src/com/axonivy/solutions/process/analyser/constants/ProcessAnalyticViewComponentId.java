@@ -15,7 +15,7 @@ public class ProcessAnalyticViewComponentId {
   public static final String WIDGET_PROCESS_SELECTION_GROUP = WIDGET_STANDRAD_FILTER + ID_SECTION_SEPARATOR
       + "process-selection-group";
   public static final String HIDDEN_IMAGE = FORM + ID_SECTION_SEPARATOR + "hidden-image";
-  public static final String PROCESS_ANALYTIC_VIEWER_PANEL_GROUP = PROCESS_ANALYTIC_VIEWER_PANEL + ID_SECTION_SEPARATOR 
+  public static final String PROCESS_ANALYTIC_VIEWER_GROUP = PROCESS_ANALYTIC_VIEWER_PANEL + ID_SECTION_SEPARATOR 
       + "viewer-group";
   public static final String SHOW_STATISTIC_BTN = STANDARD_FILTER_PANEL_GROUP + ID_SECTION_SEPARATOR + "show-statistic-btn";
   public static final String CUSTOM_FILTER_PANEL = FORM + ID_SECTION_SEPARATOR + "custom-filter-panel-group";
@@ -25,7 +25,7 @@ public class ProcessAnalyticViewComponentId {
   public static final String ACTION_BTN_GROUP = FORM + ID_SECTION_SEPARATOR + "action-btn-group";
   public static final String DATA_STATISTICS = FORM + ID_SECTION_SEPARATOR + "statistic-viewer" +ID_SECTION_SEPARATOR+ "data-statistics";
   public static List<String> getDiagramAndStatisticComponentIds() {
-    return List.of(HIDDEN_IMAGE, PROCESS_ANALYTIC_VIEWER_PANEL, PROCESS_ANALYTIC_VIEWER_PANEL_GROUP, SHOW_STATISTIC_BTN, ACTION_BTN_GROUP,
+    return List.of(HIDDEN_IMAGE, PROCESS_ANALYTIC_VIEWER_GROUP, SHOW_STATISTIC_BTN, ACTION_BTN_GROUP,
         DATA_STATISTICS);
   }
 }

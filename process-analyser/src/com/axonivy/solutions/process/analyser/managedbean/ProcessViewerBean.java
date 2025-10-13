@@ -45,7 +45,7 @@ public class ProcessViewerBean implements Serializable {
     if (selectedProcess != null) {
       unifySelectionData();
       updateBpmnIframeSourceUrl(selectedStartElement);
-      PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_ANALYTIC_VIEWER_PANEL);
+      PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_ANALYTIC_VIEWER_GROUP);
     }
   }
 
