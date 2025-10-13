@@ -127,7 +127,7 @@
       </f:facet>
       <h:panelGroup rendered="#{processViewerBean.shouldRenderBpmnFrame()}">
         <iframe id="process-analytic-viewer" src="#{processViewerBean.bpmnIframeSourceUrl}" width="100%" height="100%"
-          class="process-analytic-viewer" onload="loadIframe(false)" />
+          class="#{managedBean.isWidgetMode ? 'full-widget-height' : ''} process-analytic-viewer" onload="loadIframe(false)" />
       </h:panelGroup>
       <h:panelGroup rendered="#{!processViewerBean.shouldRenderBpmnFrame()}" styleClass="col mb-2" layout="block">
         <h:outputText value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/EmptyDataMessage')}" />

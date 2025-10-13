@@ -110,14 +110,15 @@ public class ProcessesAnalyticsBean {
     customFieldsByType = new ArrayList<>();
     selectedCustomFilters = new ArrayList<>();
     selectedCustomFieldNames = new ArrayList<>();
-    String persistedConfigString = Ivy.session().getSessionUser().getProperty(PROCESS_ANALYTIC_PERSISTED_CONFIG);
-    persistedConfig = JacksonUtils.fromJson(persistedConfigString, ProcessViewerConfig.class);
     initKpiTypes();
     selectedColorMode = ColorMode.HEATMAP;
     initSelectedValueFromUserProperty();
   }
 
   private void initSelectedValueFromUserProperty() {
+    String persistedConfigString = Ivy.session().getSessionUser().getProperty(PROCESS_ANALYTIC_PERSISTED_CONFIG);
+    persistedConfig = StringUtils.isBlank(persistedConfigString) ? new ProcessViewerConfig()
+        : JacksonUtils.fromJson(persistedConfigString, ProcessViewerConfig.class);
     if (!isWidgetMode) {
       return;
     }
@@ -132,6 +133,8 @@ public class ProcessesAnalyticsBean {
     if (StringUtils.isNotBlank(selectedKpiTypeName)) {
       selectedKpiType = KpiType.valueOf(selectedKpiTypeName);
     }
+    updateDiagramAndStatistic();
+    
   }
 
   private ProcessAnalyser initSelectedProcessAnalyser(String selectedProcessAnalyzerId) {
@@ -142,7 +145,7 @@ public class ProcessesAnalyticsBean {
       var selectedProcess = processesMap.get(selectedModule).stream()
           .filter(process -> Strings.CS.equals(process.getId(), selectedProcessId)).findAny().orElse(null);
       if (selectedProcess == null) {
-        return persistedProcessAnalyser;
+        return null;
       }
       persistedProcessAnalyser.setProcess(selectedProcess);
       String selectedStartPid = parts.length == 2 ? parts[1] : StringUtils.EMPTY;
@@ -449,10 +452,12 @@ public class ProcessesAnalyticsBean {
 
   public void updateDiagramAndStatistic() {
     if (isDiagramAndStatisticRenderable()) {
+      Ivy.log().warn(isDiagramAndStatisticRenderable());
       viewerBean.init(selectedProcessAnalyser);
       loadNodes();
       updateProcessMiningDataJson();
       renderNodesForKPIType();
+      Ivy.log().warn(filteredNodes.size());
       PF.current().executeScript(ProcessAnalyticsConstants.UPDATE_IFRAME_SOURCE_METHOD_CALL);
       PF.current().ajax().update(ProcessAnalyticViewComponentId.getDiagramAndStatisticComponentIds());
     }
