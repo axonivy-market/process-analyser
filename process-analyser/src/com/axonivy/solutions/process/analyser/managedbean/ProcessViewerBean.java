@@ -15,7 +15,7 @@ import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
 import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
 import com.axonivy.solutions.process.analyser.core.bo.ElementDisplayName;
 import com.axonivy.solutions.process.analyser.core.bo.Process;
-import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
+import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessViewerBuilder;
 import com.axonivy.solutions.process.analyser.core.util.ProcessElementUtils;
 

@@ -1,9 +1,10 @@
 package com.axonivy.solutions.process.analyser.managedbean;
 
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COLOR_SEGMENT_ATTRIBUTE;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_REGEX;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_SIGN;
+import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.COLOR_SEGMENT_ATTRIBUTE;
+import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS;
+import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.HYPHEN_REGEX;
+import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.PROCESS_ANALYTIC_PERSISTED_CONFIG;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyserConstants.HYPHEN_SIGN;
 import static com.axonivy.solutions.process.analyser.enums.KpiType.FREQUENCY;
 
 import java.io.Serializable;
@@ -23,6 +24,7 @@ import com.axonivy.solutions.process.analyser.enums.ColorMode;
 import com.axonivy.solutions.process.analyser.enums.HeatmapColor;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.utils.ColorUtils;
+import com.axonivy.solutions.process.analyser.utils.JacksonUtils;
 
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.security.IUser;
@@ -32,8 +34,6 @@ import ch.ivyteam.ivy.security.IUser;
 public class ColorPickerBean implements Serializable {
 
   private static final long serialVersionUID = -4814493647451230728L;
-  //TODO: convert to constant
-  private final String PERSISTED_CONFIG = "PERSISTED_CONFIG";
   private KpiType selectedKpiType;
   private List<String> colorSegments;
   private List<String> textColors;
@@ -92,19 +92,19 @@ public class ColorPickerBean implements Serializable {
     String colorValue = String.join(HYPHEN_SIGN, colorSegments);
     String textValue = String.join(HYPHEN_SIGN, textColors);
     if (FREQUENCY == selectedKpiType) {
-      processViewerConfig.setFrquencyColor(colorValue);
-      processViewerConfig.setFrquencyTextColor(textValue);
+      processViewerConfig.setFrequencyColor(colorValue);
+      processViewerConfig.setFrequencyTextColor(textValue);
     } else {
       processViewerConfig.setDurationColor(colorValue);
       processViewerConfig.setDurationTextColor(textValue);
     }
-    user.setProperty(PERSISTED_CONFIG, processViewerConfig.toJson());
+    user.setProperty(PROCESS_ANALYTIC_PERSISTED_CONFIG, JacksonUtils.convertObjectToJSONString(processViewerConfig));
   }
 
   public void onChooseColorChooserMode() {
-    String colorProperty = FREQUENCY == selectedKpiType ? processViewerConfig.getFrquencyColor()
+    String colorProperty = FREQUENCY == selectedKpiType ? processViewerConfig.getFrequencyColor()
         : processViewerConfig.getDurationColor();
-    String textProperty = FREQUENCY == selectedKpiType ? processViewerConfig.getFrquencyTextColor()
+    String textProperty = FREQUENCY == selectedKpiType ? processViewerConfig.getFrequencyTextColor()
         : processViewerConfig.getDurationTextColor();
 
     if (StringUtils.isNoneBlank(colorProperty, textProperty)) {

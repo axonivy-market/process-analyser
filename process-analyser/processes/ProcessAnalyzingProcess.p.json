@@ -16,9 +16,9 @@
           }
         },
         "request" : {
-          "name" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/name\")%>",
-          "description" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/description\")%>",
-          "category" : "ProcessAnalyser",
+          "name" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/Name\")%>",
+          "description" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/Description\")%>",
+          "category" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/Name\")%>",
           "customFields" : [
             { "name" : "embedInFrame", "value" : "false" }
           ]
@@ -66,14 +66,12 @@
           }
         },
         "request" : {
-          "name" : "widget start",
-          "description" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/description\")%>",
-          "category" : "ProcessAnalyser",
+          "name" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/WidgetStartName\")%>",
+          "description" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/Description\")%>",
           "customFields" : [
             { "name" : "embedInFrame", "value" : "false" },
             { "name" : "isDashboardProcess", "value" : "true" }
-          ],
-          "isVisibleOnStartList" : false
+          ]
         }
       },
       "visual" : {

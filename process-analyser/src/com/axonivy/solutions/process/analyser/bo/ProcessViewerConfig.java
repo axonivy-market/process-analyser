@@ -1,13 +1,8 @@
 package com.axonivy.solutions.process.analyser.bo;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 public class ProcessViewerConfig {
-  private String frquencyColor;
-  private String frquencyTextColor;
+  private String frequencyColor;
+  private String frequencyTextColor;
   private String durationColor;
   private String durationTextColor;
   private String widgetSelectedModule;
@@ -16,35 +11,6 @@ public class ProcessViewerConfig {
   private Boolean widgetMergedProcessStart;
   private Boolean widgetIncludeRunningCase;
   private Boolean widgetHeatMapMode;
-
-  private static final ObjectMapper MAPPER = new ObjectMapper().setSerializationInclusion(Include.NON_EMPTY)
-      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-  public String toJson() {
-    try {
-      return MAPPER.writeValueAsString(this);
-    } catch (JsonProcessingException e) {
-      throw new IllegalStateException("Failed to serialize A", e);
-    }
-  }
-
-  public static ProcessViewerConfig fromJson(String json) {
-    if (json == null || json.trim().isEmpty())
-      return new ProcessViewerConfig();
-    try {
-      return MAPPER.readValue(json, ProcessViewerConfig.class);
-    } catch (JsonProcessingException e) {
-      throw new IllegalArgumentException("Invalid JSON for A", e);
-    }
-  }
-
-  public String getFrquencyTextColor() {
-    return frquencyTextColor;
-  }
-
-  public void setFrquencyTextColor(String frquencyTextColor) {
-    this.frquencyTextColor = frquencyTextColor;
-  }
 
   public String getDurationTextColor() {
     return durationTextColor;
@@ -102,19 +68,27 @@ public class ProcessViewerConfig {
     this.widgetSelectedProcessAnalyzer = widgetSelectedProcessAnalyzer;
   }
 
-  public String getFrquencyColor() {
-    return frquencyColor;
-  }
-
-  public void setFrquencyColor(String frquencyColor) {
-    this.frquencyColor = frquencyColor;
-  }
-
   public String getDurationColor() {
     return durationColor;
   }
 
   public void setDurationColor(String durationColor) {
     this.durationColor = durationColor;
+  }
+
+  public String getFrequencyColor() {
+    return frequencyColor;
+  }
+
+  public void setFrequencyColor(String frequencyColor) {
+    this.frequencyColor = frequencyColor;
+  }
+
+  public String getFrequencyTextColor() {
+    return frequencyTextColor;
+  }
+
+  public void setFrequencyTextColor(String frequencyTextColor) {
+    this.frequencyTextColor = frequencyTextColor;
   }
 }

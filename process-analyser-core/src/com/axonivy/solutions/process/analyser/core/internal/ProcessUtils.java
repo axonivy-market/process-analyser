@@ -18,7 +18,7 @@ import org.apache.commons.lang3.Strings;
 
 import com.axonivy.solutions.process.analyser.core.bo.Process;
 import com.axonivy.solutions.process.analyser.core.bo.StartElement;
-import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
+import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyserConstants;
 import com.axonivy.solutions.process.analyser.core.util.PIDUtils;
 
 import ch.ivyteam.ivy.application.IApplication;
@@ -62,7 +62,7 @@ public class ProcessUtils {
   }
 
   public static String getProcessPidFromElement(String elementId) {
-    return StringUtils.defaultString(elementId).split(ProcessAnalyticsConstants.HYPHEN_SIGN)[0];
+    return StringUtils.defaultString(elementId).split(ProcessAnalyserConstants.HYPHEN_SIGN)[0];
   }
 
   public static boolean isEmbeddedElementInstance(Object element) {
@@ -211,13 +211,13 @@ public class ProcessUtils {
 
   private static Predicate<? super IProcessModelVersion> isPMVNeedToRecordStatistic() {
     String configSkipProjects = StringUtils.trim(Ivy.var().get(SKIP_PROJECTS_VARIABLE));
-    String[] skipPMVs = Arrays.asList(StringUtils.split(configSkipProjects, ProcessAnalyticsConstants.SEMI_COLONS))
+    String[] skipPMVs = Arrays.asList(StringUtils.split(configSkipProjects, ProcessAnalyserConstants.SEMI_COLONS))
         .stream().filter(StringUtils::isNoneBlank)
         .map(String::trim).toArray(String[]::new);
     return pmv -> {
       String pmName = pmv.getProcessModel().getName();
-      return !(Strings.CS.equals(pmName, ProcessAnalyticsConstants.PROCESS_ANALYSER_PMV_NAME)
-          || Strings.CS.contains(pmName, ProcessAnalyticsConstants.PORTAL_PMV_SUFFIX)
+      return !(Strings.CS.equals(pmName, ProcessAnalyserConstants.PROCESS_ANALYSER_PMV_NAME)
+          || Strings.CS.contains(pmName, ProcessAnalyserConstants.PORTAL_PMV_SUFFIX)
           || Strings.CI.equalsAny(pmName, skipPMVs));
     };
   }
@@ -242,8 +242,8 @@ public class ProcessUtils {
 
   public static boolean isIWebStartableNeedToRecordStatistic(IWebStartable process) {
     String pmName = process.pmv().getProcessModel().getName();
-    return !(Strings.CS.equals(pmName, ProcessAnalyticsConstants.PROCESS_ANALYSER_PMV_NAME)
-        || Strings.CS.contains(pmName, ProcessAnalyticsConstants.PORTAL_PMV_SUFFIX))
+    return !(Strings.CS.equals(pmName, ProcessAnalyserConstants.PROCESS_ANALYSER_PMV_NAME)
+        || Strings.CS.contains(pmName, ProcessAnalyserConstants.PORTAL_PMV_SUFFIX))
         && IProcessWebStartable.class.isInstance(process);
   }
 
@@ -294,7 +294,7 @@ public class ProcessUtils {
   }
 
   public static String getTaskElementIdFromRequestPath(String requestPath) {
-    String[] arr = requestPath.split(ProcessAnalyticsConstants.SLASH);
+    String[] arr = requestPath.split(ProcessAnalyserConstants.SLASH);
     // Request Path contains: {PROCESS ID}/.../{NAME OF TASK}
     // So we have get the node before /{NAME OF TASK}
     // Ignore case {PROCESS ID}/{NAME OF TASK}
@@ -310,8 +310,8 @@ public class ProcessUtils {
     if (!isTaskInTaskSwitchGateway) {
       return getTaskElementIdFromRequestPath(requestPath);
     }
-    String[] arr = requestPath.split(ProcessAnalyticsConstants.SLASH);
-    return arr.length > 2 ? arr[arr.length - 2] + ProcessAnalyticsConstants.SLASH + arr[arr.length - 1]
+    String[] arr = requestPath.split(ProcessAnalyserConstants.SLASH);
+    return arr.length > 2 ? arr[arr.length - 2] + ProcessAnalyserConstants.SLASH + arr[arr.length - 1]
         : StringUtils.EMPTY;
   }
 
@@ -338,10 +338,10 @@ public class ProcessUtils {
   public static String getSelectedProcessFilePath(String selectedStartableId, String selectedModule,
       String applicationName) {
     String processFilePath = selectedStartableId.replace(
-        String.format(ProcessAnalyticsConstants.MODULE_PATH, applicationName, selectedModule), StringUtils.EMPTY);
-    int lastSlashIndex = processFilePath.lastIndexOf(ProcessAnalyticsConstants.SLASH);
+        String.format(ProcessAnalyserConstants.MODULE_PATH, applicationName, selectedModule), StringUtils.EMPTY);
+    int lastSlashIndex = processFilePath.lastIndexOf(ProcessAnalyserConstants.SLASH);
     if (lastSlashIndex != StringUtils.INDEX_NOT_FOUND) {
-      processFilePath = processFilePath.substring(0, lastSlashIndex) + ProcessAnalyticsConstants.PROCESSFILE_EXTENSION;
+      processFilePath = processFilePath.substring(0, lastSlashIndex) + ProcessAnalyserConstants.PROCESSFILE_EXTENSION;
     }
     return processFilePath;
   }

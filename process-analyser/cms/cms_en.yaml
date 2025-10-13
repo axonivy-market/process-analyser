@@ -1,7 +1,6 @@
 Categories:
-  Process:
-    Analyser:
-      name: Process Analyser
+  ProcessAnalyser:
+    name: Process Analyser
 Dialogs:
   com:
     axonivy:
@@ -157,5 +156,6 @@ Labels:
 Processes:
   Process:
     Analyser:
-      description: To show statistic for your processes
-      name: Process Analyser
+      Description: To show statistic for your processes
+      Name: Process Analyser
+      WidgetStartName: Process Analyser

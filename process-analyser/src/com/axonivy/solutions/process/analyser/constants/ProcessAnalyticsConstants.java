@@ -1,19 +1,12 @@
-package com.axonivy.solutions.process.analyser.core.constants;
-
-import ch.ivyteam.ivy.process.rdm.IProcess;
+package com.axonivy.solutions.process.analyser.constants;
 
 public class ProcessAnalyticsConstants {
   public static final int DEFAULT_INITIAL_STATISTIC_NUMBER = 0;
   public static final int GRADIENT_COLOR_LEVELS = 10;
-  public static final String HYPHEN_SIGN = "-";
   public static final String HYPHEN_REGEX = "\\-";
   public static final String DEFAULT_SECURITY_CONTEXT = "default";
-  public static final String PROCESS_ANALYSER_PMV_NAME = "process-analyser";
-  public static final String PORTAL_PMV_SUFFIX = "portal";
   public static final String FROM = "from";
   public static final String TO = "to";
-  public static final String AND = "&";
-  public static final String SEMI_COLONS = ";";
   public static final String COMMA = ",";
   public static final String HASHTAG = "#";
   public static final String COMMA_CONNECT_PATTERN = ", ";
@@ -23,12 +16,9 @@ public class ProcessAnalyticsConstants {
   public static final String DATA_CMS_PATH = "data";
   public static final String JSON_EXTENSION = "json";
   public static final String EN_CMS_LOCALE = "en";
-  public static final String SLASH = "/";
-  public static final String MODULE_PATH = "%s/%s/";
   public static final String ANALYSIS_EXCEL_FILE_PATTERN = "Analysis_%s_Of_%s";
   public static final String LIKE_TEXT_SEARCH = "%%%s%%";
   public static final String UPDATE_IFRAME_SOURCE_METHOD_CALL = "updateUrlForIframe()";
-  public static final String PROCESSFILE_EXTENSION = IProcess.PROCESSFILE_EXTENSION;
   public static final String UNDERSCORE = "_";
   public static final String SPACE_DASH_REGEX = "[\\s-]+";
   public static final String MULTIPLE_UNDERSCORES_REGEX = "_+";
@@ -41,4 +31,5 @@ public class ProcessAnalyticsConstants {
   public static final String LIGHT_TEXT_COLOR = "#FFFFFF";
   public static final String DARK_TEXT_COLOR = "#000000";
   public static final int DEFAULT_COLOR_MAX = 255;
+  public static final String PROCESS_ANALYTIC_PERSISTED_CONFIG = "PROCESS_ANALYTIC_PERSISTED_CONFIG";
 }
