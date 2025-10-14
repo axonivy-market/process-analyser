@@ -36,7 +36,7 @@
       <p:toggleSwitch id="merge-process-starts" onIcon="pi pi-check"
         offIcon="pi pi-times" value="#{managedBean.mergeProcessStarts}">
         <p:ajax listener="#{managedBean.onChangeMergeProcessStarts}"
-          update="#{cc.attrs.componentsToUpdate}" />
+          update="process-analytics-form" />
       </p:toggleSwitch>
     </div>
   </h:panelGroup>

@@ -134,7 +134,6 @@ public class ProcessesAnalyticsBean {
       selectedKpiType = KpiType.valueOf(selectedKpiTypeName);
     }
     updateDiagramAndStatistic();
-    
   }
 
   private ProcessAnalyser initSelectedProcessAnalyser(String selectedProcessAnalyzerId) {
@@ -452,12 +451,10 @@ public class ProcessesAnalyticsBean {
 
   public void updateDiagramAndStatistic() {
     if (isDiagramAndStatisticRenderable()) {
-      Ivy.log().warn(isDiagramAndStatisticRenderable());
       viewerBean.init(selectedProcessAnalyser);
       loadNodes();
       updateProcessMiningDataJson();
       renderNodesForKPIType();
-      Ivy.log().warn(filteredNodes.size());
       PF.current().executeScript(ProcessAnalyticsConstants.UPDATE_IFRAME_SOURCE_METHOD_CALL);
       PF.current().ajax().update(ProcessAnalyticViewComponentId.getDiagramAndStatisticComponentIds());
     }

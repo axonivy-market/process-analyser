@@ -18,7 +18,7 @@
         "request" : {
           "name" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/Name\")%>",
           "description" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/Description\")%>",
-          "category" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/Name\")%>",
+          "category" : "ProcessAnalyser",
           "customFields" : [
             { "name" : "embedInFrame", "value" : "false" }
           ]
@@ -68,6 +68,7 @@
         "request" : {
           "name" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/WidgetStartName\")%>",
           "description" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/Description\")%>",
+          "category" : "ProcessAnalyser",
           "customFields" : [
             { "name" : "embedInFrame", "value" : "false" },
             { "name" : "isDashboardProcess", "value" : "true" }
