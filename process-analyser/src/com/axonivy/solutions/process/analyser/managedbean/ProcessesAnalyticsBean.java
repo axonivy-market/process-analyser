@@ -119,6 +119,7 @@ public class ProcessesAnalyticsBean {
     String persistedConfigString = Ivy.session().getSessionUser().getProperty(PROCESS_ANALYTIC_PERSISTED_CONFIG);
     persistedConfig = StringUtils.isBlank(persistedConfigString) ? new ProcessViewerConfig()
         : JacksonUtils.fromJson(persistedConfigString, ProcessViewerConfig.class);
+    // Early escapse if not in widget mode
     if (!isWidgetMode) {
       return;
     }
@@ -133,6 +134,7 @@ public class ProcessesAnalyticsBean {
     if (StringUtils.isNotBlank(selectedKpiTypeName)) {
       selectedKpiType = KpiType.valueOf(selectedKpiTypeName);
     }
+    colorPickerBean.initBean(selectedKpiType, selectedColorMode, persistedConfig);
     updateDiagramAndStatistic();
   }
 

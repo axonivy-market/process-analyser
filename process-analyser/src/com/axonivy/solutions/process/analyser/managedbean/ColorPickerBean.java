@@ -48,7 +48,7 @@ public class ColorPickerBean implements Serializable {
     this.textColors = new ArrayList<>();
     if (selectedKpiType != null) {
       resetSelection();
-      if (selectedColorMode != null && selectedColorMode.isHeatmap()) {
+      if (selectedColorMode == null || selectedColorMode.isHeatmap()) {
         onChooseHeatMapMode();
       } else {
         onChooseColorChooserMode();
