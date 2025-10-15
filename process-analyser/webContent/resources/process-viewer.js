@@ -7,7 +7,9 @@ const HIDDEN_CLASS = "hidden";
 const CHILD_DIV_FROM_NODE_ELEMENT_SELECTOR = ".node-child-label > div";
 const DEFAULT_IMAGE_TYPE = "image/jpeg";
 const ANCHOR_TAG = "a";
-const CURRENT_PROCESS_LABEL = "process-dropdown";
+const CURRENT_PROCESS_LABEL = "standard-filter-panel-group:process-dropdown";
+const CURRENT_MERGED_PROCESS_LABEL = "standard-filter-panel-group:process-merge-dropdown_label";
+const MERGED_PROCESS_INPUT = "merge-process-starts_input";
 const HIDDEN_IMAGE_ID = "hidden-image";
 const JUMP_OUT_BTN_CLASS = "ivy-jump-out";
 const IVY_PROCESS_EXTENSION = ".ivp";
@@ -97,7 +99,9 @@ async function captureScreenFromIframe() {
     allowTaint: true,
   })
     .then((canvas) => {
-      let imageName = queryObjectByIdInForm(CURRENT_PROCESS_LABEL).text();
+      let isMergeProcessStart = $(`[id$="${MERGED_PROCESS_INPUT}"]`).is(':checked');
+      let selectedProcessStartId = isMergeProcessStart ? CURRENT_MERGED_PROCESS_LABEL : CURRENT_PROCESS_LABEL
+      let imageName = queryObjectByIdInForm(selectedProcessStartId).text();
       imageName = imageName.split(IVY_PROCESS_EXTENSION)[0];
       const encodedImg = canvas.toDataURL(DEFAULT_IMAGE_TYPE);
       const $link = $("<a>");
@@ -234,16 +238,14 @@ function openViewerInNewTab() {
 }
 
 // Color picker popup handling
-$(document).on("click", function (event) {
-  const $colorPickerWrapper = $("#color-picker-wrapper");
-  const $colorPickerComponent = $(
-    "#process-analytics-form\\:color-picker-component\\:color-picker"
-  );
-  if ($colorPickerWrapper.length === 0 || $colorPickerComponent.length === 0) {
+document.addEventListener("click", function (event) {
+  var colorPickerWrapper = document.getElementById("color-picker-wrapper");
+  var colorPickerComponent = document.getElementById("process-analytics-form:color-picker-component:color-picker");
+  if (!colorPickerWrapper || !colorPickerComponent) {
     return;
   }
-  const colorPickerWidget = PF("colorPickerWidget");
-  if (colorPickerWidget && !$colorPickerWrapper.get(0).contains(event.target)) {
-    $colorPickerWrapper.css("display", "none");
+  var colorPickerWidget = PF("colorPickerWidget");
+  if (colorPickerWidget && !colorPickerWrapper.contains(event.target)) {
+    colorPickerWrapper.style.display = "none";
   }
 });
