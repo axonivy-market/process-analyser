@@ -13,10 +13,10 @@ import com.codeborne.selenide.SelenideElement;
 @IvyWebTest
 public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
-  private static final String SHOW_STATISTIC_BTN_CSS_SELECTOR = "#process-analytics-form\\:show-statistic-btn";
-  private static final String MODULE_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:moduleDropdown";
-  private static final String PROCESS_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:process-dropdown";
-  private static final String KPI_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:kpiDropdown";
+  private static final String SHOW_STATISTIC_BTN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter-panel-group\\:show-statistic-btn";
+  private static final String MODULE_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter\\:moduleDropdown";
+  private static final String PROCESS_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter\\:process-dropdown";
+  private static final String KPI_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter\\:kpiDropdown";
   private static final String CASCADE_DROPDOWN_LIST_SUFFIX = "_panel";
   private static final String CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX = " .ui-cascadeselect-label";
   private static final String DISABLE_PROPERTY = "disabled";
