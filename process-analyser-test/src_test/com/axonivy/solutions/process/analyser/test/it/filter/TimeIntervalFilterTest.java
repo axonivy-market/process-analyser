@@ -63,9 +63,9 @@ public class TimeIntervalFilterTest extends WebBaseSetup {
     openFilterTypes();
     $(By.cssSelector("li[data-label^='Custom']")).shouldBe(visible).click();
     String startTimeToday = String.format(START_TIME_DATE_PATTERN, dateFormat.format(new Date()));
-    $(By.id("process-analytics-form:custom-date-from_input")).shouldBe(visible).shouldHave(value(startTimeToday));
+    $(By.id("process-analytics-form:standard-filter-panel-group:custom-date-from_input")).shouldBe(visible).shouldHave(value(startTimeToday));
     String endTimeToday = String.format(END_TIME_DATE_PATTERN, dateFormat.format(new Date()));
-    $(By.id("process-analytics-form:custom-date-to_input")).shouldBe(visible).shouldHave(value(endTimeToday));
+    $(By.id("process-analytics-form:standard-filter-panel-group:custom-date-to_input")).shouldBe(visible).shouldHave(value(endTimeToday));
   }
 
   private void openFilterTypes() {
