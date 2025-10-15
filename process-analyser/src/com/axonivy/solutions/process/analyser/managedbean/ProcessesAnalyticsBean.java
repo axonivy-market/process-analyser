@@ -1,7 +1,18 @@
 package com.axonivy.solutions.process.analyser.managedbean;
 
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyserConstants.HYPHEN_SIGN;
+import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.ANALYSIS_EXCEL_FILE_PATTERN;
+import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.DATA_CMS_PATH;
+import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.EN_CMS_LOCALE;
+import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.FROM;
+import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.JSON_EXTENSION;
+import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.MULTIPLE_UNDERSCORES_REGEX;
+import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.PROCESS_ANALYSER_CMS_PATH;
 import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.PROCESS_ANALYTIC_PERSISTED_CONFIG;
+import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.SPACE_DASH_REGEX;
+import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.TO;
+import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.UNDERSCORE;
+import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.UPDATE_IFRAME_SOURCE_METHOD_CALL;
+import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyserConstants.HYPHEN_SIGN;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartEventElement;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartSignalEventElement;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.WebServiceProcessStartElement;
@@ -41,7 +52,6 @@ import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewCompo
 import com.axonivy.solutions.process.analyser.core.bo.Process;
 import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyserConstants;
-import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants;
 import com.axonivy.solutions.process.analyser.core.enums.StartElementType;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.ColorMode;
@@ -103,8 +113,8 @@ public class ProcessesAnalyticsBean {
     processesMap = masterDataBean.getProcessesMap();
     nodes = new ArrayList<>();
     processMiningDataJsonFile = ContentManagement.cms(IApplication.current()).root().child()
-        .folder(ProcessAnalyticsConstants.PROCESS_ANALYSER_CMS_PATH).child()
-        .file(ProcessAnalyticsConstants.DATA_CMS_PATH, ProcessAnalyticsConstants.JSON_EXTENSION);
+        .folder(PROCESS_ANALYSER_CMS_PATH).child()
+        .file(DATA_CMS_PATH, JSON_EXTENSION);
     miningUrl = processMiningDataJsonFile.uri();
     timeIntervalFilter = TimeIntervalFilter.getDefaultFilterSet();
     customFieldsByType = new ArrayList<>();
@@ -441,8 +451,8 @@ public class ProcessesAnalyticsBean {
 
   public void updateDataOnChangingFilter() {
     var parameterMap = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-    String from = parameterMap.get(ProcessAnalyticsConstants.FROM);
-    String to = parameterMap.get(ProcessAnalyticsConstants.TO);
+    String from = parameterMap.get(FROM);
+    String to = parameterMap.get(TO);
     timeIntervalFilter.setFrom(DateUtils.parseDateFromString(from));
     timeIntervalFilter.setTo(DateUtils.parseDateFromString(to));
     if (!isWidgetMode) {
@@ -457,7 +467,7 @@ public class ProcessesAnalyticsBean {
       loadNodes();
       updateProcessMiningDataJson();
       renderNodesForKPIType();
-      PF.current().executeScript(ProcessAnalyticsConstants.UPDATE_IFRAME_SOURCE_METHOD_CALL);
+      PF.current().executeScript(UPDATE_IFRAME_SOURCE_METHOD_CALL);
       PF.current().ajax().update(ProcessAnalyticViewComponentId.getDiagramAndStatisticComponentIds());
     }
   }
@@ -515,7 +525,7 @@ public class ProcessesAnalyticsBean {
 
   private void updateProcessMiningDataJson() {
     String jsonString = JacksonUtils.convertObjectToJSONString(processMiningData);
-    processMiningDataJsonFile.value().get(ProcessAnalyticsConstants.EN_CMS_LOCALE).write().string(jsonString);
+    processMiningDataJsonFile.value().get(EN_CMS_LOCALE).write().string(jsonString);
   }
 
   private void initializingProcessMiningData() {
@@ -535,11 +545,11 @@ public class ProcessesAnalyticsBean {
 
   public String generateNameOfExcelFile() {
     String formattedKpiTypeName = selectedKpiType.getCmsName()
-        .replaceAll(ProcessAnalyticsConstants.SPACE_DASH_REGEX, ProcessAnalyticsConstants.UNDERSCORE)
-        .replaceAll(ProcessAnalyticsConstants.MULTIPLE_UNDERSCORES_REGEX, ProcessAnalyticsConstants.UNDERSCORE);
+        .replaceAll(SPACE_DASH_REGEX, UNDERSCORE)
+        .replaceAll(MULTIPLE_UNDERSCORES_REGEX, UNDERSCORE);
     var startName = Optional.ofNullable(selectedProcessAnalyser).map(ProcessAnalyser::getStartElement)
         .map(StartElement::getName).orElse(StringUtils.EMPTY);
-    return String.format(ProcessAnalyticsConstants.ANALYSIS_EXCEL_FILE_PATTERN, formattedKpiTypeName, startName);
+    return String.format(ANALYSIS_EXCEL_FILE_PATTERN, formattedKpiTypeName, startName);
   }
 
   public void renderNodesForKPIType() {
@@ -709,7 +719,9 @@ public class ProcessesAnalyticsBean {
 
   private void resetProcessSelection() {
     selectedProcessAnalyser = null;
-    PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP);
+    String componentIdToUpdate = isWidgetMode ? ProcessAnalyticViewComponentId.WIDGET_PROCESS_SELECTION_GROUP
+        : ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP;
+    PF.current().ajax().update(componentIdToUpdate);
   }
 
   public ColorMode getSelectedColorMode() {
