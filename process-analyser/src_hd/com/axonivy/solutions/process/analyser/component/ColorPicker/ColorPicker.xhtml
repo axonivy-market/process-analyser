@@ -64,10 +64,10 @@
           widgetVar="colorPickerWidget" theme="large" format="rgb"
           alpha="false">
           <p:ajax event="change"
-            listener="#{colorPickerBean.onColorChange()}"
+            listener="#{colorPickerBean.onColorChange}"
             update="color-bar-segment" process="@this"
             partialSubmit="true" delay="500" global="false"
-            onsuccess="onColorChange()" />
+            onsuccess="onColorChange(); $('.color-picker-panel').hide();" />
         </p:colorPicker>
       </div>
     </p:outputPanel>
@@ -84,7 +84,7 @@
         <p:ajax event="change"
           listener="#{processesAnalyticsBean.onColorModeChange}"
           process="@this"
-          update="process-analytics-form:color-picker-component:color-container"
+          update="color-bar-segment"
           partialSubmit="true" />
       </p:selectOneMenu>
     </h:panelGroup>

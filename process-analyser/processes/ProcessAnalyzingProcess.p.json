@@ -72,7 +72,8 @@
           "customFields" : [
             { "name" : "embedInFrame", "value" : "false" },
             { "name" : "isDashboardProcess", "value" : "true" }
-          ]
+          ],
+          "isVisibleOnStartList" : false
         }
       },
       "visual" : {

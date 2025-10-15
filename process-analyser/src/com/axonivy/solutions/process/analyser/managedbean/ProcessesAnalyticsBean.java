@@ -121,7 +121,6 @@ public class ProcessesAnalyticsBean {
     selectedCustomFilters = new ArrayList<>();
     selectedCustomFieldNames = new ArrayList<>();
     initKpiTypes();
-    selectedColorMode = ColorMode.HEATMAP;
     initSelectedValueFromUserProperty();
   }
 
@@ -129,6 +128,7 @@ public class ProcessesAnalyticsBean {
     String persistedConfigString = Ivy.session().getSessionUser().getProperty(PROCESS_ANALYTIC_PERSISTED_CONFIG);
     persistedConfig = StringUtils.isBlank(persistedConfigString) ? new ProcessViewerConfig()
         : JacksonUtils.fromJson(persistedConfigString, ProcessViewerConfig.class);
+    selectedColorMode = BooleanUtils.isTrue(persistedConfig.getIsCustomColorMode()) ? ColorMode.CUSTOM : ColorMode.HEATMAP;
     // Early escapse if not in widget mode
     if (!isWidgetMode) {
       return;
@@ -343,8 +343,7 @@ public class ProcessesAnalyticsBean {
   }
 
   private void updateUserProperty() {
-    String config = JacksonUtils.convertObjectToJSONString(persistedConfig);
-    Ivy.session().getSessionUser().setProperty(PROCESS_ANALYTIC_PERSISTED_CONFIG, config);
+    Ivy.session().getSessionUser().setProperty(PROCESS_ANALYTIC_PERSISTED_CONFIG, JacksonUtils.convertObjectToJSONString(persistedConfig));
   }
 
   private void resetStatisticValue() {
@@ -476,11 +475,15 @@ public class ProcessesAnalyticsBean {
     if (this.selectedKpiType == null) {
       return;
     }
-
-    if(selectedColorMode.isHeatmap()) {
+    if (selectedColorMode.isHeatmap()) {
       colorPickerBean.onChooseHeatMapMode();
     } else {
       colorPickerBean.onChooseColorChooserMode();
+    }
+    if (isWidgetMode) {
+      persistedConfig.setIsCustomColorMode(selectedColorMode.isCustom());
+      updateUserProperty();
+      return;
     }
     refreshAnalyserReportToView();
   }

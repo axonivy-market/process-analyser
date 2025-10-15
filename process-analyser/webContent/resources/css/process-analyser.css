@@ -97,8 +97,11 @@ h3 {
 .process-analytic-viewer-container,
 .viewer-group {
   width: 100%;
-  border-bottom: .5rem solid var(--surface-border);
   border-radius: 0 0 .5rem .5rem;
+}
+
+.border-b-05rem {
+  border-bottom: .5rem solid var(--surface-border);
 }
 
 .process-analytic-viewer {

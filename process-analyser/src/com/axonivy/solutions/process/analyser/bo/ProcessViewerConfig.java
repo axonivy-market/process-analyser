@@ -5,6 +5,7 @@ public class ProcessViewerConfig {
   private String frequencyTextColor;
   private String durationColor;
   private String durationTextColor;
+  private Boolean isCustomColorMode;
   private String widgetSelectedModule;
   private String widgetSelectedProcessAnalyzer;
   private String widgetSelectedKpi;
@@ -90,5 +91,13 @@ public class ProcessViewerConfig {
 
   public void setFrequencyTextColor(String frequencyTextColor) {
     this.frequencyTextColor = frequencyTextColor;
+  }
+
+  public Boolean getIsCustomColorMode() {
+    return isCustomColorMode;
+  }
+
+  public void setIsCustomColorMode(Boolean isCustomColorMode) {
+    this.isCustomColorMode = isCustomColorMode;
   }
 }
