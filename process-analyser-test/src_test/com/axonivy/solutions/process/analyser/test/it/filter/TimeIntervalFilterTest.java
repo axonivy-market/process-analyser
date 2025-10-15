@@ -39,9 +39,11 @@ public class TimeIntervalFilterTest extends WebBaseSetup {
 
   @Test
   void checkDefaultTimeIntervalFilterType() {
-    $(By.id("process-analytics-form:standard-filter-panel-group:filter-types_label")).shouldBe(visible).shouldBe(exactText("Today"));
+    $(By.id("process-analytics-form:standard-filter-panel-group:filter-types_label")).shouldBe(visible)
+        .shouldBe(exactText("Today"));
     String today = dateFormat.format(new Date());
-    $(By.id("process-analytics-form:standard-filter-panel-group:date-point-selection_input")).shouldBe(visible).shouldHave(value(today));
+    $(By.id("process-analytics-form:standard-filter-panel-group:date-point-selection_input")).shouldBe(visible)
+        .shouldHave(value(today));
   }
 
   @Test
@@ -63,9 +65,11 @@ public class TimeIntervalFilterTest extends WebBaseSetup {
     openFilterTypes();
     $(By.cssSelector("li[data-label^='Custom']")).shouldBe(visible).click();
     String startTimeToday = String.format(START_TIME_DATE_PATTERN, dateFormat.format(new Date()));
-    $(By.id("process-analytics-form:standard-filter-panel-group:custom-date-from_input")).shouldBe(visible).shouldHave(value(startTimeToday));
+    $(By.id("process-analytics-form:standard-filter-panel-group:custom-date-from_input")).shouldBe(visible)
+        .shouldHave(value(startTimeToday));
     String endTimeToday = String.format(END_TIME_DATE_PATTERN, dateFormat.format(new Date()));
-    $(By.id("process-analytics-form:standard-filter-panel-group:custom-date-to_input")).shouldBe(visible).shouldHave(value(endTimeToday));
+    $(By.id("process-analytics-form:standard-filter-panel-group:custom-date-to_input")).shouldBe(visible)
+        .shouldHave(value(endTimeToday));
   }
 
   private void openFilterTypes() {
@@ -73,6 +77,7 @@ public class TimeIntervalFilterTest extends WebBaseSetup {
     typeFilter.shouldBe(visible);
     Selenide.sleep(1000);
     typeFilter.click();
-    $(By.id("process-analytics-form:standard-filter-panel-group:filter-types_panel")).shouldBe(visible, Duration.ofSeconds(1));
+    $(By.id("process-analytics-form:standard-filter-panel-group:filter-types_panel")).shouldBe(visible,
+        Duration.ofSeconds(1));
   }
 }
