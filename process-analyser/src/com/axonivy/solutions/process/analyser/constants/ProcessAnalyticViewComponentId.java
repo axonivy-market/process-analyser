@@ -17,9 +17,9 @@ public class ProcessAnalyticViewComponentId {
       + "filter-options-group";
   public static final String ACTION_BTN_GROUP = FORM + ID_SECTION_SEPARATOR + "action-btn-group";
   public static final String DATA_STATISTICS = FORM + ID_SECTION_SEPARATOR + "data-statistics";
-  public static final String COLOR_PICKER_GROUP = FORM + ID_SECTION_SEPARATOR + "color-picker-component" + ID_SECTION_SEPARATOR + "color-container";  
+
   public static List<String> getDiagramAndStatisticComponentIds() {
     return List.of(ARROW_STATISTIC, HIDDEN_IMAGE, PROCESS_ANALYTIC_VIEWER_PANEL, SHOW_STATISTIC_BTN, ACTION_BTN_GROUP,
-        DATA_STATISTICS, COLOR_PICKER_GROUP);
+        DATA_STATISTICS);
   }
 }
