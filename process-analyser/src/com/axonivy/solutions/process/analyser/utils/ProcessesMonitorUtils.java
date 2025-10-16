@@ -1,5 +1,7 @@
 package com.axonivy.solutions.process.analyser.utils;
 
+import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.PROCESS_ANALYTIC_PERSISTED_CONFIG;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
@@ -19,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
+import com.axonivy.solutions.process.analyser.bo.ProcessViewerConfig;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.core.util.ProcessElementUtils;
@@ -357,5 +360,16 @@ public class ProcessesMonitorUtils {
     default:
       break;
     }
+  }
+  
+  public static ProcessViewerConfig getUserConfig() {
+    String persistedConfigString = Ivy.session().getSessionUser().getProperty(PROCESS_ANALYTIC_PERSISTED_CONFIG);
+    return StringUtils.isBlank(persistedConfigString) ? new ProcessViewerConfig()
+        : JacksonUtils.fromJson(persistedConfigString, ProcessViewerConfig.class);
+  }
+  
+  public static void updateUserProperty(ProcessViewerConfig persistedConfig) {
+    Ivy.session().getSessionUser().setProperty(PROCESS_ANALYTIC_PERSISTED_CONFIG,
+        JacksonUtils.convertObjectToJSONString(persistedConfig));
   }
 }

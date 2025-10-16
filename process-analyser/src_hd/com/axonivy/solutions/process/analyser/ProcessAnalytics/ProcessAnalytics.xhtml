@@ -40,10 +40,8 @@
         <ic:com.axonivy.solutions.process.analyser.component.ColorPicker
           id="color-picker-component"
           kpiType="#{processesAnalyticsBean.selectedKpiType}"
-          onColorChange="#{processesAnalyticsBean.refreshAnalyserReportToView()}"
-          viewerConfig="#{processesAnalyticsBean.persistedConfig}"
+          managedBean="#{processesAnalyticsBean}"
           componentToUpdate="@this"
-          selectedColorMode="#{processesAnalyticsBean.selectedColorMode}"
           rendered="#{not processesAnalyticsBean.isWidgetMode}" />
         <h:panelGroup layout="block"
           styleClass="border-top-1 surface-border my-3"

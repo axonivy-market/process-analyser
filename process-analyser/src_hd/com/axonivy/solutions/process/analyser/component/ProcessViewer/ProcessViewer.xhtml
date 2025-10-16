@@ -90,7 +90,7 @@
                 value="#{ivy.cms.co('/Labels/Apply')}" />
           </h:panelGroup>
             <ic:com.axonivy.solutions.process.analyser.component.ColorPicker id="color-picker" kpiType="#{managedBean.selectedKpiType}"
-               viewerConfig="#{managedBean.persistedConfig}" componentToUpdate="@this" selectedColorMode="#{managedBean.selectedColorMode}" />
+               viewerConfig="#{managedBean.persistedConfig}" managedBean="#{managedBean}" componentToUpdate="@this" rendered="#{managedBean.isWidgetMode}" />
         </p:overlayPanel>
         <p:overlayPanel for="config-viewer-link" styleClass="toolbar-overlay-panel" my="right bottom" at="right top">
           <h:panelGroup id="toolbar-group" styleClass="grid formgrid ui-fluid">
