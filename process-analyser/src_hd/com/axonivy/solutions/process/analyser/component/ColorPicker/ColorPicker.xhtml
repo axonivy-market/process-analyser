@@ -64,6 +64,24 @@
         </p:colorPicker>
       </div>
     </p:outputPanel>
+    <h:panelGroup layout="block" rendered="#{kpiType ne null}">
+    <div class="flex align-items-end gap-2 justify-content-end">
+      <p:outputLabel for="colorModeDropdown" styleClass="pb-2 w-6rem"
+        value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectColorMode')}" />
+      <p:selectOneMenu id="colorModeDropdown"
+        value="#{processesAnalyticsBean.selectedColorMode}"
+        styleClass="color-mode-dropdown w-8rem">
+        <f:selectItems value="#{processesAnalyticsBean.colorModes}"
+          var="colorMode" itemValue="#{colorMode}"
+          itemLabel="#{colorMode.cmsName}" />
+        <p:ajax event="change"
+          listener="#{processesAnalyticsBean.onColorModeChange}"
+          process="@this"
+          update="process-analytics-form:color-picker-component:color-container"
+          partialSubmit="true" />
+      </p:selectOneMenu>
+    </div>
+    </h:panelGroup>
   </h:panelGroup>
 </cc:implementation>
 </html>
