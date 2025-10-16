@@ -45,9 +45,17 @@ public class ColorPickerBean implements Serializable {
     this.textColors = new ArrayList<>();
     this.isWidgetMode = BooleanUtils.isTrue(isWidgetMode);
     selectedColorMode = ColorMode.HEATMAP;
+    initSelectedValue();
     updateColorByKpiType(selectedKpiType);
+
   }
 
+  private void initSelectedValue() {
+    if (isWidgetMode) {
+      ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
+      selectedColorMode = persistedConfig.getIsCustomColorMode() ? ColorMode.CUSTOM : ColorMode.HEATMAP;
+    }
+  }
 
   public void updateColorByKpiType(KpiType selectedKpiType) {
     this.selectedKpiType = selectedKpiType;

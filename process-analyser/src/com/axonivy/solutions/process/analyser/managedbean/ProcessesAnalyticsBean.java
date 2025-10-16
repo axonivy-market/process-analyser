@@ -135,6 +135,7 @@ public class ProcessesAnalyticsBean {
     if (StringUtils.isNotBlank(selectedKpiTypeName)) {
       selectedKpiType = KpiType.valueOf(selectedKpiTypeName);
     }
+    colorPickerBean.initBean(selectedKpiType, isWidgetMode);
     updateDiagramAndStatistic();
   }
 
