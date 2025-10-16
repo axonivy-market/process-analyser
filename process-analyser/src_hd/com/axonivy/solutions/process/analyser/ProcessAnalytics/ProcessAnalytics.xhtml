@@ -19,7 +19,7 @@
           action="#{processesAnalyticsBean.updateDataTable}"
           update="statistic-viewer:data-statistics" process="@this"
           partialSubmit="true" />
-        <p:graphicImage id="hidden-image" library="ivy-cms"
+        <p:graphicImage id="hidden-image" library="ivy-cms" styleClass="hidden"
           name="#{processesAnalyticsBean.miningUrl}" />
         <h:panelGroup layout="block"
           rendered="#{not processesAnalyticsBean.isWidgetMode}">
@@ -66,7 +66,7 @@
           </p:menuButton>
           <p:commandButton icon="pi pi-upload" styleClass="action-button"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/ExportExcel')}">
-            <p:dataExporter type="csv" target="node" fileName="#{processesAnalyticsBean.generateNameOfExcelFile()}" />
+            <p:dataExporter type="csv" target="process-analytics-form:statistic-viewer:node" fileName="#{processesAnalyticsBean.generateNameOfExcelFile()}" />
           </p:commandButton>
         </h:panelGroup>
       </h:form>

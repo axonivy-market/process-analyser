@@ -531,8 +531,11 @@ public class ProcessesAnalyticsBean {
   public String generateNameOfExcelFile() {
     String formattedKpiTypeName = selectedKpiType.getCmsName().replaceAll(SPACE_DASH_REGEX, UNDERSCORE)
         .replaceAll(MULTIPLE_UNDERSCORES_REGEX, UNDERSCORE);
-    var startName = Optional.ofNullable(selectedProcessAnalyser).map(ProcessAnalyser::getStartElement)
-        .map(StartElement::getName).orElse(StringUtils.EMPTY);
+    var startName = Optional.ofNullable(selectedProcessAnalyser)
+        .map(analyser -> isMergeProcessStarts
+            ? Optional.ofNullable(analyser.getProcess()).map(Process::getName).orElse(StringUtils.EMPTY)
+            : Optional.ofNullable(analyser.getStartElement()).map(StartElement::getName).orElse(StringUtils.EMPTY))
+        .orElse(StringUtils.EMPTY);
     return String.format(ANALYSIS_EXCEL_FILE_PATTERN, formattedKpiTypeName, startName);
   }
 

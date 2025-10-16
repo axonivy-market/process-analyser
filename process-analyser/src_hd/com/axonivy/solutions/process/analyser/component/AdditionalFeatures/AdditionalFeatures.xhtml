@@ -38,6 +38,8 @@
         <p:ajax listener="#{managedBean.onChangeMergeProcessStarts}"
           update="process-analytics-form" />
       </p:toggleSwitch>
+      <p:tooltip for="@previous"
+        value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/MergeProcessStartTooltip')}" />
     </div>
   </h:panelGroup>
 </cc:implementation>

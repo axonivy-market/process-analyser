@@ -16,6 +16,7 @@ Dialogs:
               IncludeRunningCases: Include running cases
               IncludeRunningCasesTooltip: By default, only closed cases are evaluated. Use this button to also include running cases in the evaluation.
               LargeTimeInterval: Setting a very large time interval may cause performance issues.
+              MergeProcessStartTooltip: Each process start is analyzed independently by default. Click this button to merge all process starts into one data set for comprehensive analysis.
               MergeProcessStarts: Merge Process Starts
               Title: Process Analytics
               To: To
