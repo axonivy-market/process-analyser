@@ -35,9 +35,11 @@ public class ProcessStartConverter implements Converter {
     try {
       String[] data = value.split(KEY_SEPARATOR);
       var masterDataBean = FacesContexts.evaluateValueExpression("#{masterDataBean}", MasterDataBean.class);
+
       List<Process> processElements = masterDataBean.getAvailableProcesses(data[0]);
       var foundProcess =
           processElements.stream().filter(element -> element.getId().equals(data[1])).findAny().orElse(null);
+
       StartElement foundStartElement = null;
       if (!isMergeProcessStarts() && foundProcess != null) {
         foundStartElement = foundProcess.getStartElements().stream().filter(start -> start.getPid().equals(data[2]))
@@ -60,6 +62,7 @@ public class ProcessStartConverter implements Converter {
     if (value instanceof ProcessAnalyser) {
       var processAnalyser = ((ProcessAnalyser) value);
       var process = processAnalyser.getProcess();
+
       if (process != null) {
         if (isMergeProcessStarts()) {
           return PROCESS_ID_PATTERN_WITHOUT_START_ELEMENT.formatted(process.getPmvName(), process.getId());

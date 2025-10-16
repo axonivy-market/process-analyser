@@ -97,8 +97,8 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
           new TimeIntervalFilter(new Date(), new Date()), new ArrayList<>(), false));
     }
 
-    List<Node> results =
-        ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(processAnalyser, KpiType.FREQUENCY, allCases);
+    List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(
+        processAnalyser, KpiType.FREQUENCY, allCases);
 
     assertThat(results).isNotEmpty();
     assertThat(results.size()).isGreaterThanOrEqualTo(24);
@@ -111,8 +111,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     List<ICase> cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(
         ProcessUtils.getTaskStartIdFromPID(selectedPid), new TimeIntervalFilter(new Date(), new Date()),
         new ArrayList<>(), false);
-    List<Node> results =
-        ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(processAnalyser, KpiType.DURATION_OVERALL, cases);
+    List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(processAnalyser, KpiType.DURATION_OVERALL, cases);
     assertThat(results).isNotEmpty();
     assertThat(results.get(0).getLabelValue()).endsWith("s");
   }
@@ -128,8 +127,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
       allCases.addAll(ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(startElement.getTaskStartId(),
           new TimeIntervalFilter(new Date(), new Date()), new ArrayList<>(), false));
     }
-    List<Node> results =
-        ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(processAnalyser, KpiType.DURATION_OVERALL, allCases);
+    List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(processAnalyser, KpiType.DURATION_OVERALL, allCases);
     assertThat(results).isNotEmpty();
     assertThat(results.get(0).getLabelValue()).endsWith("s");
   }
