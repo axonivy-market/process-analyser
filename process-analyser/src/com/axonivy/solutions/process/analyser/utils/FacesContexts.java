@@ -14,8 +14,12 @@ import javax.faces.application.FacesMessage.Severity;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
 
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
 
 /**
  * This class is to provide utility functions interacting JSF by FacesContext
@@ -140,5 +144,11 @@ public final class FacesContexts {
     } else {
       return null;
     }
+  }
+
+  public static String extractRootComponentClientId(AjaxBehaviorEvent event) {
+    String clientId = event.getComponent().getClientId();
+    int lastColonIndex = clientId.lastIndexOf(ProcessAnalyticViewComponentId.ID_SECTION_SEPARATOR);
+    return lastColonIndex != StringUtils.INDEX_NOT_FOUND ? clientId.substring(0, lastColonIndex) : clientId;
   }
 }

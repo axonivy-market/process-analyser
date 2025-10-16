@@ -13,8 +13,6 @@ import javax.faces.bean.ViewScoped;
 
 import com.axonivy.solutions.process.analyser.demo.data.FlightInformation;
 
-import ch.ivyteam.ivy.environment.Ivy;
-
 @ManagedBean
 @ViewScoped
 public class SearchingFlightBean {
@@ -71,7 +69,6 @@ public class SearchingFlightBean {
 
 			FlightInformation flight = new FlightInformation();
 			flight.setId("F-" + i);
-			Ivy.log().info(flight.getId());
 			flight.setPlaneRegistrationNumber(String.format("%04d", i));
 			flight.setStartTime(startTime);
 			flight.setEndTime(endTime);

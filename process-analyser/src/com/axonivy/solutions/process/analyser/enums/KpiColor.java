@@ -2,7 +2,7 @@ package com.axonivy.solutions.process.analyser.enums;
 
 import java.util.List;
 
-import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
+import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants;
 import com.axonivy.solutions.process.analyser.utils.ColorUtils;
 
 public enum KpiColor implements HasCmsName {

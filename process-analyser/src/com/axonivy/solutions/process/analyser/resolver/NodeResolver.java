@@ -8,7 +8,8 @@ import java.util.stream.Stream;
 import org.apache.commons.collections4.CollectionUtils;
 
 import com.axonivy.solutions.process.analyser.bo.Node;
-import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
+import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants;
+import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyserConstants;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
@@ -64,7 +65,7 @@ public class NodeResolver {
       String elementId = taskSwitchGateway.getPid().toString();
       List<Node> taskNodes = taskSwitchGateway.getAllTaskConfigs().stream()
           .map(task -> createNode(
-              elementId + ProcessAnalyticsConstants.SLASH + task.getTaskIdentifier().getTaskIvpLinkName(),
+              elementId + ProcessAnalyserConstants.SLASH + task.getTaskIdentifier().getTaskIvpLinkName(),
               task.getName().getRawMacro(), NodeType.ELEMENT))
           .collect(Collectors.toList());
       taskNodes.add(0, node);
