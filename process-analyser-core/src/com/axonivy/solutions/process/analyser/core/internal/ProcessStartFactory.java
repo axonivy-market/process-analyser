@@ -49,7 +49,7 @@ public class ProcessStartFactory {
 
   private static String getStartName(AbstractStartElement startElement) {
     if (startElement != null) {
-      var localeName = startElement.getName();
+      var localeName = startElement.names().current();
       if (StringUtils.isNoneBlank(localeName)) {
         return localeName;
       }

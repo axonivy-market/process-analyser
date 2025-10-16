@@ -240,6 +240,7 @@ public class ProcessesAnalyticsBean {
   public void onProcessSelect() {
     resetStatisticValue();
     if (selectedProcessAnalyser != null) {
+      getCaseAndTaskCustomFields();
       refreshAnalyserReportToView();
     }
   }
@@ -268,6 +269,8 @@ public class ProcessesAnalyticsBean {
     if (selectedProcessAnalyser == null || selectedProcessAnalyser.getProcess() == null) {
       return new ArrayList<>();
     }
+    selectedPid = selectedProcessAnalyser.getProcess().getId();
+    customFieldsByType = IvyTaskOccurrenceService.getCaseAndTaskCustomFields(selectedPid, timeIntervalFilter);
     return customFieldsByType;
   }
 
@@ -331,7 +334,6 @@ public class ProcessesAnalyticsBean {
 
   public void refreshAnalyserReportToView() {
     updateDiagramAndStatistic();
-    updateCustomFilterPanel();
     renderNodesForKPIType();
   }
 
@@ -342,6 +344,7 @@ public class ProcessesAnalyticsBean {
     timeIntervalFilter.setFrom(DateUtils.parseDateFromString(from));
     timeIntervalFilter.setTo(DateUtils.parseDateFromString(to));
     resetStatisticValue();
+    getCaseAndTaskCustomFields();
     refreshAnalyserReportToView();
   }
 
@@ -376,13 +379,12 @@ public class ProcessesAnalyticsBean {
 
     if (haveMandatoryFieldsBeenFilled()) {
       List<ICase> cases = new ArrayList<>();
-      boolean shouldIncludeRunningCasesByKpi = isIncludingRunningCases && !selectedKpiType.isDescendantOf(KpiType.DURATION);
       if (isMergeProcessStarts) {
         List<Long> taskStartIds =
             selectedProcessAnalyser.getProcess().getStartElements().stream().map(StartElement::getTaskStartId).toList();
         for (Long taskStartId : taskStartIds) {
-          List<ICase> subCases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter,
-              selectedCustomFilters, shouldIncludeRunningCasesByKpi);
+          List<ICase> subCases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId,
+              timeIntervalFilter, selectedCustomFilters, isIncludingRunningCases);
           if (CollectionUtils.isNotEmpty(subCases)) {
             cases.addAll(subCases);
           }
@@ -390,11 +392,9 @@ public class ProcessesAnalyticsBean {
       } else {
         Long taskStartId = selectedProcessAnalyser.getStartElement().getTaskStartId();
         cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter,
-            selectedCustomFilters, shouldIncludeRunningCasesByKpi);
+            selectedCustomFilters, isIncludingRunningCases);
       }
       if (CollectionUtils.isNotEmpty(cases)) {
-        var tasks = cases.stream().flatMap(ivyCase -> ivyCase.tasks().all().stream()).toList();
-        customFieldsByType = IvyTaskOccurrenceService.getCaseAndTaskCustomFields(tasks, customFieldsByType);
         analyzedNode = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(selectedProcessAnalyser, selectedKpiType, cases);
         processMiningData.setNodes(analyzedNode);
         processMiningData.setNumberOfInstances(cases.size());

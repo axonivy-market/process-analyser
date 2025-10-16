@@ -40,7 +40,6 @@ public class ProcessViewerBean implements Serializable {
     selectedProcess = processAnalyser.getProcess();
     selectedStartElement =
         (processAnalyser.getStartElement() != null) ? processAnalyser.getStartElement().getPid() : null;
-
     availableProcessElements = new ArrayList<>();
     if (selectedProcess != null) {
       unifySelectionData();
