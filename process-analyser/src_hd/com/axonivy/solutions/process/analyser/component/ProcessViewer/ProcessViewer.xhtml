@@ -60,8 +60,8 @@
             containerClasses=" grid align-items-center mr-2" rendered="#{managedBean.isWidgetMode}" />
         </h:panelGroup>
         <p:overlayPanel for="config-filter-link" styleClass="toolbar-overlay-panel" my="right bottom" at="right top">
-          <h:panelGroup styleClass="grid formgrid ui-fluid">
-            <h:panelGroup
+          <h:panelGroup layout="block" styleClass="grid formgrid">
+            <h:panelGroup layout="block"
               styleClass="col-12 flex justify-content-between flex-row">
               <h:outputText
                 value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/FilterConfig')}" />
