@@ -16,8 +16,8 @@
           }
         },
         "request" : {
-          "name" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/Name\")%>",
-          "description" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/Description\")%>",
+          "name" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/name\")%>",
+          "description" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/description\")%>",
           "category" : "ProcessAnalyser",
           "customFields" : [
             { "name" : "embedInFrame", "value" : "false" }
@@ -66,8 +66,8 @@
           }
         },
         "request" : {
-          "name" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/WidgetStartName\")%>",
-          "description" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/Description\")%>",
+          "name" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/name\")%>",
+          "description" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/description\")%>",
           "category" : "ProcessAnalyser",
           "customFields" : [
             { "name" : "embedInFrame", "value" : "false" },

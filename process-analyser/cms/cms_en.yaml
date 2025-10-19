@@ -157,6 +157,5 @@ Labels:
 Processes:
   Process:
     Analyser:
-      Description: To show statistic for your processes
-      Name: Process Analyser
-      WidgetStartName: Process Analyser
+      description: To show statistic for your processes
+      name: Process Analyser
