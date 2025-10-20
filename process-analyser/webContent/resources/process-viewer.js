@@ -245,7 +245,7 @@ document.addEventListener("click", function (event) {
     return;
   }
   var colorPickerWidget = PF("colorPickerWidget");
-  if (colorPickerWidget) {
-    colorPickerWidget.jq.hide();
-  }
+  if (colorPickerWidget && !colorPickerWrapper.contains(event.target)) {
+      colorPickerWrapper.style.display = "none";
+    }
 });

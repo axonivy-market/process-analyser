@@ -431,6 +431,11 @@ public class ProcessesAnalyticsBean {
     updateDiagramAndStatistic();
   }
 
+  public void onColorChange() {
+    colorPickerBean.onColorChange();
+    refreshAnalyserReportToView();
+  }
+
   public void onChangeMergeProcessStarts() {
     if (isWidgetMode) {
       ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();

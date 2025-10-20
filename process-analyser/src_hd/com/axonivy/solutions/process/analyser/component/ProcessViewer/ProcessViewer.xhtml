@@ -11,7 +11,7 @@
   <c:set var="managedBean" value="#{cc.attrs.managedBean}" />
   <h:outputScript name="resources/process-viewer.js" target="head" />
   <f:event listener="#{processViewerBean.init(managedBean.selectedProcessAnalyser)}" type="preRenderComponent" />
-  <h:panelGroup id="viewer-group" layout="block" styleClass="#{managedBean.isWidgetMode ? '' : 'border-b-05rem'}">
+  <h:panelGroup id="viewer-group" layout="block" styleClass="process-analytic-viewer-container #{managedBean.isWidgetMode ? '' : 'border-b-05rem'}">
     <p:panel id="viewer-panel" widgetVar="viewer-panel" toggleable="#{not managedBean.isWidgetMode}" toggleSpeed="500"
       toggleTitle="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/ToggleTooltip')}"
       styleClass="viewer-group">

@@ -47,7 +47,6 @@ public class ColorPickerBean implements Serializable {
     selectedColorMode = ColorMode.HEATMAP;
     initSelectedValue();
     updateColorByKpiType(selectedKpiType);
-
   }
 
   private void initSelectedValue() {
@@ -198,7 +197,6 @@ public class ColorPickerBean implements Serializable {
   public void setSelectedColorMode(ColorMode selectedColorMode) {
     this.selectedColorMode = selectedColorMode;
   }
-
 
   public List<ColorMode> getColorModes() {
     return colorModes;

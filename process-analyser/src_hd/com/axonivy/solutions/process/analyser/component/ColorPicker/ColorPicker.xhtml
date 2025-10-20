@@ -57,11 +57,9 @@
           rendered="#{colorPickerBean.checkRenderCondition()}"
           widgetVar="colorPickerWidget" theme="large" format="rgb"
           alpha="false">
-          <p:ajax event="change"
-            listener="#{colorPickerBean.onColorChange}"
+          <p:ajax event="change" listener="#{managedBean.onColorChange}"
             update="color-bar-segment" process="@this"
-            partialSubmit="true" delay="500" global="false"
-            onsuccess="$('.color-picker-panel').hide();" />
+            partialSubmit="true" delay="500" global="false" />
         </p:colorPicker>
       </div>
     </p:outputPanel>
