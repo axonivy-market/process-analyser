@@ -199,8 +199,8 @@ public class ProcessesAnalyticsBean {
    * - If no module is selected, returns an empty list.
    * - In "merge process starts" mode, each process is a single {@link SelectItem}.
    * - Otherwise, processes with one start element create a single item,
-   *  and processes with multiple start elements create a {@link SelectItemGroup}.
-   * 
+   *   and processes with multiple start elements create a {@link SelectItemGroup}.
+   *
    * @return list of available process starts for the selected module
    */
   public List<SelectItem> getAvailableProcessStarts() {
