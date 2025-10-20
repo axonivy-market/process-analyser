@@ -433,7 +433,9 @@ public class ProcessesAnalyticsBean {
 
   public void onColorChange() {
     colorPickerBean.onColorChange();
-    refreshAnalyserReportToView();
+    if (!isWidgetMode) {      
+      refreshAnalyserReportToView();
+    }
   }
 
   public void onChangeMergeProcessStarts() {
