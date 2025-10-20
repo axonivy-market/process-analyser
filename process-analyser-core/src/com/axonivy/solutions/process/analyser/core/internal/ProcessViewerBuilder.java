@@ -1,7 +1,7 @@
 package com.axonivy.solutions.process.analyser.core.internal;
 
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyserConstants.AND;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyserConstants.SLASH;
+import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.AND;
+import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.SLASH;
 import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.*;
 
 import java.net.URI;

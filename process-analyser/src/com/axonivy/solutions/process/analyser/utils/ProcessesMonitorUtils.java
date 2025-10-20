@@ -1,6 +1,6 @@
 package com.axonivy.solutions.process.analyser.utils;
 
-import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.PROCESS_ANALYTIC_PERSISTED_CONFIG;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.PROCESS_ANALYTIC_PERSISTED_CONFIG;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

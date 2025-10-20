@@ -1,14 +1,14 @@
 package com.axonivy.solutions.process.analyser.utils;
 
-import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.COMMA;
-import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.DARK_TEXT_COLOR;
-import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.DEFAULT_COLOR_MAX;
-import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.HASHTAG;
-import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.LIGHT_TEXT_COLOR;
-import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.NON_DIGIT_COMMA_REGEX;
-import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.RGB_PREFIX;
-import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.RGB_REGEX_PATTERN;
-import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.RGB_FORMAT;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.COMMA;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.DARK_TEXT_COLOR;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.DEFAULT_COLOR_MAX;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.HASHTAG;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.LIGHT_TEXT_COLOR;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.NON_DIGIT_COMMA_REGEX;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.RGB_PREFIX;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.RGB_REGEX_PATTERN;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.RGB_FORMAT;
 
 
 import java.util.ArrayList;

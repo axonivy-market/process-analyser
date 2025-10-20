@@ -1,17 +1,17 @@
 package com.axonivy.solutions.process.analyser.managedbean;
 
-import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.ANALYSIS_EXCEL_FILE_PATTERN;
-import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.DATA_CMS_PATH;
-import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.EN_CMS_LOCALE;
-import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.FROM;
-import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.JSON_EXTENSION;
-import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.MULTIPLE_UNDERSCORES_REGEX;
-import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.PROCESS_ANALYSER_CMS_PATH;
-import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.SPACE_DASH_REGEX;
-import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.TO;
-import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.UNDERSCORE;
-import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.UPDATE_IFRAME_SOURCE_METHOD_CALL;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyserConstants.HYPHEN_SIGN;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.ANALYSIS_EXCEL_FILE_PATTERN;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.DATA_CMS_PATH;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.EN_CMS_LOCALE;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.FROM;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.JSON_EXTENSION;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.MULTIPLE_UNDERSCORES_REGEX;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.PROCESS_ANALYSER_CMS_PATH;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.SPACE_DASH_REGEX;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.TO;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.UNDERSCORE;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.UPDATE_IFRAME_SOURCE_METHOD_CALL;
+import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.HYPHEN_SIGN;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartEventElement;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartSignalEventElement;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.WebServiceProcessStartElement;
@@ -50,7 +50,7 @@ import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
 import com.axonivy.solutions.process.analyser.core.bo.Process;
 import com.axonivy.solutions.process.analyser.core.bo.StartElement;
-import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyserConstants;
+import com.axonivy.solutions.process.analyser.core.constants.CoreConstants;
 import com.axonivy.solutions.process.analyser.core.enums.StartElementType;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
@@ -237,7 +237,7 @@ public class ProcessesAnalyticsBean {
     var startElement = process.getStartElements().getFirst();
     var item = createNewProcessItemForDropdown(process, startElement);
 
-    var processNameAndStartElement = process.getName().concat(ProcessAnalyserConstants.SLASH).concat(item.getLabel());
+    var processNameAndStartElement = process.getName().concat(CoreConstants.SLASH).concat(item.getLabel());
     item.setLabel(processNameAndStartElement);
 
     processStartsSelection.add(item);
@@ -257,7 +257,7 @@ public class ProcessesAnalyticsBean {
   private SelectItem createNewProcessItemForDropdown(Process process, StartElement startElement) {
     var processStartElement = new ProcessAnalyser(process, startElement);
     String displayName = getStartElementDisplayName(startElement);
-    var description = process.getName().concat(ProcessAnalyserConstants.SLASH).concat(displayName);
+    var description = process.getName().concat(CoreConstants.SLASH).concat(displayName);
     return new SelectItem(processStartElement, displayName, description);
   }
 

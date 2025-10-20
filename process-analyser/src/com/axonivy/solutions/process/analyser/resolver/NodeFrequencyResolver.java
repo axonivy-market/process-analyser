@@ -1,6 +1,6 @@
 package com.axonivy.solutions.process.analyser.resolver;
 
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyserConstants.SLASH;
+import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.SLASH;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.axonivy.solutions.process.analyser.constants;
 
-public class ProcessAnalyticsConstants {
+public class AnalyserConstants {
   public static final int DEFAULT_INITIAL_STATISTIC_NUMBER = 0;
   public static final int GRADIENT_COLOR_LEVELS = 10;
   public static final String HYPHEN_REGEX = "\\-";

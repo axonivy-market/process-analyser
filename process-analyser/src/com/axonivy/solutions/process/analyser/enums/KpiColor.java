@@ -2,7 +2,7 @@ package com.axonivy.solutions.process.analyser.enums;
 
 import java.util.List;
 
-import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants;
+import com.axonivy.solutions.process.analyser.constants.AnalyserConstants;
 import com.axonivy.solutions.process.analyser.utils.ColorUtils;
 
 public enum KpiColor implements HasCmsName {
@@ -13,7 +13,7 @@ public enum KpiColor implements HasCmsName {
 
   private KpiColor(String baseColor) {
     this.baseColor = baseColor;
-    this.colors = ColorUtils.generateGradientFromRgb(baseColor, ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS);
+    this.colors = ColorUtils.generateGradientFromRgb(baseColor, AnalyserConstants.GRADIENT_COLOR_LEVELS);
   }
 
   public String getBaseColor() {
