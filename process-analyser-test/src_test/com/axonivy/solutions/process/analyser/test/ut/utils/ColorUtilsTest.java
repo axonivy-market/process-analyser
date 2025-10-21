@@ -1,7 +1,7 @@
 package com.axonivy.solutions.process.analyser.test.ut.utils;
 
-import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.DARK_TEXT_COLOR;
-import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants.LIGHT_TEXT_COLOR;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.DARK_TEXT_COLOR;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.LIGHT_TEXT_COLOR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;

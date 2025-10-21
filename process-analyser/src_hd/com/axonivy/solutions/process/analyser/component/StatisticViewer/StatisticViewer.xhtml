@@ -14,7 +14,7 @@
   <c:set var="managedBean" value="#{cc.attrs.managedBean}" />
   <h:panelGroup id="data-statistics" layout="block"
     rendered="#{not managedBean.isWidgetMode}">
-    <p:dataTable var="node" styleClass="grid" id="node"
+    <p:dataTable var="node" styleClass="grid m-0" id="node"
       value="#{managedBean.filteredNodes}" scrollable="true"
       scrollHeight="300"
       emptyMessage="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/NoRecordsFound')}">

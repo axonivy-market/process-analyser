@@ -8,7 +8,7 @@
   <cc:attribute name="rendered" default="true"/>
   <cc:attribute name="managedBean" />
   <cc:attribute name="kpiType" />
-  
+  <cc:attribute name="isWidgetMode" default="false"/>
 </cc:interface>
 
 <cc:implementation>
@@ -19,11 +19,11 @@
   <c:set var="persistedConfig" value="#{cc.attrs.managedBean.persistedConfig}"/>
   <c:set var="isFrequecyKpi" value="#{kpiType eq 'FREQUENCY'}"/>
   <f:event listener="#{colorPickerBean.initBean(kpiType, isWidgetMode)}" type="preRenderComponent"/>
-  <h:panelGroup id="color-container" layout="block" styleClass="color-container" rendered="#{rendered}">
-    <p:outputPanel id="color-bar-segment">
+  <h:panelGroup id="color-container" layout="block" styleClass="color-container #{isWidgetMode? 'align-items-start' : 'align-items-end'}" rendered="#{rendered}">
+    <p:outputPanel id="color-bar-segment" styleClass="#{isWidgetMode ? 'w-full' : ''}">
       <h:panelGroup layout="block" styleClass="duration-container"
         rendered="#{kpiType ne null}">
-        <h:panelGroup styleClass="duration-labels">
+        <h:panelGroup layout="block" styleClass="duration-labels #{isWidgetMode ? 'w-full' : ''}">
           <h:outputText styleClass="duration-label left"
             value="#{ivy.cms.co(isFrequecyKpi ? '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/LowExecution' : '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/LowDuration')}"
             escape="false" />
@@ -31,7 +31,7 @@
             value="#{ivy.cms.co(isFrequecyKpi ? '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/HighExecution' : '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/HighDuration')}"
             escape="false" />
         </h:panelGroup>
-        <div class="duration-bar">
+        <h:panelGroup layout="block" styleClass="duration-bar #{isWidgetMode ? 'w-full' : ''}">
           <ui:repeat value="#{colorPickerBean.colorSegments}" var="color" varStatus="status">
             <p:commandLink actionListener="#{colorPickerBean.onSegmentClick}"
               update="#{cc.clientId}:color-picker-panel" styleClass="segment"
@@ -46,7 +46,7 @@
                   style="background-color: #{color};"
                   rendered="#{colorPickerBean.selectedColorMode == 'HEATMAP'}" />
           </ui:repeat>
-        </div>
+        </h:panelGroup>
       </h:panelGroup>
     </p:outputPanel>
 

@@ -17,7 +17,7 @@
     <h:panelGroup layout="block" rendered="#{timeIntervalFilterBean.pointSelection}"
       styleClass="#{isWidgetMode ? 'col-12' : 'col-4'} p-0 m-0 field">
       <p:outputLabel for="@next" />
-      <div class="#{isWidgetMode ? 'px-0' : 'pl-1'} col pt-2">
+      <div class="#{isWidgetMode ? 'px-0' : 'px-1'} col pt-2">
         <p:calendar id="date-point-selection" value="#{timeIntervalFilterBean.filter.from}" readonly="true"
           pattern="#{timeIntervalFilterBean.datePattern}" />
       </div>

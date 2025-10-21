@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.Strings;
 
-import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticsConstants;
+import com.axonivy.solutions.process.analyser.constants.AnalyserConstants;
 import com.axonivy.solutions.process.analyser.core.bo.Process;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 
@@ -72,7 +72,7 @@ public class BaseSetup {
   }
 
   protected int extractBrightness(String rgbString) {
-    Matcher matcher = Pattern.compile(ProcessAnalyticsConstants.RGB_REGEX_PATTERN).matcher(rgbString);
+    Matcher matcher = Pattern.compile(AnalyserConstants.RGB_REGEX_PATTERN).matcher(rgbString);
     if (!matcher.matches()) {
       throw new IllegalArgumentException("Invalid RGB format: " + rgbString);
     }
