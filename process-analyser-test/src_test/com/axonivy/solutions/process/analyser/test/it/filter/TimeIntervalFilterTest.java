@@ -29,6 +29,7 @@ public class TimeIntervalFilterTest extends WebBaseSetup {
 
   @BeforeEach
   void startProcess() {
+    login();
     startAnalyzingProcess();
   }
 
