@@ -3,7 +3,7 @@ properties([
     [$class: 'GitParameterDefinition',
       name: 'BRANCH',
       type: 'PT_BRANCH',
-      defaultValue: 'origin/master',
+      defaultValue: 'origin/develop',
       description: 'Choose your GitHub branch',
       branchFilter: '.*',
       tagFilter: '*',
@@ -75,7 +75,6 @@ pipeline {
     }
 
     stage('Restart Engine') {
-      agent any
       steps {
         sh """
           cd /etc/docker-compose/engine/12
