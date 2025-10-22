@@ -1,8 +1,9 @@
 package com.axonivy.solutions.process.analyser.core.internal;
 
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.SLASH;
+import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.SLASH;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import com.axonivy.solutions.process.analyser.core.enums.StartElementType;
 
@@ -54,7 +55,7 @@ public class ProcessStartFactory {
         return localeName;
       }
 
-      if (StringUtils.contains(startElement.getRequestPath(), SLASH)) {
+      if (Strings.CS.contains(startElement.getRequestPath(), SLASH)) {
         var requestPaths = StringUtils.split(startElement.getRequestPath(), SLASH);
         return requestPaths[requestPaths.length - 1];
       }

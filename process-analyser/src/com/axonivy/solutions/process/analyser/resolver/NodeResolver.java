@@ -8,7 +8,8 @@ import java.util.stream.Stream;
 import org.apache.commons.collections4.CollectionUtils;
 
 import com.axonivy.solutions.process.analyser.bo.Node;
-import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
+import com.axonivy.solutions.process.analyser.constants.AnalyserConstants;
+import com.axonivy.solutions.process.analyser.core.constants.CoreConstants;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
@@ -46,7 +47,7 @@ public class NodeResolver {
       node.setFormattedMedianDuration(medianDurationValue);
     }
     if (Double.isNaN(node.getRelativeValue())) {
-      node.setRelativeValue(ProcessAnalyticsConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
+      node.setRelativeValue(AnalyserConstants.DEFAULT_INITIAL_STATISTIC_NUMBER);
     }
   }
 
@@ -63,10 +64,9 @@ public class NodeResolver {
       node.setTaskSwitchGateway(true);
       String elementId = taskSwitchGateway.getPid().toString();
       List<Node> taskNodes = taskSwitchGateway.getAllTaskConfigs().stream()
-          .map(task -> {
-            var nodeId = elementId + ProcessAnalyticsConstants.SLASH + task.identifier().getTaskIvpLinkName();
-            return createNode(nodeId, task.name().getRawMacro(), NodeType.ELEMENT);
-          })
+          .map(task -> createNode(
+              elementId + CoreConstants.SLASH + task.getTaskIdentifier().getTaskIvpLinkName(),
+              task.getName().getRawMacro(), NodeType.ELEMENT))
           .collect(Collectors.toList());
       taskNodes.add(0, node);
       yield taskNodes;

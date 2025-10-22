@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
 import com.axonivy.solutions.process.analyser.bo.TaskOccurrence;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
-import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
+import com.axonivy.solutions.process.analyser.constants.AnalyserConstants;
 import com.axonivy.solutions.process.analyser.enums.IvyVariable;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 
@@ -163,6 +163,6 @@ public class IvyTaskOccurrenceService {
   }
 
   private static String getRequestPath(String processId) {
-    return String.format(ProcessAnalyticsConstants.LIKE_TEXT_SEARCH, processId);
+    return String.format(AnalyserConstants.LIKE_TEXT_SEARCH, processId);
   }
 }

@@ -42,7 +42,6 @@ h3 {
 .color-container {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
   gap: 1em;
   margin: 1em 0;
 }
@@ -97,8 +96,11 @@ h3 {
 .process-analytic-viewer-container,
 .viewer-group {
   width: 100%;
-  border-bottom: .5rem solid var(--surface-border);
   border-radius: 0 0 .5rem .5rem;
+}
+
+.border-b-05rem {
+  border-bottom: .5rem solid var(--surface-border);
 }
 
 .process-analytic-viewer {
@@ -108,6 +110,10 @@ h3 {
   height: 100%;
   min-width: 100%;
   min-height: 400px;
+}
+
+.full-widget-height {
+  height: calc(100vh - 9rem);
 }
 
 .toolbar-overlay-panel {
