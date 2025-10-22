@@ -120,7 +120,7 @@ public class ProcessesAnalyticsBean {
 
   private void initSelectedValueFromUserProperty() {
     ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
-    // Early escapse if not in widget mode
+    // Early escape if not in widget mode
     if (!isWidgetMode) {
       return;
     }
