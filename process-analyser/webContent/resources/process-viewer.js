@@ -7,7 +7,9 @@ const HIDDEN_CLASS = "hidden";
 const CHILD_DIV_FROM_NODE_ELEMENT_SELECTOR = ".node-child-label > div";
 const DEFAULT_IMAGE_TYPE = "image/jpeg";
 const ANCHOR_TAG = "a";
-const CURRENT_PROCESS_LABEL = "process-dropdown";
+const CURRENT_PROCESS_LABEL = "standard-filter-panel-group:process-dropdown";
+const CURRENT_MERGED_PROCESS_LABEL = "standard-filter-panel-group:process-merge-dropdown_label";
+const MERGED_PROCESS_INPUT = "merge-process-starts_input";
 const HIDDEN_IMAGE_ID = "hidden-image";
 const JUMP_OUT_BTN_CLASS = "ivy-jump-out";
 const IVY_PROCESS_EXTENSION = ".ivp";
@@ -28,7 +30,8 @@ const MINING_URL_PARAM = "&miningUrl=";
 function getCenterizeButton() {
   return queryObjectById(DIAGRAM_IFRAME_ID)
     .contents()
-    .find(buildIdRef(CENTER_BUTTON_ID))[0];
+    .find(buildIdRef(CENTER_BUTTON_ID))
+    .get(0);
 }
 
 function buildIdRef(id) {
@@ -50,22 +53,29 @@ function queryObjectByIdInForm(id) {
 function updateUrlForIframe() {
   const dataUrl = queryObjectByIdInForm(HIDDEN_IMAGE_ID).attr("src");
   const encodedDataUrl = encodeURIComponent(dataUrl);
-  const currentViewerUrl = window.frames[DIAGRAM_IFRAME_ID].src;
+  const $iframe = queryObjectById(DIAGRAM_IFRAME_ID);
+  const currentViewerUrl = $iframe.prop("src");
   let url;
   if (currentViewerUrl.includes(MINING_URL_PARAM)) {
     // If miningUrl param already exists, replace it
-    url = currentViewerUrl.replace(MINING_URL_PARAM, MINING_URL_PARAM + encodedDataUrl);
+    url = currentViewerUrl.replace(
+      MINING_URL_PARAM,
+      MINING_URL_PARAM + encodedDataUrl
+    );
   } else {
     // If miningUrl param doesn't exist, add it
     url = currentViewerUrl + MINING_URL_PARAM + encodedDataUrl;
   }
-  window.frames[DIAGRAM_IFRAME_ID].src = url;
+  $iframe.prop("src", url);
 }
 
 async function getFullDiagramData() {
   await wait(DEFAULT_SLEEP_TIME_IN_MS);
   await returnToFirstLayer();
-  await setIframeResolution(FULL_HD_RESOLUTION_WIDTH, FULL_HD_RESOLUTION_HEIGHT);
+  await setIframeResolution(
+    FULL_HD_RESOLUTION_WIDTH,
+    FULL_HD_RESOLUTION_HEIGHT
+  );
   await wait(DEFAULT_SLEEP_TIME_IN_MS);
   await centerizeIframeImage();
   await captureScreenFromIframe();
@@ -80,7 +90,8 @@ async function captureScreenFromIframe() {
   await hideViewPortBar(true);
   await updateMissingCssForChildSelector();
 
-  const iframe = document.querySelector("[id$='process-analytic-viewer']");
+  const $iframe = $("[id$='process-analytic-viewer']");
+  const iframe = $iframe.get(0);
   const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 
   await html2canvas(iframeDoc.body, {
@@ -88,13 +99,15 @@ async function captureScreenFromIframe() {
     allowTaint: true,
   })
     .then((canvas) => {
-      let imageName = queryObjectByIdInForm(CURRENT_PROCESS_LABEL).text();
+      let isMergeProcessStart = $(`[id$="${MERGED_PROCESS_INPUT}"]`).is(':checked');
+      let selectedProcessStartId = isMergeProcessStart ? CURRENT_MERGED_PROCESS_LABEL : CURRENT_PROCESS_LABEL
+      let imageName = queryObjectByIdInForm(selectedProcessStartId).text();
       imageName = imageName.split(IVY_PROCESS_EXTENSION)[0];
       const encodedImg = canvas.toDataURL(DEFAULT_IMAGE_TYPE);
-      const link = document.createElement(ANCHOR_TAG);
-      link.href = encodedImg;
-      link.download = `${imageName}.jpeg`;
-      link.click();
+      const $link = $("<a>");
+      $link.attr("href", encodedImg);
+      $link.attr("download", `${imageName}.jpeg`);
+      $link.get(0).click();
     })
     .catch((err) => {
       console.error("Error capturing iframe content:", err);
@@ -117,9 +130,11 @@ async function updateMissingCssForChildSelector() {
 }
 
 async function setIframeResolution(width, height) {
-  const iframe = queryObjectById(DIAGRAM_IFRAME_ID)[0];
-  iframe.style.width = width;
-  iframe.style.height = height;
+  const $iframe = queryObjectById(DIAGRAM_IFRAME_ID);
+  $iframe.css({
+    width: width,
+    height: height,
+  });
 }
 
 async function returnToFirstLayer() {
@@ -161,7 +176,8 @@ function getContentsById(id) {
 function getJumpOutBtn() {
   return queryObjectById(DIAGRAM_IFRAME_ID)
     .contents()
-    .find(buildClassRef(JUMP_OUT_BTN_CLASS))[0];
+    .find(buildClassRef(JUMP_OUT_BTN_CLASS))
+    .get(0);
 }
 
 function removeExecutedClass() {
@@ -193,7 +209,8 @@ function getPidQueryParamValue(url) {
 }
 
 function loadIframe(recheckIndicator) {
-  var iframe = document.getElementById(DIAGRAM_IFRAME_ID);
+  const $iframe = $(buildIdRef(DIAGRAM_IFRAME_ID));
+  const iframe = $iframe.get(0);
 
   if (recheckIndicator) {
     const iframeDoc = iframe.contentDocument;
@@ -206,13 +223,13 @@ function loadIframe(recheckIndicator) {
       return;
     }
   }
-  recheckFrameTimer = setTimeout(function () {
+  recheckFrameTimer = setTimeout(() => {
     loadIframe(true);
   }, 500);
 }
 
 function openViewerInNewTab() {
-  var url = $("[id$='process-analytic-viewer']").prop("src");
+  const url = $("[id$='process-analytic-viewer']").prop("src");
   if (url) {
     window.open(url, "_blank");
   } else {
@@ -229,6 +246,6 @@ document.addEventListener("click", function (event) {
   }
   var colorPickerWidget = PF("colorPickerWidget");
   if (colorPickerWidget && !colorPickerWrapper.contains(event.target)) {
-    colorPickerWrapper.style.display = "none";
-  }
+      colorPickerWrapper.style.display = "none";
+    }
 });

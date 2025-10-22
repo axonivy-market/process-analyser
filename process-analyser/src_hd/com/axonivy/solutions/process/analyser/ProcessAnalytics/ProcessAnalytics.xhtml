@@ -10,199 +10,48 @@
   <ui:composition template="/layouts/frame-10-full-width.xhtml">
     <ui:define name="title">#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Title')}</ui:define>
     <ui:define name="content">
-      <h:outputScript name="resources/html2canvas.min.js" target="head"/>
-        <h:outputStylesheet library="css" name="process-analyser.css" />
-
-      <h:form id="process-analytics-form" styleClass="card">
-        <p:remoteCommand id="update-data-table-cmd" name="updateDataTable"
-          action="#{processesAnalyticsBean.updateDataTable}" update="data-statistics"
-          process="@this" partialSubmit="true"/>
-        <p:graphicImage id="hidden-image" library="ivy-cms"
+      <h:outputScript name="resources/html2canvas.min.js" target="head" />
+      <h:outputStylesheet library="css" name="process-analyser.css" />
+      <h:form id="process-analytics-form"
+        styleClass="#{processesAnalyticsBean.isWidgetMode ? 'flex-1' : 'card'}">
+        <p:remoteCommand id="update-data-table-cmd"
+          name="updateDataTable"
+          action="#{processesAnalyticsBean.updateDataTable}"
+          update="statistic-viewer:data-statistics" process="@this"
+          partialSubmit="true" />
+        <p:graphicImage id="hidden-image" library="ivy-cms" styleClass="hidden"
           name="#{processesAnalyticsBean.miningUrl}" />
-        <p:panelGrid columns="2" layout="grid" styleClass="ui-fluid"
-          columnClasses="ui-g-6 pl-0, ui-g-6 pr-0 mr-0 grid align-items-center flex-row-reverse">
-          <h:panelGroup layout="block"  styleClass="flex align-items-center h-full">
-            <h3>#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/Title')}</h3>
-          </h:panelGroup>
-
-          <h:panelGroup>
-            <p:commandButton id="show-statistic-btn"
-                icon="pi pi-chart-line"
-                value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/ShowStatistic')}"
-                styleClass="show-statistic-btn w-auto"
-                update="process-analytics-form"
-                actionListener="#{processesAnalyticsBean.updateDiagramAndStatistic}"
-                disabled="#{processesAnalyticsBean.showStatisticBtnDisabled}" />
-
-            <div class="grid mr-4 grid align-items-center line-height-4 mt-1">
-              <p:outputLabel id="include-running-cases-label" for="include-running-cases" value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/IncludeRunningCases')}"
-                styleClass="p-2" />
-              <p:toggleSwitch id="include-running-cases" onIcon="pi pi-check" offIcon="pi pi-times"
-                value="#{processesAnalyticsBean.includingRunningCases}">
-                <p:ajax listener="#{processesAnalyticsBean.updateDiagramAndStatistic}" update="process-analytics-form" />
-              </p:toggleSwitch>
-              <p:tooltip for="include-running-cases-label"
-                value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/IncludeRunningCasesTooltip')}"/>
-            </div>
-
-             <div class="grid mr-4 grid align-items-center line-height-4 mt-1">
-              <p:outputLabel id="merge-process-starts-label" for="merge-process-starts" value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/MergeProcessStarts')}"
-                styleClass="p-2" />
-              <p:toggleSwitch id="merge-process-starts" onIcon="pi pi-check" offIcon="pi pi-times"
-                value="#{processesAnalyticsBean.mergeProcessStarts}">
-                <p:ajax listener="#{processesAnalyticsBean.updateDiagramAndStatistic}" update="process-analytics-form" />
-              </p:toggleSwitch>
-            </div>
-          </h:panelGroup>
-        </p:panelGrid>
-        <p:outputPanel>
-            <br />
-        </p:outputPanel>
-
-        <p:panelGrid id="search-fields" columns="3"
-          styleClass="ui-fluid" layout="flex"
-          columnClasses="ui-g-4, ui-g-4, ui-g-4">
-          <h:panelGroup styleClass="ui-g field" layout="block">
-            <p:outputLabel for="moduleDropdown"
-              value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectProject')}" />
-            <p:selectOneMenu id="moduleDropdown"
-              value="#{processesAnalyticsBean.selectedModule}">
-              <f:selectItem itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectProject')}" itemValue="#{null}"
-                noSelectionOption="true" />
-              <f:selectItems
-                value="#{processesAnalyticsBean.availableModules}"
-                var="module" itemLabel="#{module}" itemValue="#{module}" />
-              <p:ajax event="change" partialSubmit="true" process="@this"
-                listener="#{processesAnalyticsBean.onModuleSelect}" />
-            </p:selectOneMenu>
-          </h:panelGroup>
-
-          <h:panelGroup id="process-selection-group" styleClass="ui-g field" layout="block">
-            <p:outputLabel
-              value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Process')}">
-              <p:outputLabel id="header-tooltip">
-                <i class="ui-icon pi pi-info-circle ml-1" />
-              </p:outputLabel>
-              <p:tooltip for="header-tooltip" trackMouse="true"
-                value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/ProcessTooltip')}" />
-            </p:outputLabel>
-
-            <c:if test="#{!processesAnalyticsBean.mergeProcessStarts}">
-            <p:cascadeSelect id="process-dropdown" value="#{processesAnalyticsBean.selectedProcessAnalyser}"
-              placeholder="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectProcess')}"
-              converter="processStartConverter" styleClass="w-full">
-              <f:selectItems value="#{processesAnalyticsBean.availableProcessStarts}" />
-              <p:ajax partialSubmit="true" process="@this" listener="#{processesAnalyticsBean.onProcessSelect}" />
-            </p:cascadeSelect>
-            </c:if>
-
-            <c:if test="#{processesAnalyticsBean.mergeProcessStarts}">
-              <p:selectOneMenu value="#{processesAnalyticsBean.selectedProcessAnalyser}" converter="processStartConverter">
-                <f:selectItem
-                  itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectProcess')}"
-                  itemValue="#{null}" noSelectionOption="true" />
-                <f:selectItems
-                  value="#{processesAnalyticsBean.availableProcessStarts}" />
-                <p:ajax event="change"
-                  listener="#{processesAnalyticsBean.onProcessSelect}" />
-              </p:selectOneMenu>
-            </c:if>
-          </h:panelGroup>
-
-          <h:panelGroup styleClass="ui-g field" layout="block">
-            <p:outputLabel for="kpiDropdown"
-              value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectKPI')}" />
-            <p:cascadeSelect id="kpiDropdown" style="width: 100%"
-              placeholder="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectKPI')}"
-              value="#{processesAnalyticsBean.selectedKpiType}" converter="kpiTypeConverter">
-              <f:selectItems value="#{processesAnalyticsBean.kpiTypes}" />
-              <p:ajax event="itemSelect"
-                listener="#{processesAnalyticsBean.onKpiTypeSelect}"
-                process="@this" partialSubmit="true"/>
-            </p:cascadeSelect>
-          </h:panelGroup>
-        </p:panelGrid>
-
-        <h:panelGroup id="time-interval-group"
-          styleClass="field col-12 grid formgrid align-items-start p-0 m-0 field"
-          layout="block">
-          <ui:include src="TimeIntervalFilter.xhtml" />
-          <p:remoteCommand id="filter-data-by-interval-rc"
-            name="filterDataByIntervalRC"
-            actionListener="#{processesAnalyticsBean.updateDataOnChangingFilter()}"
-            process="@this" partialSubmit="true"/>
+        <h:panelGroup layout="block"
+          rendered="#{not processesAnalyticsBean.isWidgetMode}">
+          <ic:com.axonivy.solutions.process.analyser.component.StandardFilter
+            id="standard-filter-panel-group"
+            managedBean="#{processesAnalyticsBean}" />
         </h:panelGroup>
-
-        <hr />
-
+        <h:panelGroup layout="block"
+          styleClass="border-top-1 surface-border my-3"
+          rendered="#{not processesAnalyticsBean.isWidgetMode}" />
         <ic:com.axonivy.solutions.process.analyser.component.CustomFilter
           id="custom-filter-panel-group"
           managedBean="#{processesAnalyticsBean}" />
-
-        <ic:com.axonivy.solutions.process.analyser.component.ProcessViewer id="process-analytic-viewer-panel"
-          process="#{processesAnalyticsBean.selectedProcessAnalyser}"
-          componentsToUpdate="@this"/>
-
-        <ic:com.axonivy.solutions.process.analyser.component.ColorPicker id="color-picker-component"
+        <ic:com.axonivy.solutions.process.analyser.component.ProcessViewer
+          id="process-analytic-viewer-panel"
+          managedBean="#{processesAnalyticsBean}"
+          componentsToUpdate="@this" />
+        <ic:com.axonivy.solutions.process.analyser.component.ColorPicker
+          id="color-picker-component"
           kpiType="#{processesAnalyticsBean.selectedKpiType}"
-          onColorChange="#{processesAnalyticsBean.refreshAnalyserReportToView()}"
+          managedBean="#{processesAnalyticsBean}"
           componentToUpdate="@this"
-          selectedColorMode= "#{processesAnalyticsBean.selectedColorMode}"/>
-
-        <hr />
-
-        <h:panelGroup id="data-statistics" layout="block">
-          <p:dataTable var="node" styleClass="grid" id="node"
-            value="#{processesAnalyticsBean.filteredNodes}" scrollable="true"
-            scrollHeight="300"
-            emptyMessage="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/NoRecordsFound')}">
-            <p:column styleClass="col-2" sortBy="#{node.id}"
-              headerText="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/ElementId')}">
-              <h:outputText value="#{node.id}" />
-            </p:column>
-            <p:column styleClass="col-2" sortable="true"
-              sortBy="#{node.type.getCmsName()}"
-              headerText="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Type')}">
-              <h:outputText value="#{node.type.getCmsName()}" />
-            </p:column>
-            <p:column styleClass="col-4" sortBy="#{node.label}"
-              headerText="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Label')}">
-              <h:outputText value="#{node.label}" />
-            </p:column>
-            <p:column
-              rendered="#{'FREQUENCY' == processesAnalyticsBean.selectedKpiType}"
-              styleClass="col-2" sortBy="#{node.frequency}"
-              exportValue="#{node.frequency}"
-              headerText="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Frequency')}">
-              <h:panelGroup layout="block" styleClass="colorable-cell"
-                style="background-color: #{processesAnalyticsBean.getCalulatedCellColor(node.relativeValue)};
-                  color: #{processesAnalyticsBean.getAccessibleTextColor(node.relativeValue)};">
-                <h:outputText value="#{node.frequency}" />
-              </h:panelGroup>
-            </p:column>
-            <p:column
-              rendered="#{processesAnalyticsBean.isMedianDurationColumnVisible()}"
-              styleClass="col-2" sortBy="#{node.medianDuration}"
-              exportValue="#{node.formattedMedianDuration}"
-              headerText="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/MedianDuration')}">
-              <h:panelGroup layout="block" styleClass="colorable-cell"
-                style="background-color: #{processesAnalyticsBean.getCalulatedCellColor(node.relativeValue)};
-                  color: #{processesAnalyticsBean.getAccessibleTextColor(node.relativeValue)};">
-                <h:outputText value="#{node.formattedMedianDuration}" />
-              </h:panelGroup>
-            </p:column>
-            <f:facet name="footer">
-              <h:outputText
-                value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/TotalElements', [processesAnalyticsBean.filteredNodes.size()])}"
-                styleClass="col-12" />
-            </f:facet>
-          </p:dataTable>
-          <br />
-        </h:panelGroup>
-        <h:panelGroup
-          id="action-btn-group"
+          rendered="#{not processesAnalyticsBean.isWidgetMode}" />
+        <h:panelGroup layout="block"
+          styleClass="border-top-1 surface-border my-3"
+          rendered="#{not processesAnalyticsBean.isWidgetMode}" />
+        <ic:com.axonivy.solutions.process.analyser.component.StatisticViewer
+          id="statistic-viewer" managedBean="#{processesAnalyticsBean}" />
+        <h:panelGroup id="action-btn-group"
           styleClass="col-12 p-0 inline-flex justify-content-end"
-          layout="block">
+          layout="block"
+          rendered="#{not processesAnalyticsBean.isWidgetMode}">
           <p:menuButton icon="pi pi-upload" styleClass="action-button mr-3"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/ExportJPEG')}">
             <p:menuitem value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/CaptureEntireScreen')}"
@@ -218,7 +67,7 @@
           <p:commandButton icon="pi pi-upload" styleClass="action-button"
           	rendered="#{processesAnalyticsBean.nodes.size() > 0}"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/ExportExcel')}">
-            <p:dataExporter type="csv" target="node" fileName="#{processesAnalyticsBean.generateNameOfExcelFile()}" />
+            <p:dataExporter type="csv" target="process-analytics-form:statistic-viewer:node" fileName="#{processesAnalyticsBean.generateNameOfExcelFile()}" />
           </p:commandButton>
         </h:panelGroup>
       </h:form>
