@@ -7,9 +7,9 @@
   "elements" : [ {
       "id" : "f0",
       "type" : "RequestStart",
-      "name" : "startAnalytic.ivp",
+      "name" : "processAnalyser.ivp",
       "config" : {
-        "signature" : "startAnalytic",
+        "signature" : "processAnalyser",
         "input" : {
           "map" : {
             "out.isWidgetMode" : "false"
@@ -57,19 +57,20 @@
     }, {
       "id" : "f5",
       "type" : "RequestStart",
-      "name" : "startAnalyticWidget.ivp",
+      "name" : "processAnalyserWidget.ivp",
       "config" : {
-        "signature" : "startAnalyticWidget",
+        "signature" : "processAnalyserWidget",
         "input" : {
           "map" : {
             "out.isWidgetMode" : "true"
           }
         },
         "request" : {
-          "name" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/name\")%>",
-          "description" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/description\")%>",
+          "name" : "<%=ivy.cms.co(\"/Processes/Process/AnalyserWidget/name\")%>",
+          "description" : "<%=ivy.cms.co(\"/Processes/Process/AnalyserWidget/description\")%>",
           "category" : "ProcessAnalyser",
           "customFields" : [
+            { "name" : "cssIcon", "value" : "si si-analytics-graph" },
             { "name" : "embedInFrame", "value" : "false" },
             { "name" : "isDashboardProcess", "value" : "true" }
           ],

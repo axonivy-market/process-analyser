@@ -159,3 +159,6 @@ Processes:
     Analyser:
       description: To show statistic for your processes
       name: Process Analyser
+    AnalyserWidget:
+      description: Track process frequency and duration visually with powerful time and attribute filters.
+      name: Process Analyser
