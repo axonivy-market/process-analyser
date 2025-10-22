@@ -1,7 +1,6 @@
 Categories:
-  Process:
-    Analyser:
-      name: Process Analyser
+  ProcessAnalyser:
+    name: Process Analyser
 Dialogs:
   com:
     axonivy:
@@ -17,6 +16,7 @@ Dialogs:
               IncludeRunningCases: Include running cases
               IncludeRunningCasesTooltip: By default, only closed cases are evaluated. Use this button to also include running cases in the evaluation.
               LargeTimeInterval: Setting a very large time interval may cause performance issues.
+              MergeProcessStartTooltip: Each process start is analyzed independently by default. Click this button to merge all process starts into one data set for comprehensive analysis.
               MergeProcessStarts: Merge Process Starts
               Title: Process Analytics
               To: To
@@ -58,8 +58,12 @@ Dialogs:
               Version: Version
             component:
               ProcessViewer:
+                ColorConfig: Color config
+                ConfigColorTooltip: Config the color
+                ConfigFilterTooltip: Config the filter
                 ConfigViewerTooltip: Config the viewer
                 EmptyDataMessage: Please select process to see mining data
+                FilterConfig: Process filter config
                 FocusItem: Focus item
                 FocusItemTooltip: Select the element you want the viewer to focus on, and that element will be centered in the viewport.
                 MiningData: Mining data
@@ -154,4 +158,7 @@ Processes:
   Process:
     Analyser:
       description: To show statistic for your processes
+      name: Process Analyser
+    AnalyserWidget:
+      description: Track process frequency and duration visually with powerful time and attribute filters.
       name: Process Analyser

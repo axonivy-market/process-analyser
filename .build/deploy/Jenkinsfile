@@ -3,7 +3,7 @@ properties([
     [$class: 'GitParameterDefinition',
       name: 'BRANCH',
       type: 'PT_BRANCH',
-      defaultValue: 'origin/develop',
+      defaultValue: 'origin/master',
       description: 'Choose your GitHub branch',
       branchFilter: '.*',
       tagFilter: '*',
@@ -22,10 +22,8 @@ pipeline {
 
   environment {
     PROCESS_ANALYSER_GIT_URL = credentials('PROCESS_ANALYSER_GIT_URL')
-    PATH = "${env.MAVEN_HOME}/bin:${env.JAVA_HOME}/bin:${env.PATH}"
-    MVN_ARGS = '-Divy.engine.download.url=https://dev.axonivy.com/permalink/12.0.0/axonivy-engine.zip -Divy.engine.version=12.0.0 -Dproject.build.plugin.version=12.0.0 -Dtester.version=12.0.1'
   }
-  
+
   stages {
     stage('Set Display Name') {
       steps {
@@ -49,10 +47,12 @@ pipeline {
         }
       }
     }
-    
+
     stage('Build') {
       steps {
-        sh 'mvn clean verify \"${MVN_ARGS}\"'
+        script {
+          sh "mvn clean verify"
+        }
       }
     }
 
@@ -60,14 +60,12 @@ pipeline {
       steps {
         script {
           def version = sh(
-              script: "xmlstarlet sel -t -m '/*[local-name()=\"project\"]' -v '*[local-name()=\"version\"]' ${env.WORKSPACE}/pom.xml",
-              returnStdout: true
+            script: "xmlstarlet sel -t -m '/*[local-name()=\"project\"]' -v '*[local-name()=\"version\"]' ${env.WORKSPACE}/pom.xml",
+            returnStdout: true
           ).trim()
           echo "📦 Detected project version: ${version}"
-        
           def artifactDir = "process-analyser"
           def engineDeployDir = "/var/tools/ivy/12/deploy/PROCESS-ANALYSER"
-
           sh """
             install -m 666 ${artifactDir}/target/process-analyser-${version}.iar ${engineDeployDir}/process-analyser-${version}.iar
             install -m 666 ${artifactDir}-demo/target/process-analyser-demo-${version}.iar ${engineDeployDir}/process-analyser-demo-${version}.iar
@@ -75,7 +73,7 @@ pipeline {
         }
       }
     }
-    
+
     stage('Restart Engine') {
       steps {
         sh """
@@ -83,6 +81,6 @@ pipeline {
           docker compose restart
         """
       }
-    }    
+    }
   }
 }

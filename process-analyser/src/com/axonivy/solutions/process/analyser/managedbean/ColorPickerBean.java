@@ -1,13 +1,9 @@
 package com.axonivy.solutions.process.analyser.managedbean;
 
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COLOR_SEGMENT_ATTRIBUTE;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.GRADIENT_COLOR_LEVELS;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_REGEX;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HYPHEN_SIGN;
-import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.DURATION_COLOR;
-import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.DURATION_TEXT_COLOR;
-import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.FREQUENCY_COLOR;
-import static com.axonivy.solutions.process.analyser.core.constants.UserProperty.FREQUENCY_TEXT_COLOR;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.COLOR_SEGMENT_ATTRIBUTE;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.GRADIENT_COLOR_LEVELS;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.HYPHEN_REGEX;
+import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.HYPHEN_SIGN;
 import static com.axonivy.solutions.process.analyser.enums.KpiType.FREQUENCY;
 
 import java.io.Serializable;
@@ -20,14 +16,15 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 
+import com.axonivy.solutions.process.analyser.bo.ProcessViewerConfig;
 import com.axonivy.solutions.process.analyser.enums.ColorMode;
 import com.axonivy.solutions.process.analyser.enums.HeatmapColor;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.utils.ColorUtils;
-
-import ch.ivyteam.ivy.environment.Ivy;
-import ch.ivyteam.ivy.security.IUser;
+import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 
 @ManagedBean
 @ViewScoped
@@ -39,18 +36,46 @@ public class ColorPickerBean implements Serializable {
   private List<String> textColors;
   private String selectedColor;
   private int selectedIndex = -1;
+  private ColorMode selectedColorMode;
+  private boolean isWidgetMode;
+  private List<ColorMode> colorModes = Arrays.asList(ColorMode.values());
 
-  public void initBean(KpiType selectedKpiType, ColorMode selectedColorMode) {
-    this.selectedKpiType = selectedKpiType;
+  public void initBean(KpiType selectedKpiType, Boolean isWidgetMode) {
     this.colorSegments = new ArrayList<>();
     this.textColors = new ArrayList<>();
-    if (selectedKpiType != null) {
-      resetSelection();
-      if (selectedColorMode != null && selectedColorMode.isHeatmap()) {
-        onChooseHeatMapMode();
-      } else {
-        onChooseColorChooserMode();
-      }
+    this.isWidgetMode = BooleanUtils.isTrue(isWidgetMode);
+    selectedColorMode = ColorMode.HEATMAP;
+    initSelectedValue();
+    updateColorByKpiType(selectedKpiType);
+  }
+
+  private void initSelectedValue() {
+    if (isWidgetMode) {
+      ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
+      selectedColorMode = BooleanUtils.isTrue(persistedConfig.getIsCustomColorMode()) ? ColorMode.CUSTOM : ColorMode.HEATMAP;
+    }
+  }
+
+  public void updateColorByKpiType(KpiType selectedKpiType) {
+    this.selectedKpiType = selectedKpiType;
+    initColor();
+  }
+
+  public void onColorModeChange() {
+    initColor();
+    if (isWidgetMode) {
+      ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
+      persistedConfig.setIsCustomColorMode(selectedColorMode.isCustom());
+      ProcessesMonitorUtils.updateUserProperty(persistedConfig);
+    }
+  }
+
+  public void initColor() {
+    resetSelection();
+    if (selectedColorMode == null || selectedColorMode.isHeatmap()) {
+      onChooseHeatMapMode();
+    } else {
+      onChooseColorChooserMode();
     }
   }
 
@@ -59,7 +84,7 @@ public class ColorPickerBean implements Serializable {
     this.textColors = ColorUtils.getAccessibleTextColors(colorSegments);
   }
 
-  public boolean checkRenderCondition(ColorMode selectedColorMode) {
+  public boolean checkRenderCondition() {
     return selectedColorMode != null && selectedColorMode.isCustom() && isRenderedColorPicker();
   }
 
@@ -83,26 +108,31 @@ public class ColorPickerBean implements Serializable {
   }
 
   private void updateColorProperties() {
-    IUser user = Ivy.session().getSessionUser();
     if (CollectionUtils.isEmpty(colorSegments) || CollectionUtils.isEmpty(textColors)) {
       return;
     }
-    String colorKey = getColorPropertyKey();
-    String textKey = getTextColorPropertyKey();
-
-    user.setProperty(colorKey, String.join(HYPHEN_SIGN, colorSegments));
-    user.setProperty(textKey, String.join(HYPHEN_SIGN, textColors));
+    ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
+    String colorValue = String.join(HYPHEN_SIGN, colorSegments);
+    String textValue = String.join(HYPHEN_SIGN, textColors);
+    if (FREQUENCY == selectedKpiType) {
+      persistedConfig.setFrequencyColor(colorValue);
+      persistedConfig.setFrequencyTextColor(textValue);
+    } else {
+      persistedConfig.setDurationColor(colorValue);
+      persistedConfig.setDurationTextColor(textValue);
+    }
+    ProcessesMonitorUtils.updateUserProperty(persistedConfig);
   }
 
   public void onChooseColorChooserMode() {
-    IUser user = Ivy.session().getSessionUser();
-    String colorKey = getColorPropertyKey();
-    String textKey = getTextColorPropertyKey();
+    ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
 
-    String colorProperty = user.getProperty(colorKey);
-    String textProperty = user.getProperty(textKey);
+    String colorProperty = FREQUENCY == selectedKpiType ? persistedConfig.getFrequencyColor()
+        : persistedConfig.getDurationColor();
+    String textProperty = FREQUENCY == selectedKpiType ? persistedConfig.getFrequencyTextColor()
+        : persistedConfig.getDurationTextColor();
 
-    if (colorProperty != null && textProperty != null) {
+    if (StringUtils.isNoneBlank(colorProperty, textProperty)) {
       colorSegments = Arrays.asList(colorProperty.split(HYPHEN_REGEX));
       textColors = Arrays.asList(textProperty.split(HYPHEN_REGEX));
     } else {
@@ -115,16 +145,9 @@ public class ColorPickerBean implements Serializable {
     selectedIndex = -1;
     selectedColor = null;
   }
+
   public boolean isRenderedColorPicker() {
     return selectedIndex >= 0;
-  }
-
-  private String getColorPropertyKey() {
-    return FREQUENCY == selectedKpiType ? FREQUENCY_COLOR : DURATION_COLOR;
-  }
-
-  private String getTextColorPropertyKey() {
-    return FREQUENCY == selectedKpiType ? FREQUENCY_TEXT_COLOR : DURATION_TEXT_COLOR;
   }
 
   public KpiType getSelectedKpiType() {
@@ -165,5 +188,21 @@ public class ColorPickerBean implements Serializable {
 
   public void setSelectedIndex(int selectedIndex) {
     this.selectedIndex = selectedIndex;
+  }
+
+  public ColorMode getSelectedColorMode() {
+    return selectedColorMode;
+  }
+
+  public void setSelectedColorMode(ColorMode selectedColorMode) {
+    this.selectedColorMode = selectedColorMode;
+  }
+
+  public List<ColorMode> getColorModes() {
+    return colorModes;
+  }
+
+  public void setColorModes(List<ColorMode> colorModes) {
+    this.colorModes = colorModes;
   }
 }

@@ -7,9 +7,14 @@
   "elements" : [ {
       "id" : "f0",
       "type" : "RequestStart",
-      "name" : "startAnalytic.ivp",
+      "name" : "processAnalyser.ivp",
       "config" : {
-        "signature" : "startAnalytic",
+        "signature" : "processAnalyser",
+        "input" : {
+          "map" : {
+            "out.isWidgetMode" : "false"
+          }
+        },
         "request" : {
           "name" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/name\")%>",
           "description" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/description\")%>",
@@ -30,7 +35,12 @@
       "type" : "DialogCall",
       "name" : "Processes Analytics",
       "config" : {
-        "dialog" : "com.axonivy.solutions.process.analyser.ProcessAnalytics:start()"
+        "dialog" : "com.axonivy.solutions.process.analyser.ProcessAnalytics:start(Boolean)",
+        "call" : {
+          "map" : {
+            "param.isWidgetMode" : "in.isWidgetMode"
+          }
+        }
       },
       "visual" : {
         "at" : { "x" : 224, "y" : 208 }
@@ -44,5 +54,34 @@
       "visual" : {
         "at" : { "x" : 352, "y" : 208 }
       }
+    }, {
+      "id" : "f5",
+      "type" : "RequestStart",
+      "name" : "processAnalyserWidget.ivp",
+      "config" : {
+        "signature" : "processAnalyserWidget",
+        "input" : {
+          "map" : {
+            "out.isWidgetMode" : "true"
+          }
+        },
+        "request" : {
+          "name" : "<%=ivy.cms.co(\"/Processes/Process/AnalyserWidget/name\")%>",
+          "description" : "<%=ivy.cms.co(\"/Processes/Process/AnalyserWidget/description\")%>",
+          "category" : "ProcessAnalyser",
+          "customFields" : [
+            { "name" : "cssIcon", "value" : "si si-analytics-graph" },
+            { "name" : "embedInFrame", "value" : "false" },
+            { "name" : "isDashboardProcess", "value" : "true" }
+          ],
+          "isVisibleOnStartList" : false
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 96, "y" : 416 }
+      },
+      "connect" : [
+        { "id" : "f3", "to" : "f1", "via" : [ { "x" : 224, "y" : 416 } ] }
+      ]
     } ]
 }

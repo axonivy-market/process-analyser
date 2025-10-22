@@ -1,21 +1,23 @@
 package com.axonivy.solutions.process.analyser.utils;
 
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COMMA;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.DARK_TEXT_COLOR;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.DEFAULT_COLOR_MAX;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HASHTAG;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.LIGHT_TEXT_COLOR;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.NON_DIGIT_COMMA_REGEX;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.RGB_PREFIX;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.COMMA;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.DARK_TEXT_COLOR;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.DEFAULT_COLOR_MAX;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.HASHTAG;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.LIGHT_TEXT_COLOR;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.NON_DIGIT_COMMA_REGEX;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.RGB_PREFIX;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.RGB_REGEX_PATTERN;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.RGB_FORMAT;
+
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 
-import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
 import com.axonivy.solutions.process.analyser.enums.KpiColor;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 
@@ -33,7 +35,7 @@ public class ColorUtils {
    * @return List of RGB color strings forming the gradient
    */
   public static List<String> generateGradientFromRgb(String rgbColor, int steps) {
-    Matcher matcher = Pattern.compile(ProcessAnalyticsConstants.RGB_REGEX_PATTERN).matcher(rgbColor);
+    Matcher matcher = Pattern.compile(RGB_REGEX_PATTERN).matcher(rgbColor);
 
     if (!matcher.matches()) {
       throw new IllegalArgumentException("Invalid RGB format: " + rgbColor);
@@ -56,7 +58,7 @@ public class ColorUtils {
       int adjustedGreen = adjustColor(g, adjustmentFactor, isLightColor);
       int adjustedBlue = adjustColor(b, adjustmentFactor, isLightColor);
 
-      gradientColors.add(String.format(ProcessAnalyticsConstants.RGB_FORMAT, adjustedRed, adjustedGreen, adjustedBlue));
+      gradientColors.add(String.format(RGB_FORMAT, adjustedRed, adjustedGreen, adjustedBlue));
     }
     return gradientColors;
   }
@@ -92,7 +94,7 @@ public class ColorUtils {
       g = (val >> 8) & 0xFF;
       b = val & 0xFF;
     } else if (color.startsWith(RGB_PREFIX)) {
-      String[] parts = color.replaceAll(NON_DIGIT_COMMA_REGEX, Strings.EMPTY).split(COMMA);
+      String[] parts = color.replaceAll(NON_DIGIT_COMMA_REGEX, StringUtils.EMPTY).split(COMMA);
       r = Integer.parseInt(parts[0]);
       g = Integer.parseInt(parts[1]);
       b = Integer.parseInt(parts[2]);

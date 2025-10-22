@@ -1,0 +1,58 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:ic="http://ivyteam.ch/jsf/component" xmlns:p="http://primefaces.org/ui"
+  xmlns:pe="http://primefaces.org/ui/extensions">
+<h:body>
+  <h:panelGroup id="process-time-interval" layout="block" styleClass="col-12 px-0 mx-0 grid formgrid ui-fluid">
+    <h:panelGroup layout="block" styleClass="#{isWidgetMode ? 'col-12' : 'col-4 pr-2'} p-0 m-0 field">
+      <p:outputLabel for="@next"
+        value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/TimeInterval')}" />
+      <p:selectOneMenu value="#{timeIntervalFilterBean.selectedType}" id="filter-types">
+        <f:selectItems value="#{timeIntervalFilterBean.intervalTypes}" var="type" itemValue="#{type}"
+          itemLabel="#{type.getCmsName()}" />
+        <p:ajax listener="#{timeIntervalFilterBean.onSelectType}" process="@this" partialSubmit="true"
+          update="process-time-interval" />
+      </p:selectOneMenu>
+    </h:panelGroup>
+    <h:panelGroup layout="block" rendered="#{timeIntervalFilterBean.pointSelection}"
+      styleClass="#{isWidgetMode ? 'col-12' : 'col-4'} p-0 m-0 field">
+      <p:outputLabel for="@next" />
+      <div class="#{isWidgetMode ? 'px-0' : 'px-1'} col pt-2">
+        <p:calendar id="date-point-selection" value="#{timeIntervalFilterBean.filter.from}" readonly="true"
+          pattern="#{timeIntervalFilterBean.datePattern}" />
+      </div>
+    </h:panelGroup>
+    <h:panelGroup id="custom-interval-start" layout="block" rendered="#{timeIntervalFilterBean.customSelection}"
+      styleClass="#{isWidgetMode ? 'col-12' : 'col-4 px-1'} p-0 m-0 field">
+      <p:outputLabel for="@next"
+        value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/From')}" />
+      <p:datePicker value="#{timeIntervalFilterBean.filter.from}" id="custom-date-from"
+        validatorMessage="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/FromToDateValidationMessage')}"
+        showIcon="true" showTime="true" timeInput="true" pattern="#{timeIntervalFilterBean.timePattern}">
+        <p:ajax listener="#{timeIntervalFilterBean.onSelectDateTime}" update="process-time-interval" process="@this"
+          partialSubmit="true" />
+      </p:datePicker>
+    </h:panelGroup>
+    <h:panelGroup id="custom-interval-end" layout="block" rendered="#{timeIntervalFilterBean.customSelection}"
+      styleClass="#{isWidgetMode ? 'col-12' : 'col-4 pl-2'} p-0 m-0 field">
+      <p:outputLabel for="@next"
+        value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/To')}" />
+      <p:datePicker value="#{timeIntervalFilterBean.filter.to}" id="custom-date-to"
+        validatorMessage="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/FromToDateValidationMessage')}"
+        showIcon="true" showTime="true" timeInput="true" mindate="#{timeIntervalFilterBean.filter.from}"
+        pattern="#{timeIntervalFilterBean.timePattern}">
+        <p:ajax listener="#{timeIntervalFilterBean.onSelectDateTime}" update="process-time-interval" process="@this"
+          partialSubmit="true" />
+      </p:datePicker>
+    </h:panelGroup>
+    <h:panelGroup id="warning-message" styleClass="col-12 m-0 p-0 mt-1"
+      rendered="#{timeIntervalFilterBean.customSelection}">
+      <span class="font-bold"><i class="pi pi-exclamation-triangle" />
+        #{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/LargeTimeInterval')} </span>
+    </h:panelGroup>
+    <div class="col-12 m-0 p-0 mt-2">
+      <p:message for="custom-date-to" styleClass="m-0" />
+    </div>
+  </h:panelGroup>
+</h:body>
+</html>
