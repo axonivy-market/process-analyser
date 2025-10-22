@@ -3,7 +3,7 @@ properties([
     [$class: 'GitParameterDefinition',
       name: 'BRANCH',
       type: 'PT_BRANCH',
-      defaultValue: 'origin/develop',
+      defaultValue: 'origin/master',
       description: 'Choose your GitHub branch',
       branchFilter: '.*',
       tagFilter: '*',
