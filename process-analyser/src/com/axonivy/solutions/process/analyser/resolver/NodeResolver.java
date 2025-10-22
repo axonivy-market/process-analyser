@@ -65,8 +65,8 @@ public class NodeResolver {
       String elementId = taskSwitchGateway.getPid().toString();
       List<Node> taskNodes = taskSwitchGateway.getAllTaskConfigs().stream()
           .map(task -> createNode(
-              elementId + CoreConstants.SLASH + task.getTaskIdentifier().getTaskIvpLinkName(),
-              task.getName().getRawMacro(), NodeType.ELEMENT))
+              elementId + CoreConstants.SLASH + task.identifier().getTaskIvpLinkName(),
+              task.name().getRawMacro(), NodeType.ELEMENT))
           .collect(Collectors.toList());
       taskNodes.add(0, node);
       yield taskNodes;

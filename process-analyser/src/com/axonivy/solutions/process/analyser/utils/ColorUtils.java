@@ -10,13 +10,15 @@ import org.apache.commons.lang3.StringUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiColor;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.COMMA;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.DARK_TEXT_COLOR;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.DEFAULT_COLOR_MAX;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.HASHTAG;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.LIGHT_TEXT_COLOR;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.NON_DIGIT_COMMA_REGEX;
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.RGB_PREFIX;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.COMMA;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.DARK_TEXT_COLOR;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.DEFAULT_COLOR_MAX;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.HASHTAG;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.LIGHT_TEXT_COLOR;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.NON_DIGIT_COMMA_REGEX;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.RGB_PREFIX;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.RGB_FORMAT;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.RGB_REGEX_PATTERN;
 
 public class ColorUtils {
   public static List<String> generateColorSegments(KpiType selectedKpiType) {
