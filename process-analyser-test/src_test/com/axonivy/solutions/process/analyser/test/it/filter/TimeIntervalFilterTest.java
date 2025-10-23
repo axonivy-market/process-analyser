@@ -29,19 +29,22 @@ public class TimeIntervalFilterTest extends WebBaseSetup {
 
   @BeforeEach
   void startProcess() {
+    login();
     startAnalyzingProcess();
   }
 
   @Test
   void checkTimeIntervalDropdownExists() {
-    $(By.id("process-analytics-form:filter-types")).shouldBe(visible);
+    $(By.id("process-analytics-form:standard-filter-panel-group:filter-types")).shouldBe(visible);
   }
 
   @Test
   void checkDefaultTimeIntervalFilterType() {
-    $(By.id("process-analytics-form:filter-types_label")).shouldBe(visible).shouldBe(exactText("Today"));
+    $(By.id("process-analytics-form:standard-filter-panel-group:filter-types_label")).shouldBe(visible)
+        .shouldBe(exactText("Today"));
     String today = dateFormat.format(new Date());
-    $(By.id("process-analytics-form:date-point-selection_input")).shouldBe(visible).shouldHave(value(today));
+    $(By.id("process-analytics-form:standard-filter-panel-group:date-point-selection_input")).shouldBe(visible)
+        .shouldHave(value(today));
   }
 
   @Test
@@ -50,29 +53,32 @@ public class TimeIntervalFilterTest extends WebBaseSetup {
     openFilterTypes();
     $(By.cssSelector("li[data-label^='Yesterday']")).shouldBe(visible).click();
     LocalDate yesterday = LocalDate.now().minusDays(1);
-    $(By.id("process-analytics-form:date-point-selection_input")).shouldBe(visible)
+    $(By.id("process-analytics-form:standard-filter-panel-group:date-point-selection_input")).shouldBe(visible)
         .shouldHave(value(yesterday.format(dateTimeFormatter)));
 
     // Test Today type
     openFilterTypes();
     $(By.cssSelector("li[data-label^='Today']")).shouldBe(visible).click();
-    $(By.id("process-analytics-form:date-point-selection_input")).shouldBe(visible)
+    $(By.id("process-analytics-form:standard-filter-panel-group:date-point-selection_input")).shouldBe(visible)
         .shouldHave(value(dateFormat.format(new Date())));
 
     // Test Custom type
     openFilterTypes();
     $(By.cssSelector("li[data-label^='Custom']")).shouldBe(visible).click();
     String startTimeToday = String.format(START_TIME_DATE_PATTERN, dateFormat.format(new Date()));
-    $(By.id("process-analytics-form:custom-date-from_input")).shouldBe(visible).shouldHave(value(startTimeToday));
+    $(By.id("process-analytics-form:standard-filter-panel-group:custom-date-from_input")).shouldBe(visible)
+        .shouldHave(value(startTimeToday));
     String endTimeToday = String.format(END_TIME_DATE_PATTERN, dateFormat.format(new Date()));
-    $(By.id("process-analytics-form:custom-date-to_input")).shouldBe(visible).shouldHave(value(endTimeToday));
+    $(By.id("process-analytics-form:standard-filter-panel-group:custom-date-to_input")).shouldBe(visible)
+        .shouldHave(value(endTimeToday));
   }
 
   private void openFilterTypes() {
-    var typeFilter = $(By.id("process-analytics-form:filter-types"));
+    var typeFilter = $(By.id("process-analytics-form:standard-filter-panel-group:filter-types"));
     typeFilter.shouldBe(visible);
     Selenide.sleep(1000);
     typeFilter.click();
-    $(By.id("process-analytics-form:filter-types_panel")).shouldBe(visible, Duration.ofSeconds(1));
+    $(By.id("process-analytics-form:standard-filter-panel-group:filter-types_panel")).shouldBe(visible,
+        Duration.ofSeconds(1));
   }
 }

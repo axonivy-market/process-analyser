@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import com.axonivy.solutions.process.analyser.core.bo.Process;
-import com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.RGB_REGEX_PATTERN;
 
 import ch.ivyteam.ivy.process.model.NodeElement;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
@@ -49,7 +49,7 @@ public class BaseSetup {
 
   protected static void prepareData() {
     testProcess = ProcessUtils.getAllProcesses().stream()
-        .filter(start -> StringUtils.contains(start.getName(), TEST_PROCESS_NAME)).findAny().orElse(null);
+        .filter(start -> Strings.CS.contains(start.getName(), TEST_PROCESS_NAME)).findAny().orElse(null);
     testProcessElements = ProcessUtils.getProcessElementsFrom(testProcess.getId(), testProcess.getPmv());
     multiIncomingsElement = getProcessElementByPid(MULTI_INCOMINGS_ELEMENT_PID);
     subProcessElement = getProcessElementByPid(EMBEDDED_PID);
@@ -72,7 +72,7 @@ public class BaseSetup {
   }
 
   protected int extractBrightness(String rgbString) {
-    Matcher matcher = Pattern.compile(ProcessAnalyticsConstants.RGB_REGEX_PATTERN).matcher(rgbString);
+    Matcher matcher = Pattern.compile(RGB_REGEX_PATTERN).matcher(rgbString);
     if (!matcher.matches()) {
       throw new IllegalArgumentException("Invalid RGB format: " + rgbString);
     }

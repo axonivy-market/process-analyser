@@ -1,25 +1,17 @@
 {
   "$schema" : "https://json-schema.axonivy.com/process/13.1.2/process.json",
-  "id" : "192C1D5504C228BD",
+  "id" : "199A3EF88ABC0C2D",
   "kind" : "HTML_DIALOG",
   "config" : {
-    "data" : "com.axonivy.solutions.process.analyser.ProcessAnalytics.ProcessAnalyticsData"
+    "data" : "com.axonivy.solutions.process.analyser.component.AdditionalFeatures.AdditionalFeaturesData"
   },
   "elements" : [ {
       "id" : "f0",
       "type" : "HtmlDialogStart",
-      "name" : "start(Boolean)",
+      "name" : "start()",
       "config" : {
         "signature" : "start",
-        "input" : {
-          "params" : [
-            { "name" : "isWidgetMode", "type" : "Boolean", "desc" : "" }
-          ],
-          "map" : {
-            "out.isWidgetMode" : "param.isWidgetMode"
-          }
-        },
-        "guid" : "192C1D5505241FC4"
+        "guid" : "199A3EF88B26935F"
       },
       "visual" : {
         "at" : { "x" : 96, "y" : 64 }
@@ -39,7 +31,7 @@
       "type" : "HtmlDialogEventStart",
       "name" : "close",
       "config" : {
-        "guid" : "192C1D55059A4B7D"
+        "guid" : "199A3EF88BEB6A0D"
       },
       "visual" : {
         "at" : { "x" : 96, "y" : 160 }

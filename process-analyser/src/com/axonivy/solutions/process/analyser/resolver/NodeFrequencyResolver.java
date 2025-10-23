@@ -1,6 +1,6 @@
 package com.axonivy.solutions.process.analyser.resolver;
 
-import static com.axonivy.solutions.process.analyser.core.constants.ProcessAnalyticsConstants.SLASH;
+import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.SLASH;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.Path;
@@ -297,7 +297,7 @@ public class NodeFrequencyResolver {
       ProcessElement processElement) {
     var processElementId = ProcessUtils.getElementPid(processElement);
     path.getNodesInPath().add(processElementId);
-    if (StringUtils.equals(processElementId, targetProcessElementId)) {
+    if (Strings.CS.equals(processElementId, targetProcessElementId)) {
       path.setStatus(PathStatus.FOUND);
       path.setEndPathId(processElementId);
       return true;
@@ -314,7 +314,7 @@ public class NodeFrequencyResolver {
   }
 
   private static boolean isEndOfLoop(String processElementId, Path path) {
-    return StringUtils.equalsAnyIgnoreCase(processElementId, path.getStartPathId());
+    return Strings.CI.equalsAny(processElementId, path.getStartPathId());
   }
 
   private static ProcessElement getNestedSubElement(ProcessElement element, List<ProcessElement> subProcessCalls) {
