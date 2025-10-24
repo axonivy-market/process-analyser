@@ -71,6 +71,11 @@ To view the result, start the Process Analyzer and select the PMV that matches t
 
 ### Portal Custom Widget Integration
 
+We support integrating the Process Analyser into Axon Ivy Portal as a custom dashboard widget from version 12.0.10 onwards. This integration allows users to embed process analytics directly within their Portal dashboards, providing quick access to key performance indicators and process insights without leaving the Portal dashboard.
+
+![widget features demo](images/widget-features.gif)
+
+
 ## Setup
 
 To collect data and analyze your processes, please follow these steps:
