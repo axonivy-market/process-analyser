@@ -22,7 +22,7 @@ Key features:
 - **Export Capabilities**  
   Export diagram and detailed Excel reports with frequency/duration statistics.
 
-![process analyzer](images/process-analyser-full-page.png)
+![process analyzer](images/process-analyzer-full-page.png)
 
 ## Demo
 
@@ -71,7 +71,7 @@ To view the result, start the Process Analyzer and select the PMV that matches t
 
 ### Portal Custom Widget Integration
 
-We support integrating the Process Analyser into Axon Ivy Portal as a custom dashboard widget from version 12.0.10 onwards. This integration allows users to embed process analytics directly within their Portal dashboards, providing quick access to key performance indicators and process insights without leaving the Portal dashboard.
+We support integrating the Process Analyzer into Axon Ivy Portal as a custom dashboard widget from version 12.0.10 onwards. This integration allows users to embed process analytics directly within their Portal dashboards, providing quick access to key performance indicators and process insights without leaving the Portal dashboard.
 
 ![widget features demo](images/widget-features.gif)
 
@@ -111,11 +111,11 @@ To collect data and analyze your processes, please follow these steps:
 ```
 ### Portal Custom Widget Integration
 
-The Process Analyser can be seamlessly integrated into Axon Ivy Portal as a custom dashboard widget, providing embedded analytics capabilities within your Portal Dashboard.
+The Process Analyzer can be seamlessly integrated into Axon Ivy Portal as a custom dashboard widget, providing embedded analytics capabilities within your Portal Dashboard.
 
 #### Prerequisites
 - Axon Ivy Portal environment with dashboard configuration access
-- Process Analyser installed and properly configured in the same security context
+- Process Analyzer installed and properly configured in the same security context
 
 #### Configuration Steps
 
@@ -143,4 +143,4 @@ The Process Analyser can be seamlessly integrated into Axon Ivy Portal as a cust
 
    ![Widget view](images/widget-view.png)
 
-> **Note:** The widget mode provides a focused subset of the full Process Analyser functionality, optimized for dashboard integration and quick insights.
+> **Note:** The widget mode provides a focused subset of the full Process Analyzer functionality, optimized for dashboard integration and quick insights.
