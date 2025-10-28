@@ -75,9 +75,7 @@ We support integrating the Process Analyzer into Axon Ivy Portal as a custom das
 
 ![widget features demo](images/widget-features.gif)
 
-
 ## Setup
-
 To collect data and analyze your processes, please follow these steps:
 
 1. Prepare your own project and processes.
