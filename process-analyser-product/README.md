@@ -22,7 +22,7 @@ Key features:
 - **Export Capabilities**  
   Export diagram and detailed Excel reports with frequency/duration statistics.
 
-![process analyzer](images/process-analyser-full-page.png)
+![process analyzer](images/process-analyzer-full-page.png)
 
 ## Demo
 
@@ -109,11 +109,11 @@ To collect data and analyze your processes, please follow these steps:
 ```
 ### Portal Custom Widget Setup
 
-The Process Analyser can be seamlessly integrated into Axon Ivy Portal as a custom dashboard widget, providing embedded analytics capabilities within your Portal Dashboard.
+The Process Analyzer can be seamlessly integrated into Axon Ivy Portal as a custom dashboard widget, providing embedded analytics capabilities within your Portal Dashboard.
 
 #### Prerequisites
 - Axon Ivy Portal environment with dashboard configuration access
-- Process Analyser installed and properly configured in the same security context
+- Process Analyzer installed and properly configured in the same security context
 
 #### Configuration Steps
 
@@ -141,4 +141,4 @@ The Process Analyser can be seamlessly integrated into Axon Ivy Portal as a cust
 
    ![Widget view](images/widget-view.png)
 
-> **Note:** The widget mode provides a focused subset of the full Process Analyser functionality, optimized for dashboard integration and quick insights.
+> **Note:** The widget mode provides a focused subset of the full Process Analyzer functionality, optimized for dashboard integration and quick insights.

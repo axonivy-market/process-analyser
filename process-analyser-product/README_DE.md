@@ -22,4 +22,4 @@ Hauptfunktionen:
 - **Export-Funktionen**  
   Exportiere Prozessdiagramme und detaillierte Excel-Berichte mit Nutzungs- und Dauerstatistiken.
 
-![process analyzer](images/process-analyser-full-page.png)
+![process analyzer](images/process-analyzer-full-page.png)
