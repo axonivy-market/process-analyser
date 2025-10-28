@@ -109,7 +109,7 @@ To collect data and analyze your processes, please follow these steps:
 ```
 @variables.yaml@
 ```
-### Portal Custom Widget Integration
+### Portal Custom Widget Setup
 
 The Process Analyser can be seamlessly integrated into Axon Ivy Portal as a custom dashboard widget, providing embedded analytics capabilities within your Portal Dashboard.
 
