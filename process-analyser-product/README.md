@@ -22,7 +22,7 @@ Key features:
 - **Export Capabilities**  
   Export diagram and detailed Excel reports with frequency/duration statistics.
 
-![process analyzer](images/process-analyser-full-page.png)
+![process analyzer](images/process-analyzer-full-page.png)
 
 ## Demo
 
@@ -69,6 +69,13 @@ To view the result, start the Process Analyzer and select the PMV that matches t
 
 ![color map demo](images/color-custom.gif)
 
+### Portal Custom Widget Integration
+
+We support integrating the Process Analyzer into Axon Ivy Portal as a custom dashboard widget from version 12.0.10 onwards. This integration allows users to embed process analytics directly within their Portal dashboards, providing quick access to key performance indicators and process insights without leaving the Portal dashboard.
+
+![widget features demo](images/widget-features.gif)
+
+
 ## Setup
 
 To collect data and analyze your processes, please follow these steps:
@@ -102,3 +109,38 @@ To collect data and analyze your processes, please follow these steps:
 ```
 @variables.yaml@
 ```
+### Portal Custom Widget Integration
+
+The Process Analyzer can be seamlessly integrated into Axon Ivy Portal as a custom dashboard widget, providing embedded analytics capabilities within your Portal Dashboard.
+
+#### Prerequisites
+- Axon Ivy Portal environment with dashboard configuration access
+- Process Analyzer installed and properly configured in the same security context
+
+#### Configuration Steps
+
+1. **Access Widget Configuration**
+   - Navigate to **Portal Dashboard Configuration** → **Widgets** section
+   - Ensure you have administrative privileges to modify dashboard layouts
+
+   ![Configure dashboard](images/config-dashboard.png)
+
+2. **Add Process Analyzer Widget**
+   - Click **"Add Widget"** from the dashboard configuration toolbar
+   - Select **"Process Analyzer"** from the **"Custom Widgets"** category
+
+   ![Add custom widget](images/add-custom-widget.png)
+
+3. **Widget Configuration**
+   - Provide a descriptive **widget name** for easy identification
+   - Click **"Save"** to add the widget to your dashboard
+   - Return to the main dashboard to begin initial configuration
+
+4. **Widget Features & Limitations**
+   - **Available Features:** Process selection, KPI type configuration, time interval filtering, color mapping
+   - **Streamlined Interface:** Essential analytics features optimized for dashboard viewing
+   - **Persistent Configuration:** All widget settings are automatically saved and restored through browser refreshes and user re-authentication
+
+   ![Widget view](images/widget-view.png)
+
+> **Note:** The widget mode provides a focused subset of the full Process Analyzer functionality, optimized for dashboard integration and quick insights.
