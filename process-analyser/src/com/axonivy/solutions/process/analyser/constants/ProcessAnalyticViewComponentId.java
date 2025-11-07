@@ -14,6 +14,8 @@ public class ProcessAnalyticViewComponentId {
       + "process-selection-group";
   public static final String WIDGET_PROCESS_SELECTION_GROUP = WIDGET_STANDRAD_FILTER + ID_SECTION_SEPARATOR
       + "process-selection-group";
+  public static final String WIDGET_PROCESS_SELECTION_GROUP2222 = WIDGET_STANDRAD_FILTER + ID_SECTION_SEPARATOR
+      + "process-selection-group";
   private static final String HIDDEN_IMAGE = FORM + ID_SECTION_SEPARATOR + "hidden-image";
   public static final String PROCESS_ANALYTIC_VIEWER_GROUP = PROCESS_ANALYTIC_VIEWER_PANEL + ID_SECTION_SEPARATOR
       + "viewer-group";

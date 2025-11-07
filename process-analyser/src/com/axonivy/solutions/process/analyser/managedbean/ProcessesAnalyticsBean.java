@@ -62,10 +62,16 @@ import com.axonivy.solutions.process.analyser.utils.JacksonUtils;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 
 import ch.ivyteam.ivy.application.IApplication;
+import ch.ivyteam.ivy.application.ILibrary;
+import ch.ivyteam.ivy.application.IProcessModel;
+import ch.ivyteam.ivy.application.IProcessModelVersion;
+import ch.ivyteam.ivy.application.ProcessModelVersionRelation;
 import ch.ivyteam.ivy.cm.ContentObject;
 import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.environment.Ivy;
+import ch.ivyteam.ivy.security.ISecurityContext;
 import ch.ivyteam.ivy.workflow.ICase;
+import ch.ivyteam.ivy.workflow.IWorkflowProcessModelVersion;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 
 @ManagedBean
@@ -75,6 +81,7 @@ public class ProcessesAnalyticsBean {
   private Map<String, List<Process>> processesMap = new HashMap<>();
   private ProcessAnalyser selectedProcessAnalyser;
   private String selectedModule;
+  private String selectedPMV;
   private KpiType selectedKpiType;
   private List<Node> nodes;
   private List<Node> analyzedNode;
@@ -116,6 +123,7 @@ public class ProcessesAnalyticsBean {
     selectedCustomFieldNames = new ArrayList<>();
     initKpiTypes();
     initSelectedValueFromUserProperty();
+    
   }
 
   private void initSelectedValueFromUserProperty() {
@@ -283,6 +291,16 @@ public class ProcessesAnalyticsBean {
   public Set<String> getAvailableModules() {
     return processesMap.keySet();
   }
+  
+  public List<IProcessModelVersion> getAvailabelPMV() {
+    if (StringUtils.isEmpty(this.selectedModule)) {
+      return List.of();
+    }
+    return IApplication.current().getLibraries()
+        .stream()
+        .filter(library -> library.getProcessModelVersion().getVersionName().contains(this.selectedModule))
+        .map(ILibrary::getProcessModelVersion).toList();
+  }
 
   private boolean isDiagramAndStatisticRenderable() {
     return ObjectUtils.allNotNull(selectedProcessAnalyser, selectedKpiType);
@@ -295,10 +313,18 @@ public class ProcessesAnalyticsBean {
       persistedConfig.setWidgetSelectedModule(selectedModule);
       ProcessesMonitorUtils.updateUserProperty(persistedConfig);
       PF.current().ajax().update(ProcessAnalyticViewComponentId.WIDGET_PROCESS_SELECTION_GROUP);
+      PF.current().ajax().update("process-analytics-form:standard-filter-panel-group:pmvDropdown");
       return;
     }
     PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP);
+    PF.current().ajax().update("process-analytics-form:standard-filter-panel-group:pmvDropdown");
     resetStatisticValue();
+  }
+  
+  public void onPmvSelect() {
+
+    IProcessModelVersion asd = IApplication.current().findProcessModelVersion(this.selectedPMV);
+    Ivy.log().warn(asd);
   }
 
   public void onProcessSelect() {
@@ -478,6 +504,12 @@ public class ProcessesAnalyticsBean {
   }
 
   private void loadNodes() {
+//    IProcessModelVersion version = IProcessModelVersion.current();
+//    Ivy.log().warn("No ne " + version.getActivityStateText());
+//    Ivy.log().warn("No ne " + version.getAllRelatedProcessModelVersions(ProcessModelVersionRelation.DEPENDENT));
+//    List<ILibrary> asd = IApplication.current().getLibraries();
+//    asd.forEach(s -> Ivy.log().warn("ProcessModelVersion " + s.getProcessModelVersion().getVersionNumber()));
+
     analyzedNode = new ArrayList<>();
     selectedPid = selectedProcessAnalyser.getProcess().getId();
     initializingProcessMiningData();
@@ -705,6 +737,14 @@ public class ProcessesAnalyticsBean {
 
   public boolean isMergeProcessStarts() {
     return isMergeProcessStarts;
+  }
+  
+  public String getSelectedPMV() {
+    return selectedPMV;
+  }
+
+  public void setSelectedPMV(String selectedPMV) {
+    this.selectedPMV = selectedPMV;
   }
 
   public void setMergeProcessStarts(boolean isMergeProcessStarts) {
