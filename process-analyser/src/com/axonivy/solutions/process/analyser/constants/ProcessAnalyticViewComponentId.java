@@ -28,7 +28,7 @@ public class ProcessAnalyticViewComponentId {
   private static final String ACTION_BTN_GROUP = FORM + ID_SECTION_SEPARATOR + "action-btn-group";
   private static final String DATA_STATISTICS = FORM + ID_SECTION_SEPARATOR + "statistic-viewer" + ID_SECTION_SEPARATOR
       + "data-statistics";
-
+  public static final String PMV_GROUP = STANDARD_FILTER_PANEL_GROUP + ID_SECTION_SEPARATOR + "pmvDropdown";
   public static List<String> getDiagramAndStatisticComponentIds() {
     return List.of(HIDDEN_IMAGE, PROCESS_ANALYTIC_VIEWER_GROUP, SHOW_STATISTIC_BTN, ACTION_BTN_GROUP, DATA_STATISTICS);
   }

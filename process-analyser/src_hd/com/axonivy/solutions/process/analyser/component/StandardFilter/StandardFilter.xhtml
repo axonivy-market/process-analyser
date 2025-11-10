@@ -53,12 +53,12 @@
           <p:outputLabel for="@next"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectPMV')}" />
         </div>
-        <p:selectOneMenu id="pmvDropdown" value="#{managedBean.selectedPMV}" styleClass="w-full">
+        <p:selectOneMenu id="pmvDropdown" value="#{managedBean.selectedPMVVersion}" styleClass="w-full">
           <f:selectItem
             itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectPMV')}"
             itemValue="#{null}" noSelectionOption="true" />
           <f:selectItems value="#{managedBean.availabelPMV}" var="pmv" itemLabel="#{pmv.getVersionNumber()}"
-            itemValue="#{pmv.getName()}" />
+            itemValue="#{pmv.getVersionName()}" />
           <p:ajax event="change" partialSubmit="true" process="@this" listener="#{managedBean.onPmvSelect}" />
         </p:selectOneMenu>
       </h:panelGroup>

@@ -221,11 +221,11 @@ public class ProcessesMonitorUtils {
    * @param isIncludingRunningCases 
    **/
   public static List<ICase> getAllCasesFromTaskStartIdWithTimeInterval(Long taskStartId,
-      TimeIntervalFilter timeIntervalFilter, List<CustomFieldFilter> customFilters, boolean isIncludingRunningCases) {
+      TimeIntervalFilter timeIntervalFilter, List<CustomFieldFilter> customFilters, boolean isIncludingRunningCases,
+      IProcessModelVersion processModelVersion) {
     var caseQuery = CaseQuery.create();
-    caseQuery.where().and(buildCaseStateQuery(isIncludingRunningCases))
-      .and(buildTaskStartIdQuery(taskStartId))
-      .and(buildStartTimestampQuery(timeIntervalFilter));
+    caseQuery.where().and(buildCaseStateQuery(isIncludingRunningCases)).and(buildTaskStartIdQuery(taskStartId))
+        .and(buildStartTimestampQuery(timeIntervalFilter));
 
     List<CustomFieldFilter> validCustomFilters = getValidCustomFilters(customFilters);
     if (ObjectUtils.isNotEmpty(validCustomFilters)) {
@@ -239,7 +239,8 @@ public class ProcessesMonitorUtils {
       }
       caseQuery.where().andOverall(allCustomFieldsQuery);
     }
-    return Ivy.wf().getCaseQueryExecutor().getResults(caseQuery);
+    return Ivy.wf().getCaseQueryExecutor().getResults(caseQuery).stream()
+        .filter(ca -> ca.getProcessModelVersion().equals(processModelVersion)).toList();
   }
 
   private static CaseQuery buildStartTimestampQuery(TimeIntervalFilter timeIntervalFilter) {

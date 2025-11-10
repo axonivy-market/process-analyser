@@ -63,15 +63,11 @@ import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.application.ILibrary;
-import ch.ivyteam.ivy.application.IProcessModel;
 import ch.ivyteam.ivy.application.IProcessModelVersion;
-import ch.ivyteam.ivy.application.ProcessModelVersionRelation;
 import ch.ivyteam.ivy.cm.ContentObject;
 import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.environment.Ivy;
-import ch.ivyteam.ivy.security.ISecurityContext;
 import ch.ivyteam.ivy.workflow.ICase;
-import ch.ivyteam.ivy.workflow.IWorkflowProcessModelVersion;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 
 @ManagedBean
@@ -81,7 +77,8 @@ public class ProcessesAnalyticsBean {
   private Map<String, List<Process>> processesMap = new HashMap<>();
   private ProcessAnalyser selectedProcessAnalyser;
   private String selectedModule;
-  private String selectedPMV;
+  private String selectedPMVVersion;
+  private IProcessModelVersion selectedPMV;
   private KpiType selectedKpiType;
   private List<Node> nodes;
   private List<Node> analyzedNode;
@@ -123,12 +120,11 @@ public class ProcessesAnalyticsBean {
     selectedCustomFieldNames = new ArrayList<>();
     initKpiTypes();
     initSelectedValueFromUserProperty();
-    
   }
 
   private void initSelectedValueFromUserProperty() {
     ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
-    // Early escapse if not in widget mode
+    // Early escapes if not in widget mode
     if (!isWidgetMode) {
       return;
     }
@@ -296,8 +292,7 @@ public class ProcessesAnalyticsBean {
     if (StringUtils.isEmpty(this.selectedModule)) {
       return List.of();
     }
-    return IApplication.current().getLibraries()
-        .stream()
+    return IApplication.current().getLibraries().stream()
         .filter(library -> library.getProcessModelVersion().getVersionName().contains(this.selectedModule))
         .map(ILibrary::getProcessModelVersion).toList();
   }
@@ -313,18 +308,18 @@ public class ProcessesAnalyticsBean {
       persistedConfig.setWidgetSelectedModule(selectedModule);
       ProcessesMonitorUtils.updateUserProperty(persistedConfig);
       PF.current().ajax().update(ProcessAnalyticViewComponentId.WIDGET_PROCESS_SELECTION_GROUP);
-      PF.current().ajax().update("process-analytics-form:standard-filter-panel-group:pmvDropdown");
+      PF.current().ajax().update(ProcessAnalyticViewComponentId.PMV_GROUP);
       return;
     }
     PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP);
-    PF.current().ajax().update("process-analytics-form:standard-filter-panel-group:pmvDropdown");
+    PF.current().ajax().update(ProcessAnalyticViewComponentId.PMV_GROUP);
     resetStatisticValue();
   }
   
   public void onPmvSelect() {
-
-    IProcessModelVersion asd = IApplication.current().findProcessModelVersion(this.selectedPMV);
-    Ivy.log().warn(asd);
+    selectedPMV = IApplication.current().findProcessModelVersion(this.selectedPMVVersion);
+    refreshAnalyserReportToView();
+//    resetStatisticValue();
   }
 
   public void onProcessSelect() {
@@ -504,16 +499,9 @@ public class ProcessesAnalyticsBean {
   }
 
   private void loadNodes() {
-//    IProcessModelVersion version = IProcessModelVersion.current();
-//    Ivy.log().warn("No ne " + version.getActivityStateText());
-//    Ivy.log().warn("No ne " + version.getAllRelatedProcessModelVersions(ProcessModelVersionRelation.DEPENDENT));
-//    List<ILibrary> asd = IApplication.current().getLibraries();
-//    asd.forEach(s -> Ivy.log().warn("ProcessModelVersion " + s.getProcessModelVersion().getVersionNumber()));
-
     analyzedNode = new ArrayList<>();
     selectedPid = selectedProcessAnalyser.getProcess().getId();
     initializingProcessMiningData();
-
     if (haveMandatoryFieldsBeenFilled()) {
       List<ICase> cases = new ArrayList<>();
       boolean shouldIncludeRunningCasesByKpi = isIncludingRunningCases && !selectedKpiType.isDescendantOf(KpiType.DURATION);
@@ -522,7 +510,7 @@ public class ProcessesAnalyticsBean {
             .map(StartElement::getTaskStartId).toList();
         for (Long taskStartId : taskStartIds) {
           List<ICase> subCases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter,
-              selectedCustomFilters, shouldIncludeRunningCasesByKpi);
+              selectedCustomFilters, shouldIncludeRunningCasesByKpi, this.selectedPMV);
           if (CollectionUtils.isNotEmpty(subCases)) {
             cases.addAll(subCases);
           }
@@ -530,7 +518,7 @@ public class ProcessesAnalyticsBean {
       } else {
         Long taskStartId = selectedProcessAnalyser.getStartElement().getTaskStartId();
         cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter,
-            selectedCustomFilters, shouldIncludeRunningCasesByKpi);
+            selectedCustomFilters, shouldIncludeRunningCasesByKpi, this.selectedPMV);
       }
       if (CollectionUtils.isNotEmpty(cases)) {
         var tasks = cases.stream().flatMap(ivyCase -> ivyCase.tasks().all().stream()).toList();
@@ -738,13 +726,13 @@ public class ProcessesAnalyticsBean {
   public boolean isMergeProcessStarts() {
     return isMergeProcessStarts;
   }
-  
-  public String getSelectedPMV() {
-    return selectedPMV;
+
+  public String getSelectedPMVVersion() {
+    return selectedPMVVersion;
   }
 
-  public void setSelectedPMV(String selectedPMV) {
-    this.selectedPMV = selectedPMV;
+  public void setSelectedPMVVersion(String selectedPMVVersion) {
+    this.selectedPMVVersion = selectedPMVVersion;
   }
 
   public void setMergeProcessStarts(boolean isMergeProcessStarts) {
