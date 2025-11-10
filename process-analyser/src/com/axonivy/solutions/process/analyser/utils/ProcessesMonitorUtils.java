@@ -239,8 +239,10 @@ public class ProcessesMonitorUtils {
       }
       caseQuery.where().andOverall(allCustomFieldsQuery);
     }
-    return Ivy.wf().getCaseQueryExecutor().getResults(caseQuery).stream()
-        .filter(ca -> ca.getProcessModelVersion().equals(processModelVersion)).toList();
+    return Ivy.wf().getCaseQueryExecutor().getResults(caseQuery)
+        .stream()
+        .filter(ca -> ca.getProcessModelVersion().equals(processModelVersion))
+        .toList();
   }
 
   private static CaseQuery buildStartTimestampQuery(TimeIntervalFilter timeIntervalFilter) {

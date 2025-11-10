@@ -42,31 +42,22 @@
           <p:ajax event="change" partialSubmit="true" process="@this" listener="#{managedBean.onModuleSelect}" />
         </p:selectOneMenu>
       </h:panelGroup>
-
-
-
-
-
       <h:panelGroup id="pmv-selection-group" styleClass="#{isWidgetMode? 'col mb-2': 'col-3 pr-2'} p-0 m-0"
         layout="block">
         <div class="mb-2">
           <p:outputLabel for="@next"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectPMV')}" />
         </div>
-        <p:selectOneMenu id="pmvDropdown" value="#{managedBean.selectedPMVVersion}" styleClass="w-full">
+        <p:selectOneMenu id="pmvDropdown" value="#{managedBean.selectedPMV}" styleClass="w-full"
+          converter="pmvConverter">
           <f:selectItem
             itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectPMV')}"
             itemValue="#{null}" noSelectionOption="true" />
           <f:selectItems value="#{managedBean.availabelPMV}" var="pmv" itemLabel="#{pmv.getVersionNumber()}"
-            itemValue="#{pmv.getVersionName()}" />
+            itemValue="#{pmv}" />
           <p:ajax event="change" partialSubmit="true" process="@this" listener="#{managedBean.onPmvSelect}" />
         </p:selectOneMenu>
       </h:panelGroup>
-
-
-
-
-
       <h:panelGroup id="process-selection-group" styleClass="#{isWidgetMode? 'col mb-2 px-0': 'col-3 px-1'} p-0 m-0"
         layout="block">
         <div class="mb-2">

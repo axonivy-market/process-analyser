@@ -77,7 +77,6 @@ public class ProcessesAnalyticsBean {
   private Map<String, List<Process>> processesMap = new HashMap<>();
   private ProcessAnalyser selectedProcessAnalyser;
   private String selectedModule;
-  private String selectedPMVVersion;
   private IProcessModelVersion selectedPMV;
   private KpiType selectedKpiType;
   private List<Node> nodes;
@@ -317,9 +316,9 @@ public class ProcessesAnalyticsBean {
   }
   
   public void onPmvSelect() {
-    selectedPMV = IApplication.current().findProcessModelVersion(this.selectedPMVVersion);
-    refreshAnalyserReportToView();
-//    resetStatisticValue();
+    if (selectedProcessAnalyser != null) {
+      refreshAnalyserReportToView();
+    }
   }
 
   public void onProcessSelect() {
@@ -727,12 +726,12 @@ public class ProcessesAnalyticsBean {
     return isMergeProcessStarts;
   }
 
-  public String getSelectedPMVVersion() {
-    return selectedPMVVersion;
+  public IProcessModelVersion getSelectedPMV() {
+    return selectedPMV;
   }
 
-  public void setSelectedPMVVersion(String selectedPMVVersion) {
-    this.selectedPMVVersion = selectedPMVVersion;
+  public void setSelectedPMV(IProcessModelVersion selectedPMV) {
+    this.selectedPMV = selectedPMV;
   }
 
   public void setMergeProcessStarts(boolean isMergeProcessStarts) {
