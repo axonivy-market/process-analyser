@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.axonivy.solutions.process.analyser</groupId>
+  <artifactId>process-analyser-test</artifactId>
+  <version>12.0.11-SNAPSHOT</version>
+  <packaging>iar-integration-test</packaging>
+  <properties>
+    <ivy.engine.version>12.0.8</ivy.engine.version>
+    <project.build.plugin.version>12.0.8</project.build.plugin.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <tester.version>12.0.1</tester.version>
+  </properties>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>sonatype</id>
+      <url>https://central.sonatype.com/repository/maven-snapshots</url>
+      <snapshots>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+  <repositories>
+    <repository>
+      <id>sonatype</id>
+      <url>https://central.sonatype.com/repository/maven-snapshots</url>
+      <snapshots>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
+    </repository>
+  </repositories>
+  <dependencies>
+    <dependency>
+      <groupId>com.axonivy.solutions.process.analyser</groupId>
+      <artifactId>process-analyser</artifactId>
+      <version>${project.version}</version>
+      <type>iar</type>
+    </dependency>
+    <dependency>
+      <groupId>com.axonivy.ivy.test</groupId>
+      <artifactId>unit-tester</artifactId>
+      <version>${tester.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.axonivy.ivy.webtest</groupId>
+      <artifactId>web-tester</artifactId>
+      <version>${tester.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  
+  <build>
+    <testSourceDirectory>src_test</testSourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>com.axonivy.ivy.ci</groupId>
+        <artifactId>project-build-plugin</artifactId>
+        <version>${project.build.plugin.version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <encoding>UTF-8</encoding>
+          <compilerWarnings>false</compilerWarnings>
+        </configuration>
+        
+        <executions>
+          <execution>
+            <id>start.test.engine</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>start-test-engine</goal>
+            </goals>
+          </execution>
+
+          <!-- <execution>
+            <id>stop.test.engine</id>
+            <goals>
+              <goal>stop-test-engine</goal>
+            </goals>
+            <phase>post-integration-test</phase>
+          </execution> -->
+
+          <execution>
+            <id>internalsupport.deploy</id>
+            <goals>
+              <goal>deploy-to-engine</goal>
+            </goals>
+            <configuration>
+              <deployFile>../process-analyser-test/src_test/test.zip</deployFile>
+              <deployToEngineApplication>processanalysertest</deployToEngineApplication>
+            </configuration>
+            <phase>process-test-classes</phase>
+          </execution>
+
+
+          <!-- 1️⃣ Deploy main project -->
+          <execution>
+            <id>deploy.process.analyser</id>
+            <goals>
+              <goal>deploy-to-engine</goal>
+            </goals>
+            <configuration>
+              <deployFile>../process-analyser/target/process-analyser-12.0.11-SNAPSHOT.iar</deployFile>
+              <deployToEngineApplication>processanalysertest</deployToEngineApplication>
+            </configuration>
+            <phase>process-test-classes</phase>
+          </execution>
+
+          <!-- 2️⃣ Deploy test project -->
+          <execution>
+            <id>deploy.process.analyser.test</id>
+            <goals>
+              <goal>deploy-to-engine</goal>
+            </goals>
+            <configuration>
+              <deployFile>../process-analyser-test/target/process-analyser-test-12.0.11-SNAPSHOT.iar</deployFile>
+              <deployToEngineApplication>processanalysertest</deployToEngineApplication>
+            </configuration>
+            <phase>process-test-classes</phase>
+          </execution>
+
+          <!-- 3️⃣ Deploy demo project -->
+          <execution>
+            <id>deploy.process.analyser.demo</id>
+            <goals>
+              <goal>deploy-to-engine</goal>
+            </goals>
+            <configuration>
+              <deployFile>../process-analyser-demo/target/process-analyser-demo-12.0.11-SNAPSHOT.iar</deployFile>
+              <deployToEngineApplication>processanalysertest</deployToEngineApplication>
+            </configuration>
+            <phase>verify</phase>
+          </execution>
+
+          <!-- 4️⃣ Stop test engine -->
+          <execution>
+            <id>stop.test.engine</id>
+            <phase>post-integration-test</phase>
+            <goals>
+              <goal>stop-test-engine</goal>
+            </goals>
+          </execution>
+
+        </executions>
+
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>
+            -Dtest.engine.url=${test.engine.url}
+            -Dtest.engine.app=processanalysertest
+          </argLine>
+        </configuration>
+        <executions>
+          <!-- <execution>
+            <id>default-test</id>
+            <phase>test</phase>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </execution> -->
+          <execution>
+            <id>selenium.web.tests</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
