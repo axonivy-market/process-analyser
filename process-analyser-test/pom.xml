@@ -59,6 +59,122 @@
         <artifactId>project-build-plugin</artifactId>
         <version>${project.build.plugin.version}</version>
         <extensions>true</extensions>
+        <configuration>
+          <encoding>UTF-8</encoding>
+          <compilerWarnings>false</compilerWarnings>
+        </configuration>
+        
+        <executions>
+          <execution>
+            <id>start.test.engine</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>start-test-engine</goal>
+            </goals>
+          </execution>
+
+          <execution>
+            <id>package.iar.test</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>pack-iar</goal>
+            </goals>
+          </execution>
+
+          <!-- <execution>
+            <id>internalsupport.deploy</id>
+            <goals>
+              <goal>deploy-to-engine</goal>
+            </goals>
+            <configuration>
+              <deployFile>../process-analyser-test/src_test/test.zip</deployFile>
+              <deployToEngineApplication>processanalysertest</deployToEngineApplication>
+            </configuration>
+            <phase>process-test-classes</phase>
+          </execution> -->
+
+
+          <!-- 1️⃣ Deploy main project -->
+          <execution>
+            <id>deploy.process.analyser</id>
+            <goals>
+              <goal>deploy-to-engine</goal>
+            </goals>
+            <configuration>
+              <deployFile>../process-analyser/target/process-analyser-12.0.11-SNAPSHOT.iar</deployFile>
+              <deployToEngineApplication>processanalysertest</deployToEngineApplication>
+            </configuration>
+            <phase>process-test-classes</phase>
+          </execution>
+
+          <!-- 2️⃣ Deploy test project -->
+          <execution>
+            <id>deploy.process.analyser.test</id>
+            <goals>
+              <goal>deploy-to-engine</goal>
+            </goals>
+            <configuration>
+              <deployFile>../process-analyser-test/target/process-analyser-test-12.0.11-SNAPSHOT.iar</deployFile>
+              <deployToEngineApplication>processanalysertest</deployToEngineApplication>
+            </configuration>
+            <phase>process-test-classes</phase>
+          </execution>
+
+          <!-- <execution>
+            <id>deploy.process.analyser.test.v2</id>
+            <goals>
+              <goal>deploy-to-engine</goal>
+            </goals>
+            <configuration>
+              <deployFile>../process-analyser-test/target/process-analyser-test-12.0.11-SNAPSHOT.iar</deployFile>
+              <deployToEngineApplication>processanalysertest</deployToEngineApplication>
+            </configuration>
+            <phase>pre-integration-test</phase>
+          </execution> -->
+
+          <!-- 3️⃣ Deploy demo project -->
+          <execution>
+            <id>deploy.process.analyser.demo</id>
+            <goals>
+              <goal>deploy-to-engine</goal>
+            </goals>
+            <configuration>
+              <deployFile>../process-analyser-demo/target/process-analyser-demo-12.0.11-SNAPSHOT.iar</deployFile>
+              <deployToEngineApplication>processanalysertest</deployToEngineApplication>
+            </configuration>
+            <phase>process-test-classes</phase>
+          </execution>
+
+          <!-- 4️⃣ Stop test engine -->
+          <!-- <execution>
+            <id>stop.test.engine</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>stop-test-engine</goal>
+            </goals>
+          </execution> -->
+        </executions>
+
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0-M4</version>
+        <configuration>
+          <argLine>
+            -Dtest.engine.url=${test.engine.url}
+            -Dtest.engine.app=processanalysertest
+          </argLine>
+        </configuration>
+        <executions>
+          <execution>
+            <id>selenium.web.tests</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
