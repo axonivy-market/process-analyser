@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.axonivy.solutions.process.analyser</groupId>
   <artifactId>process-analyser-test</artifactId>
   <version>12.0.11-SNAPSHOT</version>
-  <packaging>iar-integration-test</packaging>
+  <packaging>iar</packaging>
   <properties>
     <ivy.engine.version>12.0.8</ivy.engine.version>
     <project.build.plugin.version>12.0.8</project.build.plugin.version>
@@ -50,7 +52,7 @@
     </dependency>
   </dependencies>
 
-  
+
   <build>
     <testSourceDirectory>src_test</testSourceDirectory>
     <plugins>
@@ -63,7 +65,7 @@
           <encoding>UTF-8</encoding>
           <compilerWarnings>false</compilerWarnings>
         </configuration>
-        
+
         <executions>
           <execution>
             <id>start.test.engine</id>
@@ -101,7 +103,8 @@
               <goal>deploy-to-engine</goal>
             </goals>
             <configuration>
-              <deployFile>../process-analyser/target/process-analyser-12.0.11-SNAPSHOT.iar</deployFile>
+              <deployFile>
+                ../process-analyser/target/process-analyser-12.0.11-SNAPSHOT.iar</deployFile>
               <deployToEngineApplication>processanalysertest</deployToEngineApplication>
             </configuration>
             <phase>process-test-classes</phase>
@@ -114,23 +117,25 @@
               <goal>deploy-to-engine</goal>
             </goals>
             <configuration>
-              <deployFile>../process-analyser-test/target/process-analyser-test-12.0.11-SNAPSHOT.iar</deployFile>
+              <deployFile>
+                ../process-analyser-test/target/process-analyser-test-12.0.11-SNAPSHOT.iar</deployFile>
               <deployToEngineApplication>processanalysertest</deployToEngineApplication>
             </configuration>
             <phase>process-test-classes</phase>
           </execution>
 
-          <!-- <execution>
+          <execution>
             <id>deploy.process.analyser.test.v2</id>
             <goals>
               <goal>deploy-to-engine</goal>
             </goals>
             <configuration>
-              <deployFile>../process-analyser-test/target/process-analyser-test-12.0.11-SNAPSHOT.iar</deployFile>
+              <deployFile>
+                ../process-analyser-test/target/process-analyser-test-12.0.12-SNAPSHOT.iar</deployFile>
               <deployToEngineApplication>processanalysertest</deployToEngineApplication>
             </configuration>
             <phase>pre-integration-test</phase>
-          </execution> -->
+          </execution>
 
           <!-- 3️⃣ Deploy demo project -->
           <execution>
@@ -139,7 +144,8 @@
               <goal>deploy-to-engine</goal>
             </goals>
             <configuration>
-              <deployFile>../process-analyser-demo/target/process-analyser-demo-12.0.11-SNAPSHOT.iar</deployFile>
+              <deployFile>
+                ../process-analyser-demo/target/process-analyser-demo-12.0.11-SNAPSHOT.iar</deployFile>
               <deployToEngineApplication>processanalysertest</deployToEngineApplication>
             </configuration>
             <phase>process-test-classes</phase>
@@ -176,6 +182,32 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>duplicate-iar-with-new-version</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <copy
+                  file="${project.basedir}/target/process-analyser-test-${project.version}.iar"
+                  tofile="${project.basedir}/target/process-analyser-test-12.0.12-SNAPSHOT.iar"
+                />
+                <echo
+                  message="✅ Duplicated IAR file as process-analyser-test-12.0.12-SNAPSHOT.iar" />
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
 </project>
