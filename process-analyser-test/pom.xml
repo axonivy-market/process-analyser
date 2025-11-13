@@ -91,7 +91,8 @@
             </goals>
             <configuration>
               <deployFile>
-                ../process-analyser/target/process-analyser-12.0.11-SNAPSHOT.iar</deployFile>
+                ../process-analyser/target/process-analyser-${project.version}.iar
+              </deployFile>
               <deployToEngineApplication>processanalysertest</deployToEngineApplication>
             </configuration>
             <phase>process-test-classes</phase>
@@ -105,7 +106,7 @@
             </goals>
             <configuration>
               <deployFile>
-                ../process-analyser-test/target/process-analyser-test-12.0.11-SNAPSHOT.iar
+                ../process-analyser-test/target/process-analyser-test-${project.version}.iar
               </deployFile>
               <deployToEngineApplication>processanalysertest</deployToEngineApplication>
             </configuration>
@@ -126,28 +127,14 @@
             <phase>process-test-classes</phase>
           </execution>
 
-          <!--          <execution>
-            <id>deploy.process.analyser.zip.test</id>
-            <goals>
-              <goal>deploy-to-engine</goal>
-            </goals>
-            <configuration>
-              <deployFile>
-                ../process-analyser-test/target/process-analyser-test-bundle.zip</deployFile>
-              <deployToEngineApplication>processanalysertest</deployToEngineApplication>
-            </configuration>
-            <phase>process-test-classes</phase>
-          </execution>-->
-
           <!-- 4️⃣ Stop test engine -->
-          <!--          <execution>
+          <execution>
             <id>stop.test.engine</id>
             <phase>post-integration-test</phase>
             <goals>
               <goal>stop-test-engine</goal>
             </goals>
-          </execution>-->
-
+          </execution>
         </executions>
 
       </plugin>
@@ -171,49 +158,6 @@
           </execution>
         </executions>
       </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>3.1.0</version>
-        <executions>
-          <execution>
-            <id>duplicate-iar-with-new-version</id>
-            <phase>process-test-classes</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <target>
-                <copy
-                  file="${project.basedir}/target/process-analyser-test-${project.version}.iar"
-                  tofile="${project.basedir}/target/process-analyser-test-12.0.12-SNAPSHOT.iar"
-                />
-              </target>
-            </configuration>
-          </execution>
-
-          <execution>
-            <id>zip-iar-files</id>
-            <phase>process-test-classes</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <target>
-                <zip
-                  destfile="${project.basedir}/target/process-analyser-test-bundle.zip">
-                  <fileset dir="${project.basedir}/target">
-                    <include name="process-analyser-test-${project.version}.iar" />
-                    <include name="process-analyser-test-12.0.12-SNAPSHOT.iar" />
-                  </fileset>
-                </zip>
-              </target>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
     </plugins>
   </build>
 </project>
