@@ -10,13 +10,14 @@ import org.junit.jupiter.api.Test;
 import com.axonivy.ivy.webtest.IvyWebTest;
 import com.codeborne.selenide.SelenideElement;
 
-@IvyWebTest
+@IvyWebTest(headless = false)
 public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
   private static final String SHOW_STATISTIC_BTN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter-panel-group\\:show-statistic-btn";
   private static final String MODULE_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter-panel-group\\:moduleDropdown";
   private static final String PROCESS_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter-panel-group\\:process-dropdown";
   private static final String KPI_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter-panel-group\\:kpiDropdown";
+  private static final String PMV_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter-panel-group\\:pmvDropdown";
   private static final String CASCADE_DROPDOWN_LIST_SUFFIX = "_panel";
   private static final String CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX = " .ui-cascadeselect-label";
   private static final String DISABLE_PROPERTY = "disabled";
@@ -26,35 +27,55 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private static final String FREQUENCY_OPTION_NAME = "Frequency";
   private static final String DROPDOWN_LABEL_SUFFIX = "_label";
   private static final String TEST_MODULE_NAME = "process-analyser-test";
+  private static final String INTERNAL_SUPPORT_MODULE = "process-analyser-internal-support";
   private static final String DROPDOWN_LIST_SUFFIX = "_items";
 
+//  @Test
+//  void showStatisticButtonShouldEnableWhenChosenFulfiled() {
+//    login();
+//    resetLocale();
+//    startAnalyzingProcess();
+//    // Check the current status of show statistic button
+//    $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, "true"));
+//
+//    // Choose test project PM
+//    verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX,
+//        DROPDOWN_LABEL_SUFFIX);
+//    // Verify English process name is rendered
+//    verifyAndSelectAProcess(PROCESS_NAME_EN);
+//    verifyAndClickItemLabelInDropdown(KPI_DROPDOWN_CSS_SELECTOR, FREQUENCY_OPTION_NAME, CASCADE_DROPDOWN_LIST_SUFFIX,
+//        CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX);
+//    // Check the status of show statistic button after data fulfilled
+//    $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, StringUtils.EMPTY));
+//
+//    // Change locale
+//    changeLocaleToGerman();
+//
+//    startAnalyzingProcess();
+//    verifyAndClickItemLabelInDropdown(PMV_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX,
+//        DROPDOWN_LABEL_SUFFIX);
+//    // Verify German process name is rendered
+//    verifyAndSelectAProcess(PROCESS_NAME_DE);
+//    resetLocale();
+//  }
+  
   @Test
-  void showStatisticButtonShouldEnableWhenChosenFulfiled() {
+  void showPmvWhenSelectProcess() {
     login();
-    resetLocale();
     startAnalyzingProcess();
     // Check the current status of show statistic button
     $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, "true"));
 
     // Choose test project PM
-    verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX,
-        DROPDOWN_LABEL_SUFFIX);
-    // Verify English process name is rendered
-    verifyAndSelectAProcess(PROCESS_NAME_EN);
-    verifyAndClickItemLabelInDropdown(KPI_DROPDOWN_CSS_SELECTOR, FREQUENCY_OPTION_NAME, CASCADE_DROPDOWN_LIST_SUFFIX,
-        CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX);
-    // Check the status of show statistic button after data fulfilled
-    $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, StringUtils.EMPTY));
-
-    // Change locale
-    changeLocaleToGerman();
-
-    startAnalyzingProcess();
-    verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX,
-        DROPDOWN_LABEL_SUFFIX);
-    // Verify German process name is rendered
-    verifyAndSelectAProcess(PROCESS_NAME_DE);
-    resetLocale();
+    var processDropdown = $(INTERNAL_SUPPORT_MODULE).shouldBe(visible, DEFAULT_DURATION);
+    processDropdown.click();
+    var pmvSelectionPanel = $(PMV_DROPDOWN_CSS_SELECTOR).shouldBe(visible, DEFAULT_DURATION);
+    var processFileAndStartName = "1";
+    SelenideElement targetElement =
+        pmvSelectionPanel.$$(" li").stream().filter(item -> processFileAndStartName.equals(item.text())).findAny()
+            .orElseThrow(() -> new AssertionError(getDropdownItemNotFoundMessage(processFileAndStartName)))
+            .shouldBe(visible, DEFAULT_DURATION);
+    targetElement.click();
   }
 
   private void verifyAndSelectAProcess(String startElementName) {

@@ -83,19 +83,6 @@
             </goals>
           </execution>
 
-          <!-- <execution>
-            <id>internalsupport.deploy</id>
-            <goals>
-              <goal>deploy-to-engine</goal>
-            </goals>
-            <configuration>
-              <deployFile>../process-analyser-test/src_test/test.zip</deployFile>
-              <deployToEngineApplication>processanalysertest</deployToEngineApplication>
-            </configuration>
-            <phase>process-test-classes</phase>
-          </execution> -->
-
-
           <!-- 1️⃣ Deploy main project -->
           <execution>
             <id>deploy.process.analyser</id>
@@ -118,47 +105,49 @@
             </goals>
             <configuration>
               <deployFile>
-                ../process-analyser-test/target/process-analyser-test-12.0.11-SNAPSHOT.iar</deployFile>
+                ../process-analyser-test/target/process-analyser-test-12.0.11-SNAPSHOT.iar
+              </deployFile>
               <deployToEngineApplication>processanalysertest</deployToEngineApplication>
             </configuration>
             <phase>process-test-classes</phase>
           </execution>
 
           <execution>
-            <id>deploy.process.analyser.test.v2</id>
+            <id>deploy.process.analyser.internal.support</id>
             <goals>
               <goal>deploy-to-engine</goal>
             </goals>
             <configuration>
               <deployFile>
-                ../process-analyser-test/target/process-analyser-test-12.0.12-SNAPSHOT.iar</deployFile>
-              <deployToEngineApplication>processanalysertest</deployToEngineApplication>
-            </configuration>
-            <phase>pre-integration-test</phase>
-          </execution>
-
-          <!-- 3️⃣ Deploy demo project -->
-          <execution>
-            <id>deploy.process.analyser.demo</id>
-            <goals>
-              <goal>deploy-to-engine</goal>
-            </goals>
-            <configuration>
-              <deployFile>
-                ../process-analyser-demo/target/process-analyser-demo-12.0.11-SNAPSHOT.iar</deployFile>
+                ../process-analyser-internal-support/target/process-analyser-internal-support.zip
+              </deployFile>
               <deployToEngineApplication>processanalysertest</deployToEngineApplication>
             </configuration>
             <phase>process-test-classes</phase>
           </execution>
+
+          <!--          <execution>
+            <id>deploy.process.analyser.zip.test</id>
+            <goals>
+              <goal>deploy-to-engine</goal>
+            </goals>
+            <configuration>
+              <deployFile>
+                ../process-analyser-test/target/process-analyser-test-bundle.zip</deployFile>
+              <deployToEngineApplication>processanalysertest</deployToEngineApplication>
+            </configuration>
+            <phase>process-test-classes</phase>
+          </execution>-->
 
           <!-- 4️⃣ Stop test engine -->
-          <!-- <execution>
+          <!--          <execution>
             <id>stop.test.engine</id>
-            <phase>process-test-classes</phase>
+            <phase>post-integration-test</phase>
             <goals>
               <goal>stop-test-engine</goal>
             </goals>
-          </execution> -->
+          </execution>-->
+
         </executions>
 
       </plugin>
@@ -200,8 +189,25 @@
                   file="${project.basedir}/target/process-analyser-test-${project.version}.iar"
                   tofile="${project.basedir}/target/process-analyser-test-12.0.12-SNAPSHOT.iar"
                 />
-                <echo
-                  message="✅ Duplicated IAR file as process-analyser-test-12.0.12-SNAPSHOT.iar" />
+              </target>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>zip-iar-files</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <zip
+                  destfile="${project.basedir}/target/process-analyser-test-bundle.zip">
+                  <fileset dir="${project.basedir}/target">
+                    <include name="process-analyser-test-${project.version}.iar" />
+                    <include name="process-analyser-test-12.0.12-SNAPSHOT.iar" />
+                  </fileset>
+                </zip>
               </target>
             </configuration>
           </execution>
