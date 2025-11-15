@@ -18,11 +18,13 @@ import static com.axonivy.solutions.process.analyser.core.enums.StartElementType
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
@@ -64,6 +66,7 @@ import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.application.ILibrary;
 import ch.ivyteam.ivy.application.IProcessModelVersion;
+import ch.ivyteam.ivy.application.ReleaseState;
 import ch.ivyteam.ivy.cm.ContentObject;
 import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.environment.Ivy;
@@ -288,12 +291,29 @@ public class ProcessesAnalyticsBean {
   }
   
   public List<IProcessModelVersion> getAvailabelPMV() {
+    Predicate<ILibrary> filterReleasedAndActivePmv = library -> {
+      IProcessModelVersion pmv = library.getProcessModelVersion();
+      ReleaseState pmvState = pmv.getReleaseState();
+      return pmv.getVersionName().contains(this.selectedModule)
+          && (pmvState == ReleaseState.ARCHIVED || pmvState == ReleaseState.RELEASED);
+    };
+
     if (StringUtils.isEmpty(this.selectedModule)) {
       return List.of();
     }
-    return IApplication.current().getLibraries().stream()
-        .filter(library -> library.getProcessModelVersion().getVersionName().contains(this.selectedModule))
-        .map(ILibrary::getProcessModelVersion).toList();
+
+    return IApplication.current().getLibraries()
+        .stream()
+        .filter(filterReleasedAndActivePmv)
+        .map(ILibrary::getProcessModelVersion)
+        .toList();
+  }
+  
+  private void preSelectPmv() {
+    List<IProcessModelVersion> pmvs = getAvailabelPMV().stream()
+        .sorted(Comparator.comparing(IProcessModelVersion::getLastChangeDate).reversed()).toList();
+
+    this.selectedPMV = ObjectUtils.isNotEmpty(pmvs) ? pmvs.get(0) : null;
   }
 
   private boolean isDiagramAndStatisticRenderable() {
@@ -306,10 +326,12 @@ public class ProcessesAnalyticsBean {
       ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
       persistedConfig.setWidgetSelectedModule(selectedModule);
       ProcessesMonitorUtils.updateUserProperty(persistedConfig);
+      preSelectPmv();
       PF.current().ajax().update(ProcessAnalyticViewComponentId.WIDGET_PROCESS_SELECTION_GROUP);
       PF.current().ajax().update(ProcessAnalyticViewComponentId.PMV_GROUP);
       return;
     }
+    preSelectPmv();
     PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP);
     PF.current().ajax().update(ProcessAnalyticViewComponentId.PMV_GROUP);
     resetStatisticValue();

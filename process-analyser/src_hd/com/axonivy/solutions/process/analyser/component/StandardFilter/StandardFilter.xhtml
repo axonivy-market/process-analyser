@@ -26,39 +26,30 @@
           containerClasses="grid mr-4 grid align-items-center line-height-4 mt-1  mb-2" />
       </h:panelGroup>
     </p:panelGrid>
-    <h:panelGroup id="search-fields" layout="block"
-      styleClass="w-full mx-0 grid formgrid ui-fluid #{isWidgetMode? 'flex-column px-2': 'flex-row px-0'}">
-      <h:panelGroup styleClass="#{isWidgetMode? 'col mb-2': 'col-3 pr-2'} p-0 m-0" layout="block">
+    <h:panelGroup layout="block"
+      styleClass="w-full pb-2 mx-0 grid formgrid ui-fluid #{isWidgetMode? 'flex-column px-2': 'flex-row px-0'}">
+      <h:panelGroup
+        styleClass="#{isWidgetMode? 'col mb-2': 'col-4 pr-2'} p-0 m-0"
+        layout="block">
         <div class="mb-2">
           <p:outputLabel for="@next"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectProject')}" />
         </div>
-        <p:selectOneMenu id="moduleDropdown" value="#{managedBean.selectedModule}" styleClass="w-full">
+        <p:selectOneMenu id="moduleDropdown"
+          value="#{managedBean.selectedModule}" styleClass="w-full">
           <f:selectItem
             itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectProject')}"
             itemValue="#{null}" noSelectionOption="true" />
-          <f:selectItems value="#{managedBean.availableModules}" var="module" itemLabel="#{module}"
-            itemValue="#{module}" />
-          <p:ajax event="change" partialSubmit="true" process="@this" listener="#{managedBean.onModuleSelect}" />
+          <f:selectItems value="#{managedBean.availableModules}"
+            var="module" itemLabel="#{module}" itemValue="#{module}" />
+          <p:ajax event="change" partialSubmit="true" process="@this"
+            listener="#{managedBean.onModuleSelect}" />
         </p:selectOneMenu>
       </h:panelGroup>
-      <h:panelGroup id="pmv-selection-group" styleClass="#{isWidgetMode? 'col mb-2': 'col-3 pr-2'} p-0 m-0"
-        layout="block">
-        <div class="mb-2">
-          <p:outputLabel for="@next"
-            value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectPMV')}" />
-        </div>
-        <p:selectOneMenu id="pmvDropdown" value="#{managedBean.selectedPMV}" styleClass="w-full"
-          converter="pmvConverter">
-          <f:selectItem
-            itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectPMV')}"
-            itemValue="#{null}" noSelectionOption="true" />
-          <f:selectItems value="#{managedBean.availabelPMV}" var="pmv" itemLabel="#{pmv.getVersionNumber()}"
-            itemValue="#{pmv}" />
-          <p:ajax event="change" partialSubmit="true" process="@this" listener="#{managedBean.onPmvSelect}" />
-        </p:selectOneMenu>
-      </h:panelGroup>
-      <h:panelGroup id="process-selection-group" styleClass="#{isWidgetMode? 'col mb-2 px-0': 'col-3 px-1'} p-0 m-0"
+    </h:panelGroup>
+    <h:panelGroup id="search-fields" layout="block"
+      styleClass="w-full mx-0 grid formgrid ui-fluid #{isWidgetMode? 'flex-column px-2': 'flex-row px-0'}">
+      <h:panelGroup id="process-selection-group" styleClass="#{isWidgetMode? 'col mb-2 px-0': 'col-4 px-1'} p-0 m-0"
         layout="block">
         <div class="mb-2">
           <p:outputLabel for="@next"
@@ -89,7 +80,23 @@
           </p:selectOneMenu>
         </c:if>
       </h:panelGroup>
-      <h:panelGroup styleClass="#{isWidgetMode? 'col mb-2': 'col-3 pl-2'} p-0 m-0" layout="block">
+      <h:panelGroup id="pmv-selection-group" styleClass="#{isWidgetMode? 'col mb-2': 'col-4 pr-2'} p-0 m-0"
+        layout="block">
+        <div class="mb-2">
+          <p:outputLabel for="@next"
+            value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectPMV')}" />
+        </div>
+        <p:selectOneMenu id="pmvDropdown" value="#{managedBean.selectedPMV}" styleClass="w-full"
+          converter="pmvConverter">
+          <f:selectItem
+            itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectPMV')}"
+            itemValue="#{null}" noSelectionOption="true" />
+          <f:selectItems value="#{managedBean.availabelPMV}" var="pmv" itemLabel="#{pmv.getVersionNumber()}"
+            itemValue="#{pmv}" />
+          <p:ajax event="change" partialSubmit="true" process="@this" listener="#{managedBean.onPmvSelect}" />
+        </p:selectOneMenu>
+      </h:panelGroup>
+      <h:panelGroup styleClass="#{isWidgetMode? 'col mb-2': 'col-4 pl-2'} p-0 m-0" layout="block">
         <div class="mb-2">
           <p:outputLabel for="@next"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectKPI')}" />
