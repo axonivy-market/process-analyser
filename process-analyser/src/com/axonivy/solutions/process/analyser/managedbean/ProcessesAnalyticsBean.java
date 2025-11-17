@@ -63,6 +63,7 @@ import com.axonivy.solutions.process.analyser.utils.FacesContexts;
 import com.axonivy.solutions.process.analyser.utils.JacksonUtils;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 
+import ch.ivyteam.ivy.application.ActivityState;
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.application.ILibrary;
 import ch.ivyteam.ivy.application.IProcessModelVersion;
@@ -294,8 +295,8 @@ public class ProcessesAnalyticsBean {
     Predicate<ILibrary> filterReleasedAndActivePmv = library -> {
       IProcessModelVersion pmv = library.getProcessModelVersion();
       ReleaseState pmvState = pmv.getReleaseState();
-      return pmv.getVersionName().contains(this.selectedModule)
-          && (pmvState == ReleaseState.ARCHIVED || pmvState == ReleaseState.RELEASED);
+      return pmv.getVersionName().contains(this.selectedModule) && (pmvState == ReleaseState.ARCHIVED
+          || pmvState == ReleaseState.RELEASED || pmvState == ReleaseState.DEPRECATED);
     };
 
     if (StringUtils.isEmpty(this.selectedModule)) {
@@ -311,6 +312,8 @@ public class ProcessesAnalyticsBean {
   
   private void preSelectPmv() {
     List<IProcessModelVersion> pmvs = getAvailabelPMV().stream()
+        .filter(version -> version.getActivityState() == ActivityState.ACTIVE
+            && version.getReleaseState() == ReleaseState.RELEASED)
         .sorted(Comparator.comparing(IProcessModelVersion::getLastChangeDate).reversed()).toList();
 
     this.selectedPMV = ObjectUtils.isNotEmpty(pmvs) ? pmvs.get(0) : null;

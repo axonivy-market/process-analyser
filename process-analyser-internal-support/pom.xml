@@ -41,7 +41,7 @@
         <version>3.1.0</version>
         <executions>
 
-          <!-- 1️⃣ Duplicate -->
+          <!-- Duplicate -->
           <execution>
             <id>duplicate-iar-with-new-version</id>
             <phase>process-test-classes</phase>
@@ -57,7 +57,7 @@
             </configuration>
           </execution>
 
-          <!-- 2️⃣ Update pom.xml inside duplicated IAR -->
+          <!-- Update pom.xml inside duplicated IAR -->
           <execution>
             <id>update-iar-pom-version</id>
             <phase>process-test-classes</phase>
@@ -90,7 +90,22 @@
             </configuration>
           </execution>
 
-          <!-- 3️⃣ Zip all IARs -->
+          <execution>
+            <id>add-deploy-options</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <copy
+                  file="${project.basedir}/deploy.options.yaml"
+                  tofile="${project.basedir}/target/deploy.options.yaml" />
+              </target>
+            </configuration>
+          </execution>
+
+          <!-- Zip all IARs -->
           <execution>
             <id>zip-iar-files</id>
             <phase>process-test-classes</phase>
@@ -105,6 +120,7 @@
                     <include name="${project.artifactId}-${project.version}.iar" />
                     <include
                       name="${project.artifactId}-${duplicate.version}.iar" />
+                    <include name="deploy.options.yaml" />
                   </fileset>
                 </zip>
               </target>
