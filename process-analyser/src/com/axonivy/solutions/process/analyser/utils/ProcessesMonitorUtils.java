@@ -34,6 +34,7 @@ import ch.ivyteam.ivy.application.IProcessModelVersion;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
+import ch.ivyteam.ivy.security.exec.Sudo;
 import ch.ivyteam.ivy.workflow.CaseState;
 import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.ITask;
@@ -239,9 +240,24 @@ public class ProcessesMonitorUtils {
       }
       caseQuery.where().andOverall(allCustomFieldsQuery);
     }
-    return Ivy.wf().getCaseQueryExecutor().getResults(caseQuery)
+//    Ivy.log().warn("current task start id ne : " + taskStartId);
+//    Sudo.run(() -> {
+//      CaseQuery.businessCases().executor().results().forEach(caze -> {
+//        Ivy.log().warn("Tasktask id ne : " + caze.getProcessStart().getTaskStart().getId());
+//        Ivy.log().error("No Filter total size {0} {1} {2} {3} {4}", caze.uuid(), caze.getProcessStart().getFullRequestPath(), caze.getProcessStart().getTaskStart().getId(), caze.getProcessModelVersion().getVersionName());
+//      });
+//
+//    });
+//    
+    var output1 =Ivy.wf().getCaseQueryExecutor().getResults(caseQuery);
+//    Ivy.log().error("total size {0}", output1.size());
+    
+    return output1
         .stream()
-        .filter(ca -> ca.getProcessModelVersion().equals(processModelVersion))
+        .filter(ca -> {
+          Ivy.log().warn("Version name ne: " + ca.getProcessModelVersion().getVersionName());
+          return  ca.getProcessModelVersion().equals(processModelVersion);
+        })
         .toList();
   }
 

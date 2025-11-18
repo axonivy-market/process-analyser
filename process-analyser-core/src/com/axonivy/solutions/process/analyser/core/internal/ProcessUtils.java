@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -238,6 +239,47 @@ public class ProcessUtils {
       }
       return result;
     });
+  }
+  
+  public static Set<String> getAllAvaiableModule() {
+    return getProcessModelVersionsInCurrentApp().stream().map(IProcessModelVersion::getName)
+        .collect(Collectors.toSet());
+  }
+  
+  public static List<Process> getAllProcessByModule(String selectedModule) {
+    List<Process> processes = new ArrayList<>();
+    IProcessModelVersion pmv = IApplication.current().getProcessModelVersions()
+        .filter(version -> version.getName().equals(selectedModule)).findFirst().orElse(null);
+    List<IProcessStart> processStarts = getProcessStartsForPMV(pmv);
+    // Index process starts by processFileId for fast lookup
+    Map<String, List<IProcessStart>> startsByProcessId =
+        processStarts.stream().collect(Collectors.groupingBy(start -> PIDUtils.getId(start.pid(), true)));
+
+    for (var processFile : getProcessesInCurrentPMV(pmv)) {
+      String processFileId = processFile.getIdentifier();
+      var process = new Process(processFileId, processFile.getName(), new ArrayList<>());
+      process.setPmvId(pmv.getId());
+      process.setPmvName(pmv.getName());
+      process.setPmv(pmv);
+      process.setProjectRelativePath(processFile.getResource().getProjectRelativePath().toString());
+
+      List<IProcessStart> starts = startsByProcessId.getOrDefault(processFileId, Collections.emptyList());
+
+      if (CollectionUtils.isEmpty(starts)) {
+        continue;
+      }
+
+      for (var start : starts) {
+        var taskStart = start.getTaskStart();
+        StartElement startElement = new StartElement();
+        startElement.setPid(PIDUtils.getId(taskStart.getProcessElementId()));
+        startElement.setTaskStartId(taskStart.getId());
+        ProcessStartFactory.extractDisplayNameAndType(start, startElement);
+        process.getStartElements().add(startElement);
+      }
+      processes.add(process);
+    }
+    return processes;
   }
 
   public static boolean isIWebStartableNeedToRecordStatistic(IWebStartable process) {

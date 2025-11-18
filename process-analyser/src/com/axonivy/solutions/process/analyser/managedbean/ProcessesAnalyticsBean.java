@@ -288,7 +288,7 @@ public class ProcessesAnalyticsBean {
   }
 
   public Set<String> getAvailableModules() {
-    return processesMap.keySet();
+    return ProcessUtils.getAllAvaiableModule();
   }
   
   public List<IProcessModelVersion> getAvailabelPMV() {

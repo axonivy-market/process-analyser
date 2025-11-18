@@ -12,6 +12,7 @@ import javax.faces.convert.FacesConverter;
 import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
 import com.axonivy.solutions.process.analyser.core.bo.Process;
 import com.axonivy.solutions.process.analyser.core.bo.StartElement;
+import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.managedbean.MasterDataBean;
 import com.axonivy.solutions.process.analyser.managedbean.ProcessesAnalyticsBean;
 import com.axonivy.solutions.process.analyser.utils.FacesContexts;
@@ -37,6 +38,7 @@ public class ProcessStartConverter implements Converter {
       var masterDataBean = FacesContexts.evaluateValueExpression("#{masterDataBean}", MasterDataBean.class);
 
       List<Process> processElements = masterDataBean.getAvailableProcesses(data[0]);
+     // List<Process> processElements = ProcessUtils.getAllProcessByModule(data[0]);
       var foundProcess =
           processElements.stream().filter(element -> element.getId().equals(data[1])).findAny().orElse(null);
 
