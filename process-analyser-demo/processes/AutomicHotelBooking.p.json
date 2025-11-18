@@ -212,12 +212,12 @@
       "id" : "f26",
       "type" : "TaskSwitchEvent",
       "name" : "Process Booking",
-      "responsible" : {
-            "activator" : "SYSTEM"
-          },
       "config" : {
         "task" : {
           "name" : "Process Booking",
+          "responsible" : {
+            "activator" : "SYSTEM"
+          },
           "delay" : "new Duration(0, 0, 0, 0, 0, 4)"
         }
       },
