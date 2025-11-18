@@ -71,6 +71,9 @@
       "name" : "Process Booking",
       "config" : {
         "task" : {
+          "responsible" : {
+            "activator" : "SYSTEM"
+          },
           "delay" : "new Duration(0, 0, 0, 0, 0, 2)"
         }
       },
@@ -87,6 +90,9 @@
       "name" : "Notify Booking Fail",
       "config" : {
         "task" : {
+          "responsible" : {
+            "activator" : "SYSTEM"
+          },
           "delay" : "new Duration(0, 0, 0, 0, 0, 3)"
         }
       },
@@ -101,6 +107,13 @@
       "id" : "f14",
       "type" : "TaskSwitchEvent",
       "name" : "Request Booking",
+      "config" : {
+        "task" : {
+          "responsible" : {
+            "activator" : "SYSTEM"
+          }
+        }
+      },
       "visual" : {
         "at" : { "x" : 208, "y" : 32 },
         "labelOffset" : { "x" : 14, "y" : 34 }
@@ -112,6 +125,13 @@
       "id" : "f7",
       "type" : "TaskSwitchEvent",
       "name" : "Notify Booking Success",
+      "config" : {
+        "task" : {
+          "responsible" : {
+            "activator" : "SYSTEM"
+          }
+        }
+      },
       "visual" : {
         "at" : { "x" : 832, "y" : 32 },
         "labelOffset" : { "x" : 1, "y" : -15 }
@@ -157,6 +177,13 @@
       "id" : "f21",
       "type" : "TaskSwitchEvent",
       "name" : "Cancel Booking",
+      "config" : {
+        "task" : {
+          "responsible" : {
+            "activator" : "SYSTEM"
+          }
+        }
+      },
       "visual" : {
         "at" : { "x" : 832, "y" : 152 },
         "labelOffset" : { "x" : 33, "y" : -47 }
@@ -185,6 +212,9 @@
       "id" : "f26",
       "type" : "TaskSwitchEvent",
       "name" : "Process Booking",
+      "responsible" : {
+            "activator" : "SYSTEM"
+          },
       "config" : {
         "task" : {
           "name" : "Process Booking",
@@ -203,12 +233,7 @@
       "type" : "SignalStartEvent",
       "name" : "hotelBooking",
       "config" : {
-        "signalCode" : "hotelBooking",
-        "output" : {
-          "map" : {
-            "out.a" : "signal.getSignalData() as String"
-          }
-        }
+        "signalCode" : "hotelBooking"
       },
       "visual" : {
         "at" : { "x" : 112, "y" : 112 },

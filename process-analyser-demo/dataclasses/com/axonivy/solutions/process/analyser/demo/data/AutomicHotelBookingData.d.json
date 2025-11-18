@@ -2,10 +2,5 @@
   "$schema" : "https://json-schema.axonivy.com/data-class/12.0.0/data-class.json",
   "simpleName" : "AutomicHotelBookingData",
   "namespace" : "com.axonivy.solutions.process.analyser.demo.data",
-  "isBusinessCaseData" : false,
-  "fields" : [ {
-    "name" : "a",
-    "type" : "String",
-    "modifiers" : [ "PERSISTENT" ]
-  } ]
+  "isBusinessCaseData" : false
 }
