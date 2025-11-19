@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.axonivy.solutions.process.analyser</groupId>
   <artifactId>process-analyser-test</artifactId>
@@ -8,11 +7,35 @@
   <packaging>iar-integration-test</packaging>
   <properties>
     <ivy.engine.version>12.0.8</ivy.engine.version>
-    <tester.version>12.0.1</tester.version>
     <project.build.plugin.version>12.0.8</project.build.plugin.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <tester.version>12.0.1</tester.version>
   </properties>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>sonatype</id>
+      <url>https://central.sonatype.com/repository/maven-snapshots</url>
+      <snapshots>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+  <repositories>
+    <repository>
+      <id>sonatype</id>
+      <url>https://central.sonatype.com/repository/maven-snapshots</url>
+      <snapshots>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
+    </repository>
+  </repositories>
   <dependencies>
+    <dependency>
+      <groupId>com.axonivy.solutions.process.analyser</groupId>
+      <artifactId>process-analyser</artifactId>
+      <version>${project.version}</version>
+      <type>iar</type>
+    </dependency>
     <dependency>
       <groupId>com.axonivy.ivy.test</groupId>
       <artifactId>unit-tester</artifactId>
@@ -25,38 +48,7 @@
       <version>${tester.version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>com.axonivy.solutions.process.analyser</groupId>
-      <artifactId>process-analyser</artifactId>
-      <version>${project.version}</version>
-      <type>iar</type>
-    </dependency>
   </dependencies>
-  <repositories>
-    <repository>
-      <snapshots>
-        <updatePolicy>always</updatePolicy>
-      </snapshots>
-      <id>sonatype</id>
-      <url>https://central.sonatype.com/repository/maven-snapshots</url>
-    </repository>
-    <repository>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <id>maven.axonivy.com</id>
-      <url>https://maven.axonivy.com</url>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <snapshots>
-        <updatePolicy>always</updatePolicy>
-      </snapshots>
-      <id>sonatype</id>
-      <url>https://central.sonatype.com/repository/maven-snapshots</url>
-    </pluginRepository>
-  </pluginRepositories>
   <build>
     <testSourceDirectory>src_test</testSourceDirectory>
     <plugins>
@@ -71,8 +63,15 @@
         </configuration>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.0.0-M4</version>
+        <configuration>
+          <argLine>
+            -Dtest.engine.url=${test.engine.url}
+            -Dtest.engine.app=processanalysertest
+          </argLine>
+        </configuration>
         <executions>
           <execution>
             <id>default-test</id>
@@ -89,10 +88,6 @@
             </goals>
           </execution>
         </executions>
-        <configuration>
-          <argLine>-Dtest.engine.url=${test.engine.url}
-            -Dtest.engine.app=processanalysertest</argLine>
-        </configuration>
       </plugin>
     </plugins>
   </build>
