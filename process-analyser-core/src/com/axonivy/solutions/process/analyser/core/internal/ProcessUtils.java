@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 
@@ -246,15 +247,24 @@ public class ProcessUtils {
         .collect(Collectors.toSet());
   }
   
-  public static List<Process> getAllProcessByModule(String selectedModule) {
+  public static List<Process> getAllProcessByModule(String selectedModule, IProcessModelVersion pmv) {
     List<Process> processes = new ArrayList<>();
-    IProcessModelVersion pmv = IApplication.current().getProcessModelVersions()
-        .filter(version -> version.getName().equals(selectedModule)).findFirst().orElse(null);
+    if (ObjectUtils.isEmpty(pmv)) {
+      Ivy.log().warn("pmv bi null " + ObjectUtils.isNotEmpty(pmv));
+       pmv = IApplication.current().getProcessModelVersions()
+          .filter(version -> version.getName().equals(selectedModule))
+          .findFirst()
+          .orElse(null);
+    }
+    
+    Ivy.log().warn("When geeting: " + pmv.getVersionName());
+    
     List<IProcessStart> processStarts = getProcessStartsForPMV(pmv);
     // Index process starts by processFileId for fast lookup
     Map<String, List<IProcessStart>> startsByProcessId =
         processStarts.stream().collect(Collectors.groupingBy(start -> PIDUtils.getId(start.pid(), true)));
 
+    Ivy.log().warn("getProcessesInCurrentPMV(pmv) :" + getProcessesInCurrentPMV(pmv).size());
     for (var processFile : getProcessesInCurrentPMV(pmv)) {
       String processFileId = processFile.getIdentifier();
       var process = new Process(processFileId, processFile.getName(), new ArrayList<>());
@@ -268,12 +278,13 @@ public class ProcessUtils {
       if (CollectionUtils.isEmpty(starts)) {
         continue;
       }
-
+      Ivy.log().warn("all Start element :" + starts.size());
       for (var start : starts) {
         var taskStart = start.getTaskStart();
         StartElement startElement = new StartElement();
         startElement.setPid(PIDUtils.getId(taskStart.getProcessElementId()));
         startElement.setTaskStartId(taskStart.getId());
+        Ivy.log().warn("task start id trong ProcessUtils: " + startElement.getTaskStartId());
         ProcessStartFactory.extractDisplayNameAndType(start, startElement);
         process.getStartElements().add(startElement);
       }

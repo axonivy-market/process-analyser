@@ -240,25 +240,22 @@ public class ProcessesMonitorUtils {
       }
       caseQuery.where().andOverall(allCustomFieldsQuery);
     }
-//    Ivy.log().warn("current task start id ne : " + taskStartId);
 //    Sudo.run(() -> {
 //      CaseQuery.businessCases().executor().results().forEach(caze -> {
 //        Ivy.log().warn("Tasktask id ne : " + caze.getProcessStart().getTaskStart().getId());
-//        Ivy.log().error("No Filter total size {0} {1} {2} {3} {4}", caze.uuid(), caze.getProcessStart().getFullRequestPath(), caze.getProcessStart().getTaskStart().getId(), caze.getProcessModelVersion().getVersionName());
+//        Ivy.log().error("No Filter total size {0} {1} {2} {3} {4}", caze.uuid(),
+//            caze.getProcessStart().getFullRequestPath(), caze.getProcessStart().getTaskStart().getId(),
+//            caze.getProcessModelVersion().getVersionName());
 //      });
-//
 //    });
-//    
-    var output1 =Ivy.wf().getCaseQueryExecutor().getResults(caseQuery);
+//
+    var output1 = Ivy.wf().getCaseQueryExecutor().getResults(caseQuery);
 //    Ivy.log().error("total size {0}", output1.size());
-    
-    return output1
-        .stream()
-        .filter(ca -> {
-          Ivy.log().warn("Version name ne: " + ca.getProcessModelVersion().getVersionName());
-          return  ca.getProcessModelVersion().equals(processModelVersion);
-        })
-        .toList();
+
+    return output1.stream().filter(ca -> {
+//      Ivy.log().warn("Version name ne: " + ca.getProcessModelVersion().getVersionName());
+      return ca.getProcessModelVersion().equals(processModelVersion);
+    }).toList();
   }
 
   private static CaseQuery buildStartTimestampQuery(TimeIntervalFilter timeIntervalFilter) {
