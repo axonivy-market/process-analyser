@@ -56,6 +56,9 @@ Dialogs:
               TotalElements: In total there are {0} element(s).
               Type: Type
               Version: Version
+            ViewNotPermittedPage:
+              Title: Process Analyser - View Not Permitted Page
+              WarningMessage: <span>You must be a member of the <b class="role-name">ProcessAnalyst</b> group to view this process!</span>
             component:
               ProcessViewer:
                 ColorConfig: Color config
@@ -153,7 +156,9 @@ Enums:
       name: Yesterday
 Labels:
   Apply: Apply
+  Close: Close
   EnterANumber: Enter a number
+  ViewNotPermittedHeader: View Not Permitted Page
 Processes:
   Process:
     Analyser:
