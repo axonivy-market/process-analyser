@@ -2,10 +2,5 @@
   "$schema" : "https://json-schema.axonivy.com/data-class/12.0.0/data-class.json",
   "simpleName" : "PrepareDataDemoData",
   "namespace" : "com.axonivy.solutions.process.analyser.demo",
-  "isBusinessCaseData" : false,
-  "fields" : [ {
-    "name" : "isHidden",
-    "type" : "Boolean",
-    "modifiers" : [ "PERSISTENT" ]
-  } ]
+  "isBusinessCaseData" : false
 }
