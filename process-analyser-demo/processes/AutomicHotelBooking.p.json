@@ -252,26 +252,5 @@
       "connect" : [
         { "id" : "f38", "to" : "f14", "color" : "default" }
       ]
-    }, {
-      "id" : "f28",
-      "type" : "ProgramStart",
-      "config" : {
-        "javaClass" : "com.axonivy.solutions.process.analyser.demo.managedbean.PrepareDataDemoBean",
-        "link" : "eventLink.ivp"
-      },
-      "visual" : {
-        "at" : { "x" : 96, "y" : 272 },
-        "labelOffset" : { "x" : 13, "y" : 33 }
-      },
-      "connect" : [
-        { "id" : "f30", "to" : "f29" }
-      ]
-    }, {
-      "id" : "f29",
-      "type" : "TaskEnd",
-      "visual" : {
-        "at" : { "x" : 280, "y" : 272 },
-        "labelOffset" : { "x" : 13, "y" : 33 }
-      }
     } ]
 }
