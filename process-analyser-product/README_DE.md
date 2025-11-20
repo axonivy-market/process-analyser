@@ -1,207 +1,207 @@
-# Verarbeitet Analysator
+# Prozessanalysator
 
-#Axon EfeusArbeitsgang Analysator Tool aktiviert umfassende Einblicke hinein
-eure workflow Arbeitsgänge.
+Das Process Analyser Tool von Axon Ivy ermöglicht umfassende Einblicke in Ihre
+Arbeitsabläufe.
 
-Wesentliche Charakterzüge:
+Wichtigste Funktionen:
 
-- **#Veranschaulichen #Verarbeiten Diagramme**\
-  #Ein räumen und intuitive Darstellung von euren Arbeitsgängen sind versehen
-  durch dynamisch Diagramme, welcher du bist schon bekannt mit von #Axon Efeu.
+- **Prozessdiagramme visualisieren**Eine klare und intuitive Darstellung Ihrer
+  Prozesse wird durch dynamische Diagramme ermöglicht, die Sie bereits aus Axon
+  Ivy kennen.
 
-- **Statistik sofort**\
-  Veranschaulicht workflow Gebrauch und Dauer direkt auf dem Diagramm.
+- **Statistiken auf einen Blick**Visualisieren Sie die Nutzung und Dauer von
+  Workflows direkt im Diagramm.
 
-- **Messen-Basisbezogene Auswertung**\
-  Filtert und analysieren #Daten für spezifisch Zeit Intervalle.
+- **Zeitbasierte Analyse**Filtern und analysieren Sie Daten für bestimmte
+  Zeitintervalle.
 
-- **#Benutzerdefiniert Attribut #Filterung**\
-  Nutzt verarbeitet-#Spezifikum Attribute (#benutzerdefiniert-#auffangen von
-  beschäftigen/Fall) zu filtern und frischen eure Auswertung für tiefer
-  Einblicke.
+- ****zur Filterung benutzerdefinierter Attribute\
+  Nutzen Sie prozessspezifische Attribute (benutzerdefinierte Felder aus
+  Aufgaben/Fällen), um Ihre Analyse zu filtern und zu verfeinern und so tiefere
+  Einblicke zu gewinnen.
 
-- **Flexible Arbeitsgang Auslese**\
-  Kuhle integriert mit irgendwelchen Arbeitsgängen von ebensolcher gleichen
-  Sicherheit Kontext zu #aushebeln das Tools stabile Charakterzüge.
+- **Flexible Prozessauswahl**\
+  Gut integriert in alle Prozesse aus dem gleichen Sicherheitskontext, um die
+  robusten Funktionen des Tools zu nutzen.
 
-- **Exportieren Fähigkeiten**\
-  Exportieren Diagramm und detailliert #Exzellieren Berichte mit
-  Häufigkeit/Dauer Statistik.
+- **Exportfunktionen**Exportieren Sie Diagramme und detaillierte Excel-Berichte
+  mit Häufigkeits-/Dauerstatistiken.
 
-![Verarbeitet Analysator](images/process-analyzer-full-page.png)
+![Prozessanalysator](images/process-analyzer-full-page.png)
 
 ## Demo
 
-In der ersten Stufe, zu aktivieren den Arbeitsgang Analysator zu einsammeln
-#Daten, du brauchst zu rennen und vervollständigen mindestens #man von die Demo
-Arbeitsgänge.
+Im ersten Schritt müssen Sie mindestens einen der Demo-Prozesse ausführen und
+abschließen, damit der Process Analyzer Daten erfassen kann.
 
-![Demo Arbeitsgänge](images/demo-processes.png)
+![Demo-Prozesse](images/demo-processes.png)
 
-### Zeigt Statistik
+### Statistik anzeigen
 
-Zu anschauen das Resultat, starte den Arbeitsgang Analysator und auswählen den
-PMV jene Wettkämpfe die gewünscht verarbeiten und KPI tippen. Bei
-#voreingestellt, Auswertungen sind getrennt bei verarbeiten Starts (automatisch
-vs. Manuell). Benutzen das Einverleiben Verarbeiten Starts #festknebeln zu
-anschauen eine volle Auswertung von jedem Arbeitsgang. Dann veranschaulichte
-verarbeitet #ein #roh #Daten Diagramm nebenher ein analysiert Statistik
-#tabellieren will sein gezeigt.
+Um das Ergebnis anzuzeigen, starten Sie den Process Analyzer und wählen Sie das
+PMV aus, das dem gewünschten Prozess und KPI-Typ entspricht. Standardmäßig
+werden Analysen nach Prozessstarts (automatisch vs. manuell) getrennt. Verwenden
+Sie die Umschaltfläche „Prozessstarts zusammenführen“, um eine vollständige
+Analyse jedes Prozesses anzuzeigen. Daraufhin wird ein visualisiertes
+Rohdaten-Prozessdiagramm zusammen mit einer analysierten Statistiktabelle
+angezeigt.
 
-![Zeigt Statistik Demo](images/show-statistic.gif)
+![Statistik-Demo anzeigen](images/show-statistic.gif)
 
-### Filtern und Konfiguration Optionen
+### Filter- und Konfigurationsoptionen
 
-- **Filtern:** Zu versehen #mehr umfassende Einblicke, der folgende zuzügliche
-  Filter Kriterien haben gewesen hereingebracht:
+- **Filter:** Um umfassendere Einblicke zu ermöglichen, wurden die folgenden
+  zusätzlichen Filterkriterien eingeführt:
 
-  1. **#Einschließen rennen Fälle:** Bei #voreingestellt, einzige geschlossene
-     Fälle sind ausgewertet. Benutzt diesen Knopf zu auch einschließen rennen
-     Fälle in der Evaluation.
-  2. **Misst Intervall filtert:** Dieser Filter schließt ein alle Fälle jenen
-     Start #innerhalb den präzisiert misst stellt auf.
-  3. **#Benutzerdefiniert Filter:** Diese Option erlaubt Nutzer zu filtern Fälle
-     gegründet auf #benutzerdefiniert Feld Werte (von dem Fall oder
-     beschäftigen) jenen Wettkampf den präzisierte Zustände.
+  1. **Laufende Fälle einbeziehen:** Standardmäßig werden nur abgeschlossene
+     Fälle ausgewertet. Verwenden Sie diese Schaltfläche, um auch laufende Fälle
+     in die Auswertung einzubeziehen.
+  2. **Zeitintervallfilter:** Dieser Filter umfasst alle Fälle, die innerhalb
+     des angegebenen Zeitraums beginnen.
+  3. **Benutzerdefinierter Filter:** Mit dieser Option können Benutzer Fälle
+     anhand von benutzerdefinierten Feldwerten (aus dem Fall oder der Aufgabe)
+     filtern, die den angegebenen Bedingungen entsprechen.
 
-![Filtert #Daten Demo](images/filter-data.gif)
+![Filterdaten-Demo](images/filter-data.gif)
 
-- **#Bergbaulich Beschauer Konfiguration Optionen:** Der #bergbaulich Beschauer
-  Angebote die folgende Konfiguration Optionen.
+- **Konfigurationsoptionen für den Mining Viewer:** Der Mining Viewer bietet die
+  folgenden Konfigurationsoptionen.
 
-  1. **Konfiguriert Beschauer:** Wählt aus ein Fokus Element zu automatisch
-     zentrieren ihm innerhalb die Besichtigungstermin Gegend.
-  2. **Zoom Passt an:** Setzte einen Zoom Wert zu passen das Diagramm zu eurem
-     Screen, oder benutzen **Ctrl + Maus #Buchrolle**.
-  3. **Öffnen in Neu Deckel:** Öffnet den #bergbaulich Beschauer in einem neuen
-     Browser Deckel für ein größeres, #in vollem Umfang #regulierbar Ausblick.
-  4. **Expandiert Beschauer Diskussionsrunde:** Schwebt über der #untere Ecke
-     von dem Beschauer und ziehen abwärts die Besichtigungstermin Gegend zu
-     erhöhen.
+  1. **Viewer konfigurieren:** Wählen Sie ein Fokuselement aus, um es
+     automatisch im Anzeigebereich zu zentrieren.
+  2. **Zoomstufe:** Stellen Sie einen Zoomwert ein, um das Diagramm an Ihren
+     Bildschirm anzupassen, oder verwenden Sie **Strg + Mausrad**.
+  3. **In neuem Tab öffnen:** Öffnen Sie den Mining Viewer in einem neuen
+     Browser-Tab, um eine größere, vollständig steuerbare Ansicht zu erhalten.
+  4. **Viewer-Fenster vergrößern:** Bewegen Sie den Mauszeiger über die untere
+     Ecke des Viewers und ziehen Sie ihn nach unten, um den Anzeigebereich zu
+     vergrößern.
 
-![Expandieren viewr](images/expand-viewer.gif)
+![expand viewr](images/expand-viewer.gif)
 
-- **Berichtend Optionen:** Benutzen die Knöpfe in das #untere-#Rechter Ecke zu
-  exportieren #Daten für berichten.
+- **Berichtsoptionen:** Verwenden Sie die Schaltflächen in der unteren rechten
+  Ecke, um Daten für Berichte zu exportieren.
 
-  1. **#Exportieren #Exzellieren:** Lädt herunter/Ladet herunter alle #Daten
-     analysiert herein #Exzellieren #formatieren für ferner berichten oder
-     Auswertung.
-  2. **Fängt ein ganzen Arbeitsgang:** Exportieren das vervollständigen #obenab
-     Arbeitsgang Diagramm (zuerst) BPMN passt an vollständige #HD Resolution,
-     #eingerechnet alle KPI Werte.
-  3. **Fängt ein gängigen Ausblick:** Exportieren nur das zurzeit sichtbar
-     #bergbaulich Diagramm da ihm fungiert auf dem Screen.
+  1. **Excel exportieren:** Laden Sie alle analysierten Daten im Excel-Format
+     herunter, um sie für weitere Berichte oder Analysen zu verwenden.
+  2. **Erfassen Sie den gesamten Prozess:** Exportieren Sie das vollständige
+     Prozessdiagramm auf der obersten (ersten) BPMN-Ebene in Full-HD-Auflösung,
+     einschließlich aller KPI-Werte.
+  3. **Aktuelle Ansicht erfassen:** Exportieren Sie nur das aktuell sichtbare
+     Mining-Diagramm, wie es auf dem Bildschirm angezeigt wird.
 
-![downoad Und exportieren Demo](images/capture-images.gif)
+![Download und Export Demo](images/capture-images.gif)
 
-- **#Färben #Barrikadieren Auslese:** Bebildert die Progression von niederer zu
-  höher KPI Werte.
-  1. **#Benutzerdefiniert Farbe:** Passt an die Farbe von #jede KPI Wert
-     benutzend eine Steigung von licht zu Finsternis.
-  2. **Heatmap:** Automatisch bewirbt eine Farbe Skala übergehen von grün zu
-     rot.
+- **Auswahl der Farbleiste:** veranschaulicht den Verlauf von niedrigeren zu
+  höheren KPI-Werten.
+  1. **Benutzerdefinierte Farbe:** Passen Sie die Farbe jedes KPI-Werts mithilfe
+     eines Farbverlaufs von hell nach dunkel an.
+  2. **Heatmap:** Wendet automatisch eine Farbskala an, die von Grün zu Rot
+     übergeht.
 
-![#Färben #kartographieren Demo](images/color-custom.gif)
+![Farbkarte-Demo](images/color-custom.gif)
 
-### Portal #Benutzerdefiniert Ding Integration
+### Integration benutzerdefinierter Widgets in das Portal
 
-Wir Unterstützung integrierend den Arbeitsgang Analysator hinein #Axon Efeu
-Portal da einem #benutzerdefiniert Armaturenbrett Ding von Version 12.0.10
-voran. Diese Integration erlaubt Nutzer zu #eingraben verarbeiten direkt
-#Analytik innerhalb ihre Portal Armaturenbretter, versehend flotten Zugang zu
-wesentlich Leistung Anzeiger und verarbeiten Einblicke ohne verlassen das Portal
-Armaturenbrett.
+Wir unterstützen die Integration des Process Analyzer in das Axon Ivy Portal als
+benutzerdefiniertes Dashboard-Widget ab Version 12.0.10. Diese Integration
+ermöglicht es Benutzern, Prozessanalysen direkt in ihre Portal-Dashboards
+einzubetten, sodass sie schnellen Zugriff auf wichtige Leistungsindikatoren und
+Prozessinformationen haben, ohne das Portal-Dashboard verlassen zu müssen.
 
-![Ding Charakterzüge Demo](images/widget-features.gif)
+![Widget-Funktionen-Demo](images/widget-features.gif)
 
 ## Einrichtung
-Zu einsammeln #Daten und analysieren eure Arbeitsgänge, bitte folgen diese
-Stufen:
+Um Daten zu sammeln und Ihre Prozesse zu analysieren, führen Sie bitte die
+folgenden Schritte aus:
 
-1. Bereite vor eure besitzen Projekt und Arbeitsgänge.
-2. Modifizier eure Arbeitsgänge für #präzise #Daten Auswertung
+1. Bereiten Sie Ihr eigenes Projekt und Ihre eigenen Prozesse vor.
+2. Passen Sie Ihre Prozesse für eine genaue Datenanalyse an.
 
-- Für irgendwelche Arbeitsgang Alternative mit mehrfach #scheidend Strömungen,
-  sichert dass jede Strömung zügelt mindestens beschäftigt #man Element entlang
-  seinen Pfad.
+- Stellen Sie bei jedem Prozess mit mehreren ausgehenden Abläufen sicher, dass
+  jeder Ablauf mindestens ein Aufgabenelement entlang seines Pfades enthält.
 
-![Einrichtung Leitfaden](images/setup-guideline.png)
+![Einrichtungsanleitung](images/setup-guideline.png)
 
-3. #Installieren #Verarbeiten Analysator von Marktplatz.
+3. Installieren Sie Process Analyzer aus dem Marketplace.
 
-- #Nachdem #installieren #Verarbeiten Analysator, die Projekt Struktur sollte
-  #aussehen dies
+- Nach der Installation von Process Analyzer sollte die Projektstruktur wie
+  folgt aussehen
 
-![#Projizieren #strukturieren](images/project-structure.png)
+![Projektstruktur](images/project-structure.png)
 
-- Für Motor #Aufstellen, sicher dass beide Arbeitsgang Models sind #aufbieten
-  innerhalb ebensolcher gleichen Sicherheit Kontext
+- Stellen Sie für die Engine-Bereitstellung sicher, dass beide Prozessmodelle
+  innerhalb desselben Sicherheitskontexts bereitgestellt werden.
 
-![Motor #aufbieten](images/engine-deployment.png)
+![engine deploy](images/engine-deployment.png)
 
-4. Rennt eure gewünscht verarbeitet zu einsammeln #Daten.
-5. Stoß aus den Arbeitsgang Analysator und folgen den Demo Deckel zu anschauen
-   die Resultate.
+4. Führen Sie den gewünschten Prozess aus, um Daten zu sammeln.
+5. Starten Sie den Process Analyzer und folgen Sie der Registerkarte „Demo“, um
+   die Ergebnisse anzuzeigen.
 
-![#Analysieren #verarbeiten](images/analyze-process.png)
+![Analyseprozess](images/analyze-process.png)
 
-6. (Optional) Verbessert das Arbeitsgang Display heißt zu vermeiden den
-   Arbeitsgang Start technischen Namen (#z.B.
-   FlightPlanningDemo/recommendDestination.ivp) Seiend gezeigt in die Auslese
-   Optionen. Multilanguage Unterstützen für verarbeiten Namen sind auch
-   verfügbar.
+6. (Optional) Aktualisieren Sie den Anzeigenamen des Prozesses, um zu vermeiden,
+   dass der technische Name des Prozessstarts (z. B.
+   FlightPlanningDemo/recommendDestination.ivp) in den Auswahloptionen angezeigt
+   wird. Es ist auch eine Mehrsprachenunterstützung für Prozessnamen verfügbar.
 
-![multilanguage #Verarbeiten #heißen
-unterstützen](images/multilanguage-process-name.png)
+![Unterstützung mehrsprachiger
+Prozessnamen](images/multilanguage-process-name.png)
 
 ```
 @variables.yaml@
 ```
-### Portal #Benutzerdefiniert Ding Einrichtung
+### Einrichtung des benutzerdefinierten Widgets für das Portal
 
-Der Arbeitsgang Analysator kann sein #bruchlos hinein #Axon integriert Efeu
-Portal da einem #benutzerdefiniert Armaturenbrett Ding, versehend #eingraben
-#Analytik Fähigkeiten innerhalb eure Portal Armaturenbrett.
+Der Process Analyzer lässt sich nahtlos als benutzerdefiniertes Dashboard-Widget
+in Axon Ivy Portal integrieren und bietet Ihnen damit integrierte
+Analysefunktionen innerhalb Ihres Portal-Dashboards.
 
 #### Voraussetzungen
-- #Axon Efeu Portal Umwelt mit Armaturenbrett Konfiguration greift zu
-- Verarbeitet Analysator installiert und geeignet konfiguriert in ebensolcher
-  gleichen Sicherheit Kontext
+- Axon Ivy Portal-Umgebung mit Zugriff auf die Dashboard-Konfiguration
+- Process Analyzer ist im selben Sicherheitskontext installiert und
+  ordnungsgemäß konfiguriert.
 
-#### Konfiguration Stufen
+#### Konfigurationsschritte
 
-1. **Greift zu Ding Konfiguration**
-   - Befahr zu **Portal Armaturenbrett Konfiguration** → **Dinge** Sektion
-   - Sicher dir haben administrative Immunitäten zu modifizieren Armaturenbrett
-     Layouts
+1. **Zugriff auf die Widget-Konfiguration**
+   - Navigieren Sie zu „ **“ (Benutzerdefinierte Widgets) → „Portal Dashboard
+     Configuration“ (Konfiguration des Portal-Dashboards) → „** “
+     (Benutzerdefinierte Widgets) → „ **“ (Benutzerdefinierte Widgets) → „** “
+     (Benutzerdefinierte Widgets)
+   - Stellen Sie sicher, dass Sie über Administratorrechte verfügen, um das
+     Layout des Dashboards zu ändern.
 
-   ![Konfiguriert Armaturenbrett](images/config-dashboard.png)
+   ![Dashboard konfigurieren](images/config-dashboard.png)
 
-2. **#Zufügen #Verarbeiten Analysator Ding**
-   - Klicken **"Fügt zu Ding"** von die Armaturenbrett Konfiguration
-     #Werkzeugleiste
-   - Wählen aus **"Verarbeitet Analysator"** von den **"#Benutzerdefiniert
-     Dinge"** Kategorie
+2. **Prozessanalysator-Widget hinzufügen**
+   - Klicken Sie im Dashboard-Konfigurations-Toolbar auf „ ** “ „Widget
+     hinzufügen“ „** “.
+   - Wählen Sie „ ** ” „Process Analyzer”** aus der Kategorie „ ** ” „Custom
+     Widgets”** aus.
 
-   ![Fügt zu #benutzerdefiniert Ding](images/add-custom-widget.png)
+   ![Benutzerdefiniertes Widget hinzufügen](images/add-custom-widget.png)
 
-3. **Ding Konfiguration**
-   - Versieh ein #beschreibend **Ding heißt** für leicht Identifikation
-   - Klicken **"Speichern"** zu zufügen das Ding zu eurem Armaturenbrett
-   - Kehrt zurück zu dem hauptsächlichen Armaturenbrett zu beginnen einleitende
-     Konfiguration
+3. **Widget-Konfiguration**
+   - Geben Sie einen beschreibenden Namen für das Widget „ **“ an (z. B. „** “),
+     damit es leicht zu identifizieren ist.
+   - Klicken Sie auf „ ** “ „Speichern“ „** “, um das Widget zu Ihrem Dashboard
+     hinzuzufügen.
+   - Kehren Sie zum Haupt-Dashboard zurück, um mit der Erstkonfiguration zu
+     beginnen.
 
-4. **Ding Charakterzüge & Begrenzungen**
-   - **Verfügbare Charakterzüge:** Verarbeitet Auslese, KPI tippt Konfiguration,
-     misst Intervall #Filterung, Farbe Vermessung
-   - **#Windschlüpfig machen #Einbinden:** Essentielle #Analytik Charakterzüge
-     optimierten für Armaturenbrett Besichtigungstermin
-   - **Ständige Konfiguration:** Alle Ding Lagen sind automatisch gespeichert
-     und umgelagert durch Browser erfrischt und Nutzer re-Authentifizierung
+4. **Widget-Funktionen und Einschränkungen**
+   - **Verfügbare Funktionen:** -Prozessauswahl, KPI-Typ-Konfiguration,
+     Zeitintervall-Filterung, Farbzuordnung
+   - **Optimierte Benutzeroberfläche:** Wichtige Analysefunktionen, die für die
+     Anzeige im Dashboard optimiert sind
+   - **Persistente Konfiguration:** Alle Widget-Einstellungen werden automatisch
+     gespeichert und durch Browser-Aktualisierungen und erneute
+     Benutzerauthentifizierung wiederhergestellt.
 
-   ![Ding schaut an](images/widget-view.png)
+   ![Widget-Ansicht](images/widget-view.png)
 
-> **Beachten:** Das Ding Verfahren versieht eine #gerichtet Teilmenge von dem
-> vollen Arbeitsgang Analysator Funktionalität, optimiert für Armaturenbrett
-> Integration und flotte Einblicke.
+> **Hinweis:** Der Widget-Modus bietet einen fokussierten Teil der gesamten
+> Process Analyzer-Funktionalität, der für die Dashboard-Integration und
+> schnelle Einblicke optimiert ist.
