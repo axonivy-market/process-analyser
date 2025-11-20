@@ -14,14 +14,11 @@ import com.axonivy.solutions.process.analyser.core.bo.Process;
 import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 import com.axonivy.solutions.process.analyser.managedbean.ProcessesAnalyticsBean;
 import com.axonivy.solutions.process.analyser.utils.FacesContexts;
+import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 
-import ch.ivyteam.ivy.environment.Ivy;
 
 @FacesConverter("processStartConverter")
 public class ProcessStartConverter implements Converter {
-  
-  private static final String KEY_SEPARATOR = ":::";
-
   // Pattern contains: Module:::Process:::Start
   private static final String PROCESS_ID_PATTERN = "%s:::%s:::%s";
 
@@ -34,21 +31,10 @@ public class ProcessStartConverter implements Converter {
       return null;
     }
     try {
-      String[] data = value.split(KEY_SEPARATOR);
-      var processesAnalyticsBean = FacesContexts.evaluateValueExpression("#{processesAnalyticsBean}", ProcessesAnalyticsBean.class);
+      var processesAnalyticsBean =
+          FacesContexts.evaluateValueExpression("#{processesAnalyticsBean}", ProcessesAnalyticsBean.class);
       List<Process> processElements = processesAnalyticsBean.getAvaiableProcesses();
-      var foundProcess =
-          processElements.stream().filter(element -> element.getId().equals(data[1])).findAny().orElse(null);
-
-      StartElement foundStartElement = null;
-      if (!isMergeProcessStarts() && foundProcess != null) {
-        foundStartElement = foundProcess.getStartElements().stream().filter(start -> start.getPid().equals(data[2]))
-            .findFirst().orElse(null);
-      }
-      var processAnalyser = new ProcessAnalyser();
-      processAnalyser.setProcess(foundProcess);
-      processAnalyser.setStartElement(foundStartElement);
-      return processAnalyser;
+      return ProcessesMonitorUtils.mappingProcessAnalyzerByProcesses(processElements, isMergeProcessStarts(), value);
     } catch (IllegalArgumentException e) {
       throw new ConverterException("Invalid ProcessStart: " + value, e);
     }

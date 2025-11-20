@@ -331,13 +331,12 @@ public class ProcessesAnalyticsBean {
   }
 
   private boolean isDiagramAndStatisticRenderable() {
-    return ObjectUtils.allNotNull(selectedProcessAnalyser, selectedKpiType);
+    return ObjectUtils.allNotNull(selectedProcessAnalyser, selectedKpiType, this.selectedPMV);
   }
 
   public void onModuleSelect() {
     selectedProcessAnalyser = null;
     preSelectPmv();
-    Ivy.log().warn("Pre select ne: " + this.selectedPMV.getVersionName());
     avaiableProcesses = ProcessUtils.getAllProcessByModule(this.selectedModule, this.selectedPMV);
     if (isWidgetMode) {
       ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
@@ -353,11 +352,19 @@ public class ProcessesAnalyticsBean {
   }
   
   public void onPmvSelect() {
-    avaiableProcesses = ProcessUtils.getAllProcessByModule(this.selectedModule, this.selectedPMV);
-    if (selectedProcessAnalyser != null) {
-      refreshAnalyserReportToView();
+    if (ObjectUtils.isEmpty(this.selectedPMV)) {
+      this.avaiableProcesses = new ArrayList<>();
+      this.selectedProcessAnalyser = null;
+    } else {
+      this.avaiableProcesses = ProcessUtils.getAllProcessByModule(this.selectedModule, this.selectedPMV);
     }
-    Ivy.log().warn("After Select PMV version: " + this.selectedPMV.getVersionName());
+
+    if (ObjectUtils.isNotEmpty(this.selectedProcessAnalyser)) {
+      selectedProcessAnalyser = ProcessesMonitorUtils.mappingProcessAnalyzerByProcesses(this.avaiableProcesses,
+          isMergeProcessStarts, selectedProcessAnalyser.getProcessKeyId());
+    }
+    refreshAnalyserReportToView();
+    PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP);
   }
 
   public void onProcessSelect() {
@@ -526,18 +533,27 @@ public class ProcessesAnalyticsBean {
   }
 
   public void updateDiagramAndStatistic() {
-    if (isDiagramAndStatisticRenderable()) {
+//    if (isDiagramAndStatisticRenderable()) {
       viewerBean.init(selectedProcessAnalyser);
       loadNodes();
       updateProcessMiningDataJson();
       renderNodesForKPIType();
       PF.current().executeScript(UPDATE_IFRAME_SOURCE_METHOD_CALL);
       PF.current().ajax().update(ProcessAnalyticViewComponentId.getDiagramAndStatisticComponentIds());
-    }
+//    }
   }
 
   private void loadNodes() {
     analyzedNode = new ArrayList<>();
+    if(this.selectedProcessAnalyser == null) {
+//      processMiningData.setNodes(analyzedNode);
+//      processMiningData.setNumberOfInstances(0);
+//      nodes = new ArrayList<>();
+      resetStatisticValue();
+      PF.current().executeScript(UPDATE_IFRAME_SOURCE_METHOD_CALL);
+      PF.current().ajax().update(ProcessAnalyticViewComponentId.getDiagramAndStatisticComponentIds());
+      return;
+    }
     selectedPid = selectedProcessAnalyser.getProcess().getId();
     initializingProcessMiningData();
     if (haveMandatoryFieldsBeenFilled()) {
@@ -555,7 +571,6 @@ public class ProcessesAnalyticsBean {
         }
       } else {
         Long taskStartId = selectedProcessAnalyser.getStartElement().getTaskStartId();
-        Ivy.log().warn("current task start id ne : " + taskStartId);
         cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter,
             selectedCustomFilters, shouldIncludeRunningCasesByKpi, this.selectedPMV);
       }

@@ -9,6 +9,7 @@ import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 public class ProcessAnalyser {
   private Process process;
   private StartElement startElement;
+  private String processKeyId;
 
   public ProcessAnalyser() { }
 
@@ -35,6 +36,14 @@ public class ProcessAnalyser {
 
   public void setStartElement(StartElement startElement) {
     this.startElement = startElement;
+  }
+
+  public String getProcessKeyId() {
+    return processKeyId;
+  }
+
+  public void setProcessKeyId(String processKeyId) {
+    this.processKeyId = processKeyId;
   }
 
   @Override

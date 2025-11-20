@@ -251,11 +251,13 @@ public class ProcessUtils {
     List<Process> processes = new ArrayList<>();
     if (ObjectUtils.isEmpty(pmv)) {
       Ivy.log().warn("pmv bi null " + ObjectUtils.isNotEmpty(pmv));
-       pmv = IApplication.current().getProcessModelVersions()
-          .filter(version -> version.getName().equals(selectedModule))
-          .findFirst()
-          .orElse(null);
+      
     }
+    
+    pmv = IApplication.current().getProcessModelVersions()
+        .filter(version -> version.getName().equals(selectedModule))
+        .findFirst()
+        .orElse(null);
     
     Ivy.log().warn("When geeting: " + pmv.getVersionName());
     
