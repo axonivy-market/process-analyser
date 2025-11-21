@@ -55,11 +55,9 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
     startAnalyzingProcess();
     turnOffProcessStart();
-    Thread.sleep(1000L);
     verifyMergeProcessStartToggleEmpty();
     verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX,
         DROPDOWN_LABEL_SUFFIX);
-    Thread.sleep(1000L);
     // Verify German process name is rendered
     verifyAndSelectAProcess(PROCESS_NAME_DE);
     resetLocale();
