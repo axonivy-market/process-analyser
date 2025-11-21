@@ -12,7 +12,7 @@ import com.codeborne.selenide.SelenideElement;
 
 import ch.ivyteam.ivy.bpm.exec.client.IvyProcessTest;
 
-@IvyWebTest
+@IvyProcessTest
 public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
   private static final String SHOW_STATISTIC_BTN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter-panel-group\\:show-statistic-btn";
@@ -36,7 +36,8 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     resetLocale();
     startAnalyzingProcess();
     verifyMergeProcessStartToggle();
-    turnOnProcessStart();
+    turnOffProcessStart();
+    verifyMergeProcessStartToggleEmpty();
     // Check the current status of show statistic button
     $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, "true"));
 
@@ -53,7 +54,9 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     // Change locale
     changeLocaleToGerman();
 
+    
     startAnalyzingProcess();
+    turnOffProcessStart();
     verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX,
         DROPDOWN_LABEL_SUFFIX);
     // Verify German process name is rendered
@@ -82,8 +85,12 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     var toggle = $("[id$=':additional-feature:merge-process-starts_input']");
     toggle.shouldBe(attribute("checked", "true"));
   }
-  private void turnOnProcessStart() throws InterruptedException {
+  private void turnOffProcessStart() throws InterruptedException {
     var toggle = $("[id$=':additional-feature:merge-process-starts']");
     toggle.click();
+  }
+  private void verifyMergeProcessStartToggleEmpty() {
+    var toggle = $("[id$=':additional-feature:merge-process-starts_input']");
+    toggle.shouldBe(attribute("checked", StringUtils.EMPTY));
   }
 }
