@@ -93,11 +93,11 @@ To collect data and analyze your processes, please follow these steps:
 
 ![engine deploy](images/engine-deployment.png)
 
-5. Launch the Process Analyzer and follow the Demo tab to view the results.
+4. Launch the Process Analyzer and follow the Demo tab to view the results.
 
 ![analyze process](images/analyze-process.png)
 
-6. (Optional) Update the process display name to avoid the process start technical name (e.g. FlightPlanningDemo/recommendDestination.ivp) being shown in the selection options. Multilanguage support for process names is also available.
+5. (Optional) Update the process display name to avoid the process start technical name (e.g. FlightPlanningDemo/recommendDestination.ivp) being shown in the selection options. Multilanguage support for process names is also available.
 
 ![multilanguage process name support](images/multilanguage-process-name.png)
 
