@@ -93,5 +93,6 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private void verifyMergeProcessStartToggleEmpty() {
     var toggle = $("[id$=':additional-feature:merge-process-starts_input']");
     toggle.shouldBe(attribute(CHECK_PROPERTY, StringUtils.EMPTY));
+    $(PROCESS_DROPDOWN_CSS_SELECTOR).shouldBe(visible, DEFAULT_DURATION);
   }
 }
