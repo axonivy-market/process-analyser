@@ -158,7 +158,7 @@ Labels:
   Apply: Apply
   Close: Close
   EnterANumber: Enter a number
-  ViewNotPermittedHeader: View Not Permitted Page
+  ViewNotPermittedHeader: Permission required to view this page
 Processes:
   Process:
     Analyser:
