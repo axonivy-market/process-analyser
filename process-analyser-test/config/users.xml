@@ -4,7 +4,7 @@
         <username>GuestUser</username>
     </user>
     <user>
-        <username>ManageUser</username>
+        <username>ManagerUser</username>
         <role>ProcessAnalyst</role>
     </user>
 </userConfig>

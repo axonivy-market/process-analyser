@@ -11,7 +11,7 @@ import com.axonivy.ivy.webtest.IvyWebTest;
 public class PermissionsTest extends WebBaseSetup {
 
   private static final String GUEST_USER = "GuestUser";
-  private static final String MANAGE_USER = "ManageUser";
+  private static final String MANAGER_USER = "ManagerUser";
 
   @Test
   void testShouldNotSeeProcessAnalyserContentDueToLackOfRole() {
@@ -22,7 +22,7 @@ public class PermissionsTest extends WebBaseSetup {
 
   @Test
   void testCanOpenProcessAnalyserWithRequiredRole() {
-    loginByGivenUserAndStartProcessAnalyser(MANAGE_USER);
+    loginByGivenUserAndStartProcessAnalyser(MANAGER_USER);
     var processAnalyserForm = $("[id$='process-analytics-form']").shouldBe(visible, DEFAULT_DURATION);
     processAnalyserForm.find("[id$='process-analytic-viewer-panel:viewer-group']").shouldBe(visible, DEFAULT_DURATION);
   }
