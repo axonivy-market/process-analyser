@@ -12,7 +12,7 @@ import com.codeborne.selenide.SelenideElement;
 
 import ch.ivyteam.ivy.bpm.exec.client.IvyProcessTest;
 
-@IvyProcessTest
+@IvyWebTest
 public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
   private static final String SHOW_STATISTIC_BTN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter-panel-group\\:show-statistic-btn";
@@ -56,7 +56,6 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     startAnalyzingProcess();
     verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX,
         DROPDOWN_LABEL_SUFFIX);
-    Thread.sleep(5000L);
     // Verify German process name is rendered
     verifyAndSelectAProcess(PROCESS_NAME_DE);
     resetLocale();
@@ -86,6 +85,5 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private void turnOnProcessStart() throws InterruptedException {
     var toggle = $("[id$=':additional-feature:merge-process-starts']");
     toggle.click();
-    Thread.sleep(5000L);
   }
 }
