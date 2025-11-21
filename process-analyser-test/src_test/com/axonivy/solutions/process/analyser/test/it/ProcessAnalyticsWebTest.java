@@ -10,9 +10,7 @@ import org.junit.jupiter.api.Test;
 import com.axonivy.ivy.webtest.IvyWebTest;
 import com.codeborne.selenide.SelenideElement;
 
-import ch.ivyteam.ivy.bpm.exec.client.IvyProcessTest;
-
-@IvyProcessTest
+@IvyWebTest
 public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
   private static final String SHOW_STATISTIC_BTN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter-panel-group\\:show-statistic-btn";
@@ -22,6 +20,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private static final String CASCADE_DROPDOWN_LIST_SUFFIX = "_panel";
   private static final String CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX = " .ui-cascadeselect-label";
   private static final String DISABLE_PROPERTY = "disabled";
+  private static final String CHECK_PROPERTY = "checked";
   private static final String PROCESS_FILE = "TestProcess";
   private static final String PROCESS_NAME_EN = "Test process";
   private static final String PROCESS_NAME_DE = "Testprozess";
@@ -54,7 +53,6 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     // Change locale
     changeLocaleToGerman();
 
-    
     startAnalyzingProcess();
     turnOffProcessStart();
     verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX,
@@ -80,17 +78,19 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
         .shouldBe(visible, DEFAULT_DURATION);
     targetElement.click();
   }
-  
+
   private void verifyMergeProcessStartToggle() {
     var toggle = $("[id$=':additional-feature:merge-process-starts_input']");
-    toggle.shouldBe(attribute("checked", "true"));
+    toggle.shouldBe(attribute(CHECK_PROPERTY, "true"));
   }
+
   private void turnOffProcessStart() throws InterruptedException {
     var toggle = $("[id$=':additional-feature:merge-process-starts']");
     toggle.click();
   }
+
   private void verifyMergeProcessStartToggleEmpty() {
     var toggle = $("[id$=':additional-feature:merge-process-starts_input']");
-    toggle.shouldBe(attribute("checked", StringUtils.EMPTY));
+    toggle.shouldBe(attribute(CHECK_PROPERTY, StringUtils.EMPTY));
   }
 }
