@@ -10,7 +10,9 @@ import org.junit.jupiter.api.Test;
 import com.axonivy.ivy.webtest.IvyWebTest;
 import com.codeborne.selenide.SelenideElement;
 
-@IvyWebTest
+import ch.ivyteam.ivy.bpm.exec.client.IvyProcessTest;
+
+@IvyProcessTest
 public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
   private static final String SHOW_STATISTIC_BTN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter-panel-group\\:show-statistic-btn";
@@ -29,10 +31,12 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private static final String DROPDOWN_LIST_SUFFIX = "_items";
 
   @Test
-  void showStatisticButtonShouldEnableWhenChosenFulfiled() {
+  void showStatisticButtonShouldEnableWhenChosenFulfiled() throws InterruptedException {
     login();
     resetLocale();
     startAnalyzingProcess();
+    verifyMergeProcessStartToggle();
+    turnOnProcessStart();
     // Check the current status of show statistic button
     $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, "true"));
 
@@ -52,6 +56,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     startAnalyzingProcess();
     verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX,
         DROPDOWN_LABEL_SUFFIX);
+    Thread.sleep(5000L);
     // Verify German process name is rendered
     verifyAndSelectAProcess(PROCESS_NAME_DE);
     resetLocale();
@@ -72,5 +77,15 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
         .orElseThrow(() -> new AssertionError(getDropdownItemNotFoundMessage(processFileAndStartName)))
         .shouldBe(visible, DEFAULT_DURATION);
     targetElement.click();
+  }
+  
+  private void verifyMergeProcessStartToggle() {
+    var toggle = $("[id$=':additional-feature:merge-process-starts_input']");
+    toggle.shouldBe(attribute("checked", "true"));
+  }
+  private void turnOnProcessStart() throws InterruptedException {
+    var toggle = $("[id$=':additional-feature:merge-process-starts']");
+    toggle.click();
+    Thread.sleep(5000L);
   }
 }
