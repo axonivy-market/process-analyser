@@ -97,15 +97,13 @@ To collect data and analyze your processes, please follow these steps:
 
 ![engine deploy](images/engine-deployment.png)
 
-4. Run your desired process to collect data.
+4. Make sure, the analyzing user owns the `ProcessAnalyst` role.
 
-5. Make sure the analyser user owns the `ProcessAnalyst` role. Otherwise, users will be redirected to the **View not permitted page**.
-
-6. Launch the Process Analyzer and follow the Demo tab to view the results.
+5. Launch the **Process Analyser** process.
 
 ![analyze process](images/analyze-process.png)
 
-7. (Optional) Update the process display name to avoid the process start technical name (e.g. FlightPlanningDemo/recommendDestination.ivp) being shown in the selection options. Multilanguage support for process names is also available.
+6. (Optional) Update the process display name to avoid the process start technical name (e.g. FlightPlanningDemo/recommendDestination.ivp) being shown in the selection options. Multilanguage support for process names is also available.
 
 ![multilanguage process name support](images/multilanguage-process-name.png)
 
