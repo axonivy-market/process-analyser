@@ -38,13 +38,13 @@ abschließen, damit der Process Analyzer Daten erfassen kann.
 
 ### Statistik anzeigen
 
-Um das Ergebnis anzuzeigen, starten Sie den Process Analyzer und wählen Sie das
-PMV aus, das dem gewünschten Prozess und KPI-Typ entspricht. Standardmäßig
-werden Analysen nach Prozessstarts (automatisch vs. manuell) getrennt. Verwenden
-Sie die Umschaltfläche „Prozessstarts zusammenführen“, um eine vollständige
-Analyse jedes Prozesses anzuzeigen. Daraufhin wird ein visualisiertes
-Rohdaten-Prozessdiagramm zusammen mit einer analysierten Statistiktabelle
-angezeigt.
+To view the analyzer report, start the Process Analyzer by a user who has the
+`ProcessAnalyst` role, maybe the `Developer` user if you are in Axon Ivy
+Designer, and select the PMV that matches the desired process and KPI type. By
+default, analyses are separated by process starts (automatic vs. manual). Use
+the Merge Process Starts toggle to view a full analysis of each process. Then a
+raw data visualized process diagram alongside an analyzed statistics table will
+be displayed.
 
 ![Statistik-Demo anzeigen](images/show-statistic.gif)
 
@@ -135,9 +135,9 @@ folgenden Schritte aus:
 
 ![engine deploy](images/engine-deployment.png)
 
-4. Führen Sie den gewünschten Prozess aus, um Daten zu sammeln.
-5. Starten Sie den Process Analyzer und folgen Sie der Registerkarte „Demo“, um
-   die Ergebnisse anzuzeigen.
+4. Make sure, the analyzing user owns the `ProcessAnalyst` role.
+
+5. Launch the **Process Analyser** process.
 
 ![Analyseprozess](images/analyze-process.png)
 
@@ -152,7 +152,8 @@ Prozessnamen](images/multilanguage-process-name.png)
 ```
 @variables.yaml@
 ```
-### Einrichtung des benutzerdefinierten Widgets für das Portal
+
+### Integration benutzerdefinierter Widgets in das Portal
 
 Der Process Analyzer lässt sich nahtlos als benutzerdefiniertes Dashboard-Widget
 in Axon Ivy Portal integrieren und bietet Ihnen damit integrierte
