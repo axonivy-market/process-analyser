@@ -20,6 +20,7 @@
           "description" : "<%=ivy.cms.co(\"/Processes/Process/Analyser/description\")%>",
           "category" : "ProcessAnalyser",
           "customFields" : [
+            { "name" : "cssIcon", "value" : "si si-analytics-graph" },
             { "name" : "embedInFrame", "value" : "false" }
           ]
         }
@@ -28,7 +29,7 @@
         "at" : { "x" : 96, "y" : 208 }
       },
       "connect" : [
-        { "id" : "f8", "to" : "f1" }
+        { "id" : "f8", "to" : "f11" }
       ]
     }, {
       "id" : "f1",
@@ -43,7 +44,8 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 224, "y" : 208 }
+        "at" : { "x" : 488, "y" : 208 },
+        "icon" : "res:/cms/Processes/Process/Analyser/logo.png"
       },
       "connect" : [
         { "id" : "f9", "to" : "f2" }
@@ -52,7 +54,7 @@
       "id" : "f2",
       "type" : "TaskEnd",
       "visual" : {
-        "at" : { "x" : 352, "y" : 208 }
+        "at" : { "x" : 656, "y" : 208 }
       }
     }, {
       "id" : "f5",
@@ -78,10 +80,53 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 96, "y" : 416 }
+        "at" : { "x" : 96, "y" : 336 }
       },
       "connect" : [
-        { "id" : "f3", "to" : "f1", "via" : [ { "x" : 224, "y" : 416 } ] }
+        { "id" : "f3", "to" : "f11", "via" : [ { "x" : 224, "y" : 336 } ] }
+      ]
+    }, {
+      "id" : "f11",
+      "type" : "Alternative",
+      "name" : "can open ProcessAnalyser?",
+      "config" : {
+        "conditions" : {
+          "f12" : "com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils.canSessionUserOpenProcessAnalyser()"
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 304, "y" : 208 },
+        "labelOffset" : { "x" : 24, "y" : -16 }
+      },
+      "connect" : [
+        { "id" : "f12", "to" : "f1", "label" : {
+            "name" : "yes",
+            "offset" : { "x" : -7, "y" : 6 }
+          }, "color" : "default" },
+        { "id" : "f4", "to" : "f6", "via" : [ { "x" : 304, "y" : 336 } ], "label" : {
+            "name" : "no",
+            "segment" : 1.04,
+            "offset" : { "x" : 29, "y" : -2 }
+          } }
+      ]
+    }, {
+      "id" : "f6",
+      "type" : "DialogCall",
+      "name" : "View not Permitted page",
+      "config" : {
+        "dialog" : "com.axonivy.solutions.process.analyser.ViewNotPermittedPage:start(Boolean)",
+        "call" : {
+          "map" : {
+            "param.isWidgetMode" : "in.isWidgetMode"
+          }
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 488, "y" : 336 },
+        "icon" : "res:/cms/Processes/Process/Analyser/logo.png"
+      },
+      "connect" : [
+        { "id" : "f13", "to" : "f2", "via" : [ { "x" : 656, "y" : 336 } ] }
       ]
     } ]
 }
