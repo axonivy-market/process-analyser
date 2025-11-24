@@ -1,0 +1,38 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/process/12.0.0/process.json",
+  "id" : "19A81371FFF428AC",
+  "kind" : "HTML_DIALOG",
+  "config" : {
+    "data" : "com.axonivy.solutions.process.analyser.ViewNotPermittedPage.ViewNotPermittedPageData"
+  },
+  "elements" : [ {
+      "id" : "f0",
+      "type" : "HtmlDialogStart",
+      "name" : "start(Boolean)",
+      "config" : {
+        "signature" : "start",
+        "input" : {
+          "params" : [
+            { "name" : "isWidgetMode", "type" : "Boolean", "desc" : "" }
+          ],
+          "map" : {
+            "out.isWidgetMode" : "param.isWidgetMode"
+          }
+        },
+        "guid" : "19A813720069E3B3"
+      },
+      "visual" : {
+        "at" : { "x" : 96, "y" : 64 }
+      },
+      "connect" : [
+        { "id" : "f2", "to" : "f1" }
+      ]
+    }, {
+      "id" : "f1",
+      "type" : "HtmlDialogEnd",
+      "visual" : {
+        "at" : { "x" : 224, "y" : 64 },
+        "labelOffset" : { "x" : 10, "y" : 30 }
+      }
+    } ]
+}
