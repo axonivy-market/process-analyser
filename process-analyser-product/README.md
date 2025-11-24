@@ -26,13 +26,9 @@ Key features:
 
 ## Demo
 
-In the first step, to enable the Process Analyzer to collect data, you need to run and complete at least one of the demo processes.
-
-![demo processes](images/demo-processes.png)
-
 ### Show Statistic
 
-To view the analyzer report, start the Process Analyzer by a user who has the `ProcessAnalyst` role, maybe the `Developer` user if you are in Axon Ivy Designer, and select the PMV that matches the desired process and KPI type. By default, analyses are separated by process starts (automatic vs. manual). Use the Merge Process Starts toggle to view a full analysis of each process. Then a raw data visualized process diagram alongside an analyzed statistics table will be displayed.
+To view the result, start the Process Analyzer and select the PMV that matches the desired process and KPI type. By default, analyses are separated by process starts (automatic vs. manual). Use the Merge Process Starts toggle to view a full analysis of each process. Then a raw data visualized process diagram alongside an analyzed statistics table will be displayed.
 
 ![show statistic demo](images/show-statistic.gif)
 
@@ -95,20 +91,17 @@ To collect data and analyze your processes, please follow these steps:
 
 ![engine deploy](images/engine-deployment.png)
 
-4. Make sure, the analyzing user owns the `ProcessAnalyst` role.
-
-5. Launch the **Process Analyser** process.
+4. Launch the Process Analyzer and follow the Demo tab to view the results.
 
 ![analyze process](images/analyze-process.png)
 
-6. (Optional) Update the process display name to avoid the process start technical name (e.g. FlightPlanningDemo/recommendDestination.ivp) being shown in the selection options. Multilanguage support for process names is also available.
+5. (Optional) Update the process display name to avoid the process start technical name (e.g. FlightPlanningDemo/recommendDestination.ivp) being shown in the selection options. Multilanguage support for process names is also available.
 
 ![multilanguage process name support](images/multilanguage-process-name.png)
 
 ```
 @variables.yaml@
 ```
-
 ### Portal Custom Widget Integration
 
 The Process Analyzer can be seamlessly integrated into Axon Ivy Portal as a custom dashboard widget, providing embedded analytics capabilities within your Portal Dashboard.
