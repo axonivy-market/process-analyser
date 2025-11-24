@@ -7,7 +7,7 @@
   "elements" : [ {
       "id" : "f28",
       "type" : "ProgramStart",
-      "name" : "PrepareDataDemo",
+      "name" : "Init Demo Data",
       "config" : {
         "javaClass" : "com.axonivy.solutions.process.analyser.demo.managedbean.PrepareDataDemoBean",
         "link" : "eventLink.ivp"

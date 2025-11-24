@@ -53,8 +53,8 @@ import ch.ivyteam.ivy.workflow.start.IWebStartable;
 @SuppressWarnings("restriction")
 public class ProcessUtils {
 
-  static final String SKIP_PROJECTS_VARIABLE = "market.processAnalyzer.skipProjects";
-  static final String SKIP_PROCESSES_VARIABLE = "market.processAnalyzer.skipProcesses";
+  static final String SKIP_PROJECTS_VARIABLE = "com.axonivy.solutions.processAnalyser.skipProjects";
+  static final String SKIP_PROCESSES_VARIABLE = "com.axonivy.solutions.processAnalyser.skipProcesses";
 
   private ProcessUtils() { }
 
