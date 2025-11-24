@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import com.axonivy.ivy.webtest.IvyWebTest;
 import com.codeborne.selenide.SelenideElement;
 
-@IvyWebTest
+@IvyWebTest(headless = false)
 public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
   private static final String SHOW_STATISTIC_BTN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter-panel-group\\:show-statistic-btn";
@@ -28,6 +28,8 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private static final String DROPDOWN_LABEL_SUFFIX = "_label";
   private static final String TEST_MODULE_NAME = "process-analyser-test";
   private static final String DROPDOWN_LIST_SUFFIX = "_items";
+  private static final String MERGE_PROCESS_STARTS_INPUT_SELECTOR = "[id$=':additional-feature:merge-process-starts_input']";
+  private static final String MERGE_PROCESS_STARTS_SELECTOR = "[id$=':additional-feature:merge-process-starts']";
 
   @Test
   void showStatisticButtonShouldEnableWhenChosenFulfiled() throws InterruptedException {
@@ -81,17 +83,17 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   }
 
   private void verifyMergeProcessStartToggle() {
-    var toggle = $("[id$=':additional-feature:merge-process-starts_input']");
+    var toggle = $(MERGE_PROCESS_STARTS_INPUT_SELECTOR);
     toggle.shouldBe(attribute(CHECK_PROPERTY, "true"));
   }
 
   private void turnOffProcessStart() throws InterruptedException {
-    var toggle = $("[id$=':additional-feature:merge-process-starts']");
+    var toggle = $(MERGE_PROCESS_STARTS_SELECTOR);
     toggle.click();
   }
 
   private void verifyMergeProcessStartToggleEmpty() {
-    var toggle = $("[id$=':additional-feature:merge-process-starts_input']");
+    var toggle = $(MERGE_PROCESS_STARTS_INPUT_SELECTOR);
     toggle.shouldBe(attribute(CHECK_PROPERTY, StringUtils.EMPTY));
     $(PROCESS_DROPDOWN_CSS_SELECTOR).shouldBe(visible, DEFAULT_DURATION);
   }
