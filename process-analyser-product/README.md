@@ -32,7 +32,7 @@ In the first step, to enable the Process Analyzer to collect data, you need to r
 
 ### Show Statistic
 
-To view the result, start the Process Analyzer and select the PMV that matches the desired process and KPI type. By default, analyses are separated by process starts (automatic vs. manual). Use the Merge Process Starts toggle to view a full analysis of each process. Then a raw data visualized process diagram alongside an analyzed statistics table will be displayed.
+To view the analyzer report, start the Process Analyzer by a user who has the `ProcessAnalyst` role, maybe the `Developer` user if you are in Axon Ivy Designer, and select the PMV that matches the desired process and KPI type. By default, analyses are separated by process starts (automatic vs. manual). Use the Merge Process Starts toggle to view a full analysis of each process. Then a raw data visualized process diagram alongside an analyzed statistics table will be displayed.
 
 ![show statistic demo](images/show-statistic.gif)
 
@@ -97,8 +97,9 @@ To collect data and analyze your processes, please follow these steps:
 
 ![engine deploy](images/engine-deployment.png)
 
-4. Run your desired process to collect data.
-5. Launch the Process Analyzer and follow the Demo tab to view the results.
+4. Make sure, the analyzing user owns the `ProcessAnalyst` role.
+
+5. Launch the **Process Analyser** process.
 
 ![analyze process](images/analyze-process.png)
 
@@ -109,6 +110,7 @@ To collect data and analyze your processes, please follow these steps:
 ```
 @variables.yaml@
 ```
+
 ### Portal Custom Widget Integration
 
 The Process Analyzer can be seamlessly integrated into Axon Ivy Portal as a custom dashboard widget, providing embedded analytics capabilities within your Portal Dashboard.

@@ -23,6 +23,7 @@ import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
 import com.axonivy.solutions.process.analyser.bo.ProcessViewerConfig;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
+import com.axonivy.solutions.process.analyser.constants.AnalyserConstants;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.core.util.ProcessElementUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
@@ -371,5 +372,9 @@ public class ProcessesMonitorUtils {
   public static void updateUserProperty(ProcessViewerConfig persistedConfig) {
     Ivy.session().getSessionUser().setProperty(PROCESS_ANALYTIC_PERSISTED_CONFIG,
         JacksonUtils.convertObjectToJSONString(persistedConfig));
+  }
+
+  public static boolean canSessionUserOpenProcessAnalyser() {
+    return Ivy.session().has().role(AnalyserConstants.PROCESS_ANALYST_ROLE);
   }
 }

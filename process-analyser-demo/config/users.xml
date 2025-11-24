@@ -132,4 +132,9 @@
         <emailAddress>lady.gaga@flyhigh.com</emailAddress>
         <role>CabinCrew</role>
     </user>
+    <user>
+        <username>DataAnalyst</username>
+        <fullName>Data Analyst</fullName>
+        <role>ProcessAnalyst</role>
+    </user>
 </userConfig>
