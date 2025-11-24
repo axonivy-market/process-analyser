@@ -11,7 +11,6 @@ import com.axonivy.ivy.webtest.IvyWebTest;
 public class PermissionsTest extends WebBaseSetup {
 
   private static final String GUEST_USER = "GuestUser";
-  private static final String MANAGER_USER = "ManagerUser";
 
   @Test
   void testShouldNotSeeProcessAnalyserContentDueToLackOfRole() {

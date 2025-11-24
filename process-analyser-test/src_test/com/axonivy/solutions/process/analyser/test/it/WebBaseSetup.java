@@ -15,7 +15,7 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 
 public class WebBaseSetup {
-  protected static final String DEVELOPER = "Developer";
+  protected static final String MANAGER_USER = "ManagerUser";
   protected static final String ANALYZING_PROCESS_PATH = "process-analyser/1910BF871CE43293/processAnalyser.ivp";
   protected static final String LOGIN_URL = "/process-analyser-test/1973F53724EE655A/login.ivp?username=%s&password=%s";
   protected static final String CHANGE_LANGUAGE_LOCALE = "/process-analyser-test/1973F53724EE655A/changeLocale.ivp?locale=";
@@ -31,7 +31,7 @@ public class WebBaseSetup {
   }
 
   protected void login() {
-    login(DEVELOPER, DEVELOPER);
+    login(MANAGER_USER, MANAGER_USER);
   }
 
   protected void login(String username, String password) {
