@@ -105,6 +105,7 @@ public class ProcessesAnalyticsBean {
     colorPickerBean = FacesContexts.evaluateValueExpression("#{colorPickerBean}", ColorPickerBean.class);
     var isWidgetModeValue = FacesContexts.evaluateValueExpression("#{data.isWidgetMode}", Boolean.class);
     isWidgetMode = BooleanUtils.isTrue(isWidgetModeValue);
+    isMergeProcessStarts = true;
     processesMap = masterDataBean.getProcessesMap();
     nodes = new ArrayList<>();
     processMiningDataJsonFile = ContentManagement.cms(IApplication.current()).root().child()
