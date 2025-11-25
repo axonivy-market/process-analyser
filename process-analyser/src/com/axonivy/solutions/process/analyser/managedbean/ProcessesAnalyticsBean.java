@@ -561,7 +561,7 @@ public class ProcessesAnalyticsBean {
             .map(StartElement::getTaskStartId).toList();
         for (Long taskStartId : taskStartIds) {
           List<ICase> subCases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter,
-              selectedCustomFilters, shouldIncludeRunningCasesByKpi, this.selectedPMV);
+              selectedCustomFilters, shouldIncludeRunningCasesByKpi);
           if (CollectionUtils.isNotEmpty(subCases)) {
             cases.addAll(subCases);
           }
@@ -569,7 +569,7 @@ public class ProcessesAnalyticsBean {
       } else {
         Long taskStartId = selectedProcessAnalyser.getStartElement().getTaskStartId();
         cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter,
-            selectedCustomFilters, shouldIncludeRunningCasesByKpi, this.selectedPMV);
+            selectedCustomFilters, shouldIncludeRunningCasesByKpi);
       }
       if (CollectionUtils.isNotEmpty(cases)) {
         var tasks = cases.stream().flatMap(ivyCase -> ivyCase.tasks().all().stream()).toList();
