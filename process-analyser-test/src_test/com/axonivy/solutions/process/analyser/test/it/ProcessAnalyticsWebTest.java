@@ -70,6 +70,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
     $(By.id(STANDARD_FILTER_PANEL_GROUP + "moduleDropdown")).click();
     $(By.id(STANDARD_FILTER_PANEL_GROUP + "moduleDropdown_1")).click();
+    Selenide.sleep(2000);
     $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmvDropdown")).click();
     $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmvDropdown_1")).click();
     $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmvDropdown")).click();
