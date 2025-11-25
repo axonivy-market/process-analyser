@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -101,6 +102,8 @@ public class ProcessesAnalyticsBean {
   private ColorPickerBean colorPickerBean;
   private boolean isWidgetMode;
   private List<Process> avaiableProcesses;
+  private boolean isSelectedPmvChanged = true;
+  private boolean isSelectedProcessAnalyserChange = true;
   
   public List<Process> getAvaiableProcesses() {
     return avaiableProcesses;
@@ -331,7 +334,7 @@ public class ProcessesAnalyticsBean {
   }
 
   private boolean isDiagramAndStatisticRenderable() {
-    return ObjectUtils.allNotNull(selectedProcessAnalyser, selectedKpiType, this.selectedPMV);
+    return isSelectedPmvChanged && isSelectedProcessAnalyserChange && selectedKpiType != null;
   }
 
   public void onModuleSelect() {
@@ -358,7 +361,6 @@ public class ProcessesAnalyticsBean {
     } else {
       this.avaiableProcesses = ProcessUtils.getAllProcessByModule(this.selectedModule, this.selectedPMV);
     }
-
     if (ObjectUtils.isNotEmpty(this.selectedProcessAnalyser)) {
       selectedProcessAnalyser = ProcessesMonitorUtils.mappingProcessAnalyzerByProcesses(this.avaiableProcesses,
           isMergeProcessStarts, selectedProcessAnalyser.getProcessKeyId());
@@ -533,25 +535,20 @@ public class ProcessesAnalyticsBean {
   }
 
   public void updateDiagramAndStatistic() {
-//    if (isDiagramAndStatisticRenderable()) {
+    if (isDiagramAndStatisticRenderable()) {
       viewerBean.init(selectedProcessAnalyser);
       loadNodes();
       updateProcessMiningDataJson();
       renderNodesForKPIType();
       PF.current().executeScript(UPDATE_IFRAME_SOURCE_METHOD_CALL);
       PF.current().ajax().update(ProcessAnalyticViewComponentId.getDiagramAndStatisticComponentIds());
-//    }
+    }
   }
 
   private void loadNodes() {
     analyzedNode = new ArrayList<>();
     if(this.selectedProcessAnalyser == null) {
-//      processMiningData.setNodes(analyzedNode);
-//      processMiningData.setNumberOfInstances(0);
-//      nodes = new ArrayList<>();
       resetStatisticValue();
-      PF.current().executeScript(UPDATE_IFRAME_SOURCE_METHOD_CALL);
-      PF.current().ajax().update(ProcessAnalyticViewComponentId.getDiagramAndStatisticComponentIds());
       return;
     }
     selectedPid = selectedProcessAnalyser.getProcess().getId();
@@ -587,7 +584,8 @@ public class ProcessesAnalyticsBean {
   }
 
   private boolean haveMandatoryFieldsBeenFilled() {
-    return StringUtils.isNoneBlank(selectedModule) && ObjectUtils.allNotNull(selectedKpiType, selectedProcessAnalyser);
+    return StringUtils.isNoneBlank(selectedModule)
+        && ObjectUtils.allNotNull(selectedKpiType, selectedProcessAnalyser, this.selectedPMV);
   }
 
   private void updateProcessMiningDataJson() {
@@ -650,6 +648,7 @@ public class ProcessesAnalyticsBean {
   }
 
   public void setSelectedProcessAnalyser(ProcessAnalyser selectedProcessAnalyser) {
+    isSelectedProcessAnalyserChange = !Objects.equals(this.selectedProcessAnalyser, selectedProcessAnalyser);
     this.selectedProcessAnalyser = selectedProcessAnalyser;
   }
 
@@ -786,6 +785,7 @@ public class ProcessesAnalyticsBean {
   }
 
   public void setSelectedPMV(IProcessModelVersion selectedPMV) {
+    isSelectedPmvChanged = !Objects.equals(this.selectedPMV, selectedPMV);
     this.selectedPMV = selectedPMV;
   }
 
