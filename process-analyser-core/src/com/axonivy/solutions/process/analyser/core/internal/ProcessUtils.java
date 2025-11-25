@@ -55,7 +55,8 @@ import ch.ivyteam.ivy.workflow.start.IWebStartable;
 @SuppressWarnings("restriction")
 public class ProcessUtils {
 
-  static final String SKIP_PROJECTS_VARIABLE = "market.processAnalyzer.skipProjects";
+  static final String SKIP_PROJECTS_VARIABLE = "com.axonivy.solutions.processAnalyser.skipProjects";
+  static final String SKIP_PROCESSES_VARIABLE = "com.axonivy.solutions.processAnalyser.skipProcesses";
 
   private ProcessUtils() { }
 
@@ -163,6 +164,10 @@ public class ProcessUtils {
   }
 
   public static List<Process> getAllProcesses() {
+    String configSkipProcesses = StringUtils.trim(Ivy.var().get(SKIP_PROCESSES_VARIABLE));
+    String[] skipProcesses = Arrays.asList(StringUtils.split(configSkipProcesses, CoreConstants.SEMI_COLONS))
+        .stream().filter(StringUtils::isNoneBlank)
+        .map(String::trim).toArray(String[]::new);
     List<Process> processes = new ArrayList<>();
     for (var pmv : getProcessModelVersionsInCurrentApp()) {
       List<IProcessStart> processStarts = getProcessStartsForPMV(pmv);
@@ -173,6 +178,9 @@ public class ProcessUtils {
       for (var processFile : getProcessesInCurrentPMV(pmv)) {
         String processFileId = processFile.getIdentifier();
         var process = new Process(processFileId, processFile.getName(), new ArrayList<>());
+        if(Strings.CI.equalsAny(process.getName(), skipProcesses)){
+          continue;
+        }
         process.setPmvId(pmv.getId());
         process.setPmvName(pmv.getName());
         process.setPmv(pmv);

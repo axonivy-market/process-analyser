@@ -104,7 +104,7 @@ public class ProcessesAnalyticsBean {
   private List<Process> avaiableProcesses;
   private boolean isSelectedPmvChanged = true;
   private boolean isSelectedProcessAnalyserChange = true;
-  
+
   public List<Process> getAvaiableProcesses() {
     return avaiableProcesses;
   }
@@ -119,6 +119,8 @@ public class ProcessesAnalyticsBean {
     colorPickerBean = FacesContexts.evaluateValueExpression("#{colorPickerBean}", ColorPickerBean.class);
     var isWidgetModeValue = FacesContexts.evaluateValueExpression("#{data.isWidgetMode}", Boolean.class);
     isWidgetMode = BooleanUtils.isTrue(isWidgetModeValue);
+    isMergeProcessStarts = true;
+    processesMap = masterDataBean.getProcessesMap();
     nodes = new ArrayList<>();
     processMiningDataJsonFile = ContentManagement.cms(IApplication.current()).root().child()
         .folder(PROCESS_ANALYSER_CMS_PATH).child().file(DATA_CMS_PATH, JSON_EXTENSION);
@@ -158,17 +160,17 @@ public class ProcessesAnalyticsBean {
     ProcessAnalyser persistedProcessAnalyser = new ProcessAnalyser();
     String[] parts = selectedProcessAnalyzerId.split(HYPHEN_SIGN, 2);
     if (parts.length >= 1) {
-      
+
       String selectedProcessId = parts[0];
       var selectedProcess = avaiableProcesses.stream()
           .filter(process -> Strings.CS.equals(process.getId(), selectedProcessId))
           .findAny()
           .orElse(null);
-      
+
       if (selectedProcess == null) {
         return null;
       }
-      
+
       persistedProcessAnalyser.setProcess(selectedProcess);
       String selectedStartPid = parts.length == 2 ? parts[1] : StringUtils.EMPTY;
       if (StringUtils.isBlank(selectedStartPid)) {
@@ -304,7 +306,7 @@ public class ProcessesAnalyticsBean {
   public Set<String> getAvailableModules() {
     return ProcessUtils.getAllAvaiableModule();
   }
-  
+
   public List<IProcessModelVersion> getAvailabelPMV() {
     Predicate<ILibrary> filterReleasedAndActivePmv = library -> {
       IProcessModelVersion pmv = library.getProcessModelVersion();
@@ -323,7 +325,7 @@ public class ProcessesAnalyticsBean {
         .map(ILibrary::getProcessModelVersion)
         .toList();
   }
-  
+
   private void preSelectPmv() {
     List<IProcessModelVersion> pmvs = getAvailabelPMV().stream()
         .filter(version -> version.getActivityState() == ActivityState.ACTIVE
@@ -353,7 +355,7 @@ public class ProcessesAnalyticsBean {
     PF.current().ajax().update(ProcessAnalyticViewComponentId.PMV_GROUP);
     resetStatisticValue();
   }
-  
+
   public void onPmvSelect() {
     if (ObjectUtils.isEmpty(this.selectedPMV)) {
       this.avaiableProcesses = new ArrayList<>();

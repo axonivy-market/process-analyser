@@ -25,6 +25,7 @@ import com.axonivy.solutions.process.analyser.bo.ProcessViewerConfig;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.core.bo.Process;
 import com.axonivy.solutions.process.analyser.core.bo.StartElement;
+import com.axonivy.solutions.process.analyser.constants.AnalyserConstants;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.core.util.ProcessElementUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
@@ -227,8 +228,9 @@ public class ProcessesMonitorUtils {
   public static List<ICase> getAllCasesFromTaskStartIdWithTimeInterval(Long taskStartId,
       TimeIntervalFilter timeIntervalFilter, List<CustomFieldFilter> customFilters, boolean isIncludingRunningCases) {
     var caseQuery = CaseQuery.create();
-    caseQuery.where().and(buildCaseStateQuery(isIncludingRunningCases)).and(buildTaskStartIdQuery(taskStartId))
-        .and(buildStartTimestampQuery(timeIntervalFilter));
+    caseQuery.where().and(buildCaseStateQuery(isIncludingRunningCases))
+      .and(buildTaskStartIdQuery(taskStartId))
+      .and(buildStartTimestampQuery(timeIntervalFilter));
 
     List<CustomFieldFilter> validCustomFilters = getValidCustomFilters(customFilters);
     if (ObjectUtils.isNotEmpty(validCustomFilters)) {
@@ -376,7 +378,11 @@ public class ProcessesMonitorUtils {
     Ivy.session().getSessionUser().setProperty(PROCESS_ANALYTIC_PERSISTED_CONFIG,
         JacksonUtils.convertObjectToJSONString(persistedConfig));
   }
-  
+
+  public static boolean canSessionUserOpenProcessAnalyser() {
+    return Ivy.session().has().role(AnalyserConstants.PROCESS_ANALYST_ROLE);
+  }
+
   public static ProcessAnalyser mappingProcessAnalyzerByProcesses(List<Process> processElements,
       boolean isMergeProcessStarts, String processKeyId) {
     String[] data = processKeyId.split(KEY_SEPARATOR);
@@ -384,7 +390,7 @@ public class ProcessesMonitorUtils {
         .filter(element -> element.getId().equals(data[1]))
         .findAny()
         .orElse(null);
-    
+
     StartElement foundStartElement = null;
     if (!isMergeProcessStarts && foundProcess != null) {
       foundStartElement = foundProcess.getStartElements()
