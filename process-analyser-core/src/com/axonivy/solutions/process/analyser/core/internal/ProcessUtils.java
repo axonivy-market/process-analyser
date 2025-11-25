@@ -246,23 +246,23 @@ public class ProcessUtils {
     return getProcessModelVersionsInCurrentApp().stream().map(IProcessModelVersion::getName)
         .collect(Collectors.toSet());
   }
-  
+
   public static List<Process> getAllProcessByModule(String selectedModule, IProcessModelVersion pmv) {
     List<Process> processes = new ArrayList<>();
-    if (ObjectUtils.isEmpty(pmv) || ObjectUtils.isEmpty(selectedModule)) {
+    if (ObjectUtils.isEmpty(selectedModule)) {
       return processes;
     }
-    
-    pmv = IApplication.current().getProcessModelVersions()
-        .filter(version -> version.getName().equals(selectedModule))
-        .findFirst()
-        .orElse(null);
 
+    if (ObjectUtils.isEmpty(pmv)) {
+      pmv = IApplication.current().getProcessModelVersions()
+          .filter(version -> selectedModule.equals(version.getName()))
+          .findFirst()
+          .orElse(null);
+    }
     List<IProcessStart> processStarts = getProcessStartsForPMV(pmv);
     // Index process starts by processFileId for fast lookup
     Map<String, List<IProcessStart>> startsByProcessId =
         processStarts.stream().collect(Collectors.groupingBy(start -> PIDUtils.getId(start.pid(), true)));
-
     for (var processFile : getProcessesInCurrentPMV(pmv)) {
       String processFileId = processFile.getIdentifier();
       var process = new Process(processFileId, processFile.getName(), new ArrayList<>());
@@ -272,7 +272,6 @@ public class ProcessUtils {
       process.setProjectRelativePath(processFile.getResource().getProjectRelativePath().toString());
 
       List<IProcessStart> starts = startsByProcessId.getOrDefault(processFileId, Collections.emptyList());
-
       if (CollectionUtils.isEmpty(starts)) {
         continue;
       }

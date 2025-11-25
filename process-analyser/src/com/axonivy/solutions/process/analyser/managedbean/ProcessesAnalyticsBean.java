@@ -176,7 +176,7 @@ public class ProcessesAnalyticsBean {
       }
       var selectedProcessStart = selectedProcess.getStartElements().stream()
           .filter(start -> Strings.CS.equals(start.getPid(), selectedStartPid)).findAny().orElse(null);
-      Ivy.log().warn("taskStartId trong initSelectedProcessAnalyser: " + selectedProcessStart.getTaskStartId());
+
       persistedProcessAnalyser.setStartElement(selectedProcessStart);
     }
     return persistedProcessAnalyser;
