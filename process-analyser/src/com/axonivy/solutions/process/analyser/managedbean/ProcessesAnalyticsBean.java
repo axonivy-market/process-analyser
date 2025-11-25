@@ -120,7 +120,6 @@ public class ProcessesAnalyticsBean {
     var isWidgetModeValue = FacesContexts.evaluateValueExpression("#{data.isWidgetMode}", Boolean.class);
     isWidgetMode = BooleanUtils.isTrue(isWidgetModeValue);
     isMergeProcessStarts = true;
-    processesMap = masterDataBean.getProcessesMap();
     nodes = new ArrayList<>();
     processMiningDataJsonFile = ContentManagement.cms(IApplication.current()).root().child()
         .folder(PROCESS_ANALYSER_CMS_PATH).child().file(DATA_CMS_PATH, JSON_EXTENSION);
