@@ -79,7 +79,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     prepareProcessAnalyzer();
     List<ICase> cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(
         ProcessUtils.getTaskStartIdFromPID(selectedPid), new TimeIntervalFilter(new Date(), new Date()),
-        new ArrayList<>(), false, testPMV);
+        new ArrayList<>(), false);
     List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(processAnalyser, KpiType.FREQUENCY, cases);
     assertThat(results.size()).isEqualTo(24);
     assertThat(results.get(0).getLabelValue()).isEqualTo("0");
@@ -94,7 +94,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     List<ICase> allCases = new ArrayList<>();
     for (StartElement startElement : testProcess.getStartElements()) {
       allCases.addAll(ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(startElement.getTaskStartId(),
-          new TimeIntervalFilter(new Date(), new Date()), new ArrayList<>(), false, testPMV));
+          new TimeIntervalFilter(new Date(), new Date()), new ArrayList<>(), false));
     }
 
     List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(
@@ -110,7 +110,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     prepareProcessAnalyzer();
     List<ICase> cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(
         ProcessUtils.getTaskStartIdFromPID(selectedPid), new TimeIntervalFilter(new Date(), new Date()),
-        new ArrayList<>(), false, testPMV);
+        new ArrayList<>(), false);
     List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(processAnalyser, KpiType.DURATION_OVERALL, cases);
     assertThat(results).isNotEmpty();
     assertThat(results.get(0).getLabelValue()).endsWith("s");
@@ -125,7 +125,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     List<ICase> allCases = new ArrayList<>();
     for (StartElement startElement : testProcess.getStartElements()) {
       allCases.addAll(ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(startElement.getTaskStartId(),
-          new TimeIntervalFilter(new Date(), new Date()), new ArrayList<>(), false, testPMV));
+          new TimeIntervalFilter(new Date(), new Date()), new ArrayList<>(), false));
     }
     List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(processAnalyser, KpiType.DURATION_OVERALL, allCases);
     assertThat(results).isNotEmpty();
@@ -135,7 +135,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
   @Test
   void test_getAllCasesFromTaskStartIdWithTimeInterval() {
     List<ICase> results = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(0L,
-        new TimeIntervalFilter(new Date(), new Date()), new ArrayList<CustomFieldFilter>(), false, testPMV);
+        new TimeIntervalFilter(new Date(), new Date()), new ArrayList<CustomFieldFilter>(), false);
     assertThat(results.size()).isZero();
   }
 

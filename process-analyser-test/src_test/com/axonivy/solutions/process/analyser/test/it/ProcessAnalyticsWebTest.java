@@ -12,7 +12,7 @@ import com.axonivy.ivy.webtest.IvyWebTest;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 
-@IvyWebTest
+@IvyWebTest(headless = false)
 public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
   private static final String SHOW_STATISTIC_BTN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter-panel-group\\:show-statistic-btn";
@@ -29,6 +29,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private static final String DROPDOWN_LABEL_SUFFIX = "_label";
   private static final String TEST_MODULE_NAME = "process-analyser-test";
   private static final String DROPDOWN_LIST_SUFFIX = "_items";
+  private static final String STANDARD_FILTER_PANEL_GROUP = "process-analytics-form:standard-filter-panel-group:";
 
   @Test
   void showStatisticButtonShouldEnableWhenChosenFulfiled() {
@@ -41,6 +42,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     // Choose test project PM
     verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX,
         DROPDOWN_LABEL_SUFFIX);
+    Selenide.sleep(2000);
     // Verify English process name is rendered
     verifyAndSelectAProcess(PROCESS_NAME_EN);
     verifyAndClickItemLabelInDropdown(KPI_DROPDOWN_CSS_SELECTOR, FREQUENCY_OPTION_NAME, CASCADE_DROPDOWN_LIST_SUFFIX,
@@ -54,6 +56,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     startAnalyzingProcess();
     verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX,
         DROPDOWN_LABEL_SUFFIX);
+    Selenide.sleep(2000);
     // Verify German process name is rendered
     verifyAndSelectAProcess(PROCESS_NAME_DE);
     resetLocale();
@@ -65,13 +68,12 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     startAnalyzingProcess();
     $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, "true"));
 
-    $(By.id("process-analytics-form:standard-filter-panel-group:moduleDropdown")).click();
-    $(By.id("process-analytics-form:standard-filter-panel-group:moduleDropdown_1")).click();
-    Selenide.sleep(5000);
-    $(By.id("process-analytics-form:standard-filter-panel-group:pmvDropdown")).click();
-    $(By.id("process-analytics-form:standard-filter-panel-group:pmvDropdown_1")).click();
-    $(By.id("process-analytics-form:standard-filter-panel-group:pmvDropdown")).click();
-    $(By.id("process-analytics-form:standard-filter-panel-group:pmvDropdown_2")).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "moduleDropdown")).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "moduleDropdown_1")).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmvDropdown")).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmvDropdown_1")).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmvDropdown")).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmvDropdown_2")).click();
   }
 
   private void verifyAndSelectAProcess(String startElementName) {
