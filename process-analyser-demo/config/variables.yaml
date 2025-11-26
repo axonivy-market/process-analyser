@@ -10,7 +10,8 @@ Variables:
   com:
     axonivy:
       solutions:
-        processAnalyser:
-          demo:
-            restUrl: http://localhost:8081
-          skipProcesses: InitDemoData
+        process:
+          analyser:
+            demo:
+              restUrl: http://localhost:8081
+            skipProcesses: InitDemoData
