@@ -101,7 +101,7 @@ be displayed.
 
 ![Farbkarte-Demo](images/color-custom.gif)
 
-### Integration benutzerdefinierter Widgets in das Portal
+### Portal Custom Widget Integration
 
 Wir unterstützen die Integration des Process Analyzer in das Axon Ivy Portal als
 benutzerdefiniertes Dashboard-Widget ab Version 12.0.10. Diese Integration
@@ -111,7 +111,7 @@ Prozessinformationen haben, ohne das Portal-Dashboard verlassen zu müssen.
 
 ![Widget-Funktionen-Demo](images/widget-features.gif)
 
-## Einrichtung
+## Setup
 Um Daten zu sammeln und Ihre Prozesse zu analysieren, führen Sie bitte die
 folgenden Schritte aus:
 
@@ -153,7 +153,7 @@ Prozessnamen](images/multilanguage-process-name.png)
 @variables.yaml@
 ```
 
-### Integration benutzerdefinierter Widgets in das Portal
+### Portal Custom Widget Integration
 
 Der Process Analyzer lässt sich nahtlos als benutzerdefiniertes Dashboard-Widget
 in Axon Ivy Portal integrieren und bietet Ihnen damit integrierte
