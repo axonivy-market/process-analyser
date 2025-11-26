@@ -32,7 +32,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private static final String MERGE_PROCESS_STARTS_SELECTOR = "[id$=':additional-feature:merge-process-starts']";
 
   @Test
-  void showStatisticButtonShouldEnableWhenChosenFulfiled() throws InterruptedException {
+  void showStatisticButtonShouldEnableWhenChosenFulfilled() throws InterruptedException {
     login();
     resetLocale();
     startAnalyzingProcess();
@@ -87,7 +87,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     toggle.shouldBe(attribute(CHECK_PROPERTY, "true"));
   }
 
-  private void turnOffProcessStart() throws InterruptedException {
+  private void turnOffProcessStart() {
     var toggle = $(MERGE_PROCESS_STARTS_SELECTOR);
     toggle.click();
   }

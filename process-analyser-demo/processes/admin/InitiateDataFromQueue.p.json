@@ -165,9 +165,7 @@
             "task" : {
               "name" : "Print log",
               "responsible" : {
-                "roles" : [
-                  "SYSTEM"
-                ]
+                "activator" : "SYSTEM"
               }
             }
           },
@@ -217,9 +215,7 @@
             "task" : {
               "name" : "Trigger sigmal",
               "responsible" : {
-                "roles" : [
-                  "SYSTEM"
-                ]
+                "activator" : "SYSTEM"
               }
             }
           },
@@ -294,9 +290,7 @@
             "task" : {
               "name" : "Proceed next queue task",
               "responsible" : {
-                "roles" : [
-                  "SYSTEM"
-                ]
+                "activator" : "SYSTEM"
               }
             }
           },

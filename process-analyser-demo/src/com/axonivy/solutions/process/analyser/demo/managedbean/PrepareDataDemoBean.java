@@ -10,7 +10,7 @@ import ch.ivyteam.ivy.process.extension.ProgramConfig;
 public class PrepareDataDemoBean extends AbstractProcessStartEventBean {
   private static final int SIGNAL_SEND_REPEAT = 5;
   private static final List<String> SIGNAL_LIST = List.of("hotelBooking", "bookFlight", "flightPayment", "planFlight", "recommendDestination",
-      "mortgate:purchase", "initiateDataFromQueue");
+      "mortgage:purchase", "initiateDataFromQueue");
 
   public PrepareDataDemoBean() {
     super("PrepareDataDemoBean", "Description of PrepareDataDemoBean");
