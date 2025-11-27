@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
-  xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>process.analyser.internal.support</groupId>
   <artifactId>process-analyser-internal-support</artifactId>
-  <version>12.0.11-SNAPSHOT</version>
+  <version>12.0.12-SNAPSHOT</version>
   <packaging>iar</packaging>
 
   <properties>
@@ -50,9 +47,7 @@
             </goals>
             <configuration>
               <target>
-                <copy
-                  file="${project.basedir}/target/${project.artifactId}-${project.version}.iar"
-                  tofile="${project.basedir}/target/${project.artifactId}-${duplicate.version}.iar" />
+                <copy file="${project.basedir}/target/${project.artifactId}-${project.version}.iar" tofile="${project.basedir}/target/${project.artifactId}-${duplicate.version}.iar" />
               </target>
             </configuration>
           </execution>
@@ -68,21 +63,13 @@
               <target>
                 <!-- Unzip -->
                 <mkdir dir="${project.basedir}/target/tmp-iar" />
-                <unzip
-                  src="${project.basedir}/target/${project.artifactId}-${duplicate.version}.iar"
-                  dest="${project.basedir}/target/tmp-iar" />
+                <unzip src="${project.basedir}/target/${project.artifactId}-${duplicate.version}.iar" dest="${project.basedir}/target/tmp-iar" />
 
                 <!-- Replace version in pom.xml -->
-                <replaceregexp
-                  file="${project.basedir}/target/tmp-iar/pom.xml"
-                  match="(&lt;version&gt;)(.*?)(&lt;/version&gt;)"
-                  replace="\1${duplicate.version}\3"
-                  byline="true" />
+                <replaceregexp file="${project.basedir}/target/tmp-iar/pom.xml" match="(&lt;version&gt;)(.*?)(&lt;/version&gt;)" replace="\1${duplicate.version}\3" byline="true" />
 
                 <!-- Rezip -->
-                <zip
-                  destfile="${project.basedir}/target/${project.artifactId}-${duplicate.version}.iar"
-                  basedir="${project.basedir}/target/tmp-iar" />
+                <zip destfile="${project.basedir}/target/${project.artifactId}-${duplicate.version}.iar" basedir="${project.basedir}/target/tmp-iar" />
 
                 <!-- Cleanup -->
                 <delete dir="${project.basedir}/target/tmp-iar" />
@@ -98,9 +85,7 @@
             </goals>
             <configuration>
               <target>
-                <copy
-                  file="${project.basedir}/deploy.options.yaml"
-                  tofile="${project.basedir}/target/deploy.options.yaml" />
+                <copy file="${project.basedir}/deploy.options.yaml" tofile="${project.basedir}/target/deploy.options.yaml" />
               </target>
             </configuration>
           </execution>
@@ -114,12 +99,10 @@
             </goals>
             <configuration>
               <target>
-                <zip
-                  destfile="${project.basedir}/target/${project.artifactId}.zip">
+                <zip destfile="${project.basedir}/target/${project.artifactId}.zip">
                   <fileset dir="${project.basedir}/target">
                     <include name="${project.artifactId}-${project.version}.iar" />
-                    <include
-                      name="${project.artifactId}-${duplicate.version}.iar" />
+                    <include name="${project.artifactId}-${duplicate.version}.iar" />
                     <include name="deploy.options.yaml" />
                   </fileset>
                 </zip>
