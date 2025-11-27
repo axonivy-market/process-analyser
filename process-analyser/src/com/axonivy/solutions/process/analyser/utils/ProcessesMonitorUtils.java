@@ -23,6 +23,8 @@ import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
 import com.axonivy.solutions.process.analyser.bo.ProcessViewerConfig;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
+import com.axonivy.solutions.process.analyser.core.bo.Process;
+import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 import com.axonivy.solutions.process.analyser.constants.AnalyserConstants;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.core.util.ProcessElementUtils;
@@ -35,6 +37,7 @@ import ch.ivyteam.ivy.application.IProcessModelVersion;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
+import ch.ivyteam.ivy.security.exec.Sudo;
 import ch.ivyteam.ivy.workflow.CaseState;
 import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.ITask;
@@ -44,6 +47,7 @@ import ch.ivyteam.ivy.workflow.query.TaskQuery;
 
 @SuppressWarnings("restriction")
 public class ProcessesMonitorUtils {
+  private static final String KEY_SEPARATOR = ":::";
 
   private ProcessesMonitorUtils() { }
 
@@ -240,6 +244,7 @@ public class ProcessesMonitorUtils {
       }
       caseQuery.where().andOverall(allCustomFieldsQuery);
     }
+
     return Ivy.wf().getCaseQueryExecutor().getResults(caseQuery);
   }
 
@@ -376,5 +381,28 @@ public class ProcessesMonitorUtils {
 
   public static boolean canSessionUserOpenProcessAnalyser() {
     return Ivy.session().has().role(AnalyserConstants.PROCESS_ANALYST_ROLE);
+  }
+
+  public static ProcessAnalyser mappingProcessAnalyzerByProcesses(List<Process> processElements,
+      boolean isMergeProcessStarts, String processKeyId) {
+    String[] data = processKeyId.split(KEY_SEPARATOR);
+    var foundProcess = processElements.stream()
+        .filter(element -> element.getId().equals(data[1]))
+        .findAny()
+        .orElse(null);
+
+    StartElement foundStartElement = null;
+    if (!isMergeProcessStarts && foundProcess != null) {
+      foundStartElement = foundProcess.getStartElements()
+          .stream()
+          .filter(start -> start.getPid().equals(data[2]))
+          .findFirst()
+          .orElse(null);
+    }
+    var processAnalyser = new ProcessAnalyser();
+    processAnalyser.setProcess(foundProcess);
+    processAnalyser.setStartElement(foundStartElement);
+    processAnalyser.setProcessKeyId(processKeyId);
+    return processAnalyser;
   }
 }

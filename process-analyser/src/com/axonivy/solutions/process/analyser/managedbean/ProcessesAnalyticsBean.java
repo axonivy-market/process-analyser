@@ -18,11 +18,12 @@ import static com.axonivy.solutions.process.analyser.core.enums.StartElementType
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
@@ -61,7 +62,11 @@ import com.axonivy.solutions.process.analyser.utils.FacesContexts;
 import com.axonivy.solutions.process.analyser.utils.JacksonUtils;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 
+import ch.ivyteam.ivy.application.ActivityState;
 import ch.ivyteam.ivy.application.IApplication;
+import ch.ivyteam.ivy.application.ILibrary;
+import ch.ivyteam.ivy.application.IProcessModelVersion;
+import ch.ivyteam.ivy.application.ReleaseState;
 import ch.ivyteam.ivy.cm.ContentObject;
 import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.environment.Ivy;
@@ -72,9 +77,9 @@ import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 @ViewScoped
 public class ProcessesAnalyticsBean {
   private static final String SUB_PROCESS_CALL_PID_PARAM_NAME = "subProcessCallPid";
-  private Map<String, List<Process>> processesMap = new HashMap<>();
   private ProcessAnalyser selectedProcessAnalyser;
   private String selectedModule;
+  private IProcessModelVersion selectedPMV;
   private KpiType selectedKpiType;
   private List<Node> nodes;
   private List<Node> analyzedNode;
@@ -93,19 +98,28 @@ public class ProcessesAnalyticsBean {
   private double minValue;
   private double maxValue;
   private List<SelectItem> kpiTypes;
-  private MasterDataBean masterDataBean;
   private ProcessViewerBean viewerBean;
   private ColorPickerBean colorPickerBean;
   private boolean isWidgetMode;
+  private List<Process> avaiableProcesses;
+  private boolean isSelectedPmvChanged = true;
+  private boolean isSelectedProcessAnalyserChange = true;
+
+  public List<Process> getAvaiableProcesses() {
+    return avaiableProcesses;
+  }
+
+  public void setAvaiableProcesses(List<Process> avaiableProcesses) {
+    this.avaiableProcesses = avaiableProcesses;
+  }
 
   @PostConstruct
   private void init() {
-    masterDataBean = FacesContexts.evaluateValueExpression("#{masterDataBean}", MasterDataBean.class);
     viewerBean = FacesContexts.evaluateValueExpression("#{processViewerBean}", ProcessViewerBean.class);
     colorPickerBean = FacesContexts.evaluateValueExpression("#{colorPickerBean}", ColorPickerBean.class);
     var isWidgetModeValue = FacesContexts.evaluateValueExpression("#{data.isWidgetMode}", Boolean.class);
     isWidgetMode = BooleanUtils.isTrue(isWidgetModeValue);
-    processesMap = masterDataBean.getProcessesMap();
+    isMergeProcessStarts = true;
     nodes = new ArrayList<>();
     processMiningDataJsonFile = ContentManagement.cms(IApplication.current()).root().child()
         .folder(PROCESS_ANALYSER_CMS_PATH).child().file(DATA_CMS_PATH, JSON_EXTENSION);
@@ -114,17 +128,19 @@ public class ProcessesAnalyticsBean {
     customFieldsByType = new ArrayList<>();
     selectedCustomFilters = new ArrayList<>();
     selectedCustomFieldNames = new ArrayList<>();
+    avaiableProcesses = new ArrayList<>();
     initKpiTypes();
     initSelectedValueFromUserProperty();
   }
 
   private void initSelectedValueFromUserProperty() {
     ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
-    // Early escape if not in widget mode
+    // Early escapes if not in widget mode
     if (!isWidgetMode) {
       return;
     }
     selectedModule = persistedConfig.getWidgetSelectedModule();
+    avaiableProcesses = ProcessUtils.getAllProcessByModule(this.selectedModule, this.selectedPMV);
     isMergeProcessStarts = BooleanUtils.isTrue(persistedConfig.getWidgetMergedProcessStart());
     isIncludingRunningCases = BooleanUtils.isTrue(persistedConfig.getWidgetIncludeRunningCase());
     String selectedKpiTypeName = persistedConfig.getWidgetSelectedKpi();
@@ -143,12 +159,17 @@ public class ProcessesAnalyticsBean {
     ProcessAnalyser persistedProcessAnalyser = new ProcessAnalyser();
     String[] parts = selectedProcessAnalyzerId.split(HYPHEN_SIGN, 2);
     if (parts.length >= 1) {
+
       String selectedProcessId = parts[0];
-      var selectedProcess = processesMap.get(selectedModule).stream()
-          .filter(process -> Strings.CS.equals(process.getId(), selectedProcessId)).findAny().orElse(null);
+      var selectedProcess = avaiableProcesses.stream()
+          .filter(process -> Strings.CS.equals(process.getId(), selectedProcessId))
+          .findAny()
+          .orElse(null);
+
       if (selectedProcess == null) {
         return null;
       }
+
       persistedProcessAnalyser.setProcess(selectedProcess);
       String selectedStartPid = parts.length == 2 ? parts[1] : StringUtils.EMPTY;
       if (StringUtils.isBlank(selectedStartPid)) {
@@ -156,6 +177,7 @@ public class ProcessesAnalyticsBean {
       }
       var selectedProcessStart = selectedProcess.getStartElements().stream()
           .filter(start -> Strings.CS.equals(start.getPid(), selectedStartPid)).findAny().orElse(null);
+
       persistedProcessAnalyser.setStartElement(selectedProcessStart);
     }
     return persistedProcessAnalyser;
@@ -208,7 +230,7 @@ public class ProcessesAnalyticsBean {
       return new ArrayList<>();
     }
     List<SelectItem> processStartsSelection = new ArrayList<>();
-    processesMap.get(selectedModule).stream().filter(process -> CollectionUtils.isNotEmpty(process.getStartElements()))
+    avaiableProcesses.stream().filter(process -> CollectionUtils.isNotEmpty(process.getStartElements()))
         .forEach(process -> {
           if (isMergeProcessStarts) {
             addMergeProcessStart(process, processStartsSelection);
@@ -281,24 +303,71 @@ public class ProcessesAnalyticsBean {
   }
 
   public Set<String> getAvailableModules() {
-    return processesMap.keySet();
+    return ProcessUtils.getAllAvaiableModule();
+  }
+
+  public List<IProcessModelVersion> getAvailabelPMV() {
+    Predicate<ILibrary> filterReleasedAndActivePmv = library -> {
+      IProcessModelVersion pmv = library.getProcessModelVersion();
+      ReleaseState pmvState = pmv.getReleaseState();
+      return pmv.getVersionName().contains(this.selectedModule) && (pmvState == ReleaseState.ARCHIVED
+          || pmvState == ReleaseState.RELEASED || pmvState == ReleaseState.DEPRECATED);
+    };
+
+    if (StringUtils.isEmpty(this.selectedModule)) {
+      return List.of();
+    }
+
+    return IApplication.current().getLibraries()
+        .stream()
+        .filter(filterReleasedAndActivePmv)
+        .map(ILibrary::getProcessModelVersion)
+        .toList();
+  }
+
+  private void preSelectPmv() {
+    List<IProcessModelVersion> pmvs = getAvailabelPMV().stream()
+        .filter(version -> version.getActivityState() == ActivityState.ACTIVE
+            && version.getReleaseState() == ReleaseState.RELEASED)
+        .sorted(Comparator.comparing(IProcessModelVersion::getLastChangeDate).reversed()).toList();
+
+    this.selectedPMV = ObjectUtils.isNotEmpty(pmvs) ? pmvs.get(0) : null;
   }
 
   private boolean isDiagramAndStatisticRenderable() {
-    return ObjectUtils.allNotNull(selectedProcessAnalyser, selectedKpiType);
+    return isSelectedPmvChanged && isSelectedProcessAnalyserChange && selectedKpiType != null;
   }
 
   public void onModuleSelect() {
     selectedProcessAnalyser = null;
+    preSelectPmv();
+    avaiableProcesses = ProcessUtils.getAllProcessByModule(this.selectedModule, this.selectedPMV);
     if (isWidgetMode) {
       ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
       persistedConfig.setWidgetSelectedModule(selectedModule);
       ProcessesMonitorUtils.updateUserProperty(persistedConfig);
       PF.current().ajax().update(ProcessAnalyticViewComponentId.WIDGET_PROCESS_SELECTION_GROUP);
+      PF.current().ajax().update(ProcessAnalyticViewComponentId.PMV_GROUP);
       return;
     }
     PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP);
+    PF.current().ajax().update(ProcessAnalyticViewComponentId.PMV_GROUP);
     resetStatisticValue();
+  }
+
+  public void onPmvSelect() {
+    if (ObjectUtils.isEmpty(this.selectedPMV)) {
+      this.avaiableProcesses = new ArrayList<>();
+      this.selectedProcessAnalyser = null;
+    } else {
+      this.avaiableProcesses = ProcessUtils.getAllProcessByModule(this.selectedModule, this.selectedPMV);
+    }
+    if (ObjectUtils.isNotEmpty(this.selectedProcessAnalyser)) {
+      selectedProcessAnalyser = ProcessesMonitorUtils.mappingProcessAnalyzerByProcesses(this.avaiableProcesses,
+          isMergeProcessStarts, selectedProcessAnalyser.getProcessKeyId());
+    }
+    refreshAnalyserReportToView();
+    PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP);
   }
 
   public void onProcessSelect() {
@@ -479,9 +548,12 @@ public class ProcessesAnalyticsBean {
 
   private void loadNodes() {
     analyzedNode = new ArrayList<>();
+    if(this.selectedProcessAnalyser == null) {
+      resetStatisticValue();
+      return;
+    }
     selectedPid = selectedProcessAnalyser.getProcess().getId();
     initializingProcessMiningData();
-
     if (haveMandatoryFieldsBeenFilled()) {
       List<ICase> cases = new ArrayList<>();
       boolean shouldIncludeRunningCasesByKpi = isIncludingRunningCases && !selectedKpiType.isDescendantOf(KpiType.DURATION);
@@ -513,7 +585,8 @@ public class ProcessesAnalyticsBean {
   }
 
   private boolean haveMandatoryFieldsBeenFilled() {
-    return StringUtils.isNoneBlank(selectedModule) && ObjectUtils.allNotNull(selectedKpiType, selectedProcessAnalyser);
+    return StringUtils.isNoneBlank(selectedModule)
+        && ObjectUtils.allNotNull(selectedKpiType, selectedProcessAnalyser, this.selectedPMV);
   }
 
   private void updateProcessMiningDataJson() {
@@ -576,6 +649,7 @@ public class ProcessesAnalyticsBean {
   }
 
   public void setSelectedProcessAnalyser(ProcessAnalyser selectedProcessAnalyser) {
+    isSelectedProcessAnalyserChange = !Objects.equals(this.selectedProcessAnalyser, selectedProcessAnalyser);
     this.selectedProcessAnalyser = selectedProcessAnalyser;
   }
 
@@ -705,6 +779,15 @@ public class ProcessesAnalyticsBean {
 
   public boolean isMergeProcessStarts() {
     return isMergeProcessStarts;
+  }
+
+  public IProcessModelVersion getSelectedPMV() {
+    return selectedPMV;
+  }
+
+  public void setSelectedPMV(IProcessModelVersion selectedPMV) {
+    isSelectedPmvChanged = !Objects.equals(this.selectedPMV, selectedPMV);
+    this.selectedPMV = selectedPMV;
   }
 
   public void setMergeProcessStarts(boolean isMergeProcessStarts) {
