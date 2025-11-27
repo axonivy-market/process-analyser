@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.axonivy.solutions.process.analyser</groupId>
   <artifactId>process-analyser-test</artifactId>
   <version>12.0.11-SNAPSHOT</version>
-  <packaging>iar-integration-test</packaging>
+  <packaging>iar</packaging>
   <properties>
     <ivy.engine.version>12.0.8</ivy.engine.version>
     <project.build.plugin.version>12.0.8</project.build.plugin.version>
@@ -49,6 +51,8 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+
   <build>
     <testSourceDirectory>src_test</testSourceDirectory>
     <plugins>
@@ -61,6 +65,78 @@
           <encoding>UTF-8</encoding>
           <compilerWarnings>false</compilerWarnings>
         </configuration>
+
+        <executions>
+          <execution>
+            <id>start.test.engine</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>start-test-engine</goal>
+            </goals>
+          </execution>
+
+          <execution>
+            <id>package.iar.test</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>pack-iar</goal>
+            </goals>
+          </execution>
+
+          <!-- 1️⃣ Deploy main project -->
+          <execution>
+            <id>deploy.process.analyser</id>
+            <goals>
+              <goal>deploy-to-engine</goal>
+            </goals>
+            <configuration>
+              <deployFile>
+                ../process-analyser/target/process-analyser-${project.version}.iar
+              </deployFile>
+              <deployToEngineApplication>processanalysertest</deployToEngineApplication>
+            </configuration>
+            <phase>process-test-classes</phase>
+          </execution>
+
+          <!-- 2️⃣ Deploy test project -->
+          <execution>
+            <id>deploy.process.analyser.test</id>
+            <goals>
+              <goal>deploy-to-engine</goal>
+            </goals>
+            <configuration>
+              <deployFile>
+                ../process-analyser-test/target/process-analyser-test-${project.version}.iar
+              </deployFile>
+              <deployToEngineApplication>processanalysertest</deployToEngineApplication>
+            </configuration>
+            <phase>process-test-classes</phase>
+          </execution>
+
+          <execution>
+            <id>deploy.process.analyser.internal.support</id>
+            <goals>
+              <goal>deploy-to-engine</goal>
+            </goals>
+            <configuration>
+              <deployFile>
+                ../process-analyser-internal-support/target/process-analyser-internal-support.zip
+              </deployFile>
+              <deployToEngineApplication>processanalysertest</deployToEngineApplication>
+            </configuration>
+            <phase>process-test-classes</phase>
+          </execution>
+
+          <!-- 4️⃣ Stop test engine -->
+          <execution>
+            <id>stop.test.engine</id>
+            <phase>post-integration-test</phase>
+            <goals>
+              <goal>stop-test-engine</goal>
+            </goals>
+          </execution>
+        </executions>
+
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -74,15 +150,8 @@
         </configuration>
         <executions>
           <execution>
-            <id>default-test</id>
-            <phase>test</phase>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-          </execution>
-          <execution>
             <id>selenium.web.tests</id>
-            <phase>integration-test</phase>
+            <phase>test</phase>
             <goals>
               <goal>test</goal>
             </goals>
