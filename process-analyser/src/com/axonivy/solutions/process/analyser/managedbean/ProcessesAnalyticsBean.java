@@ -801,4 +801,9 @@ public class ProcessesAnalyticsBean {
         : ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP;
     PF.current().ajax().update(componentIdToUpdate);
   }
+  
+  public String getPmvLabel(IProcessModelVersion pmv) {
+    String versionLabel = Ivy.cms().co("/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Version");
+    return String.format("%s %s", versionLabel, pmv.getVersionNumber());
+  }
 }
