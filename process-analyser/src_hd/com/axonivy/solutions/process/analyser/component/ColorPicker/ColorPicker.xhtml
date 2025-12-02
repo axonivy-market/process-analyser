@@ -6,24 +6,29 @@
 <cc:interface componentType="IvyComponent">
   <cc:attribute name="componentToUpdate" default="@this"/>
   <cc:attribute name="rendered" default="true"/>
-  <cc:attribute name="managedBean" />
+  <cc:attribute name="isWidgetMode" required="true"/>
   <cc:attribute name="kpiType" />
+  <cc:attribute name="persistedConfig" />
   <cc:attribute name="isWidgetMode" default="false"/>
+  <cc:attribute name="onColorChangeListener" method-signature="void method()" required="true" />
 </cc:interface>
 
 <cc:implementation>
   <c:set var="kpiType" value="#{cc.attrs.kpiType}" />
-  <c:set var="isWidgetMode" value="#{cc.attrs.managedBean.isWidgetMode}" />
-  <c:set var="managedBean" value="#{cc.attrs.managedBean}" />
+  <c:set var="isWidgetMode" value="#{cc.attrs.isWidgetMode}" />
   <c:set var="rendered" value="#{cc.attrs.rendered}"/>
-  <c:set var="persistedConfig" value="#{cc.attrs.managedBean.persistedConfig}"/>
+  <c:set var="persistedConfig" value="#{cc.attrs.persistedConfig}"/>
   <c:set var="isFrequecyKpi" value="#{kpiType eq 'FREQUENCY'}"/>
   <f:event listener="#{colorPickerBean.initBean(kpiType, isWidgetMode)}" type="preRenderComponent"/>
-  <h:panelGroup id="color-container" layout="block" styleClass="color-container #{isWidgetMode? 'align-items-start' : 'align-items-end'}" rendered="#{rendered}">
-    <p:outputPanel id="color-bar-segment" styleClass="#{isWidgetMode ? 'w-full' : ''}">
+  <h:panelGroup id="color-container" layout="block"
+    styleClass="color-container #{isWidgetMode? 'align-items-start' : 'align-items-end'}"
+    rendered="#{rendered}">
+    <p:outputPanel id="color-bar-segment"
+      styleClass="#{isWidgetMode ? 'w-full' : ''}">
       <h:panelGroup layout="block" styleClass="duration-container"
         rendered="#{kpiType ne null}">
-        <h:panelGroup layout="block" styleClass="duration-labels #{isWidgetMode ? 'w-full' : ''}">
+        <h:panelGroup layout="block"
+          styleClass="duration-labels #{isWidgetMode ? 'w-full' : ''}">
           <h:outputText styleClass="duration-label left"
             value="#{ivy.cms.co(isFrequecyKpi ? '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/LowExecution' : '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/LowDuration')}"
             escape="false" />
@@ -31,39 +36,45 @@
             value="#{ivy.cms.co(isFrequecyKpi ? '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/HighExecution' : '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/HighDuration')}"
             escape="false" />
         </h:panelGroup>
-        <h:panelGroup layout="block" styleClass="duration-bar #{isWidgetMode ? 'w-full' : ''}">
-          <ui:repeat value="#{colorPickerBean.colorSegments}" var="color" varStatus="status">
-            <p:commandLink actionListener="#{colorPickerBean.onSegmentClick}"
-              update="#{cc.clientId}:color-picker-panel" styleClass="segment"
-              style="background-color: #{color};"
+        <h:panelGroup layout="block"
+          styleClass="duration-bar #{isWidgetMode ? 'w-full' : ''}">
+          <ui:repeat value="#{colorPickerBean.colorSegments}"
+            var="color" varStatus="status">
+            <p:commandLink
+              actionListener="#{colorPickerBean.onSegmentClick}"
+              update="#{cc.clientId}:color-picker-panel"
+              styleClass="segment" style="background-color: #{color};"
               oncomplete="PF('colorPickerWidget').show();"
-              ondblclick="return false;"
-              process="@this" partialSubmit="true"
+              ondblclick="return false;" process="@this"
+              partialSubmit="true"
               rendered="#{colorPickerBean.selectedColorMode == 'CUSTOM'}">
               <f:attribute name="segmentIndex" value="#{status.index}" />
             </p:commandLink>
             <h:outputText styleClass="segment"
-                  style="background-color: #{color};"
-                  rendered="#{colorPickerBean.selectedColorMode == 'HEATMAP'}" />
+              style="background-color: #{color};"
+              rendered="#{colorPickerBean.selectedColorMode == 'HEATMAP'}" />
           </ui:repeat>
         </h:panelGroup>
       </h:panelGroup>
     </p:outputPanel>
 
-    <p:outputPanel id="color-picker-panel" styleClass="color-picker-panel">
+    <p:outputPanel id="color-picker-panel"
+      styleClass="color-picker-panel">
       <div id="color-picker-wrapper">
         <p:colorPicker id="color-picker" mode="inline"
           value="#{colorPickerBean.selectedColor}"
           rendered="#{colorPickerBean.checkRenderCondition()}"
           widgetVar="colorPickerWidget" theme="large" format="rgb"
           alpha="false">
-          <p:ajax event="change" listener="#{managedBean.onColorChange}"
+          <p:ajax event="change"
+            listener="#{cc.attrs.onColorChangeListener}"
             update="color-bar-segment" process="@this"
             partialSubmit="true" delay="500" global="false" />
         </p:colorPicker>
       </div>
     </p:outputPanel>
-    <h:panelGroup layout="block" rendered="#{rendered and kpiType ne null}"
+    <h:panelGroup layout="block"
+      rendered="#{rendered and kpiType ne null}"
       styleClass="flex align-items-center gap-2 justify-content-center">
       <p:outputLabel for="colorModeDropdown" styleClass="pb-2 w-6rem"
         value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectColorMode')}" />
@@ -74,10 +85,8 @@
           var="colorMode" itemValue="#{colorMode}"
           itemLabel="#{colorMode.cmsName}" />
         <p:ajax event="change"
-          listener="#{managedBean.onColorModeChange()}"
-          process="@this"
-          update="color-bar-segment"
-          partialSubmit="true" />
+          listener="#{cc.attrs.onColorChangeListener}" process="@this"
+          update="color-bar-segment" partialSubmit="true" />
       </p:selectOneMenu>
     </h:panelGroup>
   </h:panelGroup>

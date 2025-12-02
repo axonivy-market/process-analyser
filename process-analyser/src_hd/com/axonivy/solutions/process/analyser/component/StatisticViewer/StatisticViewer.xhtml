@@ -13,7 +13,7 @@
 <cc:implementation>
   <c:set var="managedBean" value="#{cc.attrs.managedBean}" />
   <h:panelGroup id="data-statistics" layout="block"
-    rendered="#{not managedBean.isWidgetMode}">
+    rendered="#{not masterDataBean.widgetMode}">
     <p:dataTable var="node" styleClass="grid m-0" id="node"
       value="#{managedBean.filteredNodes}" scrollable="true"
       scrollHeight="300"

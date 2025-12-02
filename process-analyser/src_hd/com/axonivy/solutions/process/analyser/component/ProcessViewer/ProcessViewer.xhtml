@@ -5,14 +5,17 @@
   xmlns:c="http://java.sun.com/jsp/jstl/core">
 <cc:interface componentType="IvyComponent">
   <cc:attribute name="managedBean" required="true" />
+  <cc:attribute name="selectedProcessAnalyser" required="true" />
+  <cc:attribute name="kpiType" />
 </cc:interface>
 
 <cc:implementation>
   <c:set var="managedBean" value="#{cc.attrs.managedBean}" />
+  <c:set var="isWidgetMode" value="#{masterDataBean.widgetMode}" />
   <h:outputScript name="resources/process-viewer.js" target="head" />
-  <f:event listener="#{processViewerBean.init(managedBean.selectedProcessAnalyser)}" type="preRenderComponent" />
-  <h:panelGroup id="viewer-group" layout="block" styleClass="process-analytic-viewer-container #{managedBean.isWidgetMode ? '' : 'border-b-05rem'}">
-    <p:panel id="viewer-panel" widgetVar="viewer-panel" toggleable="#{not managedBean.isWidgetMode}" toggleSpeed="500"
+  <f:event listener="#{processViewerBean.init(cc.attrs.selectedProcessAnalyser)}" type="preRenderComponent" />
+  <h:panelGroup id="viewer-group" layout="block" styleClass="process-analytic-viewer-container #{isWidgetMode ? '' : 'border-b-05rem'}">
+    <p:panel id="viewer-panel" widgetVar="viewer-panel" toggleable="#{not isWidgetMode}" toggleSpeed="500"
       toggleTitle="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/ToggleTooltip')}"
       styleClass="viewer-group">
       <f:facet name="header">
@@ -43,21 +46,21 @@
             <h:outputText styleClass="ui-icon pi pi-cog" />
           </p:commandLink>
           <p:commandLink id="config-color-link" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
-            rendered="#{managedBean.isWidgetMode}" disabled="#{ not (processViewerBean.shouldRenderBpmnFrame())}" process="@this"
+            rendered="#{isWidgetMode}" disabled="#{ not (processViewerBean.shouldRenderBpmnFrame())}" process="@this"
             partialSubmit="true" immediate="true">
             <p:tooltip for="config-color-link" trackMouse="true"
               value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/ConfigColorTooltip')}" />
             <h:outputText styleClass="ui-icon pi pi-palette" />
           </p:commandLink>
           <p:commandLink id="config-filter-link" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
-            rendered="#{managedBean.isWidgetMode}" process="@this" partialSubmit="true" immediate="true">
+            rendered="#{isWidgetMode}" process="@this" partialSubmit="true" immediate="true">
             <p:tooltip for="config-filter-link" trackMouse="true"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/ConfigFilterTooltip')}" />
             <h:outputText styleClass="ui-icon pi pi-filter" />
           </p:commandLink>
           <ic:com.axonivy.solutions.process.analyser.component.AdditionalFeatures
             componentsToUpdate="process-analytics-form" managedBean="#{managedBean}"
-            containerClasses=" grid align-items-center mr-2" rendered="#{managedBean.isWidgetMode}" />
+            containerClasses=" grid align-items-center mr-2" rendered="#{isWidgetMode}" />
         </h:panelGroup>
         <p:overlayPanel for="config-filter-link" styleClass="toolbar-overlay-panel" my="right bottom" at="right top">
           <h:panelGroup layout="block" styleClass="grid formgrid">
@@ -74,7 +77,7 @@
                 value="#{ivy.cms.co('/Labels/Apply')}" />
             </h:panelGroup>
             <ic:com.axonivy.solutions.process.analyser.component.StandardFilter id="standard-filter" managedBean="#{managedBean}"
-              isWidgetMode="#{managedBean.isWidgetMode}" />
+              isWidgetMode="#{isWidgetMode}" />
           </h:panelGroup>
         </p:overlayPanel>
         <p:overlayPanel for="config-color-link" styleClass="toolbar-overlay-panel" my="right bottom" at="right top">
@@ -89,9 +92,12 @@
                 title="#{ivy.cms.co('/Labels/Apply')}"
                 value="#{ivy.cms.co('/Labels/Apply')}" />
           </h:panelGroup>
-            <ic:com.axonivy.solutions.process.analyser.component.ColorPicker id="color-picker" kpiType="#{managedBean.selectedKpiType}"
-               viewerConfig="#{managedBean.persistedConfig}" managedBean="#{managedBean}" componentToUpdate="@this" rendered="#{managedBean.isWidgetMode}"
-               isWidgetMode="#{managedBean.isWidgetMode}" />
+          <ic:com.axonivy.solutions.process.analyser.component.ColorPicker
+            id="color-picker" kpiType="#{cc.attrs.kpiType}"
+            viewerConfig="#{managedBean.persistedConfig}"
+            onColorChangeListener="#{managedBean.onColorModeChange}"
+            componentToUpdate="@this" rendered="#{isWidgetMode}"
+            isWidgetMode="#{isWidgetMode}" />
         </p:overlayPanel>
         <p:overlayPanel for="config-viewer-link" styleClass="toolbar-overlay-panel" my="right bottom" at="right top">
           <h:panelGroup id="toolbar-group" styleClass="grid formgrid ui-fluid">
@@ -136,13 +142,13 @@
       </f:facet>
       <h:panelGroup rendered="#{processViewerBean.shouldRenderBpmnFrame()}">
         <iframe id="process-analytic-viewer" src="#{processViewerBean.bpmnIframeSourceUrl}" width="100%" height="100%"
-          class="#{managedBean.isWidgetMode ? 'full-widget-height' : ''} process-analytic-viewer" onload="loadIframe(false)" />
+          class="#{isWidgetMode ? 'full-widget-height' : ''} process-analytic-viewer" onload="loadIframe(false)" />
       </h:panelGroup>
       <h:panelGroup rendered="#{!processViewerBean.shouldRenderBpmnFrame()}" styleClass="col mb-2" layout="block">
         <h:outputText value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/component/ProcessViewer/EmptyDataMessage')}" />
       </h:panelGroup>
     </p:panel>
-    <p:resizable rendered="#{not managedBean.isWidgetMode}" id="viewer-group-resize" for="viewer-panel" animate="true" ghost="true" grid="20" handles="s"
+    <p:resizable rendered="#{not isWidgetMode}" id="viewer-group-resize" for="viewer-panel" animate="true" ghost="true" grid="20" handles="s"
       proxy="true" />
   </h:panelGroup>
 </cc:implementation>

@@ -4,11 +4,10 @@
   xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions"
   xmlns:c="http://java.sun.com/jsp/jstl/core">
 <cc:interface >
-  <cc:attribute name="managedBean" required="true" />
   <cc:attribute name="isWidgetMode" default="false" />
 </cc:interface>
 <cc:implementation>
-  <c:set var="managedBean" value="#{cc.attrs.managedBean}" />
+  <c:set var="managedBean" value="#{processesAnalyticsBean}" />
   <c:set var="isWidgetMode" value="#{cc.attrs.isWidgetMode}" />
   <h:panelGroup layout="block">
     <p:panelGrid columns="2" layout="grid" styleClass="ui-fluid" rendered="#{!isWidgetMode}"
@@ -20,9 +19,9 @@
         <p:commandButton id="show-statistic-btn" icon="pi pi-chart-line"
           value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/ShowStatistic')}"
           styleClass="show-statistic-btn w-auto" update="process-analytics-form"
-          actionListener="#{managedBean.updateDiagramAndStatistic}" disabled="#{managedBean.showStatisticBtnDisabled}" />
+          actionListener="#{processesAnalyticsBean.updateDiagramAndStatistic}" disabled="#{true}" />
         <ic:com.axonivy.solutions.process.analyser.component.AdditionalFeatures id ="additional-feature"
-          componentsToUpdate="process-analytics-form" managedBean="#{managedBean}"
+          componentsToUpdate="process-analytics-form" managedBean="#{processesAnalyticsBean}"
           containerClasses="grid mr-4 grid align-items-center line-height-4 mt-1  mb-2" />
       </h:panelGroup>
     </p:panelGrid>
@@ -36,14 +35,14 @@
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectProject')}" />
         </div>
         <p:selectOneMenu id="moduleDropdown"
-          value="#{managedBean.selectedModule}" styleClass="w-full">
+          value="#{masterDataBean.selectedModule}" styleClass="w-full">
           <f:selectItem
             itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectProject')}"
             itemValue="#{null}" noSelectionOption="true" />
-          <f:selectItems value="#{managedBean.availableModules}"
+          <f:selectItems value="#{masterDataBean.availableModules}"
             var="module" itemLabel="#{module}" itemValue="#{module}" />
           <p:ajax event="change" partialSubmit="true" process="@this"
-            listener="#{managedBean.onModuleSelect}" />
+            listener="#{masterDataBean.onModuleSelect}" />
         </p:selectOneMenu>
       </h:panelGroup>
     </h:panelGroup>
@@ -55,12 +54,12 @@
           <p:outputLabel for="@next"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectPMV')}" />
         </div>
-        <p:selectOneMenu id="pmvDropdown" value="#{managedBean.selectedPMV}" styleClass="w-full"
+        <p:selectOneMenu id="pmvDropdown" value="#{masterDataBean.selectedPMV}" styleClass="w-full"
           converter="pmvConverter">
           <f:selectItem
             itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectPMV')}"
             itemValue="#{null}" noSelectionOption="true" />
-          <f:selectItems value="#{managedBean.availabelPMV}" var="pmv" itemLabel="#{managedBean.getPmvLabel(pmv)}"
+          <f:selectItems value="#{masterDataBean.availabelPMV}" var="pmv" itemLabel="#{masterDataBean.getPmvLabel(pmv)}"
             itemValue="#{pmv}" />
           <p:ajax event="change" partialSubmit="true" process="@this" listener="#{managedBean.onPmvSelect}" />
         </p:selectOneMenu>
@@ -77,22 +76,22 @@
               value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/ProcessTooltip')}" />
           </p:outputLabel>
         </div>
-        <c:if test="#{not managedBean.mergeProcessStarts}">
-          <p:cascadeSelect id="process-dropdown" value="#{managedBean.selectedProcessAnalyser}"
+        <c:if test="#{not masterDataBean.mergeProcessStarts}">
+          <p:cascadeSelect id="process-dropdown" value="#{masterDataBean.selectedProcessAnalyser}"
             placeholder="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectProcess')}"
             converter="processStartConverter" styleClass="w-full">
-            <f:selectItems value="#{managedBean.availableProcessStarts}" />
-            <p:ajax partialSubmit="true" process="@this" listener="#{managedBean.onProcessSelect}" />
+            <f:selectItems value="#{masterDataBean.availableProcessStarts}" />
+            <p:ajax partialSubmit="true" process="@this" listener="#{processesAnalyticsBean.onProcessSelect}" />
           </p:cascadeSelect>
         </c:if>
-        <c:if test="#{managedBean.mergeProcessStarts}">
-          <p:selectOneMenu id="process-merge-dropdown" value="#{managedBean.selectedProcessAnalyser}"
+        <c:if test="#{masterDataBean.mergeProcessStarts}">
+          <p:selectOneMenu id="process-merge-dropdown" value="#{masterDataBean.selectedProcessAnalyser}"
             converter="processStartConverter" styleClass="w-full">
             <f:selectItem
               itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectProcess')}"
               itemValue="#{null}" noSelectionOption="true" />
-            <f:selectItems value="#{managedBean.availableProcessStarts}" />
-            <p:ajax event="change" listener="#{managedBean.onProcessSelect}" />
+            <f:selectItems value="#{masterDataBean.availableProcessStarts}" />
+            <p:ajax event="change" listener="#{processesAnalyticsBean.onProcessSelect}" />
           </p:selectOneMenu>
         </c:if>
       </h:panelGroup>
@@ -103,9 +102,9 @@
         </div>
         <p:cascadeSelect id="kpiDropdown" styleClass="w-full"
           placeholder="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectKPI')}"
-          value="#{managedBean.selectedKpiType}" converter="kpiTypeConverter">
-          <f:selectItems value="#{managedBean.kpiTypes}" />
-          <p:ajax event="itemSelect" listener="#{managedBean.onKpiTypeSelect}"
+          value="#{masterDataBean.selectedKpiType}" converter="kpiTypeConverter">
+          <f:selectItems value="#{masterDataBean.kpiTypes}" />
+          <p:ajax event="itemSelect" listener="#{processesAnalyticsBean.onKpiTypeSelect}"
             update="process-analytics-form:color-picker-component:color-container" process="@this" partialSubmit="true" />
         </p:cascadeSelect>
       </h:panelGroup>
@@ -116,7 +115,7 @@
         <ui:param name="isWidgetMode" value="#{isWidgetMode}" />
       </ui:include>
       <p:remoteCommand id="filter-data-by-interval-rc" name="filterDataByIntervalRC"
-        actionListener="#{managedBean.updateDataOnChangingFilter()}" process="@this" partialSubmit="true" />
+        actionListener="#{processesAnalyticsBean.updateDataOnChangingFilter}" process="@this" partialSubmit="true" />
     </h:panelGroup>
   </h:panelGroup>
 </cc:implementation>
