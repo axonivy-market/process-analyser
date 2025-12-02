@@ -36,7 +36,7 @@ public class ProcessViewerBuilder {
   }
 
   private String detectServerParam() {
-    String server = IHtmlDialogContext.current().applicationHomeLink().toAbsoluteUri().getAuthority();
+    String server = IHtmlDialogContext.current().appHomeLink().toAbsoluteUri().getAuthority();
     String securityContextName = ISecurityContext.current().getName();
     if (!ISecurityContext.DEFAULT.equals(securityContextName)) {
       server = StringUtils.join(server, SLASH, securityContextName);

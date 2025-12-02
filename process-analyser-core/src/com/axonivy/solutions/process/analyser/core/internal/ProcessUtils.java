@@ -3,7 +3,6 @@ package com.axonivy.solutions.process.analyser.core.internal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -236,17 +235,6 @@ public class ProcessUtils {
   private static List<IProcessStart> getProcessStartsForPMV(IProcessModelVersion pmv) {
     return Sudo.get(() -> {
       return IWorkflowProcessModelVersion.of(pmv).getProcessStarts();
-    });
-  }
-
-  public static Map<String, List<Process>> getProcessesWithPmv() {
-    return Sudo.get(() -> {
-      Map<String, List<Process>> result = new HashMap<>();
-      for (var process : getAllProcesses()) {
-        String pmvName = process.getPmvName();
-        result.computeIfAbsent(pmvName, key -> new ArrayList<>()).add((Process) process);
-      }
-      return result;
     });
   }
   
