@@ -46,6 +46,7 @@ import ch.ivyteam.ivy.application.ILibrary;
 import ch.ivyteam.ivy.application.IProcessModelVersion;
 import ch.ivyteam.ivy.application.ReleaseState;
 import ch.ivyteam.ivy.environment.Ivy;
+import ch.ivyteam.ivy.security.IRole;
 
 @ManagedBean
 @ViewScoped
@@ -60,7 +61,9 @@ public class MasterDataBean implements Serializable {
   private ProcessAnalyser selectedProcessAnalyser;
   private KpiType selectedKpiType;
   private List<SelectItem> kpiTypes;
+  private List<String> availableRoles;
   private boolean isWidgetMode;
+  private String selectedRole;
 
   @PostConstruct
   public void init() {
@@ -69,6 +72,7 @@ public class MasterDataBean implements Serializable {
     isWidgetMode = BooleanUtils.isTrue(isWidgetModeValue);
     initKpiTypes();
     availableModules = ProcessUtils.getAllAvaiableModule();
+    availableRoles = Ivy.security().roles().all().stream().map(IRole::getName).toList();
   }
 
   public List<SelectItem> getAvailableProcessStarts() {
@@ -292,5 +296,21 @@ public class MasterDataBean implements Serializable {
 
   public void setWidgetMode(boolean isWidgetMode) {
     this.isWidgetMode = isWidgetMode;
+  }
+
+  public List<String> getAvailableRoles() {
+    return availableRoles;
+  }
+
+  public void setAvailableRoles(List<String> availableRoles) {
+    this.availableRoles = availableRoles;
+  }
+
+  public String getSelectedRole() {
+    return selectedRole;
+  }
+
+  public void setSelectedRole(String selectedRole) {
+    this.selectedRole = selectedRole;
   }
 }

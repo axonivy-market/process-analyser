@@ -24,6 +24,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.primefaces.PF;
 
 import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
@@ -329,10 +330,12 @@ public class ProcessesAnalyticsBean {
             customFilterBean.getSelectedCustomFilters(), shouldIncludeRunningCasesByKpi);
       }
       if (CollectionUtils.isNotEmpty(cases)) {
-        var tasks = cases.stream().flatMap(ivyCase -> ivyCase.tasks().all().stream()).toList();
+        var role = masterDataBean.getSelectedRole();
+        var tasks = cases.stream().flatMap(ivyCase -> ivyCase.tasks().all().stream())
+            .filter(task -> StringUtils.isBlank(role) || Strings.CS.equals(task.getActivatorName(), role)).toList();
         customFilterBean.setCustomFieldsByType(IvyTaskOccurrenceService.getCaseAndTaskCustomFields(tasks, customFilterBean.getCustomFieldsByType()));
         analyzedNode = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(masterDataBean.getSelectedProcessAnalyser(),
-            masterDataBean.getSelectedKpiType(), cases);
+            masterDataBean.getSelectedKpiType(), tasks);
         processMiningData.setNodes(analyzedNode);
         processMiningData.setNumberOfInstances(cases.size());
       }

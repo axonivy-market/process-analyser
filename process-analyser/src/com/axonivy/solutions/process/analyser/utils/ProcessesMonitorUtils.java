@@ -51,16 +51,17 @@ public class ProcessesMonitorUtils {
   private ProcessesMonitorUtils() { }
 
   public static List<Node> filterInitialStatisticByIntervalTime(ProcessAnalyser processAnalyser, KpiType analysisType,
-      List<ICase> cases) {
+      List<ITask> tasks) {
     if (Objects.isNull(processAnalyser)) {
       return Collections.emptyList();
     }
-    return (processAnalyser.getStartElement() == null) ? filterForMergedStarts(processAnalyser, analysisType, cases)
-        : filterForSingleStart(processAnalyser, analysisType, cases);
+    Ivy.log().fatal("filterInitialStatisticByIntervalTime");
+    return (processAnalyser.getStartElement() == null) ? filterForMergedStarts(processAnalyser, analysisType, tasks)
+        : filterForSingleStart(processAnalyser, analysisType, tasks);
   }
 
   private static List<Node> filterForMergedStarts(ProcessAnalyser processAnalyser, KpiType analysisType,
-      List<ICase> cases) {
+      List<ITask> tasks) {
     var pmv = processAnalyser.getProcess().getPmv();
     String processId = processAnalyser.getProcess().getId();
     List<ProcessElement> processElements = ProcessUtils.getProcessElementsFrom(processId, pmv);
@@ -68,12 +69,12 @@ public class ProcessesMonitorUtils {
     if (isDuration(analysisType)) {
       processElements = ProcessUtils.getTaskStart(processElements);
     }
-
-    return buildNodesAndApplyKpi(processElements, analysisType, cases);
+Ivy.log().fatal("filterForMergedStarts");
+    return buildNodesAndApplyKpi(processElements, analysisType, tasks);
   }
 
   private static List<Node> filterForSingleStart(ProcessAnalyser processAnalyser, KpiType analysisType,
-      List<ICase> cases) {
+      List<ITask> tasks) {
     String startElementPID = processAnalyser.getStartElement().getPid();
     String processId = processAnalyser.getProcess().getId();
     var pmv = processAnalyser.getProcess().getPmv();
@@ -83,20 +84,20 @@ public class ProcessesMonitorUtils {
       processElements = ProcessUtils.getTaskStart(processElements);
     }
 
-    return buildNodesAndApplyKpi(processElements, analysisType, cases);
+    return buildNodesAndApplyKpi(processElements, analysisType, tasks);
   }
 
   private static List<Node> buildNodesAndApplyKpi(List<ProcessElement> processElements, KpiType analysisType,
-      List<ICase> cases) {
+      List<ITask> tasks) {
     List<SequenceFlow> sequenceFlows = ProcessUtils.getSequenceFlowsFrom(processElements);
     List<Node> nodes = NodeResolver.convertToNodes(processElements, sequenceFlows);
 
     if (isFrequency(analysisType)) {
       var nodeFrequencyResolver = new NodeFrequencyResolver(nodes, processElements);
-      nodeFrequencyResolver.updateFrequencyByCases(cases);
+      nodeFrequencyResolver.updateFrequencyByTasks(tasks);
       nodes = nodeFrequencyResolver.getNodes();
     } else if (isDuration(analysisType)) {
-      updateDurationForNodes(nodes, cases, analysisType);
+      updateDurationForNodes(nodes, tasks, analysisType);
     }
 
     return NodeResolver.updateNodeByAnalysisType(nodes, analysisType);
@@ -117,8 +118,8 @@ public class ProcessesMonitorUtils {
     return kpiType != null && kpiType.isDescendantOf(KpiType.DURATION);
   }
 
-  public static void updateDurationForNodes(List<Node> nodes, List<ICase> cases, KpiType durationKpiType) {
-    if (CollectionUtils.isEmpty(nodes) || CollectionUtils.isEmpty(cases)) {
+  public static void updateDurationForNodes(List<Node> nodes, List<ITask> tasks, KpiType durationKpiType) {
+    if (CollectionUtils.isEmpty(nodes) || CollectionUtils.isEmpty(tasks)) {
       return;
     }
 
@@ -132,7 +133,7 @@ public class ProcessesMonitorUtils {
     Function<ITask, Long> durationExtractor = getDurationExtractor(durationKpiType);
 
     // Group task durations based on their extracted task ID
-    Map<String, List<Long>> nodeDurations = cases.stream().flatMap(currentCase -> currentCase.tasks().all().stream())
+    Map<String, List<Long>> nodeDurations = tasks.stream()
         .filter(task -> isValidTask(task, taskSwitchPids, requestPaths))
         .collect(Collectors.groupingBy(task -> determineTaskKey(task, taskSwitchGatewayPids, requestPaths),
             Collectors.mapping(durationExtractor, Collectors.toList())));

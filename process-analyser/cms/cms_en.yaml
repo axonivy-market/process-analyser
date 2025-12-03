@@ -42,6 +42,7 @@ Dialogs:
               PleaseSelectKPI: KPI
               PleaseSelectPMV: PMV
               PleaseSelectProject: Project
+              PleaseSelectRole: Role
               Process: Process
               ProcessInformation: Process Information
               ProcessTooltip: By default analysis of processes is separated by process starts (i.e. automatic vs. manual start)
@@ -52,6 +53,7 @@ Dialogs:
               SelectPMV: Select PMV
               SelectProcess: Select Process
               SelectProject: Select Project
+              SelectRole: Select Role
               ShowStatistic: Show Statistic
               TimeInterval: Please select a time interval
               Title: Process Analyser
