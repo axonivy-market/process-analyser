@@ -31,6 +31,7 @@ public class CustomFilterBean implements Serializable {
   private TimeIntervalFilter timeIntervalFilter;
   private double minValue;
   private double maxValue;
+
   @PostConstruct
   private void init() {
     customFieldsByType = new ArrayList<>();
@@ -81,14 +82,14 @@ public class CustomFilterBean implements Serializable {
       } else if (!isSelectedCustomField) {
         customField.setCustomFieldValues(new ArrayList<>());
         customField.setTimestampCustomFieldValues(new ArrayList<>());
-        selectedCustomFilters.removeIf(selectedFilter -> selectedFilter.getCustomFieldMeta().name()
-            .equals(customField.getCustomFieldMeta().name()));
+        selectedCustomFilters
+            .removeIf(selectedFilter -> selectedFilter.getCustomFieldMeta().name().equals(customField.getCustomFieldMeta().name()));
       }
     });
     setFilterDropdownVisible(!selectedCustomFieldNames.isEmpty());
 //    refreshAnalyserReportToView();
   }
-  
+
   public void resetCustomFieldFilterValues() {
     selectedCustomFieldNames = new ArrayList<>();
     selectedCustomFilters = new ArrayList<>();
@@ -96,11 +97,13 @@ public class CustomFilterBean implements Serializable {
     setFilterDropdownVisible(false);
     updateCustomFilterPanel();
   }
+
   public void onCustomfieldUnselect() {
     onCustomFieldSelect();
     updateCustomFilterPanel();
 //    refreshAnalyserReportToView();
   }
+
   public TimeIntervalFilter getTimeIntervalFilter() {
     return timeIntervalFilter;
   }

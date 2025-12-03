@@ -81,7 +81,6 @@ public class ProcessesAnalyticsBean {
 
   @PostConstruct
   private void init() {
-    Ivy.log().warn("init");
     initDefaultVariableValue();
     initRelatedBeans();
     initSelectedValueFromUserProperty();
@@ -95,7 +94,7 @@ public class ProcessesAnalyticsBean {
   }
 
   private void initDefaultVariableValue() {
-    var isWidgetModeValue = FacesContexts.evaluateValueExpression("#{data.isWidgetMode}", Boolean.class);
+//    var isWidgetModeValue = FacesContexts.evaluateValueExpression("#{data.isWidgetMode}", Boolean.class);
 //    isWidgetMode = BooleanUtils.isTrue(isWidgetModeValue);
     processMiningDataJsonFile = ContentManagement.cms(IApplication.current()).root().child()
         .folder(PROCESS_ANALYSER_CMS_PATH).child().file(DATA_CMS_PATH, JSON_EXTENSION);
@@ -439,9 +438,5 @@ public class ProcessesAnalyticsBean {
 
   public void setIncludingRunningCases(boolean isIncludingRunningCases) {
     this.isIncludingRunningCases = isIncludingRunningCases;
-  }
-
-  public String getPmvLabel(IProcessModelVersion pmv) {
-    return Ivy.cms().co("/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Version", List.of(pmv.getVersionNumber()));
   }
 }

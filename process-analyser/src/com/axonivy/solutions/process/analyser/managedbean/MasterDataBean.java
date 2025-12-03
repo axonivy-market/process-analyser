@@ -199,7 +199,6 @@ public class MasterDataBean implements Serializable {
   }
 
   public void onModuleSelect() {
-    Ivy.log().warn("onModuleSelect - master bean");
     resetDefaultPMV();
     avaiableProcesses = ProcessUtils.getAllProcessByModule(selectedModule, selectedPMV);
     if (isWidgetMode) {
@@ -216,8 +215,7 @@ public class MasterDataBean implements Serializable {
   }
 
   public String getPmvLabel(IProcessModelVersion pmv) {
-    String versionLabel = Ivy.cms().co("/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Version");
-    return String.format("%s %s", versionLabel, pmv.getVersionNumber());
+    return Ivy.cms().co("/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Version", List.of(pmv.getVersionNumber()));
   }
 
   public void setSelectedPMV(IProcessModelVersion selectedPMV) {
