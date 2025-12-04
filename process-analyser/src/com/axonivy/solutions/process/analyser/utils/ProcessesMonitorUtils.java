@@ -55,7 +55,6 @@ public class ProcessesMonitorUtils {
     if (Objects.isNull(processAnalyser)) {
       return Collections.emptyList();
     }
-    Ivy.log().fatal("filterInitialStatisticByIntervalTime");
     return (processAnalyser.getStartElement() == null) ? filterForMergedStarts(processAnalyser, analysisType, tasks)
         : filterForSingleStart(processAnalyser, analysisType, tasks);
   }
@@ -69,7 +68,6 @@ public class ProcessesMonitorUtils {
     if (isDuration(analysisType)) {
       processElements = ProcessUtils.getTaskStart(processElements);
     }
-Ivy.log().fatal("filterForMergedStarts");
     return buildNodesAndApplyKpi(processElements, analysisType, tasks);
   }
 

@@ -104,7 +104,6 @@ public class MasterDataBean implements Serializable {
 
   private void initKpiTypes() {
     kpiTypes = new ArrayList<>();
-
     for (KpiType type : KpiType.getTopLevelOptions()) {
       kpiTypes.add(createSelectItem(type));
     }
@@ -223,7 +222,6 @@ public class MasterDataBean implements Serializable {
   }
 
   public void setSelectedPMV(IProcessModelVersion selectedPMV) {
-//    isSelectedPmvChanged = !Objects.equals(this.selectedPMV, selectedPMV);
     this.selectedPMV = selectedPMV;
   }
 
