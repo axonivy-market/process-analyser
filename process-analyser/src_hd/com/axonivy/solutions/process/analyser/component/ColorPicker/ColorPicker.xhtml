@@ -11,6 +11,7 @@
   <cc:attribute name="persistedConfig" />
   <cc:attribute name="isWidgetMode" default="false"/>
   <cc:attribute name="onColorChangeListener" method-signature="void method()" required="true" />
+  <cc:attribute name="onColorModeChangeListener" method-signature="void method()" required="true" />
 </cc:interface>
 
 <cc:implementation>
@@ -85,8 +86,9 @@
           var="colorMode" itemValue="#{colorMode}"
           itemLabel="#{colorMode.cmsName}" />
         <p:ajax event="change"
-          listener="#{cc.attrs.onColorChangeListener}" process="@this"
-          update="color-bar-segment" partialSubmit="true" />
+          listener="#{cc.attrs.onColorModeChangeListener}"
+          process="@this" update="color-bar-segment"
+          partialSubmit="true" />
       </p:selectOneMenu>
     </h:panelGroup>
   </h:panelGroup>

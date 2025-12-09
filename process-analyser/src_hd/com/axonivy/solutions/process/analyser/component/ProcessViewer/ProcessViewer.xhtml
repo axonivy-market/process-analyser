@@ -95,7 +95,8 @@
           <ic:com.axonivy.solutions.process.analyser.component.ColorPicker
             id="color-picker" kpiType="#{cc.attrs.kpiType}"
             viewerConfig="#{managedBean.persistedConfig}"
-            onColorChangeListener="#{managedBean.onColorModeChange}"
+            onColorChangeListener="#{managedBean.onColorChange}"
+            onColorModeChangeListener="#{managedBean.onColorModeChange}"
             componentToUpdate="@this" rendered="#{isWidgetMode}"
             isWidgetMode="#{isWidgetMode}" />
         </p:overlayPanel>

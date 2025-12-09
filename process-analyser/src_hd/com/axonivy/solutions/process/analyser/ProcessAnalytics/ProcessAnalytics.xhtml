@@ -44,7 +44,8 @@
           kpiType="#{masterDataBean.selectedKpiType}"
           isWidgetMode="#{masterDataBean.widgetMode}"
           componentToUpdate="@this"
-          onColorChangeListener="#{processesAnalyticsBean.onColorModeChange}"
+          onColorChangeListener="#{processesAnalyticsBean.onColorChange}"
+          onColorModeChangeListener="#{processesAnalyticsBean.onColorModeChange}"
           rendered="#{not masterDataBean.widgetMode}" />
         <h:panelGroup layout="block"
           styleClass="border-top-1 surface-border my-3"
