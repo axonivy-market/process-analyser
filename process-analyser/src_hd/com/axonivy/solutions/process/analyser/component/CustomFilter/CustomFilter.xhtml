@@ -29,7 +29,7 @@
             process="@this" />
           <!-- Update data & 2 groups of custom fields -->
           <p:ajax event="itemUnselect"
-            listener="#{cc.attrs.updateDiagram}"
+            listener="#{managedBean.updateDiagramAndStatistic}"
             partialSubmit="true" process="@this" />
           <f:selectItems value="#{customFilterBean.customFieldsByType}" var="customFieldFilter"
             itemValue="#{customFieldFilter.customFieldMeta.name()}"
@@ -53,7 +53,7 @@
             <p:slider for="min-value, max-value" range="true" display="number-range" displayTemplate="{min} - {max}"
               step="0.01" styleClass="m-2 mb-4" minValue="#{managedBean.minValue}" maxValue="#{managedBean.maxValue}">
               <p:ajax event="slideEnd"
-                listener="#{cc.attrs.updateDiagram}"
+                listener="#{managedBean.updateDiagramAndStatistic}"
                 process="@this min-value max-value" partialSubmit="true" />
             </p:slider>
             <h:inputHidden id="min-value" value="#{customField.customFieldValues[0]}" />
@@ -69,11 +69,11 @@
               <f:selectItems value="#{customField.availableCustomFieldValues}" var="optionValue"
                 itemValue="#{optionValue}" itemLabel="#{optionValue}" />
               <p:ajax event="change"
-                listener="#{cc.attrs.updateDiagram}" process="@this" partialSubmit="true" />
+                listener="#{managedBean.updateDiagramAndStatistic}" process="@this" partialSubmit="true" />
               <p:ajax event="toggleSelect"
-                listener="#{cc.attrs.updateDiagram}" process="@this" partialSubmit="true" />
+                listener="#{managedBean.updateDiagramAndStatistic}" process="@this" partialSubmit="true" />
               <p:ajax event="itemUnselect"
-                listener="#{cc.attrs.updateDiagram}" process="@this" partialSubmit="true" />
+                listener="#{managedBean.updateDiagramAndStatistic}" process="@this" partialSubmit="true" />
             </p:selectCheckboxMenu>
             <p:message styleClass="col-12 m-0 p-2 grid formgrid" for="text-dropdown" />
           </h:panelGroup>
@@ -84,7 +84,7 @@
               maxdate="#{managedBean.timeIntervalFilter.to}" styleClass="col-12 m-0 p-0 grid formgrid"
               value="#{customField.timestampCustomFieldValues}"
               pattern="dd/MM/yyyy">
-              <p:ajax event="dateSelect" process="@this" partialSubmit="true" listener="#{cc.attrs.updateDiagram}" />
+              <p:ajax event="dateSelect" process="@this" partialSubmit="true" listener="#{managedBean.updateDiagramAndStatistic}" />
             </p:datePicker>
             <p:message styleClass="col-12 m-0 p-2 grid formgrid" for="date-range" />
           </h:panelGroup>

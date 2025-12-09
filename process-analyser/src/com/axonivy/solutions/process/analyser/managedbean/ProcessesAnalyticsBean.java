@@ -60,8 +60,6 @@ public class ProcessesAnalyticsBean {
   private String selectedPid;
   private String miningUrl;
   private ContentObject processMiningDataJsonFile;
-  private boolean isIncludingRunningCases;
-
   private MasterDataBean masterDataBean;
   private ProcessViewerBean viewerBean;
   private ColorPickerBean colorPickerBean;
@@ -93,7 +91,7 @@ public class ProcessesAnalyticsBean {
   private void initSelectedValueFromUserProperty() {
 //    ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
     // Early escapes if not in widget mode
-    if (!masterDataBean.isWidgetMode()) {
+    if (!isWidgetMode) {
       return;
     }
 //    selectedModule = persistedConfig.getWidgetSelectedModule();
@@ -108,7 +106,7 @@ public class ProcessesAnalyticsBean {
 //    if (StringUtils.isNotBlank(selectedKpiTypeName)) {
 //      selectedKpiType = KpiType.valueOf(selectedKpiTypeName);
 //    }
-    colorPickerBean.initBean(masterDataBean.getSelectedKpiType(), masterDataBean.isWidgetMode());
+    colorPickerBean.initBean(masterDataBean.getSelectedKpiType(), isWidgetMode);
     updateDiagramAndStatistic();
   }
 //
@@ -140,16 +138,7 @@ public class ProcessesAnalyticsBean {
 //    return persistedProcessAnalyser;
 //  }
 
-  public void onModuleSelect() {
-    masterDataBean.onModuleSelect();
-    if (isWidgetMode) {
-      PF.current().ajax()
-          .update(List.of(ProcessAnalyticViewComponentId.WIDGET_PROCESS_SELECTION_GROUP, ProcessAnalyticViewComponentId.PMV_GROUP));
-      return;
-    }
-    PF.current().ajax().update(List.of(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP, ProcessAnalyticViewComponentId.PMV_GROUP));
-    resetStatisticValue();
-  }
+
 
   public void updateDataTable() {
     String subProcessCallPid =
@@ -171,51 +160,35 @@ public class ProcessesAnalyticsBean {
     }
   }
 
+  // Action listener section
+  public void onModuleSelect() {
+    masterDataBean.handleModuleChange();
+    String processSelectionGroupId = isWidgetMode ? ProcessAnalyticViewComponentId.WIDGET_PROCESS_SELECTION_GROUP : ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP;
+    refreshAnalyzedData();
+    PF.current().ajax().update(List.of(processSelectionGroupId, ProcessAnalyticViewComponentId.PMV_GROUP));
+  }
+
   public void onPmvSelect() {
-    if (ObjectUtils.isEmpty(masterDataBean.getSelectedPMV())) {
-      masterDataBean.setAvaiableProcesses(new ArrayList<>());
-      masterDataBean.setSelectedProcessAnalyser(null);
-    } else {
-      masterDataBean
-          .setAvaiableProcesses(ProcessUtils.getAllProcessByModule(masterDataBean.getSelectedModule(), masterDataBean.getSelectedPMV()));
-    }
-    if (ObjectUtils.isNotEmpty(masterDataBean.getSelectedProcessAnalyser())) {
-      masterDataBean.setSelectedProcessAnalyser(ProcessesMonitorUtils.mappingProcessAnalyzerByProcesses(masterDataBean.getAvaiableProcesses(),
-          masterDataBean.isMergeProcessStarts(), masterDataBean.getSelectedProcessAnalyser().getProcessKeyId()));
-    }
-    customFilterBean.updateCustomFilterPanel();
-    updateDiagramAndStatistic();
+    masterDataBean.handlePmvChange();
+    refreshAnalyzedData();
     PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP);
   }
 
   public void onProcessSelect() {
-    if (masterDataBean.isWidgetMode()) {
-      String widgetSelectedProcessAnalyzer = getWidgetSelectedProcessAnalyzerKey();
-      ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
-      persistedConfig.setWidgetSelectedProcessAnalyzer(widgetSelectedProcessAnalyzer);
-      ProcessesMonitorUtils.updateUserProperty(persistedConfig);
-      return;
-    }
-    resetStatisticValue();
-    if (masterDataBean.getSelectedProcessAnalyser() != null) {
-      updateDiagramAndStatistic();
-      customFilterBean.updateCustomFilterPanel();
-    }
-    refreshDiagramAndStatisticUI();
+    masterDataBean.handleProcessChange();
+    refreshAnalyzedData();
   }
 
-  private String getWidgetSelectedProcessAnalyzerKey() {
-    String selectedProcessId =
-        Optional.ofNullable(masterDataBean.getSelectedProcessAnalyser().getProcess()).map(Process::getId).orElse(StringUtils.EMPTY);
-    String selectedStartId =
-        Optional.ofNullable(masterDataBean.getSelectedProcessAnalyser().getStartElement()).map(StartElement::getPid).orElse(StringUtils.EMPTY);
-    String widgetSelectedProcessAnalyzer =
-        masterDataBean.isMergeProcessStarts() ? selectedProcessId : String.join(HYPHEN_SIGN, selectedProcessId, selectedStartId);
-    return widgetSelectedProcessAnalyzer;
+  private void refreshAnalyzedData() {
+    if (!isWidgetMode) {
+      customFilterBean.updateCustomFilterPanel();
+      resetStatisticValue();
+      refreshDiagramAndStatisticUI();
+    }
   }
 
   public void onKpiTypeSelect() {
-    if (masterDataBean.isWidgetMode()) {
+    if (isWidgetMode) {
       ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
       persistedConfig.setWidgetSelectedKpi(masterDataBean.getSelectedKpiType().name());
       ProcessesMonitorUtils.updateUserProperty(persistedConfig);
@@ -240,9 +213,9 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onChangeIncludingRunningCases() {
-    if (masterDataBean.isWidgetMode()) {
+    if (isWidgetMode) {
       ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
-      persistedConfig.setWidgetIncludeRunningCase(isIncludingRunningCases);
+      persistedConfig.setWidgetIncludeRunningCase(masterDataBean.isIncludingRunningCases());
       ProcessesMonitorUtils.updateUserProperty(persistedConfig);
     }
     refreshDiagramAndStatistic();
@@ -250,13 +223,13 @@ public class ProcessesAnalyticsBean {
 
   public void onColorChange() {
     colorPickerBean.onColorChange();
-    if (!masterDataBean.isWidgetMode()) {
+    if (!isWidgetMode) {
       refreshDiagramAndStatistic();
     }
   }
 
   public void onChangeMergeProcessStarts() {
-    if (masterDataBean.isWidgetMode()) {
+    if (isWidgetMode) {
       ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
       persistedConfig.setWidgetMergedProcessStart(masterDataBean.isMergeProcessStarts());
       ProcessesMonitorUtils.updateUserProperty(persistedConfig);
@@ -266,7 +239,7 @@ public class ProcessesAnalyticsBean {
 
   public void onColorModeChange() {
     colorPickerBean.onColorModeChange();
-    if (!masterDataBean.isWidgetMode()) {
+    if (!isWidgetMode) {
       refreshDiagramAndStatistic();
     }
   }
@@ -277,7 +250,7 @@ public class ProcessesAnalyticsBean {
     String to = parameterMap.get(TO);
     timeIntervalFilter.setFrom(DateUtils.parseDateFromString(from));
     timeIntervalFilter.setTo(DateUtils.parseDateFromString(to));
-    if (!masterDataBean.isWidgetMode()) {
+    if (!isWidgetMode) {
       resetStatisticValue();
       customFilterBean.updateCustomFilterPanel();
       refreshDiagramAndStatistic();
@@ -313,7 +286,7 @@ public class ProcessesAnalyticsBean {
     initializingProcessMiningData();
     if (haveMandatoryFieldsBeenFilled()) {
       List<ICase> cases = new ArrayList<>();
-      boolean shouldIncludeRunningCasesByKpi = isIncludingRunningCases && !masterDataBean.getSelectedKpiType().isDescendantOf(KpiType.DURATION);
+      boolean shouldIncludeRunningCasesByKpi = masterDataBean.isIncludingRunningCases() && !masterDataBean.getSelectedKpiType().isDescendantOf(KpiType.DURATION);
       if (masterDataBean.isMergeProcessStarts()) {
         List<Long> taskStartIds =
             masterDataBean.getSelectedProcessAnalyser().getProcess().getStartElements().stream().map(StartElement::getTaskStartId).toList();
@@ -421,13 +394,5 @@ public class ProcessesAnalyticsBean {
 
   public void setFilteredNodes(List<Node> filteredNodes) {
     this.filteredNodes = filteredNodes;
-  }
-
-  public boolean isIncludingRunningCases() {
-    return isIncludingRunningCases;
-  }
-
-  public void setIncludingRunningCases(boolean isIncludingRunningCases) {
-    this.isIncludingRunningCases = isIncludingRunningCases;
   }
 }

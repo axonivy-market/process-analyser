@@ -4,6 +4,7 @@ import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.MULTIPLE_UNDERSCORES_REGEX;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.SPACE_DASH_REGEX;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.UNDERSCORE;
+import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.HYPHEN_SIGN;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartEventElement;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartSignalEventElement;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.WebServiceProcessStartElement;
@@ -64,6 +65,7 @@ public class MasterDataBean implements Serializable {
   private List<String> availableRoles;
   private boolean isWidgetMode;
   private String selectedRole;
+  private boolean isIncludingRunningCases;
 
   @PostConstruct
   public void init() {
@@ -200,7 +202,7 @@ public class MasterDataBean implements Serializable {
     return selectedPMV;
   }
 
-  public void onModuleSelect() {
+  public void handleModuleChange() {
     resetDefaultPMV();
     avaiableProcesses = ProcessUtils.getAllProcessByModule(selectedModule, selectedPMV);
     if (isWidgetMode) {
@@ -208,6 +210,36 @@ public class MasterDataBean implements Serializable {
       persistedConfig.setWidgetSelectedModule(selectedModule);
       ProcessesMonitorUtils.updateUserProperty(persistedConfig);
     }
+  }
+
+  public void handlePmvChange() {
+    if (ObjectUtils.isEmpty(selectedPMV)) {
+      avaiableProcesses = List.of();
+      selectedProcessAnalyser = null;
+    } else {
+      avaiableProcesses = ProcessUtils.getAllProcessByModule(selectedModule, selectedPMV);
+    }
+    if (ObjectUtils.isNotEmpty(selectedProcessAnalyser)) {
+      selectedProcessAnalyser = ProcessesMonitorUtils.mappingProcessAnalyzerByProcesses(avaiableProcesses, isMergeProcessStarts,
+          selectedProcessAnalyser.getProcessKeyId());
+    }
+  }
+
+  public void handleProcessChange() {
+    if (isWidgetMode) {
+      String widgetSelectedProcessAnalyzer = getWidgetSelectedProcessAnalyzerKey();
+      ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
+      persistedConfig.setWidgetSelectedProcessAnalyzer(widgetSelectedProcessAnalyzer);
+      ProcessesMonitorUtils.updateUserProperty(persistedConfig);
+    }
+  }
+
+  private String getWidgetSelectedProcessAnalyzerKey() {
+    String selectedProcessId = Optional.ofNullable(selectedProcessAnalyser.getProcess()).map(Process::getId).orElse(StringUtils.EMPTY);
+    String selectedStartId = Optional.ofNullable(selectedProcessAnalyser.getStartElement()).map(StartElement::getPid).orElse(StringUtils.EMPTY);
+    String widgetSelectedProcessAnalyzer =
+        isMergeProcessStarts ? selectedProcessId : String.join(HYPHEN_SIGN, selectedProcessId, selectedStartId);
+    return widgetSelectedProcessAnalyzer;
   }
 
   public String getPmvLabel(IProcessModelVersion pmv) {
@@ -306,5 +338,13 @@ public class MasterDataBean implements Serializable {
 
   public void setSelectedRole(String selectedRole) {
     this.selectedRole = selectedRole;
+  }
+
+  public boolean isIncludingRunningCases() {
+    return isIncludingRunningCases;
+  }
+
+  public void setIncludingRunningCases(boolean isIncludingRunningCases) {
+    this.isIncludingRunningCases = isIncludingRunningCases;
   }
 }

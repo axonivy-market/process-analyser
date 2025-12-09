@@ -60,8 +60,11 @@
             <h:outputText styleClass="ui-icon pi pi-filter" />
           </p:commandLink>
           <ic:com.axonivy.solutions.process.analyser.component.AdditionalFeatures
-            componentsToUpdate="process-analytics-form" managedBean="#{managedBean}"
-            containerClasses=" grid align-items-center mr-2" rendered="#{isWidgetMode}" />
+            componentsToUpdate="process-analytics-form"
+            onChangeIncludingRunningCases="#{managedBean.onChangeIncludingRunningCases}"
+            onChangeMergeProcessStarts="#{managedBean.onChangeIncludingRunningCases}"
+            containerClasses=" grid align-items-center mr-2"
+            rendered="#{isWidgetMode}" />
         </h:panelGroup>
         <p:overlayPanel for="config-filter-link" styleClass="toolbar-overlay-panel" my="right bottom" at="right top">
           <h:panelGroup layout="block" styleClass="grid formgrid">

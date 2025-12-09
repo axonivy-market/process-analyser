@@ -20,8 +20,11 @@
           value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/ShowStatistic')}"
           styleClass="show-statistic-btn w-auto" update="process-analytics-form"
           actionListener="#{processesAnalyticsBean.updateDiagramAndStatistic}" disabled="#{true}" />
-        <ic:com.axonivy.solutions.process.analyser.component.AdditionalFeatures id ="additional-feature"
-          componentsToUpdate="process-analytics-form" managedBean="#{managedBean}"
+        <ic:com.axonivy.solutions.process.analyser.component.AdditionalFeatures
+          id="additional-feature"
+          componentsToUpdate="process-analytics-form"
+          onChangeIncludingRunningCases="#{managedBean.onChangeIncludingRunningCases}"
+          onChangeMergeProcessStarts="#{managedBean.onChangeMergeProcessStarts}"
           containerClasses="grid mr-4 grid align-items-center line-height-4 mt-1  mb-2" />
       </h:panelGroup>
     </p:panelGrid>
