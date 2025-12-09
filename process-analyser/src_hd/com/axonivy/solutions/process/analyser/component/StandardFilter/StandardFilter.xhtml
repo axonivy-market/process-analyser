@@ -21,7 +21,7 @@
           styleClass="show-statistic-btn w-auto" update="process-analytics-form"
           actionListener="#{processesAnalyticsBean.updateDiagramAndStatistic}" disabled="#{true}" />
         <ic:com.axonivy.solutions.process.analyser.component.AdditionalFeatures id ="additional-feature"
-          componentsToUpdate="process-analytics-form" managedBean="#{processesAnalyticsBean}"
+          componentsToUpdate="process-analytics-form" managedBean="#{managedBean}"
           containerClasses="grid mr-4 grid align-items-center line-height-4 mt-1  mb-2" />
       </h:panelGroup>
     </p:panelGrid>
@@ -42,7 +42,7 @@
           <f:selectItems value="#{masterDataBean.availableModules}"
             var="module" itemLabel="#{module}" itemValue="#{module}" />
           <p:ajax event="change" partialSubmit="true" process="@this"
-            listener="#{masterDataBean.onModuleSelect}" />
+            listener="#{managedBean.onModuleSelect}" />
         </p:selectOneMenu>
       </h:panelGroup>
       <h:panelGroup
@@ -58,7 +58,7 @@
             itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectRole')}"
             itemValue="#{null}" noSelectionOption="true" />
           <f:selectItems value="#{masterDataBean.availableRoles}"/>
-           <p:ajax event="change" partialSubmit="true" process="@this"
+           <p:ajax event="change" partialSubmit="true" process="@this" listener="#{masterDataBean.onRoleSelect}"
              />
         </p:selectOneMenu>
       </h:panelGroup>

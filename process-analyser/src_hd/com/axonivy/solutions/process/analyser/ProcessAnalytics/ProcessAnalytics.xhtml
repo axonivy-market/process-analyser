@@ -10,10 +10,11 @@
   <ui:composition template="/layouts/frame-10-full-width.xhtml">
     <ui:define name="title">#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Title')}</ui:define>
     <ui:define name="content">
+      <ui:param name="widgetMode" value="#{masterDataBean.widgetMode}" />
       <h:outputScript name="resources/html2canvas.min.js" target="head" />
       <h:outputStylesheet library="css" name="process-analyser.css" />
       <h:form id="process-analytics-form"
-        styleClass="#{masterDataBean.widgetMode ? 'flex-1' : 'card'}">
+        styleClass="#{widgetMode ? 'flex-1' : 'card'}">
         <p:remoteCommand id="update-data-table-cmd"
           name="updateDataTable"
           action="#{processesAnalyticsBean.updateDataTable}"
@@ -22,40 +23,41 @@
         <p:graphicImage id="hidden-image" library="ivy-cms" styleClass="hidden"
           name="#{processesAnalyticsBean.miningUrl}" />
         <h:panelGroup layout="block"
-          rendered="#{not masterDataBean.widgetMode}">
+          rendered="#{not widgetMode}">
           <ic:com.axonivy.solutions.process.analyser.component.StandardFilter
             id="standard-filter-panel-group"
             managedBean="#{processesAnalyticsBean}" />
         </h:panelGroup>
         <h:panelGroup layout="block"
           styleClass="border-top-1 surface-border my-3"
-          rendered="#{not masterDataBean.widgetMode}" />
+          rendered="#{not widgetMode}" />
         <ic:com.axonivy.solutions.process.analyser.component.CustomFilter
           id="custom-filter-panel-group"
-          updateDiagram="#{processesAnalyticsBean.updateDiagramAndStatistic()}"
           managedBean="#{processesAnalyticsBean}" />
         <ic:com.axonivy.solutions.process.analyser.component.ProcessViewer
           id="process-analytic-viewer-panel"
           managedBean="#{processesAnalyticsBean}"
+          isWidgetMode="#{widgetMode}"
           selectedProcessAnalyser="#{masterDataBean.selectedProcessAnalyser}"
           componentsToUpdate="@this" />
         <ic:com.axonivy.solutions.process.analyser.component.ColorPicker
           id="color-picker-component"
           kpiType="#{masterDataBean.selectedKpiType}"
-          isWidgetMode="#{masterDataBean.widgetMode}"
+          isWidgetMode="#{widgetMode}"
           componentToUpdate="@this"
           onColorChangeListener="#{processesAnalyticsBean.onColorChange}"
           onColorModeChangeListener="#{processesAnalyticsBean.onColorModeChange}"
-          rendered="#{not masterDataBean.widgetMode}" />
+          rendered="#{not widgetMode}" />
         <h:panelGroup layout="block"
           styleClass="border-top-1 surface-border my-3"
-          rendered="#{not masterDataBean.widgetMode}" />
+          rendered="#{not widgetMode}" />
         <ic:com.axonivy.solutions.process.analyser.component.StatisticViewer
-          id="statistic-viewer" managedBean="#{processesAnalyticsBean}" />
+          id="statistic-viewer" managedBean="#{processesAnalyticsBean}"
+          isWidgetMode="#{widgetMode}" />
         <h:panelGroup id="action-btn-group"
           styleClass="col-12 p-0 inline-flex justify-content-end"
           layout="block"
-          rendered="#{not masterDataBean.widgetMode}">
+          rendered="#{not widgetMode}">
           <p:menuButton icon="pi pi-upload" styleClass="action-button mr-3"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/ExportJPEG')}">
             <p:menuitem value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/CaptureEntireScreen')}"

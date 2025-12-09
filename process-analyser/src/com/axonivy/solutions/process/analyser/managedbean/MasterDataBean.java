@@ -87,7 +87,6 @@ public class MasterDataBean implements Serializable {
         handleProcessStarts(process, processStartsSelection);
       }
     });
-
     return processStartsSelection;
   }
 
@@ -188,7 +187,7 @@ public class MasterDataBean implements Serializable {
     return IApplication.current().getLibraries().stream().filter(filterReleasedAndActivePmv).map(ILibrary::getProcessModelVersion).toList();
   }
 
-  public void resetDefaultPMV() {
+  private void resetDefaultPMV() {
     selectedProcessAnalyser = null;
     List<IProcessModelVersion> pmvs = getAvailabelPMV().stream()
         .filter(version -> version.getActivityState() == ActivityState.ACTIVE && version.getReleaseState() == ReleaseState.RELEASED)
@@ -208,17 +207,15 @@ public class MasterDataBean implements Serializable {
       ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
       persistedConfig.setWidgetSelectedModule(selectedModule);
       ProcessesMonitorUtils.updateUserProperty(persistedConfig);
-      PF.current().ajax().update(ProcessAnalyticViewComponentId.WIDGET_PROCESS_SELECTION_GROUP);
-      PF.current().ajax().update(ProcessAnalyticViewComponentId.PMV_GROUP);
-      return;
     }
-    PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP);
-    PF.current().ajax().update(ProcessAnalyticViewComponentId.PMV_GROUP);
-//    resetStatisticValue();
   }
 
   public String getPmvLabel(IProcessModelVersion pmv) {
     return Ivy.cms().co("/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Version", List.of(pmv.getVersionNumber()));
+  }
+
+  public boolean isStatisticReportRenderable() {
+    return ObjectUtils.allNotNull(selectedKpiType, selectedPMV, selectedProcessAnalyser) && StringUtils.isNotBlank(selectedModule);
   }
 
   public void setSelectedPMV(IProcessModelVersion selectedPMV) {
@@ -252,7 +249,6 @@ public class MasterDataBean implements Serializable {
   }
 
   public void setSelectedProcessAnalyser(ProcessAnalyser selectedProcessAnalyser) {
-//    isSelectedProcessAnalyserChange = !Objects.equals(this.selectedProcessAnalyser, selectedProcessAnalyser);
     this.selectedProcessAnalyser = selectedProcessAnalyser;
   }
 

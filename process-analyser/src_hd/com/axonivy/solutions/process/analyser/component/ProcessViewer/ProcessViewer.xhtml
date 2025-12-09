@@ -6,12 +6,13 @@
 <cc:interface componentType="IvyComponent">
   <cc:attribute name="managedBean" required="true" />
   <cc:attribute name="selectedProcessAnalyser" required="true" />
+  <cc:attribute name="isWidgetMode" default="false" />
   <cc:attribute name="kpiType" />
 </cc:interface>
 
 <cc:implementation>
   <c:set var="managedBean" value="#{cc.attrs.managedBean}" />
-  <c:set var="isWidgetMode" value="#{masterDataBean.widgetMode}" />
+  <c:set var="isWidgetMode" value="#{cc.attrs.widgetMode}" />
   <h:outputScript name="resources/process-viewer.js" target="head" />
   <f:event listener="#{processViewerBean.init(cc.attrs.selectedProcessAnalyser)}" type="preRenderComponent" />
   <h:panelGroup id="viewer-group" layout="block" styleClass="process-analytic-viewer-container #{isWidgetMode ? '' : 'border-b-05rem'}">
@@ -76,7 +77,9 @@
                 title="#{ivy.cms.co('/Labels/Apply')}"
                 value="#{ivy.cms.co('/Labels/Apply')}" />
             </h:panelGroup>
-            <ic:com.axonivy.solutions.process.analyser.component.StandardFilter id="standard-filter" managedBean="#{managedBean}"
+            <ic:com.axonivy.solutions.process.analyser.component.StandardFilter
+              id="standard-filter" managedBean="#{managedBean}"
+              refreshStatisticUI="#{manageBean.refreshDiagramAndStatisticUI}"
               isWidgetMode="#{isWidgetMode}" />
           </h:panelGroup>
         </p:overlayPanel>
