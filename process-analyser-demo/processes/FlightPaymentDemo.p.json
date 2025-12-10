@@ -19,7 +19,7 @@
         "at" : { "x" : 96, "y" : 384 }
       },
       "connect" : [
-        { "id" : "f4", "to" : "f3", "label" : {
+        { "id" : "f4", "to" : "f29", "label" : {
             "name" : [
               "create new task",
               "to validate payment"
@@ -32,7 +32,7 @@
       "type" : "TaskEnd",
       "name" : "End",
       "visual" : {
-        "at" : { "x" : 1848, "y" : 384 }
+        "at" : { "x" : 1888, "y" : 384 }
       }
     }, {
       "id" : "f3",
@@ -49,7 +49,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 248, "y" : 384 },
+        "at" : { "x" : 288, "y" : 384 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
@@ -75,7 +75,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 984, "y" : 384 }
+        "at" : { "x" : 1024, "y" : 384 }
       },
       "connect" : [
         { "id" : "f18", "to" : "S10", "label" : {
@@ -98,7 +98,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 840, "y" : 384 },
+        "at" : { "x" : 880, "y" : 384 },
         "labelOffset" : { "x" : 24, "y" : 32 }
       },
       "connect" : [
@@ -106,7 +106,7 @@
             "name" : "start 7",
             "offset" : { "x" : 1, "y" : -10 }
           } },
-        { "id" : "f13", "to" : "f14", "via" : [ { "x" : 840, "y" : 272 } ], "label" : {
+        { "id" : "f13", "to" : "f14", "via" : [ { "x" : 880, "y" : 272 } ], "label" : {
             "name" : "start 3",
             "segment" : 1.36,
             "offset" : { "x" : -71, "y" : 36 }
@@ -130,7 +130,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 984, "y" : 272 },
+        "at" : { "x" : 1024, "y" : 272 },
         "labelOffset" : { "x" : -15, "y" : 41 }
       },
       "connect" : [
@@ -144,10 +144,10 @@
         "processCall" : "demo/VisaValidation:visaValidation()"
       },
       "visual" : {
-        "at" : { "x" : 1112, "y" : 272 }
+        "at" : { "x" : 1152, "y" : 272 }
       },
       "connect" : [
-        { "id" : "f19", "to" : "S10", "via" : [ { "x" : 1368, "y" : 272 } ] }
+        { "id" : "f19", "to" : "S10", "via" : [ { "x" : 1408, "y" : 272 } ] }
       ]
     }, {
       "id" : "S10",
@@ -306,7 +306,7 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 1368, "y" : 384 }
+        "at" : { "x" : 1408, "y" : 384 }
       },
       "connect" : [
         { "id" : "f20", "to" : "f2", "label" : {
@@ -325,11 +325,11 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1496, "y" : 384 },
+        "at" : { "x" : 1536, "y" : 384 },
         "labelOffset" : { "y" : -24 }
       },
       "connect" : [
-        { "id" : "f17", "to" : "f5", "via" : [ { "x" : 1496, "y" : 480 } ], "label" : {
+        { "id" : "f17", "to" : "f5", "via" : [ { "x" : 1536, "y" : 480 } ], "label" : {
             "name" : "start 2",
             "segment" : 0.32,
             "offset" : { "x" : 31, "y" : 26 }
@@ -408,7 +408,7 @@
           "parentConnector" : "f22"
         } ],
       "visual" : {
-        "at" : { "x" : 392, "y" : 384 }
+        "at" : { "x" : 432, "y" : 384 }
       },
       "connect" : [
         { "id" : "f22", "to" : "f10" }
@@ -429,18 +429,18 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1096, "y" : 480 },
+        "at" : { "x" : 1136, "y" : 480 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
-        { "id" : "f6", "to" : "S20", "via" : [ { "x" : 392, "y" : 480 } ], "color" : "default" }
+        { "id" : "f6", "to" : "S20", "via" : [ { "x" : 432, "y" : 480 } ], "color" : "default" }
       ]
     }, {
       "id" : "f10",
       "type" : "Script",
       "name" : "get payment provider",
       "visual" : {
-        "at" : { "x" : 552, "y" : 384 }
+        "at" : { "x" : 592, "y" : 384 }
       },
       "connect" : [
         { "id" : "f12", "to" : "f23", "color" : "default" }
@@ -450,7 +450,7 @@
       "type" : "Script",
       "name" : "validate payment provider",
       "visual" : {
-        "at" : { "x" : 712, "y" : 384 }
+        "at" : { "x" : 752, "y" : 384 }
       },
       "connect" : [
         { "id" : "f24", "to" : "f11", "label" : {
@@ -473,7 +473,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1592, "y" : 384 },
+        "at" : { "x" : 1632, "y" : 384 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
@@ -484,10 +484,34 @@
       "type" : "Script",
       "name" : "send confirmation mail",
       "visual" : {
-        "at" : { "x" : 1720, "y" : 384 }
+        "at" : { "x" : 1760, "y" : 384 }
       },
       "connect" : [
         { "id" : "f28", "to" : "f1", "color" : "default" }
+      ]
+    }, {
+      "id" : "f29",
+      "type" : "Alternative",
+      "visual" : {
+        "at" : { "x" : 192, "y" : 384 },
+        "labelOffset" : { "x" : 14, "y" : 34 }
+      },
+      "connect" : [
+        { "id" : "f30", "to" : "f3", "color" : "default" }
+      ]
+    }, {
+      "id" : "f31",
+      "type" : "SignalStartEvent",
+      "name" : "flightPayment",
+      "config" : {
+        "signalCode" : "flightPayment"
+      },
+      "visual" : {
+        "at" : { "x" : 192, "y" : 496 },
+        "labelOffset" : { "x" : 13, "y" : 33 }
+      },
+      "connect" : [
+        { "id" : "f32", "to" : "f29" }
       ]
     } ],
   "layout" : {
