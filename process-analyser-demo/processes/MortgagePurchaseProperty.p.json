@@ -7,9 +7,9 @@
   "elements" : [ {
       "id" : "f3",
       "type" : "SignalStartEvent",
-      "name" : "mortgate:purchase",
+      "name" : "mortgage:purchase",
       "config" : {
-        "signalCode" : "mortgate:purchase",
+        "signalCode" : "mortgage:purchase",
         "attachToBusinessCase" : false
       },
       "visual" : {
