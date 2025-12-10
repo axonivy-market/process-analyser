@@ -31,20 +31,13 @@ Wichtigste Funktionen:
 
 ## Demo
 
-Im ersten Schritt müssen Sie mindestens einen der Demo-Prozesse ausführen und
-abschließen, damit der Process Analyzer Daten erfassen kann.
-
-![Demo-Prozesse](images/demo-processes.png)
-
 ### Statistik anzeigen
 
-To view the analyzer report, start the Process Analyzer by a user who has the
-`ProcessAnalyst` role, maybe the `Developer` user if you are in Axon Ivy
-Designer, and select the PMV that matches the desired process and KPI type. By
-default, analyses are separated by process starts (automatic vs. manual). Use
-the Merge Process Starts toggle to view a full analysis of each process. Then a
-raw data visualized process diagram alongside an analyzed statistics table will
-be displayed.
+To view the result, start the Process Analyzer and select the PMV that matches
+the desired process and KPI type. By default, analyses are separated by process
+starts (automatic vs. manual). Use the Merge Process Starts toggle to view a
+full analysis of each process. Then a raw data visualized process diagram
+alongside an analyzed statistics table will be displayed.
 
 ![Statistik-Demo anzeigen](images/show-statistic.gif)
 
@@ -135,13 +128,11 @@ folgenden Schritte aus:
 
 ![engine deploy](images/engine-deployment.png)
 
-4. Make sure, the analyzing user owns the `ProcessAnalyst` role.
-
-5. Launch the **Process Analyser** process.
+4. Launch the Process Analyzer and follow the Demo tab to view the results.
 
 ![Analyseprozess](images/analyze-process.png)
 
-6. (Optional) Aktualisieren Sie den Anzeigenamen des Prozesses, um zu vermeiden,
+5. (Optional) Aktualisieren Sie den Anzeigenamen des Prozesses, um zu vermeiden,
    dass der technische Name des Prozessstarts (z. B.
    FlightPlanningDemo/recommendDestination.ivp) in den Auswahloptionen angezeigt
    wird. Es ist auch eine Mehrsprachenunterstützung für Prozessnamen verfügbar.
@@ -152,7 +143,6 @@ Prozessnamen](images/multilanguage-process-name.png)
 ```
 @variables.yaml@
 ```
-
 ### Portal Custom Widget Integration
 
 Der Process Analyzer lässt sich nahtlos als benutzerdefiniertes Dashboard-Widget
