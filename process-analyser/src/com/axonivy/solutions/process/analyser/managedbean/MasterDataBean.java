@@ -194,6 +194,7 @@ public class MasterDataBean implements Serializable {
         .sorted(Comparator.comparing(IProcessModelVersion::getLastChangeDate).reversed()).toList();
 
     selectedPMV = ObjectUtils.isNotEmpty(pmvs) ? pmvs.get(0) : null;
+    selectedRole = null;
   }
 
   public IProcessModelVersion getSelectedPMV() {
@@ -224,6 +225,7 @@ public class MasterDataBean implements Serializable {
       selectedProcessAnalyser = ProcessesMonitorUtils.mappingProcessAnalyzerByProcesses(avaiableProcesses, isMergeProcessStarts,
           selectedProcessAnalyser.getProcessKeyId());
     }
+    selectedRole = null;
   }
 
 

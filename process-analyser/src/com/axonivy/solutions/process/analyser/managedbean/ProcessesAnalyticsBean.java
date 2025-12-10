@@ -202,9 +202,9 @@ public class ProcessesAnalyticsBean {
   }
 
   private void refreshAnalyzedData() {
-      customFilterBean.updateCustomFilterPanel();
       resetStatisticValue();
       refreshDiagramAndStatisticUI();
+      customFilterBean.updateCustomFilterPanel();
   }
 
   /**
@@ -216,7 +216,7 @@ public class ProcessesAnalyticsBean {
     if (!isWidgetMode) {
       refreshAnalyzedData();
     }
-    PF.current().ajax().update(List.of(processSelectionGroupId, ProcessAnalyticViewComponentId.PMV_GROUP));
+    PF.current().ajax().update(processSelectionGroupId, ProcessAnalyticViewComponentId.PMV_GROUP, ProcessAnalyticViewComponentId.ROLE_SELECTION_GROUP);
   }
 
   public void onPmvSelect() {
@@ -224,15 +224,17 @@ public class ProcessesAnalyticsBean {
     if (!isWidgetMode) {
       refreshAnalyzedData();
     }
-    PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP);
+    PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP, ProcessAnalyticViewComponentId.ROLE_SELECTION_GROUP);
   }
 
   public void onProcessSelect() {
+    masterDataBean.setSelectedRole(StringUtils.EMPTY);
     if (isWidgetMode) {
       masterDataBean.handleProcessChangeWidgetMode();
       return;
     }
-    refreshAnalyzedData();
+    refreshDiagramAndStatistic();
+    PF.current().ajax().update(ProcessAnalyticViewComponentId.ROLE_SELECTION_GROUP);
   }
 
   public void onChangeIncludingRunningCases() {
@@ -255,6 +257,8 @@ public class ProcessesAnalyticsBean {
       ProcessesMonitorUtils
           .updateUserConfig(persistedConfig -> persistedConfig.setWidgetMergedProcessStart(masterDataBean.isMergeProcessStarts()));
     }
+    masterDataBean.setSelectedProcessAnalyser(null);
+    onProcessSelect();
     refreshDiagramAndStatistic();;
   }
 
@@ -273,6 +277,12 @@ public class ProcessesAnalyticsBean {
     }
     colorPickerBean.updateColorByKpiType(masterDataBean.getSelectedKpiType());
     refreshDiagramAndStatistic();
+  }
+
+  public void onRoleSelect() {
+    if (!isWidgetMode) {
+      refreshDiagramAndStatistic();
+    }
   }
 
   public List<CustomFieldFilter> getCaseAndTaskCustomFields() {

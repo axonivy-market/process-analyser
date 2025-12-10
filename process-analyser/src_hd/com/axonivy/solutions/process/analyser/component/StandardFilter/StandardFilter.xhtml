@@ -50,7 +50,7 @@
       </h:panelGroup>
       <h:panelGroup
         styleClass="#{isWidgetMode? 'col mb-2': 'col-4 pr-2'} p-0 m-0"
-        layout="block">
+        layout="block"  id="role-selection-group">
         <div class="mb-2">
           <p:outputLabel for="@next"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectRole')}" />
@@ -61,8 +61,8 @@
             itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectRole')}"
             itemValue="#{null}" noSelectionOption="true" />
           <f:selectItems value="#{masterDataBean.availableRoles}"/>
-           <p:ajax event="change" partialSubmit="true" process="@this" listener="#{masterDataBean.onRoleSelect}"
-             />
+          <p:ajax event="change" partialSubmit="true" process="@this"
+            listener="#{managedBean.onRoleSelect}" />
         </p:selectOneMenu>
       </h:panelGroup>
     </h:panelGroup>

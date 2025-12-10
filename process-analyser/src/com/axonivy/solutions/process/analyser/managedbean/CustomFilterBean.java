@@ -87,7 +87,6 @@ public class CustomFilterBean implements Serializable {
       }
     });
     setFilterDropdownVisible(!selectedCustomFieldNames.isEmpty());
-//    refreshAnalyserReportToView();
   }
 
   public void resetCustomFieldFilterValues() {
@@ -101,7 +100,6 @@ public class CustomFilterBean implements Serializable {
   public void onCustomfieldUnselect() {
     onCustomFieldSelect();
     updateCustomFilterPanel();
-//    refreshAnalyserReportToView();
   }
 
   public TimeIntervalFilter getTimeIntervalFilter() {
