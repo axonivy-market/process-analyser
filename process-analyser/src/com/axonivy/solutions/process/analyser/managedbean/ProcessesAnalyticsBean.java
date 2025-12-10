@@ -42,6 +42,7 @@ import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.cm.ContentObject;
 import ch.ivyteam.ivy.cm.exec.ContentManagement;
+import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.workflow.ICase;
 
 @ManagedBean
@@ -383,7 +384,7 @@ public class ProcessesAnalyticsBean {
   }
 
   public boolean isShowStatisticBtnDisabled() {
-    return masterDataBean.isStatisticReportRenderable();
+    return !masterDataBean.isStatisticReportRenderable();
   }
 
   public TimeIntervalFilter getTimeIntervalFilter() {

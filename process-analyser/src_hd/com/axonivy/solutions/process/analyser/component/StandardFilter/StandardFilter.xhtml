@@ -19,7 +19,7 @@
         <p:commandButton id="show-statistic-btn" icon="pi pi-chart-line"
           value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/ShowStatistic')}"
           styleClass="show-statistic-btn w-auto" update="process-analytics-form"
-          actionListener="#{processesAnalyticsBean.updateDiagramAndStatistic}" disabled="#{true}" />
+          actionListener="#{managedBean.updateDiagramAndStatistic}" disabled="#{managedBean.showStatisticBtnDisabled}" />
         <ic:com.axonivy.solutions.process.analyser.component.AdditionalFeatures
           id="additional-feature"
           componentsToUpdate="process-analytics-form"
