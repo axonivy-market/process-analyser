@@ -8,6 +8,7 @@ import static com.axonivy.solutions.process.analyser.core.constants.CoreConstant
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartEventElement;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartSignalEventElement;
 import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.WebServiceProcessStartElement;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,11 +28,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.primefaces.PF;
 
 import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
-import com.axonivy.solutions.process.analyser.bo.ProcessViewerConfig;
-import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
 import com.axonivy.solutions.process.analyser.core.bo.Process;
 import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 import com.axonivy.solutions.process.analyser.core.constants.CoreConstants;
@@ -97,9 +95,9 @@ public class MasterDataBean implements Serializable {
         selectedKpiType.getCmsName().replaceAll(SPACE_DASH_REGEX, UNDERSCORE).replaceAll(MULTIPLE_UNDERSCORES_REGEX, UNDERSCORE);
     var startName =
         Optional.ofNullable(selectedProcessAnalyser)
-            .map(analyser -> isMergeProcessStarts ? Optional.ofNullable(analyser.getProcess()).map(Process::getName).orElse(StringUtils.EMPTY)
-                : Optional.ofNullable(analyser.getStartElement()).map(StartElement::getName).orElse(StringUtils.EMPTY))
-            .orElse(StringUtils.EMPTY);
+            .map(analyser -> isMergeProcessStarts ? Optional.ofNullable(analyser.getProcess()).map(Process::getName).orElse(EMPTY)
+                : Optional.ofNullable(analyser.getStartElement()).map(StartElement::getName).orElse(EMPTY))
+            .orElse(EMPTY);
     return String.format(ANALYSIS_EXCEL_FILE_PATTERN, formattedKpiTypeName, startName);
   }
 
@@ -206,10 +204,13 @@ public class MasterDataBean implements Serializable {
     resetDefaultPMV();
     avaiableProcesses = ProcessUtils.getAllProcessByModule(selectedModule, selectedPMV);
     if (isWidgetMode) {
-      ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
-      persistedConfig.setWidgetSelectedModule(selectedModule);
-      ProcessesMonitorUtils.updateUserProperty(persistedConfig);
+      ProcessesMonitorUtils.updateUserConfig(persistedConfig -> persistedConfig.setWidgetSelectedModule(selectedModule));
     }
+  }
+
+  public void handleProcessChangeWidgetMode() {
+    String widgetSelectedProcessAnalyzer = getWidgetSelectedProcessAnalyzerKey();
+    ProcessesMonitorUtils.updateUserConfig(persistedConfig -> persistedConfig.setWidgetSelectedProcessAnalyzer(widgetSelectedProcessAnalyzer));
   }
 
   public void handlePmvChange() {
@@ -225,21 +226,11 @@ public class MasterDataBean implements Serializable {
     }
   }
 
-  public void handleProcessChange() {
-    if (isWidgetMode) {
-      String widgetSelectedProcessAnalyzer = getWidgetSelectedProcessAnalyzerKey();
-      ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
-      persistedConfig.setWidgetSelectedProcessAnalyzer(widgetSelectedProcessAnalyzer);
-      ProcessesMonitorUtils.updateUserProperty(persistedConfig);
-    }
-  }
 
   private String getWidgetSelectedProcessAnalyzerKey() {
-    String selectedProcessId = Optional.ofNullable(selectedProcessAnalyser.getProcess()).map(Process::getId).orElse(StringUtils.EMPTY);
-    String selectedStartId = Optional.ofNullable(selectedProcessAnalyser.getStartElement()).map(StartElement::getPid).orElse(StringUtils.EMPTY);
-    String widgetSelectedProcessAnalyzer =
-        isMergeProcessStarts ? selectedProcessId : String.join(HYPHEN_SIGN, selectedProcessId, selectedStartId);
-    return widgetSelectedProcessAnalyzer;
+    String selectedProcessId = Optional.ofNullable(selectedProcessAnalyser.getProcess()).map(Process::getId).orElse(EMPTY);
+    String selectedStartId = Optional.ofNullable(selectedProcessAnalyser.getStartElement()).map(StartElement::getPid).orElse(EMPTY);
+    return isMergeProcessStarts ? selectedProcessId : String.join(HYPHEN_SIGN, selectedProcessId, selectedStartId);
   }
 
   public String getPmvLabel(IProcessModelVersion pmv) {
@@ -252,6 +243,10 @@ public class MasterDataBean implements Serializable {
 
   public void setSelectedPMV(IProcessModelVersion selectedPMV) {
     this.selectedPMV = selectedPMV;
+  }
+
+  public boolean isDurationKpiType() {
+    return ProcessesMonitorUtils.isDuration(selectedKpiType);
   }
 
   public List<SelectItem> getKpiTypes() {

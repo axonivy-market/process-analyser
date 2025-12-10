@@ -7,7 +7,6 @@ import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.PROCESS_ANALYSER_CMS_PATH;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.TO;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.UPDATE_IFRAME_SOURCE_METHOD_CALL;
-import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.HYPHEN_SIGN;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,6 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.primefaces.PF;
@@ -28,11 +26,9 @@ import org.primefaces.PF;
 import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.ProcessMiningData;
-import com.axonivy.solutions.process.analyser.bo.ProcessViewerConfig;
 import com.axonivy.solutions.process.analyser.bo.TimeFrame;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
-import com.axonivy.solutions.process.analyser.core.bo.Process;
 import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
@@ -46,7 +42,6 @@ import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.cm.ContentObject;
 import ch.ivyteam.ivy.cm.exec.ContentManagement;
-import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.workflow.ICase;
 
 @ManagedBean
@@ -138,8 +133,9 @@ public class ProcessesAnalyticsBean {
 //    return persistedProcessAnalyser;
 //  }
 
-
-
+  /**
+   * Update and refresh section
+   */
   public void updateDataTable() {
     String subProcessCallPid =
         FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get(SUB_PROCESS_CALL_PID_PARAM_NAME);
@@ -153,95 +149,10 @@ public class ProcessesAnalyticsBean {
     filteredNodes = analyzedNode.stream().filter(node -> node.getId().startsWith(prefix)).collect(Collectors.toList());
   }
 
-  public void prepareForExportingJPEG(boolean isResetView) {
-    if (isResetView) {
-      viewerBean.resetViewerSelection();
-      refreshDiagramAndStatisticUI();
-    }
-  }
 
-  // Action listener section
-  public void onModuleSelect() {
-    masterDataBean.handleModuleChange();
-    String processSelectionGroupId = isWidgetMode ? ProcessAnalyticViewComponentId.WIDGET_PROCESS_SELECTION_GROUP : ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP;
-    refreshAnalyzedData();
-    PF.current().ajax().update(List.of(processSelectionGroupId, ProcessAnalyticViewComponentId.PMV_GROUP));
-  }
-
-  public void onPmvSelect() {
-    masterDataBean.handlePmvChange();
-    refreshAnalyzedData();
-    PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP);
-  }
-
-  public void onProcessSelect() {
-    masterDataBean.handleProcessChange();
-    refreshAnalyzedData();
-  }
-
-  private void refreshAnalyzedData() {
-    if (!isWidgetMode) {
-      customFilterBean.updateCustomFilterPanel();
-      resetStatisticValue();
-      refreshDiagramAndStatisticUI();
-    }
-  }
-
-  public void onKpiTypeSelect() {
-    if (isWidgetMode) {
-      ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
-      persistedConfig.setWidgetSelectedKpi(masterDataBean.getSelectedKpiType().name());
-      ProcessesMonitorUtils.updateUserProperty(persistedConfig);
-      return;
-    }
-    colorPickerBean.updateColorByKpiType(masterDataBean.getSelectedKpiType());
-    refreshDiagramAndStatistic();
-  }
-
-  private void resetStatisticValue() {
-    customFilterBean.resetCustomFieldFilterValues();
-    processMiningData = null;
-    filteredNodes = List.of();
-    analyzedNode = List.of();
-  }
-
-  public List<CustomFieldFilter> getCaseAndTaskCustomFields() {
-    if (masterDataBean.getSelectedProcessAnalyser() == null || masterDataBean.getSelectedProcessAnalyser().getProcess() == null) {
-      return new ArrayList<>();
-    }
-    return customFilterBean.getCustomFieldsByType();
-  }
-
-  public void onChangeIncludingRunningCases() {
-    if (isWidgetMode) {
-      ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
-      persistedConfig.setWidgetIncludeRunningCase(masterDataBean.isIncludingRunningCases());
-      ProcessesMonitorUtils.updateUserProperty(persistedConfig);
-    }
-    refreshDiagramAndStatistic();
-  }
-
-  public void onColorChange() {
-    colorPickerBean.onColorChange();
-    if (!isWidgetMode) {
-      refreshDiagramAndStatistic();
-    }
-  }
-
-  public void onChangeMergeProcessStarts() {
-    if (isWidgetMode) {
-      ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
-      persistedConfig.setWidgetMergedProcessStart(masterDataBean.isMergeProcessStarts());
-      ProcessesMonitorUtils.updateUserProperty(persistedConfig);
-    }
-    refreshDiagramAndStatistic();;
-  }
-
-  public void onColorModeChange() {
-    colorPickerBean.onColorModeChange();
-    if (!isWidgetMode) {
-      refreshDiagramAndStatistic();
-    }
+  private void updateProcessMiningDataJson() {
+    String jsonString = JacksonUtils.convertObjectToJSONString(processMiningData);
+    processMiningDataJsonFile.value().get(EN_CMS_LOCALE).write().string(jsonString);
   }
 
   public void updateDataOnChangingFilter() {
@@ -276,20 +187,116 @@ public class ProcessesAnalyticsBean {
     refreshDiagramAndStatisticUI();
   }
 
+  public void prepareForExportingJPEG(boolean isResetView) {
+    if (isResetView) {
+      viewerBean.resetViewerSelection();
+      refreshDiagramAndStatisticUI();
+    }
+  }
+
+  private void resetStatisticValue() {
+    customFilterBean.resetCustomFieldFilterValues();
+    processMiningData = null;
+    filteredNodes = List.of();
+    analyzedNode = List.of();
+  }
+
+  private void refreshAnalyzedData() {
+      customFilterBean.updateCustomFilterPanel();
+      resetStatisticValue();
+      refreshDiagramAndStatisticUI();
+  }
+
+  /**
+   * Action listener section
+   */
+  public void onModuleSelect() {
+    masterDataBean.handleModuleChange();
+    String processSelectionGroupId = isWidgetMode ? ProcessAnalyticViewComponentId.WIDGET_PROCESS_SELECTION_GROUP : ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP;
+    if (!isWidgetMode) {
+      refreshAnalyzedData();
+    }
+    PF.current().ajax().update(List.of(processSelectionGroupId, ProcessAnalyticViewComponentId.PMV_GROUP));
+  }
+
+  public void onPmvSelect() {
+    masterDataBean.handlePmvChange();
+    if (!isWidgetMode) {
+      refreshAnalyzedData();
+    }
+    PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP);
+  }
+
+  public void onProcessSelect() {
+    if (isWidgetMode) {
+      masterDataBean.handleProcessChangeWidgetMode();
+      return;
+    }
+    refreshAnalyzedData();
+  }
+
+  public void onChangeIncludingRunningCases() {
+    if (isWidgetMode) {
+      ProcessesMonitorUtils
+          .updateUserConfig(persistedConfig -> persistedConfig.setWidgetIncludeRunningCase(masterDataBean.isIncludingRunningCases()));
+    }
+    refreshDiagramAndStatistic();
+  }
+
+  public void onColorChange() {
+    colorPickerBean.onColorChange();
+    if (!isWidgetMode) {
+      refreshDiagramAndStatistic();
+    }
+  }
+
+  public void onChangeMergeProcessStarts() {
+    if (isWidgetMode) {
+      ProcessesMonitorUtils
+          .updateUserConfig(persistedConfig -> persistedConfig.setWidgetMergedProcessStart(masterDataBean.isMergeProcessStarts()));
+    }
+    refreshDiagramAndStatistic();;
+  }
+
+  public void onColorModeChange() {
+    colorPickerBean.onColorModeChange();
+    if (!isWidgetMode) {
+      refreshDiagramAndStatistic();
+    }
+  }
+
+  public void onKpiTypeSelect() {
+    if (isWidgetMode) {
+      ProcessesMonitorUtils
+          .updateUserConfig(persistedConfig -> persistedConfig.setWidgetSelectedKpi(masterDataBean.getSelectedKpiType().name()));
+      return;
+    }
+    colorPickerBean.updateColorByKpiType(masterDataBean.getSelectedKpiType());
+    refreshDiagramAndStatistic();
+  }
+
+  public List<CustomFieldFilter> getCaseAndTaskCustomFields() {
+    if (masterDataBean.getSelectedProcessAnalyser() == null || masterDataBean.getSelectedProcessAnalyser().getProcess() == null) {
+      return new ArrayList<>();
+    }
+    return customFilterBean.getCustomFieldsByType();
+  }
+
   private void loadNodes() {
     analyzedNode = new ArrayList<>();
-    if (masterDataBean.getSelectedProcessAnalyser() == null) {
+    var selectedProcessAnalyser = masterDataBean.getSelectedProcessAnalyser();
+    if (selectedProcessAnalyser == null) {
       resetStatisticValue();
       return;
     }
-    selectedPid = masterDataBean.getSelectedProcessAnalyser().getProcess().getId();
+    selectedPid = selectedProcessAnalyser.getProcess().getId();
     initializingProcessMiningData();
-    if (haveMandatoryFieldsBeenFilled()) {
+    if (masterDataBean.isStatisticReportRenderable()) {
       List<ICase> cases = new ArrayList<>();
-      boolean shouldIncludeRunningCasesByKpi = masterDataBean.isIncludingRunningCases() && !masterDataBean.getSelectedKpiType().isDescendantOf(KpiType.DURATION);
+      boolean shouldIncludeRunningCasesByKpi = masterDataBean.isIncludingRunningCases() && !masterDataBean.isDurationKpiType();
       if (masterDataBean.isMergeProcessStarts()) {
         List<Long> taskStartIds =
-            masterDataBean.getSelectedProcessAnalyser().getProcess().getStartElements().stream().map(StartElement::getTaskStartId).toList();
+            selectedProcessAnalyser.getProcess().getStartElements().stream().map(StartElement::getTaskStartId).toList();
         for (Long taskStartId : taskStartIds) {
           List<ICase> subCases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter,
               customFilterBean.getSelectedCustomFilters(), shouldIncludeRunningCasesByKpi);
@@ -298,7 +305,7 @@ public class ProcessesAnalyticsBean {
           }
         }
       } else {
-        Long taskStartId = masterDataBean.getSelectedProcessAnalyser().getStartElement().getTaskStartId();
+        Long taskStartId = selectedProcessAnalyser.getStartElement().getTaskStartId();
         cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(taskStartId, timeIntervalFilter,
             customFilterBean.getSelectedCustomFilters(), shouldIncludeRunningCasesByKpi);
       }
@@ -308,23 +315,13 @@ public class ProcessesAnalyticsBean {
             .filter(task -> StringUtils.isBlank(role) || Strings.CS.equals(task.getActivatorName(), role)).toList();
         customFilterBean
             .setCustomFieldsByType(IvyTaskOccurrenceService.getCaseAndTaskCustomFields(tasks, customFilterBean.getCustomFieldsByType()));
-        analyzedNode = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(masterDataBean.getSelectedProcessAnalyser(),
+        analyzedNode = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(selectedProcessAnalyser,
             masterDataBean.getSelectedKpiType(), tasks);
         processMiningData.setNodes(analyzedNode);
         processMiningData.setNumberOfInstances(cases.size());
       }
     }
     updateDataTableWithNodesPrefix(ProcessUtils.getProcessPidFromElement(selectedPid));
-  }
-
-  private boolean haveMandatoryFieldsBeenFilled() {
-    return StringUtils.isNoneBlank(masterDataBean.getSelectedModule()) && ObjectUtils.allNotNull(masterDataBean.getSelectedKpiType(),
-        masterDataBean.getSelectedProcessAnalyser(), masterDataBean.getSelectedPMV());
-  }
-
-  private void updateProcessMiningDataJson() {
-    String jsonString = JacksonUtils.convertObjectToJSONString(processMiningData);
-    processMiningDataJsonFile.value().get(EN_CMS_LOCALE).write().string(jsonString);
   }
 
   private void initializingProcessMiningData() {
@@ -343,17 +340,16 @@ public class ProcessesAnalyticsBean {
   }
 
   public void renderNodesByKPIType() {
-    if (masterDataBean.getSelectedKpiType() != null && masterDataBean.getSelectedKpiType().isDescendantOf(KpiType.DURATION)) {
+    if (masterDataBean.isDurationKpiType()) {
       List<String> avaibleTaskIds =
           filteredNodes.stream().filter(node -> node.getType() == NodeType.ARROW).map(node -> node.getSourceNodeId()).toList();
-
       filteredNodes = filteredNodes.stream().filter(node -> node.getType() != NodeType.ARROW && avaibleTaskIds.contains(node.getId()))
           .collect(Collectors.toList());
     }
   }
 
   public boolean isMedianDurationColumnVisible() {
-    return ProcessesMonitorUtils.isDuration(masterDataBean.getSelectedKpiType());
+    return masterDataBean.isDurationKpiType();
   }
 
   public String getCalulatedCellColor(Double value) {

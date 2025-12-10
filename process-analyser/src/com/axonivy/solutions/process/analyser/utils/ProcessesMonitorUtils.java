@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -377,6 +378,11 @@ public class ProcessesMonitorUtils {
         JacksonUtils.convertObjectToJSONString(persistedConfig));
   }
 
+  public static void updateUserConfig(Consumer<ProcessViewerConfig> updateAction) {
+    ProcessViewerConfig persistedConfig = getUserConfig();
+    updateAction.accept(persistedConfig);
+    updateUserProperty(persistedConfig);
+}
   public static boolean canSessionUserOpenProcessAnalyser() {
     return Ivy.session().has().role(AnalyserConstants.PROCESS_ANALYST_ROLE);
   }
