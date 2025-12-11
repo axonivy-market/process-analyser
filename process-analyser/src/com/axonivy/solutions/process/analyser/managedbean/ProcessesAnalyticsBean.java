@@ -34,7 +34,7 @@ import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
