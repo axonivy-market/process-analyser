@@ -19,6 +19,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.primefaces.PF;
@@ -42,7 +43,6 @@ import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.cm.ContentObject;
 import ch.ivyteam.ivy.cm.exec.ContentManagement;
-import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.workflow.ICase;
 
 @ManagedBean
@@ -77,7 +77,8 @@ public class ProcessesAnalyticsBean {
   }
 
   private void initDefaultVariableValue() {
-    isWidgetMode = masterDataBean.isWidgetMode();
+    var isWidgetModeValue = FacesContexts.evaluateValueExpression("#{data.isWidgetMode}", Boolean.class);
+    isWidgetMode = BooleanUtils.isTrue(isWidgetModeValue);
     processMiningDataJsonFile = ContentManagement.cms(IApplication.current()).root().child().folder(PROCESS_ANALYSER_CMS_PATH).child()
         .file(DATA_CMS_PATH, JSON_EXTENSION);
     miningUrl = processMiningDataJsonFile.uri();
@@ -165,7 +166,7 @@ public class ProcessesAnalyticsBean {
     if (!isWidgetMode) {
       resetStatisticValue();
       customFilterBean.updateCustomFilterPanel();
-      refreshDiagramAndStatistic();
+      updateAndRefreshDiagramAndStatistic();
     }
   }
 
@@ -183,7 +184,7 @@ public class ProcessesAnalyticsBean {
     PF.current().ajax().update(ProcessAnalyticViewComponentId.getDiagramAndStatisticComponentIds());
   }
 
-  public void refreshDiagramAndStatistic() {
+  public void updateAndRefreshDiagramAndStatistic() {
     updateDiagramAndStatistic();
     refreshDiagramAndStatisticUI();
   }
@@ -217,7 +218,9 @@ public class ProcessesAnalyticsBean {
     if (!isWidgetMode) {
       refreshAnalyzedData();
     }
-    PF.current().ajax().update(processSelectionGroupId, ProcessAnalyticViewComponentId.PMV_GROUP, ProcessAnalyticViewComponentId.ROLE_SELECTION_GROUP);
+    String pmvGroupId = isWidgetMode ? ProcessAnalyticViewComponentId.WIDGET_PMV_GROUP : ProcessAnalyticViewComponentId.PMV_GROUP;
+    String roleSelectionGroupId = isWidgetMode ? ProcessAnalyticViewComponentId.WIDGET_ROLE_SELECTION_GROUP : ProcessAnalyticViewComponentId.ROLE_SELECTION_GROUP;
+    PF.current().ajax().update(processSelectionGroupId, pmvGroupId, roleSelectionGroupId);
   }
 
   public void onPmvSelect() {
@@ -234,7 +237,7 @@ public class ProcessesAnalyticsBean {
       masterDataBean.handleProcessChangeWidgetMode();
       return;
     }
-    refreshDiagramAndStatistic();
+    updateAndRefreshDiagramAndStatistic();
     PF.current().ajax().update(ProcessAnalyticViewComponentId.ROLE_SELECTION_GROUP);
   }
 
@@ -243,13 +246,13 @@ public class ProcessesAnalyticsBean {
       ProcessesMonitorUtils
           .updateUserConfig(persistedConfig -> persistedConfig.setWidgetIncludeRunningCase(masterDataBean.isIncludingRunningCases()));
     }
-    refreshDiagramAndStatistic();
+    updateAndRefreshDiagramAndStatistic();
   }
 
   public void onColorChange() {
     colorPickerBean.onColorChange();
     if (!isWidgetMode) {
-      refreshDiagramAndStatistic();
+      updateAndRefreshDiagramAndStatistic();
     }
   }
 
@@ -260,13 +263,13 @@ public class ProcessesAnalyticsBean {
     }
     masterDataBean.setSelectedProcessAnalyser(null);
     onProcessSelect();
-    refreshDiagramAndStatistic();;
+    updateAndRefreshDiagramAndStatistic();;
   }
 
   public void onColorModeChange() {
     colorPickerBean.onColorModeChange();
     if (!isWidgetMode) {
-      refreshDiagramAndStatistic();
+      updateAndRefreshDiagramAndStatistic();
     }
   }
 
@@ -277,12 +280,12 @@ public class ProcessesAnalyticsBean {
       return;
     }
     colorPickerBean.updateColorByKpiType(masterDataBean.getSelectedKpiType());
-    refreshDiagramAndStatistic();
+    updateAndRefreshDiagramAndStatistic();
   }
 
   public void onRoleSelect() {
     if (!isWidgetMode) {
-      refreshDiagramAndStatistic();
+      updateAndRefreshDiagramAndStatistic();
     }
   }
 
@@ -401,5 +404,13 @@ public class ProcessesAnalyticsBean {
 
   public void setFilteredNodes(List<Node> filteredNodes) {
     this.filteredNodes = filteredNodes;
+  }
+
+  public boolean isWidgetMode() {
+    return isWidgetMode;
+  }
+
+  public void setWidgetMode(boolean isWidgetMode) {
+    this.isWidgetMode = isWidgetMode;
   }
 }

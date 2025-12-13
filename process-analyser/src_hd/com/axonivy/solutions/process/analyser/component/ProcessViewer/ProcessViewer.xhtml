@@ -12,7 +12,7 @@
 
 <cc:implementation>
   <c:set var="managedBean" value="#{cc.attrs.managedBean}" />
-  <c:set var="isWidgetMode" value="#{cc.attrs.widgetMode}" />
+  <c:set var="isWidgetMode" value="#{cc.attrs.isWidgetMode}" />
   <h:outputScript name="resources/process-viewer.js" target="head" />
   <f:event listener="#{processViewerBean.init(cc.attrs.selectedProcessAnalyser)}" type="preRenderComponent" />
   <h:panelGroup id="viewer-group" layout="block" styleClass="process-analytic-viewer-container #{isWidgetMode ? '' : 'border-b-05rem'}">

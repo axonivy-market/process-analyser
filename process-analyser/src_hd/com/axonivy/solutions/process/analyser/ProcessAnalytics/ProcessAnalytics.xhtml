@@ -10,7 +10,7 @@
   <ui:composition template="/layouts/frame-10-full-width.xhtml">
     <ui:define name="title">#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Title')}</ui:define>
     <ui:define name="content">
-      <ui:param name="widgetMode" value="#{masterDataBean.widgetMode}" />
+      <ui:param name="widgetMode" value="#{data.isWidgetMode}" />
       <h:outputScript name="resources/html2canvas.min.js" target="head" />
       <h:outputStylesheet library="css" name="process-analyser.css" />
       <h:form id="process-analytics-form"
@@ -33,6 +33,7 @@
           rendered="#{not widgetMode}" />
         <ic:com.axonivy.solutions.process.analyser.component.CustomFilter
           id="custom-filter-panel-group"
+          isWidgetMode="#{widgetMode}"
           managedBean="#{processesAnalyticsBean}" />
         <ic:com.axonivy.solutions.process.analyser.component.ProcessViewer
           id="process-analytic-viewer-panel"
