@@ -53,7 +53,6 @@ public class ProcessesAnalyticsBean {
   private List<Node> filteredNodes;
   private TimeIntervalFilter timeIntervalFilter;
   private ProcessMiningData processMiningData;
-  private String selectedPid;
   private String miningUrl;
   private ContentObject processMiningDataJsonFile;
   private MasterDataBean masterDataBean;
@@ -66,7 +65,11 @@ public class ProcessesAnalyticsBean {
   private void init() {
     initRelatedBeans();
     initDefaultVariableValue();
-    initSelectedValueFromUserProperty();
+    if (isWidgetMode) {
+      masterDataBean.initSelectedValueFromUserProperty();
+      colorPickerBean.initBean(masterDataBean.getSelectedKpiType(), isWidgetMode);
+      updateDiagramAndStatistic();
+    }
   }
 
   private void initRelatedBeans() {
@@ -84,56 +87,6 @@ public class ProcessesAnalyticsBean {
     miningUrl = processMiningDataJsonFile.uri();
     timeIntervalFilter = TimeIntervalFilter.getDefaultFilterSet();
   }
-
-  private void initSelectedValueFromUserProperty() {
-//    ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
-    // Early escapes if not in widget mode
-    if (!isWidgetMode) {
-      return;
-    }
-//    selectedModule = persistedConfig.getWidgetSelectedModule();
-//    avaiableProcesses = ProcessUtils.getAllProcessByModule(this.selectedModule, this.selectedPMV);
-//    isMergeProcessStarts = BooleanUtils.isTrue(persistedConfig.getWidgetMergedProcessStart());
-//    isIncludingRunningCases = BooleanUtils.isTrue(persistedConfig.getWidgetIncludeRunningCase());
-//    String selectedKpiTypeName = persistedConfig.getWidgetSelectedKpi();
-//    String selectedProcessAnalyzerId = persistedConfig.getWidgetSelectedProcessAnalyzer();
-//    if (StringUtils.isNoneBlank(selectedModule, selectedProcessAnalyzerId)) {
-//      selectedProcessAnalyser = initSelectedProcessAnalyser(selectedProcessAnalyzerId);
-//    }
-//    if (StringUtils.isNotBlank(selectedKpiTypeName)) {
-//      selectedKpiType = KpiType.valueOf(selectedKpiTypeName);
-//    }
-    colorPickerBean.initBean(masterDataBean.getSelectedKpiType(), isWidgetMode);
-    updateDiagramAndStatistic();
-  }
-//
-//  private ProcessAnalyser initSelectedProcessAnalyser(String selectedProcessAnalyzerId) {
-//    ProcessAnalyser persistedProcessAnalyser = new ProcessAnalyser();
-//    String[] parts = selectedProcessAnalyzerId.split(HYPHEN_SIGN, 2);
-//    if (parts.length >= 1) {
-//
-//      String selectedProcessId = parts[0];
-//      var selectedProcess = avaiableProcesses.stream()
-//          .filter(process -> Strings.CS.equals(process.getId(), selectedProcessId))
-//          .findAny()
-//          .orElse(null);
-//
-//      if (selectedProcess == null) {
-//        return null;
-//      }
-//
-//      persistedProcessAnalyser.setProcess(selectedProcess);
-//      String selectedStartPid = parts.length == 2 ? parts[1] : StringUtils.EMPTY;
-//      if (StringUtils.isBlank(selectedStartPid)) {
-//        return persistedProcessAnalyser;
-//      }
-//      var selectedProcessStart = selectedProcess.getStartElements().stream()
-//          .filter(start -> Strings.CS.equals(start.getPid(), selectedStartPid)).findAny().orElse(null);
-//
-//      persistedProcessAnalyser.setStartElement(selectedProcessStart);
-//    }
-//    return persistedProcessAnalyser;
-//  }
 
   /**
    * Update and refresh section
@@ -214,31 +167,34 @@ public class ProcessesAnalyticsBean {
    */
   public void onModuleSelect() {
     masterDataBean.handleModuleChange();
-    String processSelectionGroupId = isWidgetMode ? ProcessAnalyticViewComponentId.WIDGET_PROCESS_SELECTION_GROUP : ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP;
+    String processSelectionGroupId, pmvGroupId, roleSelectionGroupId;
     if (!isWidgetMode) {
       refreshAnalyzedData();
+      processSelectionGroupId = ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP;
+      pmvGroupId = ProcessAnalyticViewComponentId.WIDGET_PMV_GROUP;
+      roleSelectionGroupId = ProcessAnalyticViewComponentId.ROLE_SELECTION_GROUP;
+    } else {
+      processSelectionGroupId = ProcessAnalyticViewComponentId.WIDGET_PROCESS_SELECTION_GROUP;
+      pmvGroupId = ProcessAnalyticViewComponentId.WIDGET_PMV_GROUP;
+      roleSelectionGroupId = ProcessAnalyticViewComponentId.WIDGET_ROLE_SELECTION_GROUP;
     }
-    String pmvGroupId = isWidgetMode ? ProcessAnalyticViewComponentId.WIDGET_PMV_GROUP : ProcessAnalyticViewComponentId.PMV_GROUP;
-    String roleSelectionGroupId = isWidgetMode ? ProcessAnalyticViewComponentId.WIDGET_ROLE_SELECTION_GROUP : ProcessAnalyticViewComponentId.ROLE_SELECTION_GROUP;
     PF.current().ajax().update(processSelectionGroupId, pmvGroupId, roleSelectionGroupId);
   }
 
   public void onPmvSelect() {
     masterDataBean.handlePmvChange();
     if (!isWidgetMode) {
-      refreshAnalyzedData();
+    refreshAnalyzedData();
     }
     PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP, ProcessAnalyticViewComponentId.ROLE_SELECTION_GROUP);
   }
 
   public void onProcessSelect() {
-    masterDataBean.setSelectedRole(StringUtils.EMPTY);
     if (isWidgetMode) {
       masterDataBean.handleProcessChangeWidgetMode();
       return;
     }
     updateAndRefreshDiagramAndStatistic();
-    PF.current().ajax().update(ProcessAnalyticViewComponentId.ROLE_SELECTION_GROUP);
   }
 
   public void onChangeIncludingRunningCases() {
@@ -263,7 +219,6 @@ public class ProcessesAnalyticsBean {
     }
     masterDataBean.setSelectedProcessAnalyser(null);
     onProcessSelect();
-    updateAndRefreshDiagramAndStatistic();;
   }
 
   public void onColorModeChange() {
@@ -303,7 +258,6 @@ public class ProcessesAnalyticsBean {
       resetStatisticValue();
       return;
     }
-    selectedPid = selectedProcessAnalyser.getProcess().getId();
     initializingProcessMiningData();
     if (masterDataBean.isStatisticReportRenderable()) {
       List<ICase> cases = new ArrayList<>();
@@ -335,7 +289,7 @@ public class ProcessesAnalyticsBean {
         processMiningData.setNumberOfInstances(cases.size());
       }
     }
-    updateDataTableWithNodesPrefix(ProcessUtils.getProcessPidFromElement(selectedPid));
+    updateDataTableWithNodesPrefix(ProcessUtils.getProcessPidFromElement(selectedProcessAnalyser.getProcess().getId()));
   }
 
   private void initializingProcessMiningData() {

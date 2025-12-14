@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -56,34 +57,22 @@ public class ProcessesMonitorUtils {
     if (Objects.isNull(processAnalyser)) {
       return Collections.emptyList();
     }
-    return (processAnalyser.getStartElement() == null) ? filterForMergedStarts(processAnalyser, analysisType, tasks)
-        : filterForSingleStart(processAnalyser, analysisType, tasks);
-  }
-
-  private static List<Node> filterForMergedStarts(ProcessAnalyser processAnalyser, KpiType analysisType,
-      List<ITask> tasks) {
-    var pmv = processAnalyser.getProcess().getPmv();
-    String processId = processAnalyser.getProcess().getId();
-    List<ProcessElement> processElements = ProcessUtils.getProcessElementsFrom(processId, pmv);
-
+    List<ProcessElement> processElements = getProcessElements(processAnalyser);
     if (isDuration(analysisType)) {
       processElements = ProcessUtils.getTaskStart(processElements);
     }
     return buildNodesAndApplyKpi(processElements, analysisType, tasks);
   }
 
-  private static List<Node> filterForSingleStart(ProcessAnalyser processAnalyser, KpiType analysisType,
-      List<ITask> tasks) {
-    String startElementPID = processAnalyser.getStartElement().getPid();
-    String processId = processAnalyser.getProcess().getId();
-    var pmv = processAnalyser.getProcess().getPmv();
-    List<ProcessElement> processElements = collectProcessElementForProcess(pmv, processId, startElementPID);
-
-    if (isDuration(analysisType)) {
-      processElements = ProcessUtils.getTaskStart(processElements);
+  private static List<ProcessElement> getProcessElements(ProcessAnalyser processAnalyser) {
+    if (Objects.isNull(processAnalyser)) {
+      return Collections.emptyList();
     }
-
-    return buildNodesAndApplyKpi(processElements, analysisType, tasks);
+    var pmv = processAnalyser.getProcess().getPmv();
+    String processId = processAnalyser.getProcess().getId();
+    var mergeProcessStartOptional = Optional.ofNullable(processAnalyser.getStartElement());
+    return mergeProcessStartOptional.isPresent() ? ProcessUtils.getProcessElementsFrom(processId, pmv)
+        : collectProcessElementForProcess(pmv, processId, mergeProcessStartOptional.get().getPid());
   }
 
   private static List<Node> buildNodesAndApplyKpi(List<ProcessElement> processElements, KpiType analysisType,
