@@ -217,6 +217,7 @@ public class ProcessesAnalyticsBean {
       ProcessesMonitorUtils
           .updateUserConfig(persistedConfig -> persistedConfig.setWidgetMergedProcessStart(masterDataBean.isMergeProcessStarts()));
     }
+    resetStatisticValue();
     masterDataBean.setSelectedProcessAnalyser(null);
     onProcessSelect();
   }

@@ -38,6 +38,7 @@
         <ic:com.axonivy.solutions.process.analyser.component.ProcessViewer
           id="process-analytic-viewer-panel"
           managedBean="#{processesAnalyticsBean}"
+          kpiType="#{masterDataBean.selectedKpiType}"
           isWidgetMode="#{widgetMode}"
           selectedProcessAnalyser="#{masterDataBean.selectedProcessAnalyser}"
           componentsToUpdate="@this" />
