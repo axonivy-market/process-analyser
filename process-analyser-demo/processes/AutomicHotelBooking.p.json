@@ -75,7 +75,6 @@
             "activator" : "SYSTEM"
           },
           "delay" : "new Duration(0, 0, 0, 0, 0, 2)"
-          }
         }
       },
       "visual" : {
@@ -95,7 +94,6 @@
             "activator" : "SYSTEM"
           },
           "delay" : "new Duration(0, 0, 0, 0, 0, 3)"
-          }
         }
       },
       "visual" : {
@@ -221,7 +219,6 @@
             "activator" : "SYSTEM"
           },
           "delay" : "new Duration(0, 0, 0, 0, 0, 4)"
-          }
         }
       },
       "visual" : {
