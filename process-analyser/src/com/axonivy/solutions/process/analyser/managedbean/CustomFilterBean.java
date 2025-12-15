@@ -61,6 +61,10 @@ public class CustomFilterBean implements Serializable {
         Arrays.asList(numberValue.get(0), numberValue.get(1)));
   }
 
+  public boolean isStringOrTextCustomFieldType(CustomFieldType customFieldType) {
+    return CustomFieldType.STRING == customFieldType || CustomFieldType.TEXT == customFieldType;
+  }
+
   public void updateCustomFilterPanel() {
     List<String> groupIdsToUpdate =
         List.of(ProcessAnalyticViewComponentId.CUSTOM_FILTER_GROUP, ProcessAnalyticViewComponentId.CUSTOM_FILTER_OPTIONS_GROUP);
@@ -87,6 +91,7 @@ public class CustomFilterBean implements Serializable {
       }
     });
     setFilterDropdownVisible(!selectedCustomFieldNames.isEmpty());
+    updateCustomFilterPanel();
   }
 
   public void resetCustomFieldFilterValues() {
@@ -140,5 +145,21 @@ public class CustomFilterBean implements Serializable {
 
   public void setCustomFieldsByType(List<CustomFieldFilter> customFieldsByType) {
     this.customFieldsByType = customFieldsByType;
+  }
+
+  public double getMinValue() {
+    return minValue;
+  }
+
+  public void setMinValue(double minValue) {
+    this.minValue = minValue;
+  }
+
+  public double getMaxValue() {
+    return maxValue;
+  }
+
+  public void setMaxValue(double maxValue) {
+    this.maxValue = maxValue;
   }
 }
