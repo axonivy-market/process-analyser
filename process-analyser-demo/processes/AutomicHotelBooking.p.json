@@ -72,7 +72,9 @@
       "config" : {
         "task" : {
           "responsible" : {
-            "activator" : "AviationPlanner"
+            "activator" : "SYSTEM"
+          },
+          "delay" : "new Duration(0, 0, 0, 0, 0, 2)"
           }
         }
       },
@@ -90,7 +92,9 @@
       "config" : {
         "task" : {
           "responsible" : {
-            "activator" : "AviationPlanner"
+            "activator" : "SYSTEM"
+          },
+          "delay" : "new Duration(0, 0, 0, 0, 0, 3)"
           }
         }
       },
@@ -108,7 +112,7 @@
       "config" : {
         "task" : {
           "responsible" : {
-            "activator" : "AviationPlanner"
+            "activator" : "SYSTEM"
           }
         }
       },
@@ -126,7 +130,7 @@
       "config" : {
         "task" : {
           "responsible" : {
-            "activator" : "Operation"
+            "activator" : "SYSTEM"
           }
         }
       },
@@ -178,7 +182,7 @@
       "config" : {
         "task" : {
           "responsible" : {
-            "activator" : "Operation"
+            "activator" : "SYSTEM"
           }
         }
       },
@@ -214,7 +218,9 @@
         "task" : {
           "name" : "Process Booking",
           "responsible" : {
-            "activator" : "Operation"
+            "activator" : "SYSTEM"
+          },
+          "delay" : "new Duration(0, 0, 0, 0, 0, 4)"
           }
         }
       },
