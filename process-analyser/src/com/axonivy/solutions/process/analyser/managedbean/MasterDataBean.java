@@ -106,7 +106,6 @@ public class MasterDataBean implements Serializable {
       String selectedProcessId = parts[0];
       var selectedProcess =
           avaiableProcesses.stream().filter(process -> Strings.CS.equals(process.getId(), selectedProcessId)).findAny().orElse(null);
-      Ivy.log().fatal(selectedProcess);
       if (selectedProcess == null) {
         return null;
       }
