@@ -71,8 +71,8 @@ public class ProcessesMonitorUtils {
     var pmv = processAnalyser.getProcess().getPmv();
     String processId = processAnalyser.getProcess().getId();
     var mergeProcessStartOptional = Optional.ofNullable(processAnalyser.getStartElement());
-    return mergeProcessStartOptional.isPresent() ? ProcessUtils.getProcessElementsFrom(processId, pmv)
-        : collectProcessElementForProcess(pmv, processId, mergeProcessStartOptional.get().getPid());
+    return mergeProcessStartOptional.isPresent() ? collectProcessElementForProcess(pmv, processId, mergeProcessStartOptional.get().getPid())
+        : ProcessUtils.getProcessElementsFrom(processId, pmv);
   }
 
   private static List<Node> buildNodesAndApplyKpi(List<ProcessElement> processElements, KpiType analysisType,

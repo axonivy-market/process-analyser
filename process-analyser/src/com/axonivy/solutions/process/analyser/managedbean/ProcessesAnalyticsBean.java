@@ -168,15 +168,15 @@ public class ProcessesAnalyticsBean {
   public void onModuleSelect() {
     masterDataBean.handleModuleChange();
     String processSelectionGroupId, pmvGroupId, roleSelectionGroupId;
-    if (!isWidgetMode) {
-      refreshAnalyzedData();
-      processSelectionGroupId = ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP;
-      pmvGroupId = ProcessAnalyticViewComponentId.WIDGET_PMV_GROUP;
-      roleSelectionGroupId = ProcessAnalyticViewComponentId.ROLE_SELECTION_GROUP;
-    } else {
+    if (isWidgetMode) {
       processSelectionGroupId = ProcessAnalyticViewComponentId.WIDGET_PROCESS_SELECTION_GROUP;
       pmvGroupId = ProcessAnalyticViewComponentId.WIDGET_PMV_GROUP;
       roleSelectionGroupId = ProcessAnalyticViewComponentId.WIDGET_ROLE_SELECTION_GROUP;
+    } else {
+      refreshAnalyzedData();
+      processSelectionGroupId = ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP;
+      pmvGroupId = ProcessAnalyticViewComponentId.PMV_GROUP;
+      roleSelectionGroupId = ProcessAnalyticViewComponentId.ROLE_SELECTION_GROUP;
     }
     PF.current().ajax().update(processSelectionGroupId, pmvGroupId, roleSelectionGroupId);
   }
