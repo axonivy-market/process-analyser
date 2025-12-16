@@ -16,4 +16,4 @@ jobs:
   build:
     uses: axonivy-market/github-workflows/.github/workflows/ci.yml@v6
     with:
-      maven-args: -Divy.engine.version=12.0.10
+      mvnArgs: "-Divy.engine.version=12.0.10"
