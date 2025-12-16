@@ -10,6 +10,8 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PF;
 
 import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
@@ -40,8 +42,9 @@ public class CustomFilterBean implements Serializable {
   }
 
   public double getMinValue(String fieldName) {
-    if (getDoubleValueFromCustomNumberField(fieldName).count() > 1) {
-      return getDoubleValueFromCustomNumberField(fieldName).map(value -> Math.floor(value * 100) / 100).min().orElse(0);
+    DoubleStream defaultValue = getDoubleValueFromCustomNumberField(fieldName);
+    if (defaultValue.count() > 1) {
+      return defaultValue.map(value -> Math.floor(value * 100) / 100).min().orElse(0);
     }
     return 0;
   }
@@ -52,13 +55,17 @@ public class CustomFilterBean implements Serializable {
 
   private DoubleStream getDoubleValueFromCustomNumberField(String fieldName) {
     return customFieldsByType.stream().filter(entry -> entry.getCustomFieldMeta().name().equals(fieldName))
-        .flatMap(entry -> entry.getAvailableCustomFieldValues().stream()).filter(Number.class::isInstance)
+        .flatMap(entry -> entry.getAvailableCustomFieldValues().stream())
+        .filter(Number.class::isInstance)
         .mapToDouble(value -> Number.class.cast(value).doubleValue());
   }
 
-  public String getRangeDisplayForNumberType(List<Double> numberValue) {
+  public String getRangeDisplayForNumberType(List<Double> numberValues) {
+    if (CollectionUtils.isEmpty(numberValues)) {
+      return StringUtils.EMPTY;
+    }
     return Ivy.cms().co("/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/NumberRange",
-        Arrays.asList(numberValue.get(0), numberValue.get(1)));
+        Arrays.asList(numberValues.getFirst(), numberValues.getLast()));
   }
 
   public boolean isStringOrTextCustomFieldType(CustomFieldType customFieldType) {

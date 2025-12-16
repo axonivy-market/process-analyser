@@ -84,11 +84,11 @@ public class MasterDataBean implements Serializable {
     selectedRole =
         availableRoles.stream().filter(role -> Strings.CS.equals(persistedConfig.getWidgetSelectedRole(), role)).findAny().orElse(null);
     selectedModule = persistedConfig.getWidgetSelectedModule();
-    avaiableProcesses = ProcessUtils.getAllProcessByModule(this.selectedModule, this.selectedPMV);
     isMergeProcessStarts = BooleanUtils.isTrue(persistedConfig.getWidgetMergedProcessStart());
     isIncludingRunningCases = BooleanUtils.isTrue(persistedConfig.getWidgetIncludeRunningCase());
     selectedPMV = getAvailabelPMV().stream().filter(pmv -> Strings.CS.equals(pmv.getVersionName(), persistedConfig.getWidgetSelectedPmv()))
         .findAny().orElse(null);
+    avaiableProcesses = ProcessUtils.getAllProcessByModule(selectedModule, selectedPMV);
     String selectedKpiTypeName = persistedConfig.getWidgetSelectedKpi();
     String selectedProcessAnalyzerId = persistedConfig.getWidgetSelectedProcessAnalyzer();
     if (StringUtils.isNoneBlank(selectedModule, selectedProcessAnalyzerId)) {
