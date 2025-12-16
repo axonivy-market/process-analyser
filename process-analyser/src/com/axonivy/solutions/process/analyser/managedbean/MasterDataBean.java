@@ -30,16 +30,17 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.primefaces.PF;
 
 import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
 import com.axonivy.solutions.process.analyser.bo.ProcessViewerConfig;
+import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
 import com.axonivy.solutions.process.analyser.core.bo.Process;
 import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 import com.axonivy.solutions.process.analyser.core.constants.CoreConstants;
 import com.axonivy.solutions.process.analyser.core.enums.StartElementType;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
-import com.axonivy.solutions.process.analyser.utils.FacesContexts;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 
 import ch.ivyteam.ivy.application.ActivityState;
@@ -67,19 +68,28 @@ public class MasterDataBean implements Serializable {
   private boolean isWidgetMode;
   private String selectedRole;
   private boolean isIncludingRunningCases;
+  private String processSelectionGroupId;
+  private String pmvGroupId;
+  private String roleSelectionGroupId;
 
   @PostConstruct
   public void init() {
     isMergeProcessStarts = true;
-    var isWidgetModeValue = FacesContexts.evaluateValueExpression("#{data.isWidgetMode}", Boolean.class);
-    isWidgetMode = BooleanUtils.isTrue(isWidgetModeValue);
+    isWidgetMode = false;
     initKpiTypes();
     availableModules = ProcessUtils.getAllAvaiableModule();
     availableRoles = Ivy.security().roles().all().stream().map(IRole::getName).collect(Collectors.toSet());
+    availableRoles = Set.of();
+    processSelectionGroupId = ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP;
+    pmvGroupId = ProcessAnalyticViewComponentId.PMV_GROUP;
+    roleSelectionGroupId = ProcessAnalyticViewComponentId.ROLE_SELECTION_GROUP; 
   }
 
   public void initSelectedValueFromUserProperty() {
     isWidgetMode = true;
+    processSelectionGroupId = ProcessAnalyticViewComponentId.WIDGET_PROCESS_SELECTION_GROUP;
+    pmvGroupId = ProcessAnalyticViewComponentId.WIDGET_PMV_GROUP;
+    roleSelectionGroupId = ProcessAnalyticViewComponentId.WIDGET_ROLE_SELECTION_GROUP;
     ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
     selectedRole =
         availableRoles.stream().filter(role -> Strings.CS.equals(persistedConfig.getWidgetSelectedRole(), role)).findAny().orElse(null);
@@ -219,22 +229,21 @@ public class MasterDataBean implements Serializable {
   }
 
   public List<IProcessModelVersion> getAvailabelPMV() {
-    Predicate<ILibrary> filterReleasedAndActivePmv = library -> {
-      IProcessModelVersion pmv = library.getProcessModelVersion();
-      ReleaseState pmvState = pmv.getReleaseState();
-      return pmv.getVersionName().contains(selectedModule)
-          && (pmvState == ReleaseState.ARCHIVED || pmvState == ReleaseState.RELEASED || pmvState == ReleaseState.DEPRECATED);
-    };
-
     if (StringUtils.isEmpty(selectedModule)) {
       return List.of();
     }
+    Predicate<ILibrary> filterReleasedAndActivePmv = library -> {
+      IProcessModelVersion pmv = library.getProcessModelVersion();
+      ReleaseState pmvState = pmv.getReleaseState();
+      return pmv.getVersionName().contains(selectedModule) && (pmvState == ReleaseState.ARCHIVED
+          || pmvState == ReleaseState.RELEASED || pmvState == ReleaseState.DEPRECATED);
+    };
 
-    return IApplication.current().getLibraries().stream().filter(filterReleasedAndActivePmv).map(ILibrary::getProcessModelVersion).toList();
+    return IApplication.current().getLibraries().stream().filter(filterReleasedAndActivePmv)
+        .map(ILibrary::getProcessModelVersion).toList();
   }
 
   private void resetDefaultPMV() {
-    selectedProcessAnalyser = null;
     List<IProcessModelVersion> pmvs = getAvailabelPMV().stream()
         .filter(version -> version.getActivityState() == ActivityState.ACTIVE && version.getReleaseState() == ReleaseState.RELEASED)
         .sorted(Comparator.comparing(IProcessModelVersion::getLastChangeDate).reversed()).toList();
@@ -246,29 +255,53 @@ public class MasterDataBean implements Serializable {
   }
 
   public void handleModuleChange() {
-    resetDefaultPMV();
     if (isWidgetMode) {
-      ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
-      persistedConfig.setWidgetSelectedModule(selectedModule);
-      persistedConfig.setWidgetSelectedProcessAnalyzer(null);
-      persistedConfig.setWidgetSelectedPmv(null);
-      ProcessesMonitorUtils.updateUserProperty(persistedConfig);
+      ProcessesMonitorUtils.updateUserConfig(persistedConfig -> persistedConfig.setWidgetSelectedModule(selectedModule));
     }
-    avaiableProcesses = ProcessUtils.getAllProcessByModule(selectedModule, selectedPMV);
+    resetDefaultPMV();
+    handlePmvChange();
+    PF.current().ajax().update(pmvGroupId);
   }
 
-  public void handleProcessChangeWidgetMode() {
-    ProcessesMonitorUtils
-        .updateUserConfig(persistedConfig -> persistedConfig.setWidgetSelectedProcessAnalyzer(getWidgetSelectedProcessAnalyzerKey()));
-    
+  public void handleProcessChange() {
+    if (isWidgetMode) {
+      ProcessesMonitorUtils.updateUserConfig(
+          persistedConfig -> persistedConfig.setWidgetSelectedProcessAnalyzer(getWidgetSelectedProcessAnalyzerKey()));
+    }
+    selectedRole = null;
+    availableRoles = ProcessesMonitorUtils.getActivatorRoleNameFromProcess(selectedProcessAnalyser);
+    handleRoleChange();
+    PF.current().ajax().update(roleSelectionGroupId);
   }
 
   public void handlePmvChange() {
-    selectedProcessAnalyser = null;
-    avaiableProcesses = ObjectUtils.isEmpty(selectedPMV) ? List.of() : ProcessUtils.getAllProcessByModule(selectedModule, selectedPMV);
     if (isWidgetMode) {
       ProcessesMonitorUtils.updateUserConfig(persistedConfig -> persistedConfig.setWidgetSelectedPmv(selectedPMV.getVersionName()));
-      ProcessesMonitorUtils.updateUserConfig(persistedConfig -> persistedConfig.setWidgetSelectedProcessAnalyzer(null));
+    }
+    selectedProcessAnalyser = null;
+    avaiableProcesses = ProcessUtils.getAllProcessByModule(selectedModule, selectedPMV);
+    handleProcessChange();
+    PF.current().ajax().update(processSelectionGroupId);
+  }
+
+  public void handleMergeProcessStartsChange() {
+    selectedProcessAnalyser = null;
+    if (isWidgetMode) {
+      ProcessesMonitorUtils
+          .updateUserConfig(persistedConfig -> persistedConfig.setWidgetMergedProcessStart(isMergeProcessStarts));
+    }
+  }
+
+  public void handleKpiTypeChange() {
+    if (isWidgetMode) {
+      ProcessesMonitorUtils
+          .updateUserConfig(persistedConfig -> persistedConfig.setWidgetSelectedKpi(selectedKpiType.name()));
+    }
+  }
+
+  public void handleRoleChange() {
+    if (isWidgetMode) {
+      ProcessesMonitorUtils.updateUserConfig(persistedConfig -> persistedConfig.setWidgetSelectedRole(selectedRole));
     }
   }
 

@@ -64,6 +64,12 @@ public class ProcessesMonitorUtils {
     return buildNodesAndApplyKpi(processElements, analysisType, tasks);
   }
 
+  public static Set<String> getActivatorRoleNameFromProcess(ProcessAnalyser processAnalyser) {
+    List<ProcessElement> elementsInProcess = getProcessElements(processAnalyser);
+    return elementsInProcess.stream().flatMap(element -> ProcessUtils.getTaskActivatorAsRoleName(element).stream())
+        .collect(Collectors.toSet());
+  };
+
   private static List<ProcessElement> getProcessElements(ProcessAnalyser processAnalyser) {
     if (Objects.isNull(processAnalyser)) {
       return Collections.emptyList();

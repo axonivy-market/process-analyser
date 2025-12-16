@@ -167,34 +167,23 @@ public class ProcessesAnalyticsBean {
    */
   public void onModuleSelect() {
     masterDataBean.handleModuleChange();
-    String processSelectionGroupId, pmvGroupId, roleSelectionGroupId;
-    if (isWidgetMode) {
-      processSelectionGroupId = ProcessAnalyticViewComponentId.WIDGET_PROCESS_SELECTION_GROUP;
-      pmvGroupId = ProcessAnalyticViewComponentId.WIDGET_PMV_GROUP;
-      roleSelectionGroupId = ProcessAnalyticViewComponentId.WIDGET_ROLE_SELECTION_GROUP;
-    } else {
+    if (!isWidgetMode) {
       refreshAnalyzedData();
-      processSelectionGroupId = ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP;
-      pmvGroupId = ProcessAnalyticViewComponentId.PMV_GROUP;
-      roleSelectionGroupId = ProcessAnalyticViewComponentId.ROLE_SELECTION_GROUP;
     }
-    PF.current().ajax().update(processSelectionGroupId, pmvGroupId, roleSelectionGroupId);
   }
 
   public void onPmvSelect() {
     masterDataBean.handlePmvChange();
     if (!isWidgetMode) {
-    refreshAnalyzedData();
+      refreshAnalyzedData();
     }
-    PF.current().ajax().update(ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP, ProcessAnalyticViewComponentId.ROLE_SELECTION_GROUP);
   }
 
   public void onProcessSelect() {
-    if (isWidgetMode) {
-      masterDataBean.handleProcessChangeWidgetMode();
-      return;
+    masterDataBean.handleProcessChange();
+    if (!isWidgetMode) {
+      updateAndRefreshDiagramAndStatistic();
     }
-    updateAndRefreshDiagramAndStatistic();
   }
 
   public void onChangeIncludingRunningCases() {
@@ -213,12 +202,8 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onChangeMergeProcessStarts() {
-    if (isWidgetMode) {
-      ProcessesMonitorUtils
-          .updateUserConfig(persistedConfig -> persistedConfig.setWidgetMergedProcessStart(masterDataBean.isMergeProcessStarts()));
-    }
+    masterDataBean.handleMergeProcessStartsChange();
     resetStatisticValue();
-    masterDataBean.setSelectedProcessAnalyser(null);
     onProcessSelect();
   }
 
@@ -230,13 +215,11 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onKpiTypeSelect() {
-    if (isWidgetMode) {
-      ProcessesMonitorUtils
-          .updateUserConfig(persistedConfig -> persistedConfig.setWidgetSelectedKpi(masterDataBean.getSelectedKpiType().name()));
-      return;
+    masterDataBean.handleKpiTypeChange();
+    if (!isWidgetMode) {
+      colorPickerBean.updateColorByKpiType(masterDataBean.getSelectedKpiType());
+      updateAndRefreshDiagramAndStatistic();      
     }
-    colorPickerBean.updateColorByKpiType(masterDataBean.getSelectedKpiType());
-    updateAndRefreshDiagramAndStatistic();
   }
 
   public void onRoleSelect() {
