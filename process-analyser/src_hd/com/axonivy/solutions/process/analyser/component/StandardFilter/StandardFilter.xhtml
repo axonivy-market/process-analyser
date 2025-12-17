@@ -128,7 +128,7 @@
             listener="#{managedBean.onRoleSelect}" />
         </p:selectOneMenu>
       </h:panelGroup>
-      <h:panelGroup id="time-interval-group" styleClass="#{isWidgetMode ? 'px-2' : 'pr-0 pl-1'} field col-9 grid formgrid align-items-start m-0 field"
+      <h:panelGroup id="time-interval-group" styleClass="#{isWidgetMode ? 'px-0 col-12' : 'pr-0 pl-1 col-9'} field grid formgrid align-items-start m-0 field"
         layout="block">
         <ui:include src="TimeIntervalFilter.xhtml">
           <ui:param name="isWidgetMode" value="#{isWidgetMode}" />
