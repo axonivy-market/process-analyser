@@ -43,7 +43,9 @@ import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.cm.ContentObject;
 import ch.ivyteam.ivy.cm.exec.ContentManagement;
+import ch.ivyteam.ivy.security.ISecurityConstants;
 import ch.ivyteam.ivy.workflow.ICase;
+import ch.ivyteam.ivy.workflow.ITask;
 
 @ManagedBean
 @ViewScoped
@@ -235,6 +237,11 @@ public class ProcessesAnalyticsBean {
     return customFilterBean.getCustomFieldsByType();
   }
 
+  private boolean isTaskMatchRoleFilter(String taskActivatorName, String roleName) {
+    return StringUtils.isBlank(roleName) || Strings.CS.equals(taskActivatorName, roleName)
+        || (Strings.CS.equals(ISecurityConstants.TOP_LEVEL_ROLE_NAME, roleName) && taskActivatorName == null);
+  }
+
   private void loadNodes() {
     analyzedNode = new ArrayList<>();
     var selectedProcessAnalyser = masterDataBean.getSelectedProcessAnalyser();
@@ -262,15 +269,14 @@ public class ProcessesAnalyticsBean {
             customFilterBean.getSelectedCustomFilters(), shouldIncludeRunningCasesByKpi);
       }
       if (CollectionUtils.isNotEmpty(cases)) {
-        var role = masterDataBean.getSelectedRole();
-        boolean isRoleFocused = StringUtils.isNotBlank(role);
-        var tasks = cases.stream().flatMap(ivyCase -> ivyCase.tasks().all().stream())
-            .filter(task -> !isRoleFocused || Strings.CS.equals(task.getActivatorName(), role)).toList();
-        customFilterBean
-            .setCustomFieldsByType(IvyTaskOccurrenceService.getCaseAndTaskCustomFields(tasks, customFilterBean.getCustomFieldsByType()));
+        String role = masterDataBean.getSelectedRole();
+        List<ITask> tasks = cases.stream().flatMap(ivyCase -> ivyCase.tasks().all().stream())
+            .filter(task -> isTaskMatchRoleFilter(task.getActivatorName(), role)).toList();
+        customFilterBean.setCustomFieldsByType(
+            IvyTaskOccurrenceService.getCaseAndTaskCustomFields(tasks, customFilterBean.getCustomFieldsByType()));
         analyzedNode = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(selectedProcessAnalyser,
             masterDataBean.getSelectedKpiType(), tasks);
-        if (isRoleFocused) {
+        if (StringUtils.isNotBlank(role)) {
           analyzedNode = analyzedNode.stream().filter(node -> node.getFrequency() != 0).collect(Collectors.toList());
         }
         processMiningData.setNodes(analyzedNode);
