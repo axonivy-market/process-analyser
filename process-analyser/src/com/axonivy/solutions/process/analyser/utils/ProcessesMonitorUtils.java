@@ -77,7 +77,8 @@ public class ProcessesMonitorUtils {
     var pmv = processAnalyser.getProcess().getPmv();
     String processId = processAnalyser.getProcess().getId();
     var mergeProcessStartOptional = Optional.ofNullable(processAnalyser.getStartElement());
-    return mergeProcessStartOptional.isPresent() ? collectProcessElementForProcess(pmv, processId, mergeProcessStartOptional.get().getPid())
+    return mergeProcessStartOptional.isPresent()
+        ? collectProcessElementForProcess(pmv, processId, mergeProcessStartOptional.get().getPid())
         : ProcessUtils.getProcessElementsFrom(processId, pmv);
   }
 

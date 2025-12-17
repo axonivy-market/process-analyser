@@ -263,12 +263,16 @@ public class ProcessesAnalyticsBean {
       }
       if (CollectionUtils.isNotEmpty(cases)) {
         var role = masterDataBean.getSelectedRole();
+        boolean isRoleFocused = StringUtils.isNotBlank(role);
         var tasks = cases.stream().flatMap(ivyCase -> ivyCase.tasks().all().stream())
-            .filter(task -> StringUtils.isBlank(role) || Strings.CS.equals(task.getActivatorName(), role)).toList();
+            .filter(task -> !isRoleFocused || Strings.CS.equals(task.getActivatorName(), role)).toList();
         customFilterBean
             .setCustomFieldsByType(IvyTaskOccurrenceService.getCaseAndTaskCustomFields(tasks, customFilterBean.getCustomFieldsByType()));
         analyzedNode = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(selectedProcessAnalyser,
             masterDataBean.getSelectedKpiType(), tasks);
+        if (isRoleFocused) {
+          analyzedNode = analyzedNode.stream().filter(node -> node.getFrequency() != 0).collect(Collectors.toList());
+        }
         processMiningData.setNodes(analyzedNode);
         processMiningData.setNumberOfInstances(cases.size());
       }
