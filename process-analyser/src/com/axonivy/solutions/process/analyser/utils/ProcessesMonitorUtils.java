@@ -383,11 +383,11 @@ public class ProcessesMonitorUtils {
     return Ivy.session().has().role(AnalyserConstants.PROCESS_ANALYST_ROLE);
   }
 
-  public static ProcessAnalyser mappingProcessAnalyzerByProcesses(List<Process> processElements,
+  public static ProcessAnalyser mappingProcessAnalyzerByProcesses(List<Process> processes,
       boolean isMergeProcessStarts, String processKeyId) {
     String[] data = processKeyId.split(KEY_SEPARATOR);
-    var foundProcess = processElements.stream()
-        .filter(element -> element.getId().equals(data[1]))
+    var foundProcess = processes.stream()
+        .filter(process -> process.getId().equals(data[1]))
         .findAny()
         .orElse(null);
 
