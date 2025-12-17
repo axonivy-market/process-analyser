@@ -19,7 +19,10 @@ import static com.axonivy.solutions.process.analyser.core.enums.StartElementType
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -40,6 +43,8 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.primefaces.PF;
+import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.TreeNode;
 
 import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
 import com.axonivy.solutions.process.analyser.bo.Node;
@@ -84,6 +89,7 @@ public class ProcessesAnalyticsBean {
   private List<Node> nodes;
   private List<Node> analyzedNode;
   private List<Node> filteredNodes;
+  private TreeNode<Object> filteredNodesTree;
   private TimeIntervalFilter timeIntervalFilter;
   private ProcessMiningData processMiningData;
   private String selectedPid;
@@ -121,6 +127,7 @@ public class ProcessesAnalyticsBean {
     isWidgetMode = BooleanUtils.isTrue(isWidgetModeValue);
     isMergeProcessStarts = true;
     nodes = new ArrayList<>();
+    filteredNodesTree = new DefaultTreeNode<Object>("root", null);
     processMiningDataJsonFile = ContentManagement.cms(IApplication.current()).root().child()
         .folder(PROCESS_ANALYSER_CMS_PATH).child().file(DATA_CMS_PATH, JSON_EXTENSION);
     miningUrl = processMiningDataJsonFile.uri();
@@ -409,6 +416,7 @@ public class ProcessesAnalyticsBean {
     resetCustomFieldFilterValues();
     processMiningData = null;
     nodes = new ArrayList<>();
+    filteredNodesTree = new DefaultTreeNode<Object>("root", null);
     PF.current().ajax().update(ProcessAnalyticViewComponentId.getDiagramAndStatisticComponentIds());
   }
 
@@ -630,6 +638,77 @@ public class ProcessesAnalyticsBean {
           .filter(node -> node.getType() != NodeType.ARROW && avaibleTaskIds.contains(node.getId()))
           .collect(Collectors.toList());
     }
+    filteredNodesTree = buildTreeFromNodes(filteredNodes);
+  }
+
+  private TreeNode<Object> buildTreeFromNodes(List<Node> flatNodes) {
+    var root = new DefaultTreeNode<Object>("root", null);
+    if (CollectionUtils.isEmpty(flatNodes)) {
+      return root;
+    }
+
+    Map<String, Node> nodesById = flatNodes.stream().collect(Collectors.toMap(Node::getId, n -> n));
+    Map<String, TreeNode<Object>> treeNodesById = new HashMap<>();
+    treeNodesById.put("root", root);
+    Set<String> processedNodeIds = new HashSet<>();
+    
+    for (Node node : flatNodes) {
+      if (!processedNodeIds.contains(node.getId())) {
+        TreeNode<Object> parentTreeNode = findOrCreateParentTreeNode(node, nodesById, treeNodesById, flatNodes, processedNodeIds);
+        
+        if (!treeNodesById.containsKey(node.getId())) {
+          var treeNode = new DefaultTreeNode<Object>(node, parentTreeNode);
+          treeNodesById.put(node.getId(), treeNode);
+          processedNodeIds.add(node.getId());
+        }
+      }
+    }
+
+    return root;
+  }
+
+  private TreeNode<Object> findOrCreateParentTreeNode(Node currentNode, Map<String, Node> nodesById, 
+      Map<String, TreeNode<Object>> treeNodesById, List<Node> allNodes, Set<String> processedNodeIds) {
+    String parentId = extractParentIdFromNodeId(currentNode.getId());
+    
+    if (parentId == null) {
+      return treeNodesById.get("root");
+    }
+    
+    Node parentNode = nodesById.get(parentId);
+    if (parentNode != null) {
+      if (!treeNodesById.containsKey(parentId)) {
+        TreeNode<Object> grandparentTreeNode = findOrCreateParentTreeNode(parentNode, nodesById, treeNodesById, allNodes, processedNodeIds);
+        var parentTreeNode = new DefaultTreeNode<Object>(parentNode, grandparentTreeNode);
+        treeNodesById.put(parentId, parentTreeNode);
+        processedNodeIds.add(parentId);
+        return parentTreeNode;
+      }
+      return treeNodesById.get(parentId);
+    }
+    
+    return treeNodesById.get("root");
+  }
+
+  private String extractParentIdFromNodeId(String nodeId) {
+    if (StringUtils.isBlank(nodeId)) {
+      return null;
+    }
+    
+    int lastDashIndex = nodeId.lastIndexOf(HYPHEN_SIGN);
+    if (lastDashIndex > 0) {
+      return nodeId.substring(0, lastDashIndex);
+    }
+    
+    return null;
+  }
+
+  public TreeNode<Object> getFilteredNodesTree() {
+    return filteredNodesTree;
+  }
+
+  public void setFilteredNodesTree(TreeNode<Object> filteredNodesTree) {
+    this.filteredNodesTree = filteredNodesTree;
   }
 
   public boolean isMedianDurationColumnVisible() {
