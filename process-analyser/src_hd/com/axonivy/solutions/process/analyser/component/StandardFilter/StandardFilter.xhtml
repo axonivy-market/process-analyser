@@ -59,7 +59,7 @@
           <f:selectItem
             itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectPMV')}"
             itemValue="#{null}" noSelectionOption="true" />
-          <f:selectItems value="#{masterDataBean.availabelPMV}" var="pmv" itemLabel="#{masterDataBean.getPmvLabel(pmv)}"
+          <f:selectItems value="#{masterDataBean.availablePMV}" var="pmv" itemLabel="#{masterDataBean.getPmvLabel(pmv)}"
             itemValue="#{pmv}" />
           <p:ajax event="change" partialSubmit="true" process="@this" listener="#{managedBean.onPmvSelect}" />
         </p:selectOneMenu>

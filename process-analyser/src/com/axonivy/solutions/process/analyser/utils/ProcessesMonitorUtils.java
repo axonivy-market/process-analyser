@@ -68,7 +68,7 @@ public class ProcessesMonitorUtils {
     List<ProcessElement> elementsInProcess = getProcessElements(processAnalyser);
     return elementsInProcess.stream().flatMap(element -> ProcessUtils.getTaskActivatorAsRoleName(element).stream())
         .collect(Collectors.toSet());
-  };
+  }
 
   private static List<ProcessElement> getProcessElements(ProcessAnalyser processAnalyser) {
     if (Objects.isNull(processAnalyser)) {

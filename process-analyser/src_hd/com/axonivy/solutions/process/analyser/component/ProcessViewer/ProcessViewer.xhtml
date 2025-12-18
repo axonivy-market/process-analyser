@@ -6,7 +6,7 @@
 <cc:interface componentType="IvyComponent">
   <cc:attribute name="managedBean" required="true" />
   <cc:attribute name="selectedProcessAnalyser" required="true" />
-  <cc:attribute name="isWidgetMode" default="false" required="true"/>
+  <cc:attribute name="isWidgetMode" required="true"/>
   <cc:attribute name="kpiType" />
 </cc:interface>
 
@@ -82,7 +82,6 @@
             </h:panelGroup>
             <ic:com.axonivy.solutions.process.analyser.component.StandardFilter
               id="standard-filter" managedBean="#{managedBean}"
-              refreshStatisticUI="#{manageBean.refreshDiagramAndStatisticUI}"
               isWidgetMode="#{isWidgetMode}" />
           </h:panelGroup>
         </p:overlayPanel>

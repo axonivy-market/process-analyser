@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -49,7 +48,6 @@ import ch.ivyteam.ivy.application.ILibrary;
 import ch.ivyteam.ivy.application.IProcessModelVersion;
 import ch.ivyteam.ivy.application.ReleaseState;
 import ch.ivyteam.ivy.environment.Ivy;
-import ch.ivyteam.ivy.security.IRole;
 
 @ManagedBean
 @ViewScoped
@@ -71,6 +69,7 @@ public class MasterDataBean implements Serializable {
   private String processSelectionGroupId;
   private String pmvGroupId;
   private String roleSelectionGroupId;
+  private List<Process> availableProcesses;
 
   @PostConstruct
   public void init() {
@@ -78,11 +77,11 @@ public class MasterDataBean implements Serializable {
     isWidgetMode = false;
     initKpiTypes();
     availableModules = ProcessUtils.getAllAvaiableModule();
-    availableRoles = Ivy.security().roles().all().stream().map(IRole::getName).collect(Collectors.toSet());
     availableRoles = Set.of();
     processSelectionGroupId = ProcessAnalyticViewComponentId.PROCESS_SELECTION_GROUP;
     pmvGroupId = ProcessAnalyticViewComponentId.PMV_GROUP;
-    roleSelectionGroupId = ProcessAnalyticViewComponentId.ROLE_SELECTION_GROUP; 
+    roleSelectionGroupId = ProcessAnalyticViewComponentId.ROLE_SELECTION_GROUP;
+    availableProcesses = new ArrayList<>();
   }
 
   public void initSelectedValueFromUserProperty() {
@@ -96,9 +95,9 @@ public class MasterDataBean implements Serializable {
     selectedModule = persistedConfig.getWidgetSelectedModule();
     isMergeProcessStarts = BooleanUtils.isTrue(persistedConfig.getWidgetMergedProcessStart());
     isIncludingRunningCases = BooleanUtils.isTrue(persistedConfig.getWidgetIncludeRunningCase());
-    selectedPMV = getAvailabelPMV().stream().filter(pmv -> Strings.CS.equals(pmv.getVersionName(), persistedConfig.getWidgetSelectedPmv()))
+    selectedPMV = getAvailablePMV().stream().filter(pmv -> Strings.CS.equals(pmv.getVersionName(), persistedConfig.getWidgetSelectedPmv()))
         .findAny().orElse(null);
-    avaiableProcesses = ProcessUtils.getAllProcessByModule(selectedModule, selectedPMV);
+    availableProcesses = ProcessUtils.getAllProcessByModule(selectedModule, selectedPMV);
     String selectedKpiTypeName = persistedConfig.getWidgetSelectedKpi();
     String selectedProcessAnalyzerId = persistedConfig.getWidgetSelectedProcessAnalyzer();
     if (StringUtils.isNoneBlank(selectedModule, selectedProcessAnalyzerId)) {
@@ -115,7 +114,7 @@ public class MasterDataBean implements Serializable {
     if (parts.length >= 1) {
       String selectedProcessId = parts[0];
       var selectedProcess =
-          avaiableProcesses.stream().filter(process -> Strings.CS.equals(process.getId(), selectedProcessId)).findAny().orElse(null);
+          availableProcesses.stream().filter(process -> Strings.CS.equals(process.getId(), selectedProcessId)).findAny().orElse(null);
       if (selectedProcess == null) {
         return null;
       }
@@ -136,7 +135,7 @@ public class MasterDataBean implements Serializable {
       return new ArrayList<>();
     }
     List<SelectItem> processStartsSelection = new ArrayList<>();
-    avaiableProcesses.stream().filter(process -> CollectionUtils.isNotEmpty(process.getStartElements())).forEach(process -> {
+    availableProcesses.stream().filter(process -> CollectionUtils.isNotEmpty(process.getStartElements())).forEach(process -> {
       if (isMergeProcessStarts) {
         addMergeProcessStart(process, processStartsSelection);
       } else {
@@ -228,7 +227,7 @@ public class MasterDataBean implements Serializable {
     return Ivy.cms().co(cmsUrl, List.of(start.getName()));
   }
 
-  public List<IProcessModelVersion> getAvailabelPMV() {
+  public List<IProcessModelVersion> getAvailablePMV() {
     if (StringUtils.isEmpty(selectedModule)) {
       return List.of();
     }
@@ -244,7 +243,7 @@ public class MasterDataBean implements Serializable {
   }
 
   private void resetDefaultPMV() {
-    List<IProcessModelVersion> pmvs = getAvailabelPMV().stream()
+    List<IProcessModelVersion> pmvs = getAvailablePMV().stream()
         .filter(version -> version.getActivityState() == ActivityState.ACTIVE && version.getReleaseState() == ReleaseState.RELEASED)
         .sorted(Comparator.comparing(IProcessModelVersion::getLastChangeDate).reversed()).toList();
     selectedPMV = ObjectUtils.isNotEmpty(pmvs) ? pmvs.get(0) : null;
@@ -279,7 +278,7 @@ public class MasterDataBean implements Serializable {
       ProcessesMonitorUtils.updateUserConfig(persistedConfig -> persistedConfig.setWidgetSelectedPmv(selectedPMV.getVersionName()));
     }
     selectedProcessAnalyser = null;
-    avaiableProcesses = ProcessUtils.getAllProcessByModule(selectedModule, selectedPMV);
+    availableProcesses = ProcessUtils.getAllProcessByModule(selectedModule, selectedPMV);
     handleProcessChange();
     PF.current().ajax().update(processSelectionGroupId);
   }
@@ -342,8 +341,6 @@ public class MasterDataBean implements Serializable {
     this.selectedKpiType = selectedKpiType;
   }
 
-  private List<Process> avaiableProcesses;
-
   public String getSelectedModule() {
     return selectedModule;
   }
@@ -360,12 +357,12 @@ public class MasterDataBean implements Serializable {
     this.selectedProcessAnalyser = selectedProcessAnalyser;
   }
 
-  public List<Process> getAvaiableProcesses() {
-    return avaiableProcesses;
+  public List<Process> getAvailableProcesses() {
+    return availableProcesses;
   }
 
-  public void setAvaiableProcesses(List<Process> avaiableProcesses) {
-    this.avaiableProcesses = avaiableProcesses;
+  public void setAvailableProcesses(List<Process> availableProcesses) {
+    this.availableProcesses = availableProcesses;
   }
 
   public void setAvailableProcessStarts(List<SelectItem> availableProcessStarts) {

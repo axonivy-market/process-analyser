@@ -32,7 +32,7 @@ public class ProcessStartConverter implements Converter {
     }
     try {
       var masterDataBean = getMasterDataBean();
-      List<Process> processElements = masterDataBean.getAvaiableProcesses();
+      List<Process> processElements = masterDataBean.getAvailableProcesses();
       return ProcessesMonitorUtils.mappingProcessAnalyzerByProcesses(processElements, masterDataBean.isMergeProcessStarts(), value);
     } catch (IllegalArgumentException e) {
       throw new ConverterException("Invalid ProcessStart: " + value, e);
