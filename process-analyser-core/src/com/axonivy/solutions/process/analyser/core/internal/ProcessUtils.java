@@ -328,7 +328,7 @@ public class ProcessUtils {
   }
 
   public static Set<String> getActivatorFromTaskConfigs(List<TaskConfig> taskConfigs) {
-    return taskConfigs.stream().map(TaskConfig::getActivator).filter(a -> a.getType() == ActivatorType.ROLE)
+    return taskConfigs.stream().map(TaskConfig::getActivator).filter(activator -> activator.getType() == ActivatorType.ROLE)
         .map(Activator::getName).collect(Collectors.toSet());
   }
 
