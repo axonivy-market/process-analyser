@@ -12,6 +12,8 @@ import com.axonivy.ivy.webtest.IvyWebTest;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 
+import ch.ivyteam.ivy.security.ISecurityConstants;
+
 @IvyWebTest
 public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
@@ -19,6 +21,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private static final String MODULE_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter-panel-group\\:moduleDropdown";
   private static final String PROCESS_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter-panel-group\\:process-dropdown";
   private static final String KPI_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter-panel-group\\:kpiDropdown";
+  private static final String ROLE_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter-panel-group\\:roleDropdown";
   private static final String CASCADE_DROPDOWN_LIST_SUFFIX = "_panel";
   private static final String CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX = " .ui-cascadeselect-label";
   private static final String DISABLE_PROPERTY = "disabled";
@@ -53,6 +56,9 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     verifyAndSelectAProcess(PROCESS_NAME_EN);
     verifyAndClickItemLabelInDropdown(KPI_DROPDOWN_CSS_SELECTOR, FREQUENCY_OPTION_NAME, CASCADE_DROPDOWN_LIST_SUFFIX,
         CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX);
+    // Choose system user role
+    verifyAndClickItemLabelInDropdown(ROLE_DROPDOWN_CSS_SELECTOR, ISecurityConstants.SYSTEM_USER_NAME, DROPDOWN_LIST_SUFFIX,
+        DROPDOWN_LABEL_SUFFIX);
     // Check the status of show statistic button after data fulfilled
     $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, StringUtils.EMPTY));
 
