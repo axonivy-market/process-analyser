@@ -21,7 +21,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private static final String MODULE_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter-panel-group\\:moduleDropdown";
   private static final String PROCESS_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter-panel-group\\:process-dropdown";
   private static final String KPI_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter-panel-group\\:kpiDropdown";
-  private static final String ROLE_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter-panel-group\\:roleDropdown";
+  private static final String ROLE_DROPDOWN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter-panel-group\\:role-dropdown";
   private static final String CASCADE_DROPDOWN_LIST_SUFFIX = "_panel";
   private static final String CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX = " .ui-cascadeselect-label";
   private static final String DISABLE_PROPERTY = "disabled";
