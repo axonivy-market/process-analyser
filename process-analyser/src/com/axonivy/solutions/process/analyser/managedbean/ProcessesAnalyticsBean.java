@@ -29,6 +29,7 @@ import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.ProcessMiningData;
 import com.axonivy.solutions.process.analyser.bo.TimeFrame;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
+import com.axonivy.solutions.process.analyser.constants.AnalyserConstants;
 import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
 import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
@@ -239,7 +240,9 @@ public class ProcessesAnalyticsBean {
 
   private boolean isTaskMatchRoleFilter(String taskActivatorName, String roleName) {
     return StringUtils.isBlank(roleName) || Strings.CS.equals(taskActivatorName, roleName)
-        || (Strings.CS.equals(ISecurityConstants.TOP_LEVEL_ROLE_NAME, roleName) && taskActivatorName == null);
+        || (Strings.CS.equals(ISecurityConstants.TOP_LEVEL_ROLE_NAME, roleName) && taskActivatorName == null)
+        || (Strings.CS.equals(ISecurityConstants.SYSTEM_USER_NAME, roleName)
+            && Strings.CS.equals(AnalyserConstants.HASHTAG + ISecurityConstants.SYSTEM_USER_NAME, taskActivatorName));
   }
 
   private void loadNodes() {
