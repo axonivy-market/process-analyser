@@ -10,6 +10,8 @@ import com.axonivy.solutions.process.analyser.core.bo.Process;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.RGB_REGEX_PATTERN;
 
+import ch.ivyteam.ivy.application.IApplication;
+import ch.ivyteam.ivy.application.IProcessModelVersion;
 import ch.ivyteam.ivy.process.model.NodeElement;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
@@ -46,8 +48,10 @@ public class BaseSetup {
   protected static ProcessElement embeddedStart;
   protected static ProcessElement embeddedEnd;
   protected static ProcessElement multiIncomingsElement;
-
+  protected static IProcessModelVersion testPMV;
+  
   protected static void prepareData() {
+    testPMV = IApplication.current().getProcessModelVersions().toList().get(0);
     testProcess = ProcessUtils.getAllProcesses().stream()
         .filter(start -> Strings.CS.contains(start.getName(), TEST_PROCESS_NAME)).findAny().orElse(null);
     testProcessElements = ProcessUtils.getProcessElementsFrom(testProcess.getId(), testProcess.getPmv());

@@ -14,6 +14,8 @@ public class ProcessAnalyticViewComponentId {
       + "process-selection-group";
   public static final String WIDGET_PROCESS_SELECTION_GROUP = WIDGET_STANDRAD_FILTER + ID_SECTION_SEPARATOR
       + "process-selection-group";
+  public static final String WIDGET_PROCESS_SELECTION_GROUP2222 = WIDGET_STANDRAD_FILTER + ID_SECTION_SEPARATOR
+      + "process-selection-group";
   private static final String HIDDEN_IMAGE = FORM + ID_SECTION_SEPARATOR + "hidden-image";
   public static final String PROCESS_ANALYTIC_VIEWER_GROUP = PROCESS_ANALYTIC_VIEWER_PANEL + ID_SECTION_SEPARATOR
       + "viewer-group";
@@ -26,7 +28,7 @@ public class ProcessAnalyticViewComponentId {
   private static final String ACTION_BTN_GROUP = FORM + ID_SECTION_SEPARATOR + "action-btn-group";
   private static final String DATA_STATISTICS = FORM + ID_SECTION_SEPARATOR + "statistic-viewer" + ID_SECTION_SEPARATOR
       + "data-statistics";
-
+  public static final String PMV_GROUP = STANDARD_FILTER_PANEL_GROUP + ID_SECTION_SEPARATOR + "pmvDropdown";
   public static List<String> getDiagramAndStatisticComponentIds() {
     return List.of(HIDDEN_IMAGE, PROCESS_ANALYTIC_VIEWER_GROUP, SHOW_STATISTIC_BTN, ACTION_BTN_GROUP, DATA_STATISTICS);
   }

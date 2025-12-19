@@ -6,8 +6,10 @@ import static com.codeborne.selenide.Selenide.$;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
 
 import com.axonivy.ivy.webtest.IvyWebTest;
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 
 @IvyWebTest
@@ -45,6 +47,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     // Choose test project PM
     verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX,
         DROPDOWN_LABEL_SUFFIX);
+    Selenide.sleep(2000);
     // Verify English process name is rendered
     verifyAndSelectAProcess(PROCESS_NAME_EN);
     verifyAndClickItemLabelInDropdown(KPI_DROPDOWN_CSS_SELECTOR, FREQUENCY_OPTION_NAME, CASCADE_DROPDOWN_LIST_SUFFIX,
@@ -60,9 +63,25 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     verifyMergeProcessStartToggleEmpty();
     verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX,
         DROPDOWN_LABEL_SUFFIX);
+    Selenide.sleep(2000);
     // Verify German process name is rendered
     verifyAndSelectAProcess(PROCESS_NAME_DE);
     resetLocale();
+  }
+
+  @Test
+  void showPmvWhenSelectProcess() {
+    login();
+    startAnalyzingProcess();
+    $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, "true"));
+
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "moduleDropdown")).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "moduleDropdown_1")).click();
+    Selenide.sleep(2000);
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmvDropdown")).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmvDropdown_1")).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmvDropdown")).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmvDropdown_2")).click();
   }
 
   private void verifyAndSelectAProcess(String startElementName) {
