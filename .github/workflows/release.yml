@@ -10,3 +10,5 @@ permissions:
 jobs:
   build:
     uses: axonivy-market/github-workflows/.github/workflows/release.yml@v6
+    with:
+      maven-args: "-Divy.engine.version=12.0.10"

@@ -12,7 +12,7 @@ import javax.faces.convert.FacesConverter;
 import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
 import com.axonivy.solutions.process.analyser.core.bo.Process;
 import com.axonivy.solutions.process.analyser.core.bo.StartElement;
-import com.axonivy.solutions.process.analyser.managedbean.ProcessesAnalyticsBean;
+import com.axonivy.solutions.process.analyser.managedbean.MasterDataBean;
 import com.axonivy.solutions.process.analyser.utils.FacesContexts;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 
@@ -31,10 +31,9 @@ public class ProcessStartConverter implements Converter {
       return null;
     }
     try {
-      var processesAnalyticsBean =
-          FacesContexts.evaluateValueExpression("#{processesAnalyticsBean}", ProcessesAnalyticsBean.class);
-      List<Process> processElements = processesAnalyticsBean.getAvaiableProcesses();
-      return ProcessesMonitorUtils.mappingProcessAnalyzerByProcesses(processElements, isMergeProcessStarts(), value);
+      var masterDataBean = getMasterDataBean();
+      List<Process> processElements = masterDataBean.getAvailableProcesses();
+      return ProcessesMonitorUtils.mappingProcessAnalyzerByProcesses(processElements, masterDataBean.isMergeProcessStarts(), value);
     } catch (IllegalArgumentException e) {
       throw new ConverterException("Invalid ProcessStart: " + value, e);
     }
@@ -49,7 +48,7 @@ public class ProcessStartConverter implements Converter {
       var processAnalyser = ((ProcessAnalyser) value);
       var process = processAnalyser.getProcess();
       if (process != null) {
-        if (isMergeProcessStarts()) {
+        if (getMasterDataBean().isMergeProcessStarts()) {
           return PROCESS_ID_PATTERN_WITHOUT_START_ELEMENT.formatted(process.getPmvName(), process.getId());
         } else {
           String startPid = Optional.ofNullable(processAnalyser.getStartElement()).map(StartElement::getPid).orElse("");
@@ -60,9 +59,7 @@ public class ProcessStartConverter implements Converter {
     throw new ConverterException("Unexpected value type: " + value.getClass().getName());
   }
 
-  private Boolean isMergeProcessStarts() {
-    var processesAnalyticsBean =
-        FacesContexts.evaluateValueExpression("#{processesAnalyticsBean}", ProcessesAnalyticsBean.class);
-    return processesAnalyticsBean.isMergeProcessStarts();
+  private MasterDataBean getMasterDataBean() {
+    return FacesContexts.evaluateValueExpression("#{masterDataBean}", MasterDataBean.class);
   }
 }

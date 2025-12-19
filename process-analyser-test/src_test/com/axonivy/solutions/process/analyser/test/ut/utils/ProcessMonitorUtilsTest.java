@@ -24,6 +24,7 @@ import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 
 import ch.ivyteam.ivy.environment.IvyTest;
 import ch.ivyteam.ivy.workflow.ICase;
+import ch.ivyteam.ivy.workflow.ITask;
 
 @IvyTest
 public class ProcessMonitorUtilsTest extends BaseSetup {
@@ -80,7 +81,8 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     List<ICase> cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(
         ProcessUtils.getTaskStartIdFromPID(selectedPid), new TimeIntervalFilter(new Date(), new Date()),
         new ArrayList<>(), false);
-    List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(processAnalyser, KpiType.FREQUENCY, cases);
+    List<ITask> tasks = cases.stream().flatMap(ivyCase -> ivyCase.tasks().all().stream()).toList();
+    List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(processAnalyser, KpiType.FREQUENCY, tasks);
     assertThat(results.size()).isEqualTo(24);
     assertThat(results.get(0).getLabelValue()).isEqualTo("0");
   }
@@ -90,15 +92,15 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     processAnalyser = new ProcessAnalyser();
     processAnalyser.setProcess(testProcess);
     processAnalyser.setStartElement(null);
-
     List<ICase> allCases = new ArrayList<>();
     for (StartElement startElement : testProcess.getStartElements()) {
       allCases.addAll(ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(startElement.getTaskStartId(),
           new TimeIntervalFilter(new Date(), new Date()), new ArrayList<>(), false));
     }
 
-    List<Node> results =
-        ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(processAnalyser, KpiType.FREQUENCY, allCases);
+    List<ITask> tasks = allCases.stream().flatMap(ivyCase -> ivyCase.tasks().all().stream()).toList();
+    List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(
+      processAnalyser, KpiType.FREQUENCY, tasks);
 
     assertThat(results).isNotEmpty();
     assertThat(results.size()).isGreaterThanOrEqualTo(24);
@@ -111,8 +113,8 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     List<ICase> cases = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(
         ProcessUtils.getTaskStartIdFromPID(selectedPid), new TimeIntervalFilter(new Date(), new Date()),
         new ArrayList<>(), false);
-    List<Node> results =
-        ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(processAnalyser, KpiType.DURATION_OVERALL, cases);
+    List<ITask> tasks = cases.stream().flatMap(ivyCase -> ivyCase.tasks().all().stream()).toList();
+    List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(processAnalyser, KpiType.DURATION_OVERALL, tasks);
     assertThat(results).isNotEmpty();
     assertThat(results.get(0).getLabelValue()).endsWith("s");
   }
@@ -128,8 +130,8 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
       allCases.addAll(ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(startElement.getTaskStartId(),
           new TimeIntervalFilter(new Date(), new Date()), new ArrayList<>(), false));
     }
-    List<Node> results =
-        ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(processAnalyser, KpiType.DURATION_OVERALL, allCases);
+    List<ITask> tasks = allCases.stream().flatMap(ivyCase -> ivyCase.tasks().all().stream()).toList();
+    List<Node> results = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(processAnalyser, KpiType.DURATION_OVERALL, tasks);
     assertThat(results).isNotEmpty();
     assertThat(results.get(0).getLabelValue()).endsWith("s");
   }

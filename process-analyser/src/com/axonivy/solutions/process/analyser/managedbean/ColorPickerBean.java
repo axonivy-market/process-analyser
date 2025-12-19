@@ -64,9 +64,7 @@ public class ColorPickerBean implements Serializable {
   public void onColorModeChange() {
     initColor();
     if (isWidgetMode) {
-      ProcessViewerConfig persistedConfig = ProcessesMonitorUtils.getUserConfig();
-      persistedConfig.setIsCustomColorMode(selectedColorMode.isCustom());
-      ProcessesMonitorUtils.updateUserProperty(persistedConfig);
+      ProcessesMonitorUtils.updateUserConfig(persistedConfig -> persistedConfig.setIsCustomColorMode(selectedColorMode.isCustom()));
     }
   }
 
