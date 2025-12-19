@@ -82,13 +82,13 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     startAnalyzingProcess();
     $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, "true"));
 
-    $(By.id(STANDARD_FILTER_PANEL_GROUP + "moduleDropdown")).click();
-    $(By.id(STANDARD_FILTER_PANEL_GROUP + "moduleDropdown_1")).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "module-dropdown")).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "module-dropdown_1")).click();
     Selenide.sleep(2000);
-    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmvDropdown")).click();
-    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmvDropdown_1")).click();
-    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmvDropdown")).click();
-    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmvDropdown_2")).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmv-dropdown")).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmv-dropdown_1")).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmv-dropdown")).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmv-dropdown_2")).click();
   }
 
   private void verifyAndSelectAProcess(String startElementName) {
