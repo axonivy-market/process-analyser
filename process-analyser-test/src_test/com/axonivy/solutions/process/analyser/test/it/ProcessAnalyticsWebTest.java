@@ -22,6 +22,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private static final String CASCADE_DROPDOWN_LIST_SUFFIX = "_panel";
   private static final String CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX = " .ui-cascadeselect-label";
   private static final String DISABLE_PROPERTY = "disabled";
+  private static final String CHECK_PROPERTY = "checked";
   private static final String PROCESS_FILE = "TestProcess";
   private static final String PROCESS_NAME_EN = "Test process";
   private static final String PROCESS_NAME_DE = "Testprozess";
@@ -31,7 +32,6 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private static final String DROPDOWN_LIST_SUFFIX = "_items";
   private static final String MERGE_PROCESS_STARTS_INPUT_SELECTOR = "[id$=':additional-feature:merge-process-starts_input']";
   private static final String MERGE_PROCESS_STARTS_SELECTOR = "[id$=':additional-feature:merge-process-starts']";
-  private static final String STANDARD_FILTER_PANEL_GROUP = "process-analytics-form:standard-filter-panel-group:";
 
   @Test
   void showStatisticButtonShouldEnableWhenChosenFulfilled() throws InterruptedException {

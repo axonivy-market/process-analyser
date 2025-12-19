@@ -370,5 +370,19 @@
       "connect" : [
         { "id" : "f30", "to" : "f7" }
       ]
+    }, {
+      "id" : "f10",
+      "type" : "SignalStartEvent",
+      "name" : "initiateDataFromQueue",
+      "config" : {
+        "signalCode" : "initiateDataFromQueue"
+      },
+      "visual" : {
+        "at" : { "x" : 256, "y" : 24 },
+        "labelOffset" : { "x" : 13, "y" : 33 }
+      },
+      "connect" : [
+        { "id" : "f4", "to" : "f24" }
+      ]
     } ]
 }
