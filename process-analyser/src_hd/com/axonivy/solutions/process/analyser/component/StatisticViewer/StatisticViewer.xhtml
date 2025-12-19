@@ -9,11 +9,12 @@
   xmlns:c="http://java.sun.com/jsp/jstl/core">
 <cc:interface>
   <cc:attribute name="managedBean" required="true" />
+  <cc:attribute name="isWidgetMode" default="false" />
 </cc:interface>
 <cc:implementation>
   <c:set var="managedBean" value="#{cc.attrs.managedBean}" />
   <h:panelGroup id="data-statistics" layout="block"
-    rendered="#{not managedBean.isWidgetMode}">
+    rendered="#{not cc.attrs.isWidgetMode}">
     <p:dataTable var="node" styleClass="grid m-0" id="node"
       value="#{managedBean.filteredNodes}" scrollable="true"
       scrollHeight="300"

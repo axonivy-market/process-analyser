@@ -10,7 +10,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -37,7 +39,6 @@ import ch.ivyteam.ivy.application.IProcessModelVersion;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
-import ch.ivyteam.ivy.security.exec.Sudo;
 import ch.ivyteam.ivy.workflow.CaseState;
 import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.ITask;
@@ -52,52 +53,46 @@ public class ProcessesMonitorUtils {
   private ProcessesMonitorUtils() { }
 
   public static List<Node> filterInitialStatisticByIntervalTime(ProcessAnalyser processAnalyser, KpiType analysisType,
-      List<ICase> cases) {
+      List<ITask> tasks) {
     if (Objects.isNull(processAnalyser)) {
       return Collections.emptyList();
     }
-    return (processAnalyser.getStartElement() == null) ? filterForMergedStarts(processAnalyser, analysisType, cases)
-        : filterForSingleStart(processAnalyser, analysisType, cases);
-  }
-
-  private static List<Node> filterForMergedStarts(ProcessAnalyser processAnalyser, KpiType analysisType,
-      List<ICase> cases) {
-    var pmv = processAnalyser.getProcess().getPmv();
-    String processId = processAnalyser.getProcess().getId();
-    List<ProcessElement> processElements = ProcessUtils.getProcessElementsFrom(processId, pmv);
-
+    List<ProcessElement> processElements = getProcessElements(processAnalyser);
     if (isDuration(analysisType)) {
       processElements = ProcessUtils.getTaskStart(processElements);
     }
-
-    return buildNodesAndApplyKpi(processElements, analysisType, cases);
+    return buildNodesAndApplyKpi(processElements, analysisType, tasks);
   }
 
-  private static List<Node> filterForSingleStart(ProcessAnalyser processAnalyser, KpiType analysisType,
-      List<ICase> cases) {
-    String startElementPID = processAnalyser.getStartElement().getPid();
-    String processId = processAnalyser.getProcess().getId();
-    var pmv = processAnalyser.getProcess().getPmv();
-    List<ProcessElement> processElements = collectProcessElementForProcess(pmv, processId, startElementPID);
+  public static Set<String> getActivatorRoleNameFromProcess(ProcessAnalyser processAnalyser) {
+    List<ProcessElement> elementsInProcess = getProcessElements(processAnalyser);
+    return elementsInProcess.stream().flatMap(element -> ProcessUtils.getTaskActivatorAsRoleName(element).stream())
+        .collect(Collectors.toSet());
+  }
 
-    if (isDuration(analysisType)) {
-      processElements = ProcessUtils.getTaskStart(processElements);
+  private static List<ProcessElement> getProcessElements(ProcessAnalyser processAnalyser) {
+    if (Objects.isNull(processAnalyser)) {
+      return Collections.emptyList();
     }
-
-    return buildNodesAndApplyKpi(processElements, analysisType, cases);
+    var pmv = processAnalyser.getProcess().getPmv();
+    String processId = processAnalyser.getProcess().getId();
+    var mergeProcessStartOptional = Optional.ofNullable(processAnalyser.getStartElement());
+    return mergeProcessStartOptional.isPresent()
+        ? collectProcessElementForProcess(pmv, processId, mergeProcessStartOptional.get().getPid())
+        : ProcessUtils.getProcessElementsFrom(processId, pmv);
   }
 
   private static List<Node> buildNodesAndApplyKpi(List<ProcessElement> processElements, KpiType analysisType,
-      List<ICase> cases) {
+      List<ITask> tasks) {
     List<SequenceFlow> sequenceFlows = ProcessUtils.getSequenceFlowsFrom(processElements);
     List<Node> nodes = NodeResolver.convertToNodes(processElements, sequenceFlows);
 
     if (isFrequency(analysisType)) {
       var nodeFrequencyResolver = new NodeFrequencyResolver(nodes, processElements);
-      nodeFrequencyResolver.updateFrequencyByCases(cases);
+      nodeFrequencyResolver.updateFrequencyByTasks(tasks);
       nodes = nodeFrequencyResolver.getNodes();
     } else if (isDuration(analysisType)) {
-      updateDurationForNodes(nodes, cases, analysisType);
+      updateDurationForNodes(nodes, tasks, analysisType);
     }
 
     return NodeResolver.updateNodeByAnalysisType(nodes, analysisType);
@@ -118,8 +113,8 @@ public class ProcessesMonitorUtils {
     return kpiType != null && kpiType.isDescendantOf(KpiType.DURATION);
   }
 
-  public static void updateDurationForNodes(List<Node> nodes, List<ICase> cases, KpiType durationKpiType) {
-    if (CollectionUtils.isEmpty(nodes) || CollectionUtils.isEmpty(cases)) {
+  public static void updateDurationForNodes(List<Node> nodes, List<ITask> tasks, KpiType durationKpiType) {
+    if (CollectionUtils.isEmpty(nodes) || CollectionUtils.isEmpty(tasks)) {
       return;
     }
 
@@ -133,7 +128,7 @@ public class ProcessesMonitorUtils {
     Function<ITask, Long> durationExtractor = getDurationExtractor(durationKpiType);
 
     // Group task durations based on their extracted task ID
-    Map<String, List<Long>> nodeDurations = cases.stream().flatMap(currentCase -> currentCase.tasks().all().stream())
+    Map<String, List<Long>> nodeDurations = tasks.stream()
         .filter(task -> isValidTask(task, taskSwitchPids, requestPaths))
         .collect(Collectors.groupingBy(task -> determineTaskKey(task, taskSwitchGatewayPids, requestPaths),
             Collectors.mapping(durationExtractor, Collectors.toList())));
@@ -379,15 +374,20 @@ public class ProcessesMonitorUtils {
         JacksonUtils.convertObjectToJSONString(persistedConfig));
   }
 
+  public static void updateUserConfig(Consumer<ProcessViewerConfig> updateAction) {
+    ProcessViewerConfig persistedConfig = getUserConfig();
+    updateAction.accept(persistedConfig);
+    updateUserProperty(persistedConfig);
+}
   public static boolean canSessionUserOpenProcessAnalyser() {
     return Ivy.session().has().role(AnalyserConstants.PROCESS_ANALYST_ROLE);
   }
 
-  public static ProcessAnalyser mappingProcessAnalyzerByProcesses(List<Process> processElements,
+  public static ProcessAnalyser mappingProcessAnalyzerByProcesses(List<Process> processes,
       boolean isMergeProcessStarts, String processKeyId) {
     String[] data = processKeyId.split(KEY_SEPARATOR);
-    var foundProcess = processElements.stream()
-        .filter(element -> element.getId().equals(data[1]))
+    var foundProcess = processes.stream()
+        .filter(process -> process.getId().equals(data[1]))
         .findAny()
         .orElse(null);
 

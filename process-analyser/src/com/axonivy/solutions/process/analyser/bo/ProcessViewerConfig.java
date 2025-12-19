@@ -12,6 +12,8 @@ public class ProcessViewerConfig {
   private Boolean widgetMergedProcessStart;
   private Boolean widgetIncludeRunningCase;
   private Boolean widgetHeatMapMode;
+  private String widgetSelectedRole;
+  private String widgetSelectedPmv;
 
   public String getDurationTextColor() {
     return durationTextColor;
@@ -99,5 +101,21 @@ public class ProcessViewerConfig {
 
   public void setIsCustomColorMode(Boolean isCustomColorMode) {
     this.isCustomColorMode = isCustomColorMode;
+  }
+
+  public String getWidgetSelectedRole() {
+    return widgetSelectedRole;
+  }
+
+  public void setWidgetSelectedRole(String widgetSelectedRole) {
+    this.widgetSelectedRole = widgetSelectedRole;
+  }
+
+  public String getWidgetSelectedPmv() {
+    return widgetSelectedPmv;
+  }
+
+  public void setWidgetSelectedPmv(String widgetSelectedPmv) {
+    this.widgetSelectedPmv = widgetSelectedPmv;
   }
 }

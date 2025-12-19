@@ -51,7 +51,7 @@ pipeline {
     stage('Build') {
       steps {
         script {
-          sh "mvn clean verify"
+          sh "mvn clean verify -Divy.engine.version=12.0.10"
         }
       }
     }
