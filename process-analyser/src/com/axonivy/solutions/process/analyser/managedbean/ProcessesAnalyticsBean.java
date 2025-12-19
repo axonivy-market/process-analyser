@@ -11,6 +11,7 @@ import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -226,6 +227,7 @@ public class ProcessesAnalyticsBean {
   }
 
   public void onRoleSelect() {
+    masterDataBean.handleRoleChange();
     if (!isWidgetMode) {
       updateAndRefreshDiagramAndStatistic();
     }
@@ -280,13 +282,19 @@ public class ProcessesAnalyticsBean {
         analyzedNode = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(selectedProcessAnalyser,
             masterDataBean.getSelectedKpiType(), tasks);
         if (StringUtils.isNotBlank(role)) {
-          analyzedNode = analyzedNode.stream().filter(node -> node.getFrequency() != 0).collect(Collectors.toList());
+          analyzedNode = removeEmptyDataFromReport(analyzedNode, masterDataBean.isDurationKpiType());
         }
         processMiningData.setNodes(analyzedNode);
         processMiningData.setNumberOfInstances(cases.size());
       }
     }
     updateDataTableWithNodesPrefix(ProcessUtils.getProcessPidFromElement(selectedProcessAnalyser.getProcess().getId()));
+  }
+
+  private List<Node> removeEmptyDataFromReport(List<Node> nodes, boolean isDurationKPI) {
+    Predicate<Node> filterPredicate = isDurationKPI ? node -> node.getMedianDuration() != 0
+        : node -> node.getFrequency() != 0;
+    return nodes.stream().filter(filterPredicate).collect(Collectors.toList());
   }
 
   private void initializingProcessMiningData() {
