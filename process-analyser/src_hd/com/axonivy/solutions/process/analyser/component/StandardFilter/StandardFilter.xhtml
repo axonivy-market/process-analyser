@@ -37,7 +37,7 @@
           <p:outputLabel for="@next"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectProject')}" />
         </div>
-        <p:selectOneMenu id="moduleDropdown"
+        <p:selectOneMenu id="module-dropdown"
           value="#{masterDataBean.selectedModule}" styleClass="w-full">
           <f:selectItem
             itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectProject')}"
@@ -54,7 +54,7 @@
           <p:outputLabel for="@next"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectPMV')}" />
         </div>
-        <p:selectOneMenu id="pmvDropdown" value="#{masterDataBean.selectedPMV}" styleClass="w-full"
+        <p:selectOneMenu id="pmv-dropdown" value="#{masterDataBean.selectedPMV}" styleClass="w-full"
           converter="pmvConverter">
           <f:selectItem
             itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectPMV')}"
@@ -100,7 +100,7 @@
           <p:outputLabel for="@next"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectKPI')}" />
         </div>
-        <p:cascadeSelect id="kpiDropdown" styleClass="w-full"
+        <p:cascadeSelect id="kpi-dropdown" styleClass="w-full"
           placeholder="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectKPI')}"
           value="#{masterDataBean.selectedKpiType}" converter="kpiTypeConverter">
           <f:selectItems value="#{masterDataBean.kpiTypes}" />
@@ -118,7 +118,7 @@
           <p:outputLabel for="@next"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/PleaseSelectRole')}" />
         </div>
-        <p:selectOneMenu id="role-dropDown"
+        <p:selectOneMenu id="role-dropdown"
           value="#{masterDataBean.selectedRole}" styleClass="w-full">
           <f:selectItem
             itemLabel="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/SelectRole')}"
