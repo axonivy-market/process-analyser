@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -110,6 +109,7 @@ public class ProcessesAnalyticsBean {
   private List<Process> avaiableProcesses;
   private boolean isSelectedPmvChanged = true;
   private boolean isSelectedProcessAnalyserChange = true;
+  
 
   public List<Process> getAvaiableProcesses() {
     return avaiableProcesses;
@@ -640,67 +640,37 @@ public class ProcessesAnalyticsBean {
     }
     filteredNodesTree = buildTreeFromNodes(filteredNodes);
   }
-
-  private TreeNode<Object> buildTreeFromNodes(List<Node> flatNodes) {
-    var root = new DefaultTreeNode<Object>("root", null);
-    if (CollectionUtils.isEmpty(flatNodes)) {
-      return root;
+  
+  private TreeNode<Object> buildTreeFromNodes(List<Node> filteredNodes) {
+    if (CollectionUtils.isEmpty(filteredNodes)) {
+      return new DefaultTreeNode<Object>();
     }
-
-    Map<String, Node> nodesById = flatNodes.stream().collect(Collectors.toMap(Node::getId, n -> n));
-    Map<String, TreeNode<Object>> treeNodesById = new HashMap<>();
-    treeNodesById.put("root", root);
-    Set<String> processedNodeIds = new HashSet<>();
     
-    for (Node node : flatNodes) {
-      if (!processedNodeIds.contains(node.getId())) {
-        TreeNode<Object> parentTreeNode = findOrCreateParentTreeNode(node, nodesById, treeNodesById, flatNodes, processedNodeIds);
-        
-        if (!treeNodesById.containsKey(node.getId())) {
-          var treeNode = new DefaultTreeNode<Object>(node, parentTreeNode);
-          treeNodesById.put(node.getId(), treeNode);
-          processedNodeIds.add(node.getId());
+    Map<String, TreeNode<Object>> nodeMap = new HashMap<>();
+    TreeNode<Object> root = new DefaultTreeNode<Object>();
+    
+    for (Node node : filteredNodes) {
+      TreeNode<Object> treeNode = new DefaultTreeNode<Object>(node, null);
+      treeNode.setExpanded(true); 
+      nodeMap.put(node.getId(), treeNode);
+    }
+    
+    for (Node node : filteredNodes) {
+      TreeNode<Object> treeNode = nodeMap.get(node.getId());
+      
+      if (StringUtils.isBlank(node.getParentNodeId())) {
+        root.getChildren().add(treeNode);
+      } else {
+        TreeNode<Object> parentTreeNode = nodeMap.get(node.getParentNodeId());
+        if (parentTreeNode != null) {
+          parentTreeNode.getChildren().add(treeNode);
+        } else {
+          root.getChildren().add(treeNode);
         }
       }
     }
-
+    
     return root;
-  }
-
-  private TreeNode<Object> findOrCreateParentTreeNode(Node currentNode, Map<String, Node> nodesById, 
-      Map<String, TreeNode<Object>> treeNodesById, List<Node> allNodes, Set<String> processedNodeIds) {
-    String parentId = extractParentIdFromNodeId(currentNode.getId());
-    
-    if (parentId == null) {
-      return treeNodesById.get("root");
-    }
-    
-    Node parentNode = nodesById.get(parentId);
-    if (parentNode != null) {
-      if (!treeNodesById.containsKey(parentId)) {
-        TreeNode<Object> grandparentTreeNode = findOrCreateParentTreeNode(parentNode, nodesById, treeNodesById, allNodes, processedNodeIds);
-        var parentTreeNode = new DefaultTreeNode<Object>(parentNode, grandparentTreeNode);
-        treeNodesById.put(parentId, parentTreeNode);
-        processedNodeIds.add(parentId);
-        return parentTreeNode;
-      }
-      return treeNodesById.get(parentId);
-    }
-    
-    return treeNodesById.get("root");
-  }
-
-  private String extractParentIdFromNodeId(String nodeId) {
-    if (StringUtils.isBlank(nodeId)) {
-      return null;
-    }
-    
-    int lastDashIndex = nodeId.lastIndexOf(HYPHEN_SIGN);
-    if (lastDashIndex > 0) {
-      return nodeId.substring(0, lastDashIndex);
-    }
-    
-    return null;
   }
 
   public TreeNode<Object> getFilteredNodesTree() {

@@ -37,7 +37,8 @@
         headerText="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Frequency')}">
         <h:panelGroup layout="block" styleClass="colorable-cell"
           style="background-color: #{managedBean.getCalulatedCellColor(node.relativeValue)};
-                  color: #{managedBean.getAccessibleTextColor(node.relativeValue)};">
+                  color: #{managedBean.getAccessibleTextColor(node.relativeValue)};
+                  width: 60%;">
           <h:outputText value="#{node.frequency}" />
         </h:panelGroup>
       </p:column>
@@ -48,7 +49,8 @@
         headerText="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/MedianDuration')}">
         <h:panelGroup layout="block" styleClass="colorable-cell"
           style="background-color: #{managedBean.getCalulatedCellColor(node.relativeValue)};
-                  color: #{managedBean.getAccessibleTextColor(node.relativeValue)};">
+                  color: #{managedBean.getAccessibleTextColor(node.relativeValue)};
+                  width: 60%;">
           <h:outputText value="#{node.formattedMedianDuration}" />
         </h:panelGroup>
       </p:column>
