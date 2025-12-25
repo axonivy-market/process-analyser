@@ -9,14 +9,13 @@
   xmlns:c="http://java.sun.com/jsp/jstl/core">
 <cc:interface>
   <cc:attribute name="managedBean" required="true" />
-  <cc:attribute name="isWidgetMode" default="false" />
 </cc:interface>
 <cc:implementation>
   <c:set var="managedBean" value="#{cc.attrs.managedBean}" />
   <h:panelGroup id="data-statistics" layout="block"
-    rendered="#{not cc.attrs.isWidgetMode}">
-    <p:dataTable var="node" styleClass="grid m-0" id="node"
-      value="#{managedBean.filteredNodes}" scrollable="true"
+    rendered="#{not managedBean.isWidgetMode}">
+    <p:treeTable var="node" styleClass="grid m-0" id="node"
+      value="#{managedBean.filteredNodesTree}" scrollable="true"
       scrollHeight="300"
       emptyMessage="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/NoRecordsFound')}">
       <p:column styleClass="col-2" sortBy="#{node.id}"
@@ -38,7 +37,8 @@
         headerText="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Frequency')}">
         <h:panelGroup layout="block" styleClass="colorable-cell"
           style="background-color: #{managedBean.getCalulatedCellColor(node.relativeValue)};
-                  color: #{managedBean.getAccessibleTextColor(node.relativeValue)};">
+                  color: #{managedBean.getAccessibleTextColor(node.relativeValue)};
+                  width: 60%;">
           <h:outputText value="#{node.frequency}" />
         </h:panelGroup>
       </p:column>
@@ -49,16 +49,17 @@
         headerText="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/MedianDuration')}">
         <h:panelGroup layout="block" styleClass="colorable-cell"
           style="background-color: #{managedBean.getCalulatedCellColor(node.relativeValue)};
-                  color: #{managedBean.getAccessibleTextColor(node.relativeValue)};">
+                  color: #{managedBean.getAccessibleTextColor(node.relativeValue)};
+                  width: 60%;">
           <h:outputText value="#{node.formattedMedianDuration}" />
         </h:panelGroup>
       </p:column>
       <f:facet name="footer">
         <h:outputText
-          value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/TotalElements', [managedBean.filteredNodes.size()])}"
+          value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/TotalElements', [managedBean.filteredNodesTree.childCount])}"
           styleClass="col-12" />
       </f:facet>
-    </p:dataTable>
+    </p:treeTable>
     <br />
   </h:panelGroup>
 </cc:implementation>
