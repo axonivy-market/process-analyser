@@ -109,7 +109,6 @@ public class ProcessesAnalyticsBean {
   private List<Process> avaiableProcesses;
   private boolean isSelectedPmvChanged = true;
   private boolean isSelectedProcessAnalyserChange = true;
-  
 
   public List<Process> getAvaiableProcesses() {
     return avaiableProcesses;
