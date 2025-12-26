@@ -132,40 +132,37 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     startAnalyzingProcess();
     verifyMergeProcessStartToggle();
     turnOffProcessStart();
+    verifyMergeProcessStartToggleEmpty();
     verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX,
         DROPDOWN_LABEL_SUFFIX);
     Selenide.sleep(2000);
-    verifyAndSelectAProcess(PROCESS_NAME_EN);
-    verifyAndClickItemLabelInDropdown(KPI_DROPDOWN_CSS_SELECTOR, FREQUENCY_OPTION_NAME, CASCADE_DROPDOWN_LIST_SUFFIX,
-        CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX);
-    verifyAndClickItemLabelInDropdown(ROLE_DROPDOWN_CSS_SELECTOR, ISecurityConstants.SYSTEM_USER_NAME, DROPDOWN_LIST_SUFFIX,
-        DROPDOWN_LABEL_SUFFIX);
     
-    // Click show statistic button
-    $(SHOW_STATISTIC_BTN_CSS_SELECTOR).click();
+    verifyAndSelectAProcess(PROCESS_NAME_EN);
     Selenide.sleep(2000);
     
-    // Wait for tree table to render
-    $("table#process-analytics-form\\:statistic-viewer\\:node").shouldBe(visible, DEFAULT_DURATION);
+    verifyAndClickItemLabelInDropdown(KPI_DROPDOWN_CSS_SELECTOR, FREQUENCY_OPTION_NAME, CASCADE_DROPDOWN_LIST_SUFFIX,
+        CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX);
+    Selenide.sleep(2000);
     
-    // Test 1: Verify parent-child relationship using data-rk and data-prk
+    verifyAndClickItemLabelInDropdown(ROLE_DROPDOWN_CSS_SELECTOR, ISecurityConstants.SYSTEM_USER_NAME, DROPDOWN_LIST_SUFFIX,
+        DROPDOWN_LABEL_SUFFIX);
+    Selenide.sleep(2000);
+    
+    // Click show statistic button
+    $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(visible, DEFAULT_DURATION).click();
+    Selenide.sleep(3000);
+
     verifyParentChildRelationship();
-    
-    // Test 2: Verify hierarchy levels using ui-node-level classes
     verifyHierarchyLevels();
-    
-    // Test 3: Verify node IDs follow correct pattern
     verifyNodeIdPattern();
   }
 
   private void verifyParentChildRelationship() {
-    // Find all rows in tree table
     var treeRows = $$("table#process-analytics-form\\:statistic-viewer\\:node tbody tr");
-    
+
     treeRows.forEach(row -> {
       String parentRowKey = row.getAttribute("data-prk");
-      
-      // Verify that parent row key exists if it's not root
+
       if (!"root".equals(parentRowKey)) {
         var parentRow = $(String.format("table#process-analytics-form\\:statistic-viewer\\:node tbody tr[data-rk='%s']", parentRowKey));
         parentRow.should(visible);
@@ -204,10 +201,8 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
     treeRows.forEach(row -> {
       String rowId = row.getAttribute("id");
-      // Extract the node part after "node_"
       String nodePattern = rowId.substring(rowId.lastIndexOf("node_"));
 
-      // Verify pattern matches
       if (nodePattern.matches("node_[0-9](_[0-9])*")) {
         row.should(visible);
       }
