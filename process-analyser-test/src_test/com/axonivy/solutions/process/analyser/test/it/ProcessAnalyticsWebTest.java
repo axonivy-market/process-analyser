@@ -144,26 +144,19 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     verifyMergeProcessStartToggleEmpty();
     verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX,
         DROPDOWN_LABEL_SUFFIX);
-    Selenide.sleep(2000);
-    
+
     verifyAndSelectAProcess(PROCESS_NAME_EN);
-    Selenide.sleep(2000);
-    
+
     verifyAndClickItemLabelInDropdown(KPI_DROPDOWN_CSS_SELECTOR, FREQUENCY_OPTION_NAME, CASCADE_DROPDOWN_LIST_SUFFIX,
         CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX);
-    Selenide.sleep(2000);
-    
+
     verifyAndClickItemLabelInDropdown(ROLE_DROPDOWN_CSS_SELECTOR, ISecurityConstants.SYSTEM_USER_NAME, DROPDOWN_LIST_SUFFIX,
         DROPDOWN_LABEL_SUFFIX);
-    Selenide.sleep(2000);
-    
-    // Click show statistic button
+
     $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(visible, DEFAULT_DURATION).click();
-    Selenide.sleep(3000);
 
     // Verify tree table is rendered
     $(TREE_TABLE_SELECTOR).shouldBe(visible, DEFAULT_DURATION);
-    Selenide.sleep(2000);
 
     verifyParentChildRelationship();
     verifyHierarchyLevels();
