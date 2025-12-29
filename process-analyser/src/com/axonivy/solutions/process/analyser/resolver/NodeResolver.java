@@ -28,7 +28,6 @@ public class NodeResolver {
           processElements.stream().flatMap(processElement -> convertProcessElementToNode(processElement).stream()),
           sequenceFlows.stream().map(flow -> convertSequenceFlowToNode(flow)))
         .collect(Collectors.toList());
-
   }
 
   public static List<Node> updateNodeByAnalysisType(List<Node> nodes, KpiType analysisType) {

@@ -9,6 +9,7 @@
   xmlns:c="http://java.sun.com/jsp/jstl/core">
 <cc:interface>
   <cc:attribute name="managedBean" required="true" />
+  <cc:attribute name="isWidgetMode" default="false" />
 </cc:interface>
 <cc:implementation>
   <c:set var="managedBean" value="#{cc.attrs.managedBean}" />
@@ -59,7 +60,6 @@
           value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/TotalElements', [managedBean.filteredNodes.size()])}"
           styleClass="col-12" />
       </f:facet>
-      
     </p:treeTable>
     <br />
   </h:panelGroup>

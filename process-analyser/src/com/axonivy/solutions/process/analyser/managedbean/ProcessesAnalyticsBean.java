@@ -289,7 +289,6 @@ public class ProcessesAnalyticsBean {
             IvyTaskOccurrenceService.getCaseAndTaskCustomFields(tasks, customFilterBean.getCustomFieldsByType()));
         analyzedNode = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(selectedProcessAnalyser,
             masterDataBean.getSelectedKpiType(), tasks);
-        filteredNodesTree = buildTreeFromNodes(analyzedNode);
         if (StringUtils.isNotBlank(role)) {
           analyzedNode = removeEmptyDataFromReport(analyzedNode, masterDataBean.isDurationKpiType());
         }
@@ -328,7 +327,6 @@ public class ProcessesAnalyticsBean {
       filteredNodes = filteredNodes.stream().filter(node -> node.getType() != NodeType.ARROW && avaibleTaskIds.contains(node.getId()))
           .collect(Collectors.toList());
     }
-    filteredNodesTree = buildTreeFromNodes(filteredNodes);
   }
 
   public boolean isMedianDurationColumnVisible() {

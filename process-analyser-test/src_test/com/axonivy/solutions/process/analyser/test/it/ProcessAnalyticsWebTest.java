@@ -2,6 +2,7 @@ package com.axonivy.solutions.process.analyser.test.it;
 
 import static com.codeborne.selenide.Condition.attribute;
 import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.CollectionCondition.sizeGreaterThan;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
@@ -154,9 +155,9 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
         DROPDOWN_LABEL_SUFFIX);
 
     $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(visible, DEFAULT_DURATION).click();
-    Selenide.sleep(3000);
-    $(TREE_TABLE_SELECTOR).shouldBe(visible, DEFAULT_DURATION);
-
+    
+    $$(TREE_TABLE_ROWS_SELECTOR).shouldHave(sizeGreaterThan(0), DEFAULT_DURATION);
+    
     verifyParentChildRelationship();
     verifyHierarchyLevels();
     verifyNodeIdPattern();
