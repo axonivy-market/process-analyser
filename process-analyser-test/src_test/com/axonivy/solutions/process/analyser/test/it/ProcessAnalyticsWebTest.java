@@ -37,7 +37,9 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private static final String MERGE_PROCESS_STARTS_INPUT_SELECTOR = "[id$=':additional-feature:merge-process-starts_input']";
   private static final String MERGE_PROCESS_STARTS_SELECTOR = "[id$=':additional-feature:merge-process-starts']";
   private static final String STANDARD_FILTER_PANEL_GROUP = "process-analytics-form:standard-filter-panel-group:";
-    private static final String TREE_TABLE_SELECTOR = "table#process-analytics-form\\:statistic-viewer\\:node";
+  
+  private static final String STATISTIC_VIEWER_PANEL_SELECTOR = "#process-analytics-form\\:statistic-viewer";
+  private static final String TREE_TABLE_SELECTOR = "table#process-analytics-form\\:statistic-viewer\\:node";
   private static final String TREE_TABLE_ROWS_SELECTOR = TREE_TABLE_SELECTOR + " tbody tr";
   private static final String TREE_TABLE_ROW_BY_KEY_SELECTOR = TREE_TABLE_SELECTOR + " tbody tr[data-rk='%s']";
   private static final String DATA_PARENT_KEY_ATTR = "data-prk";
@@ -155,7 +157,9 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
     $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(visible, DEFAULT_DURATION).click();
 
-    // Verify tree table is rendered
+    var statisticPanel = $(STATISTIC_VIEWER_PANEL_SELECTOR);
+    statisticPanel.shouldBe(visible, DEFAULT_DURATION);
+
     $(TREE_TABLE_SELECTOR).shouldBe(visible, DEFAULT_DURATION);
 
     verifyParentChildRelationship();
