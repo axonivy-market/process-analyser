@@ -154,8 +154,7 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
         DROPDOWN_LABEL_SUFFIX);
 
     $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(visible, DEFAULT_DURATION).click();
-
-    // Verify tree table is rendered
+    Selenide.sleep(3000);
     $(TREE_TABLE_SELECTOR).shouldBe(visible, DEFAULT_DURATION);
 
     verifyParentChildRelationship();
