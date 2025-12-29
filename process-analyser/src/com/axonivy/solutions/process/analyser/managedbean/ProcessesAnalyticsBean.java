@@ -49,7 +49,6 @@ import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.cm.ContentObject;
 import ch.ivyteam.ivy.cm.exec.ContentManagement;
-import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.security.ISecurityConstants;
 import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.ITask;
@@ -142,7 +141,6 @@ public class ProcessesAnalyticsBean {
       updateProcessMiningDataJson();
       renderNodesByKPIType();
       filteredNodesTree = buildTreeFromNodes(filteredNodes);
-      Ivy.log().fatal(filteredNodesTree.getChildCount());
       PF.current().executeScript(UPDATE_IFRAME_SOURCE_METHOD_CALL);
     }
   }
