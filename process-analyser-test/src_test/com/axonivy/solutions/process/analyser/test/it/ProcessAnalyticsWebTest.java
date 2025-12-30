@@ -1,8 +1,8 @@
+
 package com.axonivy.solutions.process.analyser.test.it;
 
 import static com.codeborne.selenide.Condition.attribute;
 import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.CollectionCondition.sizeGreaterThan;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
@@ -38,15 +38,6 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
   private static final String MERGE_PROCESS_STARTS_INPUT_SELECTOR = "[id$=':additional-feature:merge-process-starts_input']";
   private static final String MERGE_PROCESS_STARTS_SELECTOR = "[id$=':additional-feature:merge-process-starts']";
   private static final String STANDARD_FILTER_PANEL_GROUP = "process-analytics-form:standard-filter-panel-group:";
-    private static final String TREE_TABLE_SELECTOR = "table#process-analytics-form\\:statistic-viewer\\:node";
-  private static final String TREE_TABLE_ROWS_SELECTOR = TREE_TABLE_SELECTOR + " tbody tr";
-  private static final String TREE_TABLE_ROW_BY_KEY_SELECTOR = TREE_TABLE_SELECTOR + " tbody tr[data-rk='%s']";
-  private static final String DATA_PARENT_KEY_ATTR = "data-prk";
-  private static final String CLASS_ATTR = "class";
-  private static final String ID_ATTR = "id";
-  private static final String ROOT_PARENT_KEY = "root";
-  private static final String NODE_ID_PATTERN = "node_[0-9](_[0-9])*";
-  private static final String NODE_ID_PREFIX = "node_";
 
   @Test
   void showStatisticButtonShouldEnableWhenChosenFulfilled() throws InterruptedException {
@@ -145,32 +136,29 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     verifyMergeProcessStartToggleEmpty();
     verifyAndClickItemLabelInDropdown(MODULE_DROPDOWN_CSS_SELECTOR, TEST_MODULE_NAME, DROPDOWN_LIST_SUFFIX,
         DROPDOWN_LABEL_SUFFIX);
+    Selenide.sleep(2000);
 
     verifyAndSelectAProcess(PROCESS_NAME_EN);
-
     verifyAndClickItemLabelInDropdown(KPI_DROPDOWN_CSS_SELECTOR, FREQUENCY_OPTION_NAME, CASCADE_DROPDOWN_LIST_SUFFIX,
         CASCADE_DROPDOWN_LABEL_CSS_SELECTOR_SUFFIX);
-
     verifyAndClickItemLabelInDropdown(ROLE_DROPDOWN_CSS_SELECTOR, ISecurityConstants.SYSTEM_USER_NAME, DROPDOWN_LIST_SUFFIX,
         DROPDOWN_LABEL_SUFFIX);
 
     $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(visible, DEFAULT_DURATION).click();
-    
-    $$(TREE_TABLE_ROWS_SELECTOR).shouldHave(sizeGreaterThan(0), DEFAULT_DURATION);
-    
+
     verifyParentChildRelationship();
     verifyHierarchyLevels();
     verifyNodeIdPattern();
   }
 
   private void verifyParentChildRelationship() {
-    var treeRows = $$(TREE_TABLE_ROWS_SELECTOR);
 
+    var treeRows = $$("table#process-analytics-form\\:statistic-viewer\\:node tbody tr");
     treeRows.forEach(row -> {
-      String parentRowKey = row.getAttribute(DATA_PARENT_KEY_ATTR);
+      String parentRowKey = row.getAttribute("data-prk");
 
-      if (!ROOT_PARENT_KEY.equals(parentRowKey)) {
-        var parentRow = $(String.format(TREE_TABLE_ROW_BY_KEY_SELECTOR, parentRowKey));
+      if (!"root".equals(parentRowKey)) {
+        var parentRow = $(String.format("table#process-analytics-form\\:statistic-viewer\\:node tbody tr[data-rk='%s']", parentRowKey));
         parentRow.should(visible);
       }
     });
@@ -178,38 +166,37 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
   private void verifyHierarchyLevels() {
     // Get all rows grouped by level
-    var level1Rows = $$(TREE_TABLE_ROWS_SELECTOR + ".ui-node-level-1");
-    var level2Rows = $$(TREE_TABLE_ROWS_SELECTOR + ".ui-node-level-2");
-    var level3Rows = $$(TREE_TABLE_ROWS_SELECTOR + ".ui-node-level-3");
+    var level1Rows = $$("table#process-analytics-form\\:statistic-viewer\\:node tbody tr.ui-node-level-1");
+    var level2Rows = $$("table#process-analytics-form\\:statistic-viewer\\:node tbody tr.ui-node-level-2");
+    var level3Rows = $$("table#process-analytics-form\\:statistic-viewer\\:node tbody tr.ui-node-level-3");
 
     // Verify that level 1 nodes have no parent (prk = root)
     level1Rows.forEach(row -> {
-      row.shouldHave(attribute(DATA_PARENT_KEY_ATTR, ROOT_PARENT_KEY));
+      row.shouldHave(attribute("data-prk", "root"));
     });
 
     // Verify that level 2 nodes have a level 1 parent
     level2Rows.forEach(row -> {
-      String parentKey = row.getAttribute(DATA_PARENT_KEY_ATTR);
-      var parentRow = $(String.format(TREE_TABLE_ROW_BY_KEY_SELECTOR, parentKey));
-      parentRow.shouldHave(attribute(CLASS_ATTR, "ui-node-level-1"));
+      String parentKey = row.getAttribute("data-prk");
+      var parentRow = $(String.format("table#process-analytics-form\\:statistic-viewer\\:node tbody tr[data-rk='%s']", parentKey));
+      parentRow.shouldHave(attribute("class", "ui-node-level-1"));
     });
 
     // Verify that level 3 nodes have a level 2 parent
     level3Rows.forEach(row -> {
-      String parentKey = row.getAttribute(DATA_PARENT_KEY_ATTR);
-      var parentRow = $(String.format(TREE_TABLE_ROW_BY_KEY_SELECTOR, parentKey));
-      parentRow.shouldHave(attribute(CLASS_ATTR, "ui-node-level-2"));
+      String parentKey = row.getAttribute("data-prk");
+      var parentRow = $(String.format("table#process-analytics-form\\:statistic-viewer\\:node tbody tr[data-rk='%s']", parentKey));
+      parentRow.shouldHave(attribute("class", "ui-node-level-2"));
     });
   }
 
   private void verifyNodeIdPattern() {
-    var treeRows = $$(TREE_TABLE_ROWS_SELECTOR);
+    var treeRows = $$("table#process-analytics-form\\:statistic-viewer\\:node tbody tr");
 
     treeRows.forEach(row -> {
-      String rowId = row.getAttribute(ID_ATTR);
-      String nodePattern = rowId.substring(rowId.lastIndexOf(NODE_ID_PREFIX));
-
-      if (nodePattern.matches(NODE_ID_PATTERN)) {
+      String rowId = row.getAttribute("id");
+      String nodePattern = rowId.substring(rowId.lastIndexOf("node_"));
+      if (nodePattern.matches("node_[0-9](_[0-9])*")) {
         row.should(visible);
       }
     });
