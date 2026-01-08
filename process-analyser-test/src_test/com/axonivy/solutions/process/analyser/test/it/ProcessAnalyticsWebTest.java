@@ -16,7 +16,7 @@ import com.codeborne.selenide.SelenideElement;
 
 import ch.ivyteam.ivy.security.ISecurityConstants;
 
-@IvyWebTest(headless = false)
+@IvyWebTest
 public class ProcessAnalyticsWebTest extends WebBaseSetup {
 
   private static final String SHOW_STATISTIC_BTN_CSS_SELECTOR = "#process-analytics-form\\:standard-filter-panel-group\\:show-statistic-btn";
