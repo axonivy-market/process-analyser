@@ -1,4 +1,3 @@
-
 package com.axonivy.solutions.process.analyser.test.it;
 
 import static com.codeborne.selenide.Condition.attribute;
