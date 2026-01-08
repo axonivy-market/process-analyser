@@ -107,12 +107,12 @@ public class ProcessesAnalyticsBean {
     if (StringUtils.isNotBlank(subProcessCallPid)) {
       updateDataTableWithNodesPrefix(subProcessCallPid);
       renderNodesByKPIType();
-      filteredNodesTree = buildTreeFromNodes(filteredNodes);
     }
   }
 
   private void updateDataTableWithNodesPrefix(String prefix) {
     filteredNodes = analyzedNode.stream().filter(node -> node.getId().startsWith(prefix)).collect(Collectors.toList());
+    filteredNodesTree = buildTreeFromNodes(filteredNodes);
   }
 
 
@@ -140,7 +140,6 @@ public class ProcessesAnalyticsBean {
       loadNodes();
       updateProcessMiningDataJson();
       renderNodesByKPIType();
-      filteredNodesTree = buildTreeFromNodes(filteredNodes);
       PF.current().executeScript(UPDATE_IFRAME_SOURCE_METHOD_CALL);
     }
   }

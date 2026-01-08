@@ -55,7 +55,8 @@ public class NodeResolver {
    * Convert process element to Node base on its class type
    **/
   public static List<Node> convertProcessElementToNode(ProcessElement element) {
-    Node node = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT, element.getParent().getPid().toString());
+    String parentNodeId = element.getParent() != null ? element.getParent().getPid().toString() : null;
+    Node node = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT, parentNodeId);
     node.setOutGoingPathIds(element.getOutgoing().stream().map(ProcessUtils::getElementPid).toList());
 
     return switch (element) {
@@ -99,7 +100,8 @@ public class NodeResolver {
   }
 
   public static Node convertSequenceFlowToNode(SequenceFlow flow) {
-    String parentNodeId = flow.getSource().getParent().getPid().toString();
+    String parentNodeId = flow.getSource() != null && flow.getSource().getParent() != null 
+        ? flow.getSource().getParent().getPid().toString() : null;
     Node node = createNode(ProcessUtils.getElementPid(flow), flow.getName(), NodeType.ARROW, parentNodeId);
     node.setTargetNodeId(flow.getTarget().getPid().toString());
     node.setSourceNodeId(flow.getSource().getPid().toString());

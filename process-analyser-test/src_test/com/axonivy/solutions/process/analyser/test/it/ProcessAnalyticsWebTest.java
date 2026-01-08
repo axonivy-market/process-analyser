@@ -149,6 +149,32 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     verifyParentChildRelationship();
     verifyHierarchyLevels();
     verifyNodeIdPattern();
+    verifyStatisticDataDisplayed();
+  }
+
+  private void verifyStatisticDataDisplayed() {
+    var frequencyCells = $$("table#process-analytics-form\\:statistic-viewer\\:node tbody tr td:nth-child(4) .colorable-cell");
+    int validFrequencyCount = 0;
+
+    for (SelenideElement cell : frequencyCells) {
+      cell.shouldBe(visible);
+      String value = cell.text().trim();
+
+      if (!value.isEmpty()) {
+        try {
+          int frequency = Integer.parseInt(value);
+          if (frequency >= 0) {
+            validFrequencyCount++;
+          }
+        } catch (NumberFormatException e) {
+          throw new AssertionError("Expected numeric frequency value, but got: " + value);
+        }
+      }
+    }
+
+    if (validFrequencyCount == 0) {
+      throw new AssertionError("Expected at least some frequency data to be displayed in the table");
+    }
   }
 
   private void verifyParentChildRelationship() {
