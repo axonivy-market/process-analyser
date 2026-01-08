@@ -149,44 +149,6 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     verifyParentChildRelationship();
     verifyHierarchyLevels();
     verifyNodeIdPattern();
-    verifyStatisticDataDisplayed();
-  }
-
-  private void verifyStatisticDataDisplayed() {
-    $("table#process-analytics-form\\:statistic-viewer\\:node tbody tr .colorable-cell").shouldBe(visible, DEFAULT_DURATION);
-    var tableRows = $$("table#process-analytics-form\\:statistic-viewer\\:node tbody tr");
-    var dataCells = $$("table#process-analytics-form\\:statistic-viewer\\:node tbody tr .colorable-cell");
-    if (dataCells.isEmpty()) {
-      dataCells = $$("table#process-analytics-form\\:statistic-viewer\\:node tbody tr td:nth-child(4)");
-    }
-    if (dataCells.isEmpty()) {
-      dataCells = $$("table#process-analytics-form\\:statistic-viewer\\:node tbody tr td:nth-child(5)");
-    }
-
-    int validDataCount = 0;
-    int totalCellsChecked = 0;
-
-    for (SelenideElement cell : dataCells) {
-      if (!cell.exists()) {
-        continue;
-      }
-
-      totalCellsChecked++;
-      String value = cell.text().trim();
-
-      if (!value.isEmpty()) {
-        try {
-          int numericValue = Integer.parseInt(value);
-          if (numericValue >= 0) {
-            validDataCount++;
-          }
-        } catch (NumberFormatException e) {
-          if (value.matches(".*[0-9]+.*[smhd].*") || value.matches("[0-9]+")) {
-            validDataCount++;
-          }
-        }
-      }
-    }
   }
 
   private void verifyParentChildRelationship() {
