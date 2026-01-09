@@ -7,15 +7,16 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>${project.name}-core</module>
-    <module>${project.name}</module>
-    <module>${project.name}-demo</module>
-    <module>${project.name}-test</module>
-    <module>${project.name}-product</module>
+    <module>process-analyser-core</module>
+    <module>process-analyser</module>
+    <module>process-analyser-demo</module>
+    <module>process-analyser-internal-support</module>
+    <module>process-analyser-test</module>
+    <module>process-analyser-product</module>
   </modules>
 
   <scm>
-    <developerConnection>scm:git:https://github.com/axonivy-market/${project.name}.git</developerConnection>
+    <developerConnection>scm:git:https://github.com/axonivy-market/process-analyser.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
 

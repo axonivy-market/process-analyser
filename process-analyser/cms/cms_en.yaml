@@ -40,6 +40,7 @@ Dialogs:
               PageHeader: Process Monitor Page
               PleaseSelectColorMode: Color Mode
               PleaseSelectKPI: KPI
+              PleaseSelectPMV: PMV
               PleaseSelectProject: Project
               Process: Process
               ProcessInformation: Process Information
@@ -48,6 +49,7 @@ Dialogs:
               RelativeValue: Relative Value
               RequireMessage: Please select a process
               SelectKPI: Select KPI
+              SelectPMV: Select PMV
               SelectProcess: Select Process
               SelectProject: Select Project
               ShowStatistic: Show Statistic
