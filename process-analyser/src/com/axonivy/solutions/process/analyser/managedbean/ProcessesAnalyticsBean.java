@@ -9,9 +9,7 @@ import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.UPDATE_IFRAME_SOURCE_METHOD_CALL;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -112,7 +110,7 @@ public class ProcessesAnalyticsBean {
 
   private void updateDataTableWithNodesPrefix(String prefix) {
     filteredNodes = analyzedNode.stream().filter(node -> node.getId().startsWith(prefix)).collect(Collectors.toList());
-    filteredNodesTree = buildTreeFromNodes(filteredNodes);
+    filteredNodesTree = ProcessesMonitorUtils.buildTreeFromNodes(filteredNodes);
   }
 
 
@@ -378,38 +376,6 @@ public class ProcessesAnalyticsBean {
 
   public void setWidgetMode(boolean isWidgetMode) {
     this.isWidgetMode = isWidgetMode;
-  }
-
-  private TreeNode<Object> buildTreeFromNodes(List<Node> filteredNodes) {
-    if (CollectionUtils.isEmpty(filteredNodes)) {
-      return new DefaultTreeNode<Object>();
-    }
-    
-    Map<String, TreeNode<Object>> nodeMap = new HashMap<>();
-    TreeNode<Object> root = new DefaultTreeNode<Object>();
-    
-    for (Node node : filteredNodes) {
-      TreeNode<Object> treeNode = new DefaultTreeNode<Object>(node, null);
-      treeNode.setExpanded(true);
-      nodeMap.put(node.getId(), treeNode);
-    }
-    
-    for (Node node : filteredNodes) {
-      TreeNode<Object> treeNode = nodeMap.get(node.getId());
-      
-      if (StringUtils.isBlank(node.getParentNodeId())) {
-        root.getChildren().add(treeNode);
-      } else {
-        TreeNode<Object> parentTreeNode = nodeMap.get(node.getParentNodeId());
-        if (parentTreeNode != null) {
-          parentTreeNode.getChildren().add(treeNode);
-        } else {
-          root.getChildren().add(treeNode);
-        }
-      }
-    }
-    
-    return root;
   }
 
   public TreeNode<Object> getFilteredNodesTree() {
