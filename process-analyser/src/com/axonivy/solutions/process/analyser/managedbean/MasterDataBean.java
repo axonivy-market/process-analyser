@@ -153,7 +153,7 @@ public class MasterDataBean implements Serializable {
             .map(analyser -> isMergeProcessStarts ? Optional.ofNullable(analyser.getProcess()).map(Process::getName).orElse(EMPTY)
                 : Optional.ofNullable(analyser.getStartElement()).map(StartElement::getName).orElse(EMPTY))
             .orElse(EMPTY);
-    return String.format(ANALYSIS_EXCEL_FILE_PATTERN, formattedKpiTypeName, startName);
+    return String.format(ANALYSIS_EXCEL_FILE_PATTERN, formattedKpiTypeName, startName) + ".csv";
   }
 
   private void initKpiTypes() {
