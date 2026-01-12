@@ -52,6 +52,7 @@ import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.cm.ContentObject;
 import ch.ivyteam.ivy.cm.exec.ContentManagement;
+import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.security.ISecurityConstants;
 import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.ITask;
@@ -365,7 +366,13 @@ public class ProcessesAnalyticsBean {
     ctx.setResponseHeader("Content-Disposition", "attachment; filename=\"" + masterDataBean.generateNameOfExcelFile() + "\"");
 
     try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(ctx.getResponseOutputStream(), StandardCharsets.UTF_8))) {
-      writer.write("Element Id,Type,Label,Frequency\r\n");
+
+      String elementId = Ivy.cms().co("/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/ElementId");
+      String type = Ivy.cms().co("/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Type");
+      String label = Ivy.cms().co("/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Label");
+      String frequency = Ivy.cms().co("/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Frequency");
+
+      writer.printf("%s,%s,%s,%s\r\n", elementId, type, label, frequency);
       writeTreeNodes(writer, filteredNodesTree.getChildren());
     }
 
