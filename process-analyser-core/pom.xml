@@ -19,6 +19,7 @@
     </dependency>
     <dependency>
       <groupId>com.axonivy.ivy.api</groupId>
+      <!-- FIXME: huge dependency; wait for process.model API fitting the use-case. -->
       <artifactId>ivy-runtime</artifactId>
       <scope>provided</scope>
     </dependency>
