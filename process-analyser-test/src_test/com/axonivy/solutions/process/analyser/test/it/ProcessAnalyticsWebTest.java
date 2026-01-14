@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 
 import com.axonivy.ivy.webtest.IvyWebTest;
+import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId.STANDARD_FILTER_PANEL_GROUP;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 
