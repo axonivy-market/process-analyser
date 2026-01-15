@@ -2,6 +2,7 @@ package com.axonivy.solutions.process.analyser.resolver;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -15,10 +16,13 @@ import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
 import com.axonivy.solutions.process.analyser.utils.DateUtils;
 
+import ch.ivyteam.ivy.process.model.BaseElement;
+import ch.ivyteam.ivy.process.model.NodeElement;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.element.event.start.RequestStart;
 import ch.ivyteam.ivy.process.model.element.gateway.TaskSwitchGateway;
+import ch.ivyteam.ivy.process.model.value.PID;
 
 @SuppressWarnings("restriction")
 public class NodeResolver {
@@ -55,7 +59,8 @@ public class NodeResolver {
    * Convert process element to Node base on its class type
    **/
   public static List<Node> convertProcessElementToNode(ProcessElement element) {
-    Node node = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT);
+    String parentNodeId = Optional.ofNullable(element).map(ProcessElement::getParent).map(BaseElement::getPid).map(PID::toString).orElse(null);
+    Node node = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT, parentNodeId);
     node.setOutGoingPathIds(element.getOutgoing().stream().map(ProcessUtils::getElementPid).toList());
 
     return switch (element) {
@@ -99,7 +104,9 @@ public class NodeResolver {
   }
 
   public static Node convertSequenceFlowToNode(SequenceFlow flow) {
-    Node node = createNode(ProcessUtils.getElementPid(flow), flow.getName(), NodeType.ARROW);
+    String parentNodeId = Optional.ofNullable(flow).map(SequenceFlow::getSource).map(NodeElement::getParent).map(BaseElement::getPid)
+        .map(PID::toString).orElse(null);
+    Node node = createNode(ProcessUtils.getElementPid(flow), flow.getName(), NodeType.ARROW, parentNodeId);
     node.setTargetNodeId(flow.getTarget().getPid().toString());
     node.setSourceNodeId(flow.getSource().getPid().toString());
     return node;
@@ -110,6 +117,12 @@ public class NodeResolver {
     node.setId(id);
     node.setLabel(label);
     node.setType(type);
+    return node;
+  }
+
+  private static Node createNode(String id, String label, NodeType type, String parentNodeId) {
+    Node node = createNode(id, label, type);
+    node.setParentNodeId(parentNodeId);
     return node;
   }
 }

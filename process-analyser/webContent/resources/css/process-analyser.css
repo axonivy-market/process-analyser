@@ -79,7 +79,7 @@ h3 {
 }
 .colorable-cell {
   display: block;
-  width: 100%;
+  width: 60%;
   height: 100%;
   padding: 10px;
   box-sizing: border-box

@@ -24,6 +24,8 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.primefaces.PF;
+import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.TreeNode;
 
 import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
 import com.axonivy.solutions.process.analyser.bo.Node;
@@ -55,6 +57,7 @@ public class ProcessesAnalyticsBean {
   private static final String SUB_PROCESS_CALL_PID_PARAM_NAME = "subProcessCallPid";
   private List<Node> analyzedNode;
   private List<Node> filteredNodes;
+  private TreeNode<Object> filteredNodesTree;
   private TimeIntervalFilter timeIntervalFilter;
   private ProcessMiningData processMiningData;
   private String miningUrl;
@@ -81,6 +84,7 @@ public class ProcessesAnalyticsBean {
     colorPickerBean = FacesContexts.evaluateValueExpression("#{colorPickerBean}", ColorPickerBean.class);
     masterDataBean = FacesContexts.evaluateValueExpression("#{masterDataBean}", MasterDataBean.class);
     customFilterBean = FacesContexts.evaluateValueExpression("#{customFilterBean}", CustomFilterBean.class);
+    filteredNodesTree = new DefaultTreeNode<Object>("root", null);
   }
 
   private void initDefaultVariableValue() {
@@ -106,6 +110,7 @@ public class ProcessesAnalyticsBean {
 
   private void updateDataTableWithNodesPrefix(String prefix) {
     filteredNodes = analyzedNode.stream().filter(node -> node.getId().startsWith(prefix)).collect(Collectors.toList());
+    filteredNodesTree = ProcessesMonitorUtils.buildTreeFromNodes(filteredNodes);
   }
 
 
@@ -371,5 +376,13 @@ public class ProcessesAnalyticsBean {
 
   public void setWidgetMode(boolean isWidgetMode) {
     this.isWidgetMode = isWidgetMode;
+  }
+
+  public TreeNode<Object> getFilteredNodesTree() {
+    return filteredNodesTree;
+  }
+
+  public void setFilteredNodesTree(TreeNode<Object> filteredNodesTree) {
+    this.filteredNodesTree = filteredNodesTree;
   }
 }
