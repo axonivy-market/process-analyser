@@ -8,10 +8,6 @@ import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.TO;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.UPDATE_IFRAME_SOURCE_METHOD_CALL;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +17,6 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -52,7 +47,6 @@ import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.cm.ContentObject;
 import ch.ivyteam.ivy.cm.exec.ContentManagement;
-import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.security.ISecurityConstants;
 import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.ITask;
@@ -358,46 +352,6 @@ public class ProcessesAnalyticsBean {
 
   public boolean isShowStatisticBtnDisabled() {
     return !masterDataBean.isStatisticReportRenderable();
-  }
-
-  public void exportToCSV() throws IOException {
-    ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
-    ctx.responseReset();
-    ctx.setResponseHeader("Content-Disposition", "attachment; filename=\"" + masterDataBean.generateNameOfExcelFile() + "\"");
-
-    try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(ctx.getResponseOutputStream(), StandardCharsets.UTF_8))) {
-
-      String elementId = Ivy.cms().co("/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/ElementId");
-      String type = Ivy.cms().co("/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Type");
-      String label = Ivy.cms().co("/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Label");
-      String frequency = Ivy.cms().co("/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Frequency");
-
-      writer.printf("%s,%s,%s,%s\r\n", elementId, type, label, frequency);
-      writeTreeNodes(writer, filteredNodesTree.getChildren());
-    }
-
-    FacesContext.getCurrentInstance().responseComplete();
-  }
-
-  private void writeTreeNodes(PrintWriter writer, List<TreeNode<Object>> nodes) {
-    for (TreeNode<Object> treeNode : nodes) {
-      if (treeNode.getData() instanceof Node node) {
-        writer.printf("%s,%s,%s,%d\r\n", escapeCsv(node.getId()), escapeCsv(node.getType().name()), escapeCsv(node.getLabel()),
-            node.getFrequency());
-
-        if (!treeNode.getChildren().isEmpty()) {
-          writeTreeNodes(writer, treeNode.getChildren());
-        }
-      }
-    }
-  }
-
-  private String escapeCsv(String value) {
-    if (value == null)
-      return "";
-    return (value.contains("\"") || value.contains(",") || value.contains("\n") || value.contains("\r"))
-        ? "\"" + value.replace("\"", "\"\"") + "\""
-        : value;
   }
 
   public TimeIntervalFilter getTimeIntervalFilter() {

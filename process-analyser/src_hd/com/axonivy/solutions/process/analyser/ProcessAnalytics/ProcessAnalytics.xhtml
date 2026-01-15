@@ -72,8 +72,9 @@
               oncomplete="getCurrentViewPortOfDiagramData(); return true;" />
           </p:menuButton>
           <p:commandButton icon="pi pi-upload" styleClass="action-button"
-            value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/ExportExcel')}"
-            action="#{processesAnalyticsBean.exportToCSV}" ajax="false" />
+            value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/ExportExcel')}">
+            <p:dataExporter type="xls" target="process-analytics-form:statistic-viewer:node" fileName="#{masterDataBean.generateNameOfExcelFile()}" />
+          </p:commandButton>
         </h:panelGroup>
       </h:form>
       <script>
