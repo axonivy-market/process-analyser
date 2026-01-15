@@ -7,6 +7,7 @@ import java.time.LocalTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -19,6 +20,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.TreeNode;
 
 import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
 import com.axonivy.solutions.process.analyser.bo.Node;
@@ -404,5 +407,37 @@ public class ProcessesMonitorUtils {
     processAnalyser.setStartElement(foundStartElement);
     processAnalyser.setProcessKeyId(processKeyId);
     return processAnalyser;
+  }
+
+  public static TreeNode<Object> buildTreeFromNodes(List<Node> filteredNodes) {
+    if (CollectionUtils.isEmpty(filteredNodes)) {
+      return new DefaultTreeNode<Object>();
+    }
+    
+    Map<String, TreeNode<Object>> nodeMap = new HashMap<>();
+    TreeNode<Object> root = new DefaultTreeNode<Object>();
+    
+    for (Node node : filteredNodes) {
+      TreeNode<Object> treeNode = new DefaultTreeNode<Object>(node, null);
+      treeNode.setExpanded(true);
+      nodeMap.put(node.getId(), treeNode);
+    }
+    
+    for (Node node : filteredNodes) {
+      TreeNode<Object> treeNode = nodeMap.get(node.getId());
+      
+      if (StringUtils.isBlank(node.getParentNodeId())) {
+        root.getChildren().add(treeNode);
+      } else {
+        TreeNode<Object> parentTreeNode = nodeMap.get(node.getParentNodeId());
+        if (parentTreeNode != null) {
+          parentTreeNode.getChildren().add(treeNode);
+        } else {
+          root.getChildren().add(treeNode);
+        }
+      }
+    }
+    
+    return root;
   }
 }

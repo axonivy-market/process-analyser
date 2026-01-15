@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.primefaces.model.TreeNode;
 
 import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
 import com.axonivy.solutions.process.analyser.bo.Node;
@@ -141,6 +142,60 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
     List<ICase> results = ProcessesMonitorUtils.getAllCasesFromTaskStartIdWithTimeInterval(0L,
         new TimeIntervalFilter(new Date(), new Date()), new ArrayList<CustomFieldFilter>(), false);
     assertThat(results.size()).isZero();
+  }
+
+  @Test
+  void test_buildTreeFromNodes_withEmptyList() {
+    TreeNode<Object> result = ProcessesMonitorUtils.buildTreeFromNodes(new ArrayList<>());
+    assertThat(result).isNotNull();
+    assertThat(result.getChildren()).isEmpty();
+  }
+
+  @Test
+  void test_buildTreeFromNodes_withSingleNode() {
+    Node node = new Node();
+    node.setId("node1");
+    node.setLabel("Node 1");
+    node.setParentNodeId(null);
+
+    List<Node> nodes = List.of(node);
+    TreeNode<Object> result = ProcessesMonitorUtils.buildTreeFromNodes(nodes);
+
+    assertThat(result.getChildren()).hasSize(1);
+    TreeNode<Object> childNode = result.getChildren().get(0);
+    assertThat(childNode.getData()).isEqualTo(node);
+    assertThat(childNode.isExpanded()).isTrue();
+  }
+
+  @Test
+  void test_buildTreeFromNodes_withMultipleLevels() {
+    Node grandParent = new Node();
+    grandParent.setId("gp");
+    grandParent.setLabel("Grand Parent");
+    grandParent.setParentNodeId(null);
+
+    Node parent = new Node();
+    parent.setId("p");
+    parent.setLabel("Parent");
+    parent.setParentNodeId("gp");
+
+    Node child = new Node();
+    child.setId("c");
+    child.setLabel("Child");
+    child.setParentNodeId("p");
+
+    List<Node> nodes = List.of(grandParent, parent, child);
+    TreeNode<Object> result = ProcessesMonitorUtils.buildTreeFromNodes(nodes);
+
+    assertThat(result.getChildren()).hasSize(1);
+    TreeNode<Object> gpNode = result.getChildren().get(0);
+    assertThat(gpNode.getData()).isEqualTo(grandParent);
+    assertThat(gpNode.getChildren()).hasSize(1);
+    TreeNode<Object> pNode = gpNode.getChildren().get(0);
+    assertThat(pNode.getData()).isEqualTo(parent);
+    assertThat(pNode.getChildren()).hasSize(1);
+    TreeNode<Object> cNode = pNode.getChildren().get(0);
+    assertThat(cNode.getData()).isEqualTo(child);
   }
 
   private void prepareProcessAnalyzer() {
