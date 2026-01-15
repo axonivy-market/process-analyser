@@ -25,7 +25,6 @@ import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.element.activity.SubProcessCall;
 import ch.ivyteam.ivy.process.model.element.event.end.CallSubEnd;
 import ch.ivyteam.ivy.process.model.element.event.end.EmbeddedEnd;
-import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.ITaskElement;
 import ch.ivyteam.ivy.workflow.ITaskSwitchEvent;
@@ -56,18 +55,16 @@ public class NodeFrequencyResolver {
    * @param cases the list of cases created from the selected process; if
    *              {@code null} or empty, the method returns immediately
    */
-  public void updateFrequencyByCases(List<ICase> cases) {
-    if (CollectionUtils.isEmpty(cases)) {
+  public void updateFrequencyByTasks(List<ITask> tasks) {
+    if (CollectionUtils.isEmpty(tasks)) {
       return;
     }
 
-    cases.forEach(ivyCase -> {
-      List<ITask> finishedTasks = ivyCase.tasks().all().stream().filter(ITask::isPersistent).toList();
+      List<ITask> finishedTasks = tasks.stream().filter(ITask::isPersistent).toList();      
       for (var task : finishedTasks) {
         List<String> nodeIdsInPath = findShortestWayFromTaskStartToEnd(task, processElements);
         updateFrequencyForNodeById(nodes, nodeIdsInPath);
       }
-    });
     NodeResolver.updateRelativeValueForNodes(nodes);
   }
 

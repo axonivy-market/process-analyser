@@ -8,13 +8,13 @@
   xmlns:pe="http://primefaces.org/ui/extensions"
   xmlns:c="http://java.sun.com/jsp/jstl/core">
 <cc:interface componentType="IvyComponent">
-  <cc:attribute name="managedBean" required="true" />
+  <cc:attribute name="onChangeIncludingRunningCases" method-signature="void method()" required="true" />
+  <cc:attribute name="onChangeMergeProcessStarts" method-signature="void method()" required="true" />
   <cc:attribute name="componentsToUpdate" required="true" />
   <cc:attribute name="containerClasses" />
   <cc:attribute name="rendered" default="true" />
 </cc:interface>
 <cc:implementation>
-  <c:set var="managedBean" value="#{cc.attrs.managedBean}" />
   <h:panelGroup rendered="#{cc.attrs.rendered}">
     <div class="#{cc.attrs.containerClasses}">
       <p:outputLabel id="include-running-cases-label" for="@next"
@@ -22,8 +22,8 @@
         styleClass="p-2" />
       <p:toggleSwitch id="include-running-cases" onIcon="pi pi-check"
         offIcon="pi pi-times"
-        value="#{managedBean.includingRunningCases}">
-        <p:ajax listener="#{managedBean.onChangeIncludingRunningCases}"
+        value="#{masterDataBean.includingRunningCases}">
+        <p:ajax listener="#{cc.attrs.onChangeIncludingRunningCases}"
           update="#{cc.attrs.componentsToUpdate}" />
       </p:toggleSwitch>
       <p:tooltip for="@previous"
@@ -34,8 +34,8 @@
         value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/MergeProcessStarts')}"
         styleClass="p-2" />
       <p:toggleSwitch id="merge-process-starts" onIcon="pi pi-check"
-        offIcon="pi pi-times" value="#{managedBean.mergeProcessStarts}">
-        <p:ajax listener="#{managedBean.onChangeMergeProcessStarts}"
+        offIcon="pi pi-times" value="#{masterDataBean.mergeProcessStarts}">
+        <p:ajax listener="#{cc.attrs.onChangeMergeProcessStarts}"
           update="process-analytics-form" />
       </p:toggleSwitch>
       <p:tooltip for="@previous"
