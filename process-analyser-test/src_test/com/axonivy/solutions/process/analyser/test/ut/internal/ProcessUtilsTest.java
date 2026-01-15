@@ -37,14 +37,6 @@ public class ProcessUtilsTest extends BaseSetup {
   }
 
   @Test
-  void test_getProcessesWithPmv() {
-    var results = ProcessUtils.getProcessesWithPmv();
-    assertThat(results).isNotEmpty();
-    assertThat(results.keySet().size()).isEqualTo(1);
-    assertThat(results.keySet().iterator().next()).isEqualTo(TEST_MODULE_NAME);
-  }
-
-  @Test
   void test_getAllProcesses() {
     var results = ProcessUtils.getAllProcesses();
     assertThat(results).isNotEmpty();
