@@ -77,13 +77,8 @@ We support integrating the Process Analyzer into Axon Ivy Portal as a custom das
 To collect data and analyze your processes, please follow these steps:
 
 1. Prepare your own project and processes.
-2. Modify your processes for accurate data analysis
 
-- For any process alternative with multiple outgoing flows, ensure that each flow contains at least one task element along its path.
-
-![setup guideline](images/setup-guideline.png)
-
-3. Install Process Analyzer from Marketplace.
+2. Install Process Analyzer from Marketplace.
 
 - After install Process Analyzer, the project structure should look like this
 
@@ -93,12 +88,11 @@ To collect data and analyze your processes, please follow these steps:
 
 ![engine deploy](images/engine-deployment.png)
 
-4. Launch the Process Analyzer and follow the Demo tab to view the results.
+3. Launch the Process Analyzer and follow the Demo tab to view the results.
 
 ![analyze process](images/analyze-process.png)
 
-5. (Optional) Update the process display name to avoid the process start technical name (e.g. FlightPlanningDemo/recommendDestination.ivp) being shown in the selection options. Multilanguage support for process names is also available.
-
+4. (Optional) Update the process display name to avoid the process start technical name (e.g. FlightPlanningDemo/recommendDestination.ivp) being shown in the selection options. Multilanguage support for process names is also available.
 ![multilanguage process name support](images/multilanguage-process-name.png)
 
 ```
