@@ -3,7 +3,6 @@ package com.axonivy.solutions.process.analyser.core.internal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -42,6 +41,9 @@ import ch.ivyteam.ivy.process.model.element.event.start.RequestStart;
 import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
 import ch.ivyteam.ivy.process.model.element.gateway.Join;
 import ch.ivyteam.ivy.process.model.element.gateway.TaskSwitchGateway;
+import ch.ivyteam.ivy.process.model.element.value.task.Activator;
+import ch.ivyteam.ivy.process.model.element.value.task.ActivatorType;
+import ch.ivyteam.ivy.process.model.element.value.task.TaskConfig;
 import ch.ivyteam.ivy.process.model.value.PID;
 import ch.ivyteam.ivy.process.rdm.IProcess;
 import ch.ivyteam.ivy.process.rdm.IProcessManager;
@@ -238,17 +240,6 @@ public class ProcessUtils {
       return IWorkflowProcessModelVersion.of(pmv).getProcessStarts();
     });
   }
-
-  public static Map<String, List<Process>> getProcessesWithPmv() {
-    return Sudo.get(() -> {
-      Map<String, List<Process>> result = new HashMap<>();
-      for (var process : getAllProcesses()) {
-        String pmvName = process.getPmvName();
-        result.computeIfAbsent(pmvName, key -> new ArrayList<>()).add((Process) process);
-      }
-      return result;
-    });
-  }
   
   public static Set<String> getAllAvaiableModule() {
     return getProcessModelVersionsInCurrentApp().stream().map(IProcessModelVersion::getName)
@@ -257,16 +248,10 @@ public class ProcessUtils {
 
   public static List<Process> getAllProcessByModule(String selectedModule, IProcessModelVersion pmv) {
     List<Process> processes = new ArrayList<>();
-    if (ObjectUtils.isEmpty(selectedModule)) {
+    if (StringUtils.isEmpty(selectedModule) || null == pmv ) {
       return processes;
     }
 
-    if (ObjectUtils.isEmpty(pmv)) {
-      pmv = IApplication.current().getProcessModelVersions()
-          .filter(version -> selectedModule.equals(version.getName()))
-          .findFirst()
-          .orElse(null);
-    }
     List<IProcessStart> processStarts = getProcessStartsForPMV(pmv);
     // Index process starts by processFileId for fast lookup
     Map<String, List<IProcessStart>> startsByProcessId =
@@ -321,12 +306,7 @@ public class ProcessUtils {
   }
 
   public static boolean isTaskStartElement(ProcessElement element) {
-    return switch (element) {
-    case TaskSwitchGateway taskSwitchGateway -> true;
-    case TaskSwitchEvent taskSwitchEvent -> true;
-    case RequestStart requestStart -> true;
-    default -> false;
-    };
+    return taskConfigsOf(element).isPresent();
   }
 
   public static boolean isComplexElementWithMultiIncomings(ProcessElement element) {
@@ -336,6 +316,26 @@ public class ProcessUtils {
     case SubProcessCall subProcessCall -> false;
     default -> isElementWithMultipleIncomingFlow(element);
     };
+  }
+
+  private static Optional<List<TaskConfig>> taskConfigsOf(ProcessElement element) {
+    List<TaskConfig> configs = switch (element) {
+    case TaskSwitchGateway taskSwitchGateway -> taskSwitchGateway.getAllTaskConfigs();
+    case TaskSwitchEvent taskSwitchEvent -> taskSwitchEvent.getAllTaskConfigs();
+    case RequestStart requestStart -> requestStart.getAllTaskConfigs();
+    default -> null;
+    };
+    return Optional.ofNullable(configs);
+  }
+
+  public static Set<String> getActivatorFromTaskConfigs(List<TaskConfig> taskConfigs) {
+    return taskConfigs.stream().map(TaskConfig::getActivator)
+        .filter(activator -> activator.getType() == ActivatorType.ROLE).map(Activator::getName)
+        .collect(Collectors.toSet());
+  }
+
+  public static Set<String> getTaskActivatorAsRoleName(ProcessElement element) {
+    return taskConfigsOf(element).map(ProcessUtils::getActivatorFromTaskConfigs).orElse(Set.of());
   }
 
   public static List<ProcessElement> getTaskSwitchEvents(List<ProcessElement> processElements) {

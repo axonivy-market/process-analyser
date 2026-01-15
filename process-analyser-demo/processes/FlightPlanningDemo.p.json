@@ -14,6 +14,9 @@
           "name" : "<%=ivy.cms.co(\"/Processes/Process/FlightPlanningDemo/name\")%>",
           "description" : "<%=ivy.cms.co(\"/Processes/Process/FlightPlanningDemo/description\")%>"
         },
+        "permission" : {
+          "role" : "AviationPlanner"
+        },
         "task" : {
           "name" : "Planner plan a flight"
         },
@@ -80,7 +83,10 @@
           "name" : "PLanner re-plan a flight",
           "config" : {
             "task" : {
-              "name" : "Re-plan a flight"
+              "name" : "Re-plan a flight",
+              "responsible" : {
+                "activator" : "AviationPlanner"
+              }
             }
           },
           "visual" : {
@@ -124,7 +130,10 @@
           "name" : "Approve the plan of planner",
           "config" : {
             "task" : {
-              "name" : "Approve the plan of planner"
+              "name" : "Approve the plan of planner",
+              "responsible" : {
+                "activator" : "Pilot"
+              }
             }
           },
           "visual" : {
@@ -212,7 +221,10 @@
           "name" : "Engineering check aircraft",
           "config" : {
             "task" : {
-              "name" : "Engineering check aircraft"
+              "name" : "Engineering check aircraft",
+              "responsible" : {
+                "activator" : "MaintenanceAndEngineering"
+              }
             }
           },
           "visual" : {

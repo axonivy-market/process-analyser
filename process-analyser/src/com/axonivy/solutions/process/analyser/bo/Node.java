@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class Node {
   private NodeType type;
   private String id;
+  private String parentNodeId;
   @JsonIgnore
   private String label;
   private String labelValue;
@@ -66,6 +67,14 @@ public class Node {
 
   public void setId(String id) {
     this.id = id;
+  }
+
+  public String getParentNodeId() {
+    return parentNodeId;
+  }
+
+  public void setParentNodeId(String parentNodeId) {
+    this.parentNodeId = parentNodeId;
   }
 
   public String getLabel() {
