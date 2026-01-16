@@ -328,9 +328,9 @@ public class ProcessUtils {
   }
 
   public static Set<String> getActivatorFromTaskConfigs(List<TaskConfig> taskConfigs) {
-    Set<String>configs =  taskConfigs.stream().map(TaskConfig::responsible)
-        .filter(responsible -> responsible.type() == ResponsibleType.ROLES && CollectionUtils.isNotEmpty(responsible.roles())).map(t -> t.roles().getFirst())
-        .collect(Collectors.toSet());
+    Set<String> configs = taskConfigs.stream().map(TaskConfig::responsible)
+        .filter(responsible -> responsible.type() == ResponsibleType.ROLES && CollectionUtils.isNotEmpty(responsible.roles()))
+        .map(t -> t.roles().getFirst()).collect(Collectors.toSet());
     return configs;
   }
 
