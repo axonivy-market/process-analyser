@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 
 import com.axonivy.ivy.webtest.IvyWebTest;
+import static com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId.STANDARD_FILTER_PANEL_GROUP;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 
@@ -81,13 +82,11 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     startAnalyzingProcess();
     $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, "true"));
 
-    $(By.id(STANDARD_FILTER_PANEL_GROUP + "module-dropdown")).click();
-    $(By.id(STANDARD_FILTER_PANEL_GROUP + "module-dropdown_1")).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + ":module-dropdown")).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + ":module-dropdown_1")).click();
     Selenide.sleep(2000);
-    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmv-dropdown")).click();
-    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmv-dropdown_1")).click();
-    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmv-dropdown")).click();
-    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmv-dropdown_2")).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + ":pmv-dropdown")).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + ":pmv-dropdown_1")).click();
   }
 
   private void verifyAndSelectAProcess(String startElementName) {

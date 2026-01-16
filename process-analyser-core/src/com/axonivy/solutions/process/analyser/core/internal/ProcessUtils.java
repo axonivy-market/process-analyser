@@ -12,7 +12,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 
@@ -40,8 +40,7 @@ import ch.ivyteam.ivy.process.model.element.event.start.RequestStart;
 import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
 import ch.ivyteam.ivy.process.model.element.gateway.Join;
 import ch.ivyteam.ivy.process.model.element.gateway.TaskSwitchGateway;
-import ch.ivyteam.ivy.process.model.element.value.task.Activator;
-import ch.ivyteam.ivy.process.model.element.value.task.ActivatorType;
+import ch.ivyteam.ivy.process.model.element.value.task.ResponsibleType;
 import ch.ivyteam.ivy.process.model.element.value.task.TaskConfig;
 import ch.ivyteam.ivy.process.model.value.PID;
 import ch.ivyteam.ivy.process.rdm.IProcess;
@@ -53,6 +52,7 @@ import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.IWorkflowProcessModelVersion;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
+
 @SuppressWarnings("restriction")
 public class ProcessUtils {
 
@@ -328,9 +328,10 @@ public class ProcessUtils {
   }
 
   public static Set<String> getActivatorFromTaskConfigs(List<TaskConfig> taskConfigs) {
-    return taskConfigs.stream().map(TaskConfig::getActivator)
-        .filter(activator -> activator.getType() == ActivatorType.ROLE).map(Activator::getName)
-        .collect(Collectors.toSet());
+    Set<String> configs = taskConfigs.stream().map(TaskConfig::responsible)
+        .filter(responsible -> responsible.type() == ResponsibleType.ROLES && CollectionUtils.isNotEmpty(responsible.roles()))
+        .map(t -> t.roles().getFirst()).collect(Collectors.toSet());
+    return configs;
   }
 
   public static Set<String> getTaskActivatorAsRoleName(ProcessElement element) {
