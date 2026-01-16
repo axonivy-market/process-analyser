@@ -109,14 +109,8 @@ Um Daten zu sammeln und Ihre Prozesse zu analysieren, führen Sie bitte die
 folgenden Schritte aus:
 
 1. Bereiten Sie Ihr eigenes Projekt und Ihre eigenen Prozesse vor.
-2. Passen Sie Ihre Prozesse für eine genaue Datenanalyse an.
 
-- Stellen Sie bei jedem Prozess mit mehreren ausgehenden Abläufen sicher, dass
-  jeder Ablauf mindestens ein Aufgabenelement entlang seines Pfades enthält.
-
-![Einrichtungsanleitung](images/setup-guideline.png)
-
-3. Installieren Sie Process Analyzer aus dem Marketplace.
+2. Installieren Sie Process Analyzer aus dem Marketplace.
 
 - Nach der Installation von Process Analyzer sollte die Projektstruktur wie
   folgt aussehen
@@ -128,17 +122,15 @@ folgenden Schritte aus:
 
 ![engine deploy](images/engine-deployment.png)
 
-4. Launch the Process Analyzer and follow the Demo tab to view the results.
+3. Launch the Process Analyzer and follow the Demo tab to view the results.
 
 ![Analyseprozess](images/analyze-process.png)
 
-5. (Optional) Aktualisieren Sie den Anzeigenamen des Prozesses, um zu vermeiden,
-   dass der technische Name des Prozessstarts (z. B.
-   FlightPlanningDemo/recommendDestination.ivp) in den Auswahloptionen angezeigt
-   wird. Es ist auch eine Mehrsprachenunterstützung für Prozessnamen verfügbar.
-
-![Unterstützung mehrsprachiger
-Prozessnamen](images/multilanguage-process-name.png)
+4. (Optional) Update the process display name to avoid the process start
+   technical name (e.g. FlightPlanningDemo/recommendDestination.ivp) being shown
+   in the selection options. Multilanguage support for process names is also
+   available. ![multilanguage process name
+   support](images/multilanguage-process-name.png)
 
 ```
 @variables.yaml@
