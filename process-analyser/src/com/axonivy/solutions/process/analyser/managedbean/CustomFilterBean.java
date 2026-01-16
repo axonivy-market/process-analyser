@@ -3,6 +3,7 @@ package com.axonivy.solutions.process.analyser.managedbean;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.stream.DoubleStream;
 
@@ -42,11 +43,8 @@ public class CustomFilterBean implements Serializable {
   }
 
   public double getMinValue(String fieldName) {
-    DoubleStream defaultValue = getDoubleValueFromCustomNumberField(fieldName);
-    if (defaultValue.count() > 1) {
-      return defaultValue.map(value -> Math.floor(value * 100) / 100).min().orElse(0);
-    }
-    return 0;
+    DoubleSummaryStatistics stats = getDoubleValueFromCustomNumberField(fieldName).map(v -> Math.floor(v * 100) / 100).summaryStatistics();
+    return stats.getCount() > 1 ? stats.getMin() : 0;
   }
 
   public double getMaxValue(String fieldName) {
@@ -87,7 +85,6 @@ public class CustomFilterBean implements Serializable {
           minValue = getMinValue(customField.getCustomFieldMeta().name());
           maxValue = getMaxValue(customField.getCustomFieldMeta().name());
           customField.setCustomFieldValues(Arrays.asList(minValue, maxValue));
-
         }
         selectedCustomFilters.add(customField);
       } else if (!isSelectedCustomField) {
