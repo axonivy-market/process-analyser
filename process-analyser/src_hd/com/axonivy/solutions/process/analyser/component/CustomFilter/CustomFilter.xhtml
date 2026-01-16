@@ -61,8 +61,7 @@
           </h:panelGroup>
 
           <!-- STRING, TEXT -->
-          <h:panelGroup layout="block"
-            rendered="#{['TIMESTAMP','STRING'].contains(customField.customFieldMeta.type())}">
+          <h:panelGroup layout="block" rendered="#{customFilterBean.isStringOrTextCustomFieldType(customField.customFieldMeta.type())}">
             <p:selectCheckboxMenu id="text-dropdown" dynamic="true" filter="true"
               styleClass="col-12 m-0 p-0 grid formgrid" filterMatchMode="startsWith" updateLabel="true"
               scrollHeight="250" value="#{customField.customFieldValues}">
