@@ -72,7 +72,6 @@
               oncomplete="getCurrentViewPortOfDiagramData(); return true;" />
           </p:menuButton>
           <p:commandButton icon="pi pi-upload" styleClass="action-button"
-          	rendered="#{processesAnalyticsBean.nodes.size() > 0}"
             value="#{ivy.cms.co('/Dialogs/com/axonivy/solutions/process/analyser/ProcessAnalytics/ExportExcel')}">
             <p:dataExporter type="xls" target="process-analytics-form:statistic-viewer:node" fileName="#{masterDataBean.generateNameOfExcelFile()}" />
           </p:commandButton>

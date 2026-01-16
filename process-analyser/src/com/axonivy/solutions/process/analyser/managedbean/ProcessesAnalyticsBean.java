@@ -20,7 +20,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.primefaces.PF;
@@ -227,7 +227,7 @@ public class ProcessesAnalyticsBean {
     masterDataBean.handleKpiTypeChange();
     if (!isWidgetMode) {
       colorPickerBean.updateColorByKpiType(masterDataBean.getSelectedKpiType());
-      updateAndRefreshDiagramAndStatistic();      
+      updateAndRefreshDiagramAndStatistic();
     }
   }
 
