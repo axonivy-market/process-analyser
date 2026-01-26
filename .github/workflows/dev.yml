@@ -13,4 +13,10 @@ permissions:
 
 jobs:
   build:
-    uses: axonivy-market/github-workflows/.github/workflows/dev.yml@v6
+    uses: axonivy-market/github-workflows/.github/workflows/ci.yml@v6
+    with:
+      mvnArgs: '"-Divy.engine.download.url=https://dev.axonivy.com/permalink/dev/axonivy-engine.zip" "-Divy.engine.version=(12.0.0,]"'
+      javaVersion: 21
+      mvnVersion: 3.9.8
+      ivyVersion: dev
+      migrateToLatestIvyVersion: true
