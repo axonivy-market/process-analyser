@@ -98,6 +98,7 @@ public class ProcessUtils {
   }
 
   public static List<ProcessElement> getNestedProcessElementsFromSub(Object element) {
+    Ivy.log().warn("getNestedProcessElementsFromSub {0}", element);
     return switch (element) {
     case EmbeddedProcessElement embeddedElement -> getEmbbedProcessElements(embeddedElement).stream()
         .flatMap(e -> Stream.concat(Stream.of(e), getEmbbedProcessElements(e).stream())).collect(Collectors.toList());
@@ -128,17 +129,16 @@ public class ProcessUtils {
   }
 
   /*
-   * Get nested process elements inside the call-able sub by these steps: 1) find
-   * the process path which is called inside the sub 2) find all of process element
-   * from this process 3) (Optional) find nested embedded process inside the BPMN
-   * sub (if exist)
+   * Get nested process elements inside the call-able sub by these steps: 
+   * 1) find the process path which is called inside the sub 
+   * 2) find all of process element from this process 
+   * 3) (Optional) find nested embedded process inside the BPMN sub (if exist)
    */
   private static List<ProcessElement> getProcessElementsFromCallableSubProcessPath(String subProcessPath) {
+    Ivy.log().warn("getProcessElementsFromCallableSubProcessPath {0}", subProcessPath);
     return IProcessManager.instance().getProjectDataModels().stream()
         .map(model -> model.getProcessByPath(subProcessPath)).filter(Objects::nonNull).findAny()
-        .map(process -> process.getModel().getProcessElements().stream()
-            .flatMap(pe -> Stream.concat(Stream.of(pe), getNestedProcessElementsFromSub(pe).stream()))
-            .collect(Collectors.toList()))
+        .map(process -> process.getModel().getProcessElements())
         .orElse(Collections.emptyList());
   }
 
