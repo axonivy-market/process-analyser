@@ -3,14 +3,15 @@ name: Release SNAPSHOT
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+  packages: write
+  pull-requests: write
+
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
+    
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 21
