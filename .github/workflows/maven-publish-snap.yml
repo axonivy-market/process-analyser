@@ -29,7 +29,8 @@ jobs:
     - name: Build with Maven
       run: mvn clean install --batch-mode -Dmaven.test.skip=true
 
-    - name: Publish to GitHub Packages Apache Maven
-      run: mvn --batch-mode -Dmaven.test.skip=true -DaltDeploymentRepository=github::https://maven.pkg.github.com/axonivy-market/process-analyser deploy
+    - name: Deploy to repo
       env:
-        GITHUB_TOKEN: ${{ github.token }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: mvn --batch-mode -Darguments="-Dmaven.test.skip=true -DaltDeploymentRepository=github::https://maven.pkg.github.com/axonivy-market/${{ github.event.repository.name }}" deploy
+
