@@ -98,13 +98,24 @@ public class ProcessUtils {
   }
 
   public static List<ProcessElement> getNestedProcessElementsFromSub(Object element) {
-    return switch (element) {
-    case EmbeddedProcessElement embeddedElement -> getEmbbedProcessElements(embeddedElement).stream()
-        .flatMap(e -> Stream.concat(Stream.of(e), getEmbbedProcessElements(e).stream())).collect(Collectors.toList());
-    case SubProcessCall subProcessCall ->
-      getProcessElementsFromCallableSubProcessPath(subProcessCall.getCallTarget().getProcessName().getName());
-    default -> Collections.emptyList();
-    };
+    List<ProcessElement> processElements = new ArrayList<>();
+    if (element instanceof EmbeddedProcessElement) {
+      List<ProcessElement> nestedProcessElements = new ArrayList<>();
+      var embeddedElement = EmbeddedProcessElement.class.cast(element);
+      for (var processElement : getEmbbedProcessElements(embeddedElement)) {
+        nestedProcessElements.addAll(getEmbbedProcessElements(processElement));
+      }
+      processElements.addAll(nestedProcessElements);
+    }
+    
+    if (element instanceof SubProcessCall) {
+      var subProcessCall = SubProcessCall.class.cast(element);
+      var callTarget = subProcessCall.getCallTarget();
+      String subProcessPath = subProcessCall.getCallTarget().getProcessName().getName();
+      String targetStartSignature = callTarget.getSignature().toSimpleNameSignature();
+      processElements.addAll(getProcessElementsFromCallableSubProcessPath(subProcessPath, targetStartSignature));
+    }
+    return processElements;
   }
 
   /*
@@ -128,18 +139,43 @@ public class ProcessUtils {
   }
 
   /*
-   * Get nested process elements inside the call-able sub by these steps: 1) find
-   * the process path which is called inside the sub 2) find all of process element
-   * from this process 3) (Optional) find nested embedded process inside the BPMN
-   * sub (if exist)
+   * Get nested process elements inside the call-able sub by these steps: 
+   * 1) find the process path which is called inside the sub 
+   * 2) find all of process element from this process 
+   * 3) (Optional) find nested embedded process inside the BPMN sub (if exist)
    */
-  private static List<ProcessElement> getProcessElementsFromCallableSubProcessPath(String subProcessPath) {
-    return IProcessManager.instance().getProjectDataModels().stream()
-        .map(model -> model.getProcessByPath(subProcessPath)).filter(Objects::nonNull).findAny()
-        .map(process -> process.getModel().getProcessElements().stream()
-            .flatMap(pe -> Stream.concat(Stream.of(pe), getNestedProcessElementsFromSub(pe).stream()))
-            .collect(Collectors.toList()))
-        .orElse(Collections.emptyList());
+  private static List<ProcessElement> getProcessElementsFromCallableSubProcessPath(String subProcessPath,
+      String targetStartSignature) {
+    List<ProcessElement> finalProcessElements = new ArrayList<>();
+    Optional<IProcess> iProcessOptional = IProcessManager.instance().getProjectDataModels().stream()
+        .map(model -> model.getProcessByPath(subProcessPath)).filter(Objects::nonNull).findAny();
+    if (iProcessOptional.isEmpty()) {
+      return List.of();
+    }
+    List<ProcessElement> foundProcessElements = iProcessOptional.get().getModel().getProcessElements();
+    var callSubStart = foundProcessElements.stream()
+        .filter(processElement -> CallSubStart.class.isInstance(processElement))
+        .map(processElement -> CallSubStart.class.cast(processElement))
+        .filter(startCallable -> startCallable.getSignature().toSimpleNameSignature().equalsIgnoreCase(targetStartSignature))
+        .findAny();
+    if (callSubStart.isEmpty()) {
+      return List.of();
+    }
+
+    ProcessElement proceedElement = callSubStart.get();
+    finalProcessElements.add(proceedElement);
+    for (int index = 0; index < foundProcessElements.size(); index++) {
+      var foundProcessElement = foundProcessElements.get(index);
+      if (proceedElement.isConnectedTo(foundProcessElement)) {
+        finalProcessElements.add(foundProcessElement);
+        List<ProcessElement> foundSubFPE = getNestedProcessElementsFromSub(foundProcessElement);
+        finalProcessElements.addAll(foundSubFPE);
+        index = 0;
+        proceedElement = foundProcessElement;
+      }
+    }
+
+    return finalProcessElements;
   }
 
   public static List<ProcessElement> getProcessElementsFrom(String processId, IProcessModelVersion pmv) {
