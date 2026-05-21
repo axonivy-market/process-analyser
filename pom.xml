@@ -11,7 +11,8 @@
     <module>process-analyser</module>
     <module>process-analyser-demo</module>
     <module>process-analyser-internal-support</module>
-
+    <module>process-analyser-test</module>
+    <module>process-analyser-product</module>
   </modules>
 
   <scm>

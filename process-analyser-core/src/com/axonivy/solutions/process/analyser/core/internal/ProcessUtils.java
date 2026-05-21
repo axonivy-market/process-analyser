@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 
@@ -99,16 +98,6 @@ public class ProcessUtils {
   }
 
   public static List<ProcessElement> getNestedProcessElementsFromSub(Object element) {
-<<<<<<< Updated upstream
-    Ivy.log().warn("getNestedProcessElementsFromSub {0}", element);
-    return switch (element) {
-    case EmbeddedProcessElement embeddedElement -> getEmbbedProcessElements(embeddedElement).stream()
-        .flatMap(e -> Stream.concat(Stream.of(e), getEmbbedProcessElements(e).stream())).collect(Collectors.toList());
-    case SubProcessCall subProcessCall ->
-      getProcessElementsFromCallableSubProcessPath(subProcessCall.getCallTarget().getProcessName().getName());
-    default -> Collections.emptyList();
-    };
-=======
     List<ProcessElement> processElements = new ArrayList<>();
     if (element instanceof EmbeddedProcessElement) {
       List<ProcessElement> nestedProcessElements = new ArrayList<>();
@@ -127,7 +116,6 @@ public class ProcessUtils {
       processElements.addAll(getProcessElementsFromCallableSubProcessPath(subProcessPath, targetStartSignature));
     }
     return processElements;
->>>>>>> Stashed changes
   }
 
   /*
@@ -156,14 +144,6 @@ public class ProcessUtils {
    * 2) find all of process element from this process 
    * 3) (Optional) find nested embedded process inside the BPMN sub (if exist)
    */
-<<<<<<< Updated upstream
-  private static List<ProcessElement> getProcessElementsFromCallableSubProcessPath(String subProcessPath) {
-    Ivy.log().warn("getProcessElementsFromCallableSubProcessPath {0}", subProcessPath);
-    return IProcessManager.instance().getProjectDataModels().stream()
-        .map(model -> model.getProcessByPath(subProcessPath)).filter(Objects::nonNull).findAny()
-        .map(process -> process.getModel().getProcessElements())
-        .orElse(Collections.emptyList());
-=======
   private static List<ProcessElement> getProcessElementsFromCallableSubProcessPath(String subProcessPath,
       String targetStartSignature) {
     List<ProcessElement> finalProcessElements = new ArrayList<>();
@@ -196,7 +176,6 @@ public class ProcessUtils {
     }
 
     return finalProcessElements;
->>>>>>> Stashed changes
   }
 
   public static List<ProcessElement> getProcessElementsFrom(String processId, IProcessModelVersion pmv) {
