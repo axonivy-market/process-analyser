@@ -111,7 +111,7 @@ public class ProcessUtils {
     if (element instanceof SubProcessCall) {
       var subProcessCall = SubProcessCall.class.cast(element);
       var callTarget = subProcessCall.getCallTarget();
-      String subProcessPath = subProcessCall.getCallTarget().getProcessName().getName();
+      String subProcessPath = callTarget.getProcessName().getName();
       String targetStartSignature = callTarget.getSignature().toSimpleNameSignature();
       processElements.addAll(getProcessElementsFromCallableSubProcessPath(subProcessPath, targetStartSignature));
     }
@@ -164,18 +164,25 @@ public class ProcessUtils {
 
     ProcessElement proceedElement = callSubStart.get();
     finalProcessElements.add(proceedElement);
-    for (int index = 0; index < foundProcessElements.size(); index++) {
-      var foundProcessElement = foundProcessElements.get(index);
+    foundProcessElements.remove(proceedElement);
+    collectAllLinkedElementsOfStartProcess(finalProcessElements, foundProcessElements, proceedElement);
+
+    return finalProcessElements;
+  }
+
+  private static void collectAllLinkedElementsOfStartProcess(List<ProcessElement> finalProcessElements,
+      List<ProcessElement> foundProcessElements, ProcessElement proceedElement) {
+    for (var foundProcessElement : foundProcessElements) {
       if (proceedElement.isConnectedTo(foundProcessElement)) {
         finalProcessElements.add(foundProcessElement);
         List<ProcessElement> foundSubFPE = getNestedProcessElementsFromSub(foundProcessElement);
         finalProcessElements.addAll(foundSubFPE);
-        index = 0;
-        proceedElement = foundProcessElement;
+        collectAllLinkedElementsOfStartProcess(finalProcessElements,
+            foundProcessElements.stream().filter(pe -> !Objects.equals(pe, foundProcessElement)).toList(),
+            foundProcessElement);
+        break;
       }
     }
-
-    return finalProcessElements;
   }
 
   public static List<ProcessElement> getProcessElementsFrom(String processId, IProcessModelVersion pmv) {
