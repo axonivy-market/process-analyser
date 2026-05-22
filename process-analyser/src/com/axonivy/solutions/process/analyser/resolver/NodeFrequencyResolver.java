@@ -60,11 +60,11 @@ public class NodeFrequencyResolver {
       return;
     }
 
-      List<ITask> finishedTasks = tasks.stream().filter(ITask::isPersistent).toList();      
-      for (var task : finishedTasks) {
-        List<String> nodeIdsInPath = findShortestWayFromTaskStartToEnd(task, processElements);
-        updateFrequencyForNodeById(nodes, nodeIdsInPath);
-      }
+    List<ITask> finishedTasks = tasks.stream().filter(ITask::isPersistent).toList();
+    for (var task : finishedTasks) {
+      List<String> nodeIdsInPath = findShortestWayFromTaskStartToEnd(task, processElements);
+      updateFrequencyForNodeById(nodes, nodeIdsInPath);
+    }
     NodeResolver.updateRelativeValueForNodes(nodes);
   }
 
@@ -202,9 +202,10 @@ public class NodeFrequencyResolver {
       nextElement = getNestedSubElement(nextElement, subProcessCalls);
     }
     if (nextElement == null) {
+      path.setStatus(PathStatus.NOT_FOUND);
+      path.setEndPathId(ProcessUtils.getElementPid(destinationElement));
       return;
     }
-
     // Retrieve all outgoing flows from the next element.
     List<SequenceFlow> nextOutgoingFlows = getNextOutgoingFlows(nextElement);
     final boolean isAlternative = ProcessUtils.isAlternativeInstance(nextElement);
