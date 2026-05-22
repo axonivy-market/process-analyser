@@ -170,10 +170,13 @@ public class NodeFrequencyResolver {
     final ProcessElement destinationElement = (ProcessElement) currentFlow.getTarget();
 
     // If the destination element meets end-of-path conditions, stop traversal.
+    // adding new if start sub
     if (isEndOfPathByGivenProcessElement(targetPid, path, destinationElement)) {
       return;
     }
-
+    // If desti is a start sub call, save procedd apth + callsub + out of call
+    // loop callsub -> collect all
+    destinationElement.getOutgoing();
     // Resolve the next process element to follow, given the path so far.
     ProcessElement nextElement = resolveNextElementForNode(path.getNodesInPath(), destinationElement, flowPid);
 
@@ -195,6 +198,7 @@ public class NodeFrequencyResolver {
           && ProcessUtils.isEmbeddedElementInstance(nextElement)) {
         nextElement = getNextElementForSubToSub(destinationElement, nextElement);
       }
+      // collect sub, find in sub, return path
     }
 
     // If the next element is a CallSubEnd, resolve the nested sub-element again.
