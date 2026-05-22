@@ -206,6 +206,7 @@ public class NodeFrequencyResolver {
       path.setEndPathId(ProcessUtils.getElementPid(destinationElement));
       return;
     }
+
     // Retrieve all outgoing flows from the next element.
     List<SequenceFlow> nextOutgoingFlows = getNextOutgoingFlows(nextElement);
     final boolean isAlternative = ProcessUtils.isAlternativeInstance(nextElement);
