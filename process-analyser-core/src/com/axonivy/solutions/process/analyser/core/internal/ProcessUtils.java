@@ -102,7 +102,11 @@ public class ProcessUtils {
     if (element instanceof EmbeddedProcessElement) {
       List<ProcessElement> nestedProcessElements = new ArrayList<>();
       var embeddedElement = EmbeddedProcessElement.class.cast(element);
+      processElements.add(embeddedElement);
+      // Loop through all process elements and find in deep one more level of embedded 
       for (var processElement : getEmbbedProcessElements(embeddedElement)) {
+        processElements.add(processElement);
+        // Find nested elements
         nestedProcessElements.addAll(getEmbbedProcessElements(processElement));
       }
       processElements.addAll(nestedProcessElements);
