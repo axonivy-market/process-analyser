@@ -116,6 +116,16 @@ public class ProcessUtils {
       processElements.addAll(getProcessElementsFromCallableSubProcessPath(subProcessPath, targetStartSignature));
     }
     return processElements;
+    /*
+     * ======= return switch (element) { case EmbeddedProcessElement embeddedElement
+     * -> getEmbbedProcessElements(embeddedElement).stream() .flatMap(e ->
+     * Stream.concat(Stream.of(e),
+     * getEmbbedProcessElements(e).stream())).collect(Collectors.toList()); case
+     * SubProcessCall subProcessCall ->
+     * getProcessElementsFromCallableSubProcessPath(subProcessCall.getCallTarget().
+     * getProcessName().getName()); default -> Collections.emptyList(); }; >>>>>>>
+     * origin/master
+     */
   }
 
   /*
@@ -139,10 +149,10 @@ public class ProcessUtils {
   }
 
   /*
-   * Get nested process elements inside the call-able sub by these steps: 
-   * 1) find the process path which is called inside the sub 
-   * 2) find all of process element from this process 
-   * 3) (Optional) find nested embedded process inside the BPMN sub (if exist)
+   * Get nested process elements inside the call-able sub by these steps: 1) find
+   * the process path which is called inside the sub 2) find all of process element
+   * from this process 3) (Optional) find nested embedded process inside the BPMN
+   * sub (if exist)
    */
   private static List<ProcessElement> getProcessElementsFromCallableSubProcessPath(String subProcessPath,
       String targetStartSignature) {
@@ -169,6 +179,17 @@ public class ProcessUtils {
 
     return finalProcessElements;
   }
+
+  /*
+   * ======= private static List<ProcessElement>
+   * getProcessElementsFromCallableSubProcessPath(String subProcessPath) { return
+   * IProcessManager.instance().getProjectDataModels().stream() .map(model ->
+   * model.getProcessByPath(subProcessPath)).filter(Objects::nonNull).findAny()
+   * .map(process -> process.getModel().getProcessElements().stream() .flatMap(pe
+   * -> Stream.concat(Stream.of(pe),
+   * getNestedProcessElementsFromSub(pe).stream())) .collect(Collectors.toList()))
+   * .orElse(Collections.emptyList()); >>>>>>> origin/master }
+   */
 
   private static void collectAllLinkedElementsOfStartProcess(List<ProcessElement> finalProcessElements,
       List<ProcessElement> foundProcessElements, ProcessElement proceedElement) {

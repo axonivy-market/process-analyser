@@ -278,15 +278,12 @@ public class NodeFrequencyResolver {
       return;
     }
 
-    paths.stream()
-      .filter(path -> Objects.nonNull(path.getEndPathId()))
-      .filter(path -> path.getEndPathId().equals(startPathId))
-      .findFirst().ifPresent(path -> {
-        nodesInPath.addAll(0, path.getNodesInPath());
-        var remainingPaths = paths.stream()
-            .filter(availablePath -> !availablePath.getStartPathId().equals(path.getStartPathId())).toList();
-        collectNodeIdsFromStartPathIdInFoundPaths(remainingPaths, nodesInPath, path.getStartPathId());
-      });
+    paths.stream().filter(path -> path.getEndPathId().equals(startPathId)).findFirst().ifPresent(path -> {
+      nodesInPath.addAll(0, path.getNodesInPath());
+      var remainingPaths = paths.stream()
+          .filter(availablePath -> !availablePath.getStartPathId().equals(path.getStartPathId())).toList();
+      collectNodeIdsFromStartPathIdInFoundPaths(remainingPaths, nodesInPath, path.getStartPathId());
+    });
   }
 
   private static ProcessElement getNextElementForSubToSub(ProcessElement destinationElement,
