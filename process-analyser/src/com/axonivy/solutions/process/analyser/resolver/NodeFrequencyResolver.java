@@ -201,9 +201,6 @@ public class NodeFrequencyResolver {
     if (nextElement instanceof CallSubEnd) {
       nextElement = getNestedSubElement(nextElement, subProcessCalls);
     }
-    if (nextElement == null) {
-      return;
-    }
 
     // Retrieve all outgoing flows from the next element.
     List<SequenceFlow> nextOutgoingFlows = getNextOutgoingFlows(nextElement);
@@ -272,15 +269,12 @@ public class NodeFrequencyResolver {
       return;
     }
 
-    paths.stream()
-      .filter(path -> Objects.nonNull(path.getEndPathId()))
-      .filter(path -> path.getEndPathId().equals(startPathId))
-      .findFirst().ifPresent(path -> {
-        nodesInPath.addAll(0, path.getNodesInPath());
-        var remainingPaths = paths.stream()
-            .filter(availablePath -> !availablePath.getStartPathId().equals(path.getStartPathId())).toList();
-        collectNodeIdsFromStartPathIdInFoundPaths(remainingPaths, nodesInPath, path.getStartPathId());
-      });
+    paths.stream().filter(path -> path.getEndPathId().equals(startPathId)).findFirst().ifPresent(path -> {
+      nodesInPath.addAll(0, path.getNodesInPath());
+      var remainingPaths = paths.stream()
+          .filter(availablePath -> !availablePath.getStartPathId().equals(path.getStartPathId())).toList();
+      collectNodeIdsFromStartPathIdInFoundPaths(remainingPaths, nodesInPath, path.getStartPathId());
+    });
   }
 
   private static ProcessElement getNextElementForSubToSub(ProcessElement destinationElement,
