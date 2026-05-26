@@ -1,19 +1,15 @@
 {
-  "$schema" : "https://json-schema.axonivy.com/data-class/13.1.0/data-class.json",
+  "$schema" : "https://json-schema.axonivy.com/14.0-dev/project/data-class.json",
   "simpleName" : "SubmitPersonalInformationData",
   "namespace" : "com.axonivy.solutions.process.analyser.demo.SubmitPersonalInformation",
-  "isBusinessCaseData" : false,
   "fields" : [ {
     "name" : "isChargeLater",
-    "type" : "Boolean",
-    "modifiers" : [ "PERSISTENT" ]
+    "type" : "Boolean"
   }, {
     "name" : "isBackToSearchPage",
-    "type" : "Boolean",
-    "modifiers" : [ "PERSISTENT" ]
+    "type" : "Boolean"
   }, {
     "name" : "flightInformation",
-    "type" : "com.axonivy.solutions.process.analyser.demo.data.FlightInformation",
-    "modifiers" : [ "PERSISTENT" ]
+    "type" : "com.axonivy.solutions.process.analyser.demo.data.FlightInformation"
   } ]
 }

@@ -1,0 +1,116 @@
+# yaml-language-server: $schema=https://json-schema.axonivy.com/14.0-dev/config/users.json
+Users:
+  - Name: SkyKing01
+    FullName: Chuck Yeager
+    Mail: chuck.yeager@flyhigh.com
+    Roles:
+      - Pilot
+  - Name: Maverick88
+    FullName: Pete Mitchell
+    Mail: pete.mitchell@flyhigh.com
+    Roles:
+      - Pilot
+  - Name: AmeliaWings
+    FullName: Amelia Earhart
+    Mail: amelia.earhart@flyhigh.com
+    Roles:
+      - Pilot
+  - Name: WrenchWizard
+    FullName: Leo DaVinci
+    Mail: leo.davinci@flyhigh.com
+    Roles:
+      - MaintenanceAndEngineering
+  - Name: GearGuru
+    FullName: Ellie Golding
+    Mail: ellie.golding@flyhigh.com
+    Roles:
+      - MaintenanceAndEngineering
+  - Name: BoltBoss
+    FullName: Isaac Newton
+    Mail: isaac.newton@flyhigh.com
+    Roles:
+      - MaintenanceAndEngineering
+  - Name: AdAce
+    FullName: Don Draper
+    Mail: don.draper@flyhigh.com
+    Roles:
+      - Marketing
+  - Name: PromoPro
+    FullName: Peggy Olson
+    Mail: peggy.olson@flyhigh.com
+    Roles:
+      - Marketing
+  - Name: PromoPitt
+    FullName: Brad Pitt
+    Mail: brad.pitt@flyhigh.com
+    Roles:
+      - Marketing
+  - Name: PlanMaster
+    FullName: Howard Hughes
+    Mail: howard.hughes@flyhigh.com
+    Roles:
+      - AviationPlanner
+  - Name: AeroArchitect
+    FullName: Frank Whittle
+    Mail: frank.whittle@flyhigh.com
+    Roles:
+      - AviationPlanner
+  - Name: SkyStrategist
+    FullName: Burt Rutan
+    Mail: burt.rutan@flyhigh.com
+    Roles:
+      - AviationPlanner
+  - Name: FlyGalJen
+    FullName: Jennifer Aniston
+    Mail: jennifer.aniston@flyhigh.com
+    Roles:
+      - CabinCrew
+  - Name: StewardLeo
+    FullName: Leonardo DiCaprio
+    Mail: leo.dicaprio@flyhigh.com
+    Roles:
+      - CabinCrew
+  - Name: AirHostessMonroe
+    FullName: 'Marilyn Monroe '
+    Mail: marilyn.monroe@flyhigh.com
+    Roles:
+      - CabinCrew
+  - Name: FlightKingElvis
+    FullName: Elvis Presley
+    Mail: elvis.presley@flyhigh.com
+    Roles:
+      - CabinCrew
+  - Name: CabinCruise
+    FullName: Tom Cruise
+    Mail: tom.cruise@flyhigh.com
+    Roles:
+      - CabinCrew
+  - Name: JetSetJolie
+    FullName: Angelina Jolie
+    Mail: angelina.jolie@flyhigh.com
+    Roles:
+      - CabinCrew
+  - Name: SkyWalkerMark
+    FullName: Mark Hamill
+    Mail: mark.hamill@flyhigh.com
+    Roles:
+      - CabinCrew
+  - Name: CloudHopperGrace
+    FullName: Grace Kelly
+    Mail: grace.kelly@flyhigh.com
+    Roles:
+      - CabinCrew
+  - Name: AirQueenBey
+    FullName: Beyoncé Knowles
+    Mail: beyonce.knowles@flyhigh.com
+    Roles:
+      - CabinCrew
+  - Name: CelestrialGaga
+    FullName: Lady Gaga
+    Mail: lady.gaga@flyhigh.com
+    Roles:
+      - CabinCrew
+  - Name: DataAnalyst
+    FullName: Data Analyst
+    Roles:
+      - ProcessAnalyst

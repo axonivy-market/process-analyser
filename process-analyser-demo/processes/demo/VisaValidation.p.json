@@ -1,5 +1,5 @@
 {
-  "$schema" : "https://json-schema.axonivy.com/process/13.2.0/process.json",
+  "$schema" : "https://json-schema.axonivy.com/14.0-dev/project/process.json",
   "id" : "19746046194A390D",
   "kind" : "CALLABLE_SUB",
   "config" : {
@@ -63,7 +63,7 @@
           "name" : "Visa card validation",
           "config" : {
             "target" : {
-              "clientId" : "4a4f321f-73ae-4da3-be66-e35cf38b0b50"
+              "clientId" : "SampleRestClient"
             }
           },
           "visual" : {

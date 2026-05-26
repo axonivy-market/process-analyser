@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=https://json-schema.axonivy.com/14.0-dev/config/roles.json
+Roles:
+  - Id: Commercial
+    Name: Commercial
+  - Id: Marketing
+    Name: Marketing
+    Parent: Commercial
+  - Id: AviationPlanner
+    Name: Aviation planner
+    Parent: Commercial
+  - Id: Operation
+    Name: Operation
+  - Id: FlightOperation
+    Name: Flight operation
+    Parent: Operation
+  - Id: Pilot
+    Parent: FlightOperation
+  - Id: CabinCrew
+    Name: Cabin crew
+    Parent: FlightOperation
+  - Id: MaintenanceAndEngineering
+    Name: Maintenance and Engineering
+    Parent: Operation

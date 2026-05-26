@@ -1,23 +1,15 @@
 {
-  "$schema" : "https://json-schema.axonivy.com/data-class/13.1.0/data-class.json",
+  "$schema" : "https://json-schema.axonivy.com/14.0-dev/project/data-class.json",
   "simpleName" : "SearchingFlight",
   "namespace" : "com.axonivy.solutions.process.analyser.demo.data",
-  "isBusinessCaseData" : false,
   "fields" : [ {
-    "name" : "flightId",
-    "type" : "String",
-    "modifiers" : [ "PERSISTENT" ]
+    "name" : "flightId"
   }, {
-    "name" : "selectedFrom",
-    "type" : "String",
-    "modifiers" : [ "PERSISTENT" ]
+    "name" : "selectedFrom"
   }, {
-    "name" : "selectedTo",
-    "type" : "String",
-    "modifiers" : [ "PERSISTENT" ]
+    "name" : "selectedTo"
   }, {
     "name" : "selectedTime",
-    "type" : "java.util.Date",
-    "modifiers" : [ "PERSISTENT" ]
+    "type" : "java.util.Date"
   } ]
 }

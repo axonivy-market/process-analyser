@@ -1,15 +1,12 @@
 {
-  "$schema" : "https://json-schema.axonivy.com/data-class/13.1.0/data-class.json",
+  "$schema" : "https://json-schema.axonivy.com/14.0-dev/project/data-class.json",
   "simpleName" : "DisplayBookingInformationData",
   "namespace" : "com.axonivy.solutions.process.analyser.demo.DisplayBookingInformation",
-  "isBusinessCaseData" : false,
   "fields" : [ {
     "name" : "isBackToSubmitInformationPage",
-    "type" : "Boolean",
-    "modifiers" : [ "PERSISTENT" ]
+    "type" : "Boolean"
   }, {
     "name" : "flightBooking",
-    "type" : "com.axonivy.solutions.process.analyser.demo.data.FlightInformation",
-    "modifiers" : [ "PERSISTENT" ]
+    "type" : "com.axonivy.solutions.process.analyser.demo.data.FlightInformation"
   } ]
 }

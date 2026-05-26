@@ -1,27 +1,21 @@
 {
-  "$schema" : "https://json-schema.axonivy.com/data-class/13.1.0/data-class.json",
+  "$schema" : "https://json-schema.axonivy.com/14.0-dev/project/data-class.json",
   "simpleName" : "FlightBookingDemoData",
   "namespace" : "com.axonivy.solutions.process.analyser.demo.data",
-  "isBusinessCaseData" : false,
   "fields" : [ {
     "name" : "isBackToSearchPage",
-    "type" : "Boolean",
-    "modifiers" : [ "PERSISTENT" ]
+    "type" : "Boolean"
   }, {
     "name" : "isBackToSubmitInformationPage",
-    "type" : "Boolean",
-    "modifiers" : [ "PERSISTENT" ]
+    "type" : "Boolean"
   }, {
     "name" : "isPaid",
-    "type" : "Boolean",
-    "modifiers" : [ "PERSISTENT" ]
+    "type" : "Boolean"
   }, {
     "name" : "isChargeLater",
-    "type" : "Boolean",
-    "modifiers" : [ "PERSISTENT" ]
+    "type" : "Boolean"
   }, {
     "name" : "flightInformation",
-    "type" : "com.axonivy.solutions.process.analyser.demo.data.FlightInformation",
-    "modifiers" : [ "PERSISTENT" ]
+    "type" : "com.axonivy.solutions.process.analyser.demo.data.FlightInformation"
   } ]
 }

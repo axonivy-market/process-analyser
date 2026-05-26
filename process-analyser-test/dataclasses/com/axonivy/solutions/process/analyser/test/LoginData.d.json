@@ -1,19 +1,12 @@
 {
-  "$schema" : "https://json-schema.axonivy.com/data-class/13.1.0/data-class.json",
+  "$schema" : "https://json-schema.axonivy.com/14.0-dev/project/data-class.json",
   "simpleName" : "LoginData",
   "namespace" : "com.axonivy.solutions.process.analyser.test",
-  "isBusinessCaseData" : false,
   "fields" : [ {
-    "name" : "username",
-    "type" : "String",
-    "modifiers" : [ "PERSISTENT" ]
+    "name" : "username"
   }, {
-    "name" : "password",
-    "type" : "String",
-    "modifiers" : [ "PERSISTENT" ]
+    "name" : "password"
   }, {
-    "name" : "locale",
-    "type" : "String",
-    "modifiers" : [ "PERSISTENT" ]
+    "name" : "locale"
   } ]
 }

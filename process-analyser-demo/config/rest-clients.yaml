@@ -1,7 +1,8 @@
-# yaml-language-server: $schema=https://json-schema.axonivy.com/app/13.1.0/rest-clients.json
+# yaml-language-server: $schema=https://json-schema.axonivy.com/14.0-dev/config/rest-clients-1.json
 RestClients:
   SampleRestClient:
-    UUID: 4a4f321f-73ae-4da3-be66-e35cf38b0b50
+    Name: SampleRestClient
     Url: ${ivy.var.com.axonivy.solutions.process.analyser.demo.restUrl}
     Features:
-    - ch.ivyteam.ivy.rest.client.mapper.JsonFeature
+      - ch.ivyteam.ivy.rest.client.mapper.JsonFeature
+    LegacyUUID: 4a4f321f-73ae-4da3-be66-e35cf38b0b50
