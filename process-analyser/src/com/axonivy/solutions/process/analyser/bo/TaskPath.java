@@ -2,9 +2,9 @@ package com.axonivy.solutions.process.analyser.bo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
 
 public class TaskPath {
   private String taskUUID;
@@ -52,18 +52,18 @@ public class TaskPath {
     this.paths = paths;
   }
 
-  public List<String> getRelatedPathOfGivenPath(Path path) {
-    List<String> relatedPaths = new ArrayList<>();
+  public List<String> getRelatedNodesOfGivenPath(Path path) {
     if (path == null || paths == null) {
       return List.of();
     }
-    String startPathId = path.getStartPathId();
+    List<String> relatedPaths = new ArrayList<>();
+    String targetPathId = path.getStartPathId();
     Path triggeredPath = null;
     do {
-      triggeredPath = findTriggeredPath(startPathId);
+      triggeredPath = getPathTriggeredGivenPath(targetPathId);
       if (triggeredPath != null) {
         relatedPaths.addAll(0, triggeredPath.getNodesInPath());
-        startPathId = triggeredPath.getStartPathId();
+        targetPathId = triggeredPath.getStartPathId();
       }
     } while (triggeredPath != null);
 
@@ -71,9 +71,9 @@ public class TaskPath {
     return relatedPaths;
   }
 
-  private Path findTriggeredPath(final String startPathId) {
-    return paths.stream().filter(p -> ObjectUtils.isNotEmpty(p.getEndPathId()))
-        .filter(p -> p.getEndPathId().equals(startPathId))
+  private Path getPathTriggeredGivenPath(final String targetPathId) {
+    return paths.stream().filter(path -> Objects.nonNull(path.getEndPathId()))
+        .filter(path -> path.getEndPathId().equals(targetPathId))
         .findAny().orElse(null);
   }
 
