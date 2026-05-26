@@ -9,7 +9,7 @@
   </parent>
   <groupId>process.analyser.internal.support</groupId>
   <artifactId>process-analyser-internal-support</artifactId>
-  <version>13.2.3-SNAPSHOT</version>
+  <version>13.2.4-SNAPSHOT</version>
   <packaging>iar</packaging>
   <properties>
     <duplicate.version>13.2.0-SNAPSHOT</duplicate.version>
