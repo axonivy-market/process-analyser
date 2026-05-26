@@ -1,5 +1,5 @@
 {
-  "$schema" : "https://json-schema.axonivy.com/process/13.2.0/process.json",
+  "$schema" : "https://json-schema.axonivy.com/14.0-dev/project/process.json",
   "id" : "1975591B4FDDED13",
   "kind" : "CALLABLE_SUB",
   "config" : {
@@ -30,7 +30,7 @@
       "type" : "RestClientCall",
       "config" : {
         "target" : {
-          "clientId" : "6d5fcdba-edcc-43e2-89ec-4c81a4f9c525"
+          "clientId" : "testClient"
         }
       },
       "visual" : {

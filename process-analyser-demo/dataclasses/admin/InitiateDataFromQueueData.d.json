@@ -1,19 +1,14 @@
 {
-  "$schema" : "https://json-schema.axonivy.com/data-class/13.1.0/data-class.json",
+  "$schema" : "https://json-schema.axonivy.com/14.0-dev/project/data-class.json",
   "simpleName" : "InitiateDataFromQueueData",
   "namespace" : "admin",
-  "isBusinessCaseData" : false,
   "fields" : [ {
     "name" : "keys",
-    "type" : "List<String>",
-    "modifiers" : [ "PERSISTENT" ]
+    "type" : "List<String>"
   }, {
     "name" : "isExistedCase",
-    "type" : "Boolean",
-    "modifiers" : [ "PERSISTENT" ]
+    "type" : "Boolean"
   }, {
-    "name" : "selectedKey",
-    "type" : "String",
-    "modifiers" : [ "PERSISTENT" ]
+    "name" : "selectedKey"
   } ]
 }
