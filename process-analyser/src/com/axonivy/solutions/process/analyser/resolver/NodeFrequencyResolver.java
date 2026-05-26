@@ -4,12 +4,14 @@ import static com.axonivy.solutions.process.analyser.core.constants.CoreConstant
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang3.Strings;
 
 import com.axonivy.solutions.process.analyser.bo.Node;
@@ -34,12 +36,14 @@ public class NodeFrequencyResolver {
   private static final Pattern SEQUENCE_FLOW_CONDITION_PATTERN = Pattern.compile("ivp==\\\"([^\\\"]+)\\\"");
   private List<Node> nodes;
   private List<ProcessElement> processElements;
+  private Map<String, List<ProcessElement>> processPIDAndElementsMap;
 
   public NodeFrequencyResolver(List<Node> nodes, List<ProcessElement> processElements) {
     Objects.requireNonNull(processElements, "ProcessElements must not be null");
     Objects.requireNonNull(nodes, "Nodes must not be empty");
     this.processElements = processElements;
     this.nodes = nodes;
+    this.processPIDAndElementsMap = new HashedMap<>();
   }
 
   /**
@@ -92,7 +96,7 @@ public class NodeFrequencyResolver {
    *                         to
    * @return foundNodeIdsInPath: list of nodes related to the found way
    */
-  private static List<String> findShortestWayFromTaskStartToEnd(ITask task, List<ProcessElement> processElements) {
+  private List<String> findShortestWayFromTaskStartToEnd(ITask task, List<ProcessElement> processElements) {
     var taskStartPid = extractTaskSwitchEventElementPid(task.getStartSwitchEvent());
     var taskEndPid = extractTaskSwitchEventElementPid(task.getEndSwitchEvent());
 
@@ -150,7 +154,7 @@ public class NodeFrequencyResolver {
    *                        resolution.
    * @param taskPath        Additional metadata for the current task traversal.
    */
-  private static void followNodes(String targetPid, Path path, SequenceFlow currentFlow,
+  private void followNodes(String targetPid, Path path, SequenceFlow currentFlow,
       List<ProcessElement> subProcessCalls, TaskPath taskPath) {
     // If the path is already marked as found, stop traversal.
     if (path.isFound()) {
@@ -183,7 +187,7 @@ public class NodeFrequencyResolver {
     // Special case: If at a CallSubEnd with no next element, try to get the nested
     // sub-element.
     if (nextElement == null && destinationElement instanceof CallSubEnd) {
-      nextElement = getNestedSubElement(destinationElement, subProcessCalls);
+      nextElement = getNestedSubElement(destinationElement, subProcessCalls, path, taskPath);
     }
 
     // If next element is not the same as the destination, check for end-of-path
@@ -203,7 +207,7 @@ public class NodeFrequencyResolver {
 
     // If the next element is a CallSubEnd, resolve the nested sub-element again.
     if (nextElement instanceof CallSubEnd) {
-      nextElement = getNestedSubElement(nextElement, subProcessCalls);
+      nextElement = getNestedSubElement(nextElement, subProcessCalls, path, taskPath);
     }
     if (nextElement == null) {
       path.setStatus(PathStatus.NOT_FOUND);
@@ -226,7 +230,7 @@ public class NodeFrequencyResolver {
 
     // If the next element is an end node for the process path, mark the path as not
     // found and set end ID.
-    if (ProcessUtils.isProcessPathEndElement(nextElement)) {
+    if (ProcessUtils.isProcessPathEndElement(nextElement) && CollectionUtils.isEmpty(nextOutgoingFlows)) {
       path.setStatus(PathStatus.NOT_FOUND);
       path.setEndPathId(nextElementPid);
       return;
@@ -238,7 +242,7 @@ public class NodeFrequencyResolver {
     }
   }
 
-  private static void finishCurrentPathAndOpenNewPathForNextFlows(String targetPid, Path path,
+  private void finishCurrentPathAndOpenNewPathForNextFlows(String targetPid, Path path,
       List<ProcessElement> subProcessCalls, TaskPath taskPath, String nextElementPid,
       List<SequenceFlow> nextOutgoingFlows) {
     path.setStatus(PathStatus.FINISHED);
@@ -307,7 +311,8 @@ public class NodeFrequencyResolver {
       path.setStatus(PathStatus.FOUND);
       path.setEndPathId(processElementId);
       return true;
-    } else if (ProcessUtils.isTaskSwitchInstance(processElement) || ProcessUtils.isTaskEndInstance(processElement)) {
+    } else if (ProcessUtils.isTaskSwitchInstance(processElement) || ProcessUtils.isTaskEndInstance(processElement)
+        || ProcessUtils.isUserTaskInstance(processElement)) {
       path.setStatus(PathStatus.NOT_FOUND);
       path.setEndPathId(processElementId);
       return true;
@@ -323,9 +328,21 @@ public class NodeFrequencyResolver {
     return Strings.CI.equalsAny(processElementId, path.getStartPathId());
   }
 
-  private static ProcessElement getNestedSubElement(ProcessElement element, List<ProcessElement> subProcessCalls) {
-    return subProcessCalls.stream().filter(subProcessCall -> isSubProcessCallContainElement(element, subProcessCall))
-        .findAny().orElse(null);
+  private ProcessElement getNestedSubElement(ProcessElement element, List<ProcessElement> subProcessCalls,
+      Path currentPath, TaskPath taskPath) {
+    ProcessElement containerElement = null;
+    List<String> allNodesOfCurrentPath = taskPath.getRelatedPathOfGivenPath(currentPath);
+    String targetPID = ProcessUtils.getElementPid(element);
+    String processID = ProcessUtils.getElementPid(element.getRootProcess());
+    List<ProcessElement> elementsOfCurrentProcess = processPIDAndElementsMap.computeIfAbsent(processID,
+        pid -> element.getRootProcess().getProcessElements());
+    List<ProcessElement> subCallOfCurrentProcess = filterSubProcessCallElements(elementsOfCurrentProcess);
+    containerElement = findSubProcessCallContainsElement(targetPID, currentPath, allNodesOfCurrentPath, subCallOfCurrentProcess);
+
+    if (containerElement == null) {
+      containerElement = findSubProcessCallContainsElement(targetPID, currentPath, allNodesOfCurrentPath, subProcessCalls);
+    }
+    return containerElement;
   }
 
   private static List<SequenceFlow> detectOutGoingCreatedTaskFromTaskGetaway(String taskRequestPath,
@@ -346,9 +363,30 @@ public class NodeFrequencyResolver {
     return outGoingFlows;
   }
 
-  private static boolean isSubProcessCallContainElement(ProcessElement element, ProcessElement subProcessCall) {
-    return ProcessUtils.getNestedProcessElementsFromSub(subProcessCall).stream().map(ProcessUtils::getElementPid)
-        .toList().contains(ProcessUtils.getElementPid(element));
+  /**
+   * Loops all the SubProcessCalls to find the wrapper call-able process of element
+   * - Find in current process
+   * - Find in reference process
+   * */
+  private ProcessElement findSubProcessCallContainsElement(String targetPID, Path currentPath,
+      List<String> allNodesOfCurrentPath, List<ProcessElement> subProcessCalls) {
+    ProcessElement containerElement = null;
+    for (var subCallElement : subProcessCalls) {
+      String subCallPID = ProcessUtils.getElementPid(subCallElement);
+      List<ProcessElement> processElements = processPIDAndElementsMap.computeIfAbsent(subCallPID,
+          pid -> ProcessUtils.getNestedProcessElementsFromSub(subCallElement));
+      List<String> processElementPIDs = processElements.stream().map(ProcessUtils::getElementPid).toList();
+      if ((processElementPIDs.contains(targetPID) || subCallPID.equals(targetPID))
+          && allNodesOfCurrentPath.contains(subCallPID)) {
+        if (currentPath.getStartPathId().equals(targetPID)
+            || currentPath.getNodesInPath().contains(targetPID)
+            || allNodesOfCurrentPath.contains(targetPID)) {
+          containerElement = subCallElement;
+          break;
+        }
+      }
+    }
+    return containerElement;
   }
 
   private static List<SequenceFlow> getNextOutgoingFlows(ProcessElement nextElement) {

@@ -30,6 +30,7 @@ import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.EmbeddedProcessElement;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.element.activity.SubProcessCall;
+import ch.ivyteam.ivy.process.model.element.activity.UserTask;
 import ch.ivyteam.ivy.process.model.element.event.end.CallSubEnd;
 import ch.ivyteam.ivy.process.model.element.event.end.EmbeddedEnd;
 import ch.ivyteam.ivy.process.model.element.event.end.TaskEnd;
@@ -79,6 +80,10 @@ public class ProcessUtils {
 
   public static boolean isTaskSwitchInstance(Object element) {
     return TaskSwitchEvent.class.isInstance(element);
+  }
+
+  public static boolean isUserTaskInstance(Object element) {
+    return UserTask.class.isInstance(element);
   }
 
   public static boolean isTaskEndInstance(Object element) {
@@ -153,10 +158,10 @@ public class ProcessUtils {
   }
 
   /*
-   * Get nested process elements inside the call-able sub by these steps: 1) find
-   * the process path which is called inside the sub 2) find all of process element
-   * from this process 3) (Optional) find nested embedded process inside the BPMN
-   * sub (if exist)
+   * Get nested process elements inside the call-able sub by these steps:
+   *  1) find the process path which is called inside the sub.
+   *  2) find all of process element from this process.
+   *  3) (Optional) find nested embedded process inside the BPMN sub (if exist)
    */
   private static List<ProcessElement> getProcessElementsFromCallableSubProcessPath(String subProcessPath,
       String targetStartSignature) {
@@ -183,17 +188,6 @@ public class ProcessUtils {
 
     return finalProcessElements;
   }
-
-  /*
-   * ======= private static List<ProcessElement>
-   * getProcessElementsFromCallableSubProcessPath(String subProcessPath) { return
-   * IProcessManager.instance().getProjectDataModels().stream() .map(model ->
-   * model.getProcessByPath(subProcessPath)).filter(Objects::nonNull).findAny()
-   * .map(process -> process.getModel().getProcessElements().stream() .flatMap(pe
-   * -> Stream.concat(Stream.of(pe),
-   * getNestedProcessElementsFromSub(pe).stream())) .collect(Collectors.toList()))
-   * .orElse(Collections.emptyList()); >>>>>>> origin/master }
-   */
 
   private static void collectAllLinkedElementsOfStartProcess(List<ProcessElement> finalProcessElements,
       List<ProcessElement> foundProcessElements, ProcessElement proceedElement) {
@@ -408,7 +402,7 @@ public class ProcessUtils {
 
   public static List<ProcessElement> getTaskSwitchEvents(List<ProcessElement> processElements) {
     return Optional.ofNullable(processElements).orElse(Collections.emptyList()).stream()
-        .filter(element -> isTaskSwitchInstance(element)).toList();
+        .filter(element -> isTaskSwitchInstance(element) || isUserTaskInstance(element)).toList();
   }
 
   @SuppressWarnings("removal")
