@@ -104,37 +104,28 @@ public class ProcessUtils {
 
   public static List<ProcessElement> getNestedProcessElementsFromSub(Object element) {
     List<ProcessElement> processElements = new ArrayList<>();
-    if (element instanceof EmbeddedProcessElement) {
+    return switch (element) {
+    case EmbeddedProcessElement embeddedElement -> {
       List<ProcessElement> nestedProcessElements = new ArrayList<>();
-      var embeddedElement = EmbeddedProcessElement.class.cast(element);
       processElements.add(embeddedElement);
-      // Loop through all process elements and find in deep one more level of embedded 
+      // Loop through all process elements and find in deep one more level of embedded
       for (var processElement : getEmbbedProcessElements(embeddedElement)) {
         processElements.add(processElement);
         // Find nested elements
         nestedProcessElements.addAll(getEmbbedProcessElements(processElement));
       }
       processElements.addAll(nestedProcessElements);
+      yield processElements;
     }
-    
-    if (element instanceof SubProcessCall) {
-      var subProcessCall = SubProcessCall.class.cast(element);
-      var callTarget = subProcessCall.getCallTarget();
-      String subProcessPath = callTarget.getProcessName().getName();
-      String targetStartSignature = callTarget.getSignature().toSimpleNameSignature();
+    case SubProcessCall subProcessCall -> {
+      var subCallTarget = subProcessCall.getCallTarget();
+      String subProcessPath = subCallTarget.getProcessName().getName();
+      String targetStartSignature = subCallTarget.getSignature().toSimpleNameSignature();
       processElements.addAll(getProcessElementsFromCallableSubProcessPath(subProcessPath, targetStartSignature));
+      yield processElements;
     }
-    return processElements;
-    /*
-     * ======= return switch (element) { case EmbeddedProcessElement embeddedElement
-     * -> getEmbbedProcessElements(embeddedElement).stream() .flatMap(e ->
-     * Stream.concat(Stream.of(e),
-     * getEmbbedProcessElements(e).stream())).collect(Collectors.toList()); case
-     * SubProcessCall subProcessCall ->
-     * getProcessElementsFromCallableSubProcessPath(subProcessCall.getCallTarget().
-     * getProcessName().getName()); default -> Collections.emptyList(); }; >>>>>>>
-     * origin/master
-     */
+    default -> processElements;
+    };
   }
 
   /*
@@ -166,13 +157,14 @@ public class ProcessUtils {
   private static List<ProcessElement> getProcessElementsFromCallableSubProcessPath(String subProcessPath,
       String targetStartSignature) {
     List<ProcessElement> finalProcessElements = new ArrayList<>();
-    Optional<IProcess> iProcessOptional = IProcessManager.instance().getProjectDataModels().stream()
-        .map(model -> model.getProcessByPath(subProcessPath)).filter(Objects::nonNull).findAny();
-    if (iProcessOptional.isEmpty()) {
+    Optional<IProcess> callableProcessOptional = IProcessManager.instance().getProjectDataModels().stream()
+        .map(model -> model.getProcessByPath(subProcessPath))
+        .filter(Objects::nonNull).findAny();
+    if (callableProcessOptional.isEmpty()) {
       return List.of();
     }
-    List<ProcessElement> foundProcessElements = iProcessOptional.get().getModel().getProcessElements();
-    var callSubStart = foundProcessElements.stream()
+    List<ProcessElement> processElements = callableProcessOptional.get().getModel().getProcessElements();
+    var callSubStart = processElements.stream()
         .filter(processElement -> CallSubStart.class.isInstance(processElement))
         .map(processElement -> CallSubStart.class.cast(processElement))
         .filter(startCallable -> startCallable.getSignature().toSimpleNameSignature().equalsIgnoreCase(targetStartSignature))
@@ -181,27 +173,34 @@ public class ProcessUtils {
       return List.of();
     }
 
-    ProcessElement proceedElement = callSubStart.get();
-    finalProcessElements.add(proceedElement);
-    foundProcessElements.remove(proceedElement);
-    collectAllLinkedElementsOfStartProcess(finalProcessElements, foundProcessElements, proceedElement);
+    ProcessElement sourceElement = callSubStart.get();
+    finalProcessElements.add(sourceElement);
+    processElements.remove(sourceElement);
+    
+    ProcessElement targetElement = null;
+    do {
+      targetElement = collectAllLinkedElementsOfStartProcess(finalProcessElements, processElements, sourceElement);
+      if (targetElement != null) {
+        final PID targetPid = targetElement.getPid();
+        processElements.removeIf(pe -> Objects.equals(pe.getPid(), targetPid));
+        sourceElement = targetElement;
+      }
+    } while (targetElement != null);
 
     return finalProcessElements;
   }
 
-  private static void collectAllLinkedElementsOfStartProcess(List<ProcessElement> finalProcessElements,
-      List<ProcessElement> foundProcessElements, ProcessElement proceedElement) {
-    for (var foundProcessElement : foundProcessElements) {
-      if (proceedElement.isConnectedTo(foundProcessElement)) {
-        finalProcessElements.add(foundProcessElement);
-        List<ProcessElement> foundSubFPE = getNestedProcessElementsFromSub(foundProcessElement);
-        finalProcessElements.addAll(foundSubFPE);
-        collectAllLinkedElementsOfStartProcess(finalProcessElements,
-            foundProcessElements.stream().filter(pe -> !Objects.equals(pe, foundProcessElement)).toList(),
-            foundProcessElement);
-        break;
+  private static ProcessElement collectAllLinkedElementsOfStartProcess(List<ProcessElement> finalProcessElements,
+      List<ProcessElement> processElements, ProcessElement sourceElement) {
+    for (var processElement : processElements) {
+      if (sourceElement.isConnectedTo(processElement)) {
+        finalProcessElements.add(processElement);
+        List<ProcessElement> nestedProcessElements = getNestedProcessElementsFromSub(processElement);
+        finalProcessElements.addAll(nestedProcessElements);
+        return processElement;
       }
     }
+    return null;
   }
 
   public static List<ProcessElement> getProcessElementsFrom(String processId, IProcessModelVersion pmv) {
