@@ -231,8 +231,11 @@ public class ProcessUtils {
     // Get all process elements, including nested ones
     List<ProcessElement> processElements = new ArrayList<>();
     for (var processElement : foundProcess.getModel().getProcessElements()) {
+      processElements.add(processElement);
       List<ProcessElement> nestedElements = getNestedProcessElementsFromSub(processElement);
-      processElements.addAll(nestedElements);
+      if (CollectionUtils.isNotEmpty(nestedElements)) {
+        processElements.addAll(nestedElements);
+      }
     }
     return processElements;
   }
