@@ -199,7 +199,6 @@ public class NodeFrequencyResolver {
           && ProcessUtils.isEmbeddedElementInstance(nextElement)) {
         nextElement = getNextElementForSubToSub(destinationElement, nextElement);
       }
-      // collect sub, find in sub, return path
     }
 
     // If the next element is a CallSubEnd, resolve the nested sub-element again.
