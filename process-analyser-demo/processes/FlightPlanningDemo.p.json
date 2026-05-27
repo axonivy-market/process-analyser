@@ -14,9 +14,6 @@
           "name" : "<%=ivy.cms.co(\"/Processes/Process/FlightPlanningDemo/name\")%>",
           "description" : "<%=ivy.cms.co(\"/Processes/Process/FlightPlanningDemo/description\")%>"
         },
-        "permission" : {
-          "role" : "AviationPlanner"
-        },
         "task" : {
           "name" : "Planner plan a flight"
         },
@@ -28,7 +25,7 @@
         "demo"
       ],
       "visual" : {
-        "at" : { "x" : 112, "y" : 592 }
+        "at" : { "x" : 112, "y" : 344 }
       },
       "connect" : [
         { "id" : "f3", "to" : "f19" }
@@ -83,10 +80,7 @@
           "name" : "PLanner re-plan a flight",
           "config" : {
             "task" : {
-              "name" : "Re-plan a flight",
-              "responsible" : {
-                "activator" : "AviationPlanner"
-              }
+              "name" : "Re-plan a flight"
             }
           },
           "visual" : {
@@ -98,7 +92,7 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 336, "y" : 592 }
+        "at" : { "x" : 336, "y" : 344 }
       },
       "connect" : [
         { "id" : "f2", "to" : "S20" }
@@ -130,10 +124,7 @@
           "name" : "Approve the plan of planner",
           "config" : {
             "task" : {
-              "name" : "Approve the plan of planner",
-              "responsible" : {
-                "activator" : "Pilot"
-              }
+              "name" : "Approve the plan of planner"
             }
           },
           "visual" : {
@@ -165,7 +156,7 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 336, "y" : 800 }
+        "at" : { "x" : 336, "y" : 552 }
       },
       "connect" : [
         { "id" : "f5", "to" : "f4" }
@@ -181,7 +172,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 632, "y" : 800 },
+        "at" : { "x" : 632, "y" : 552 },
         "labelOffset" : { "x" : 64, "y" : 8 }
       },
       "connect" : [
@@ -221,10 +212,7 @@
           "name" : "Engineering check aircraft",
           "config" : {
             "task" : {
-              "name" : "Engineering check aircraft",
-              "responsible" : {
-                "activator" : "MaintenanceAndEngineering"
-              }
+              "name" : "Engineering check aircraft"
             }
           },
           "visual" : {
@@ -255,7 +243,7 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 632, "y" : 1016 }
+        "at" : { "x" : 632, "y" : 768 }
       },
       "connect" : [
         { "id" : "f9", "to" : "f8" }
@@ -271,7 +259,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 808, "y" : 1016 },
+        "at" : { "x" : 808, "y" : 768 },
         "labelOffset" : { "x" : 120, "y" : 8 }
       },
       "connect" : [
@@ -290,7 +278,7 @@
       "id" : "f10",
       "type" : "Alternative",
       "visual" : {
-        "at" : { "x" : 632, "y" : 592 }
+        "at" : { "x" : 632, "y" : 344 }
       },
       "connect" : [
         { "id" : "f6", "to" : "f12" }
@@ -320,11 +308,11 @@
           } ]
       },
       "visual" : {
-        "at" : { "x" : 880, "y" : 1272 }
+        "at" : { "x" : 880, "y" : 1024 }
       },
       "connect" : [
-        { "id" : "f15", "to" : "S30", "via" : [ { "x" : 880, "y" : 1208 } ], "condition" : "ivp==\"TaskA.ivp\"" },
-        { "id" : "f16", "to" : "S40", "via" : [ { "x" : 880, "y" : 1328 } ], "condition" : "ivp==\"TaskB.ivp\"" }
+        { "id" : "f15", "to" : "S30", "via" : [ { "x" : 880, "y" : 960 } ], "condition" : "ivp==\"TaskA.ivp\"" },
+        { "id" : "f16", "to" : "S40", "via" : [ { "x" : 880, "y" : 1080 } ], "condition" : "ivp==\"TaskB.ivp\"" }
       ]
     }, {
       "id" : "S30",
@@ -349,16 +337,16 @@
           "parentConnector" : "f20"
         } ],
       "visual" : {
-        "at" : { "x" : 1072, "y" : 1208 }
+        "at" : { "x" : 1072, "y" : 960 }
       },
       "connect" : [
-        { "id" : "f20", "to" : "f22", "via" : [ { "x" : 1256, "y" : 1208 } ] }
+        { "id" : "f20", "to" : "f22", "via" : [ { "x" : 1256, "y" : 960 } ] }
       ]
     }, {
       "id" : "f22",
       "type" : "TaskEnd",
       "visual" : {
-        "at" : { "x" : 1256, "y" : 1272 }
+        "at" : { "x" : 1256, "y" : 1024 }
       }
     }, {
       "id" : "f1",
@@ -377,7 +365,7 @@
         "demo"
       ],
       "visual" : {
-        "at" : { "x" : 112, "y" : 1456 },
+        "at" : { "x" : 112, "y" : 1208 },
         "labelOffset" : { "x" : 81, "y" : 33 }
       },
       "connect" : [
@@ -420,7 +408,7 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 376, "y" : 1456 }
+        "at" : { "x" : 376, "y" : 1208 }
       },
       "connect" : [
         { "id" : "f26", "to" : "f25" }
@@ -429,7 +417,7 @@
       "id" : "f25",
       "type" : "TaskEnd",
       "visual" : {
-        "at" : { "x" : 544, "y" : 1456 }
+        "at" : { "x" : 544, "y" : 1208 }
       }
     }, {
       "id" : "f12",
@@ -445,7 +433,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 512, "y" : 592 },
+        "at" : { "x" : 512, "y" : 344 },
         "labelOffset" : { "x" : 9, "y" : -23 }
       },
       "connect" : [
@@ -465,7 +453,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 632, "y" : 744 },
+        "at" : { "x" : 632, "y" : 496 },
         "labelOffset" : { "x" : 81, "y" : 9 }
       },
       "connect" : [
@@ -485,11 +473,11 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 808, "y" : 800 },
+        "at" : { "x" : 808, "y" : 552 },
         "labelOffset" : { "x" : 105, "y" : 9 }
       },
       "connect" : [
-        { "id" : "f30", "to" : "f10", "via" : [ { "x" : 808, "y" : 592 } ], "color" : "default" }
+        { "id" : "f30", "to" : "f10", "via" : [ { "x" : 808, "y" : 344 } ], "color" : "default" }
       ]
     }, {
       "id" : "f31",
@@ -505,7 +493,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 632, "y" : 952 },
+        "at" : { "x" : 632, "y" : 704 },
         "labelOffset" : { "x" : -71, "y" : 9 }
       },
       "connect" : [
@@ -525,11 +513,11 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 808, "y" : 1160 },
+        "at" : { "x" : 808, "y" : 912 },
         "labelOffset" : { "x" : 137, "y" : -7 }
       },
       "connect" : [
-        { "id" : "f34", "to" : "f13", "via" : [ { "x" : 808, "y" : 1272 } ], "color" : "default", "var" : "in1" }
+        { "id" : "f34", "to" : "f13", "via" : [ { "x" : 808, "y" : 1024 } ], "color" : "default", "var" : "in1" }
       ]
     }, {
       "id" : "S40",
@@ -555,16 +543,16 @@
           "parentConnector" : "f21"
         } ],
       "visual" : {
-        "at" : { "x" : 1072, "y" : 1328 }
+        "at" : { "x" : 1072, "y" : 1080 }
       },
       "connect" : [
-        { "id" : "f21", "to" : "f22", "via" : [ { "x" : 1256, "y" : 1328 } ], "color" : "default" }
+        { "id" : "f21", "to" : "f22", "via" : [ { "x" : 1256, "y" : 1080 } ], "color" : "default" }
       ]
     }, {
       "id" : "f19",
       "type" : "Alternative",
       "visual" : {
-        "at" : { "x" : 208, "y" : 592 },
+        "at" : { "x" : 208, "y" : 344 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
@@ -578,7 +566,7 @@
         "signalCode" : "planFlight"
       },
       "visual" : {
-        "at" : { "x" : 208, "y" : 656 },
+        "at" : { "x" : 208, "y" : 408 },
         "labelOffset" : { "x" : 13, "y" : 33 }
       },
       "connect" : [
@@ -592,7 +580,7 @@
         "signalCode" : "recommendDestination"
       },
       "visual" : {
-        "at" : { "x" : 216, "y" : 1576 },
+        "at" : { "x" : 216, "y" : 1328 },
         "labelOffset" : { "x" : 13, "y" : 33 }
       },
       "connect" : [
@@ -602,7 +590,7 @@
       "id" : "f38",
       "type" : "Alternative",
       "visual" : {
-        "at" : { "x" : 216, "y" : 1456 },
+        "at" : { "x" : 216, "y" : 1208 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [

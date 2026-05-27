@@ -3,6 +3,7 @@ package com.axonivy.solutions.process.analyser.resolver;
 import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.SLASH;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -11,7 +12,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang3.Strings;
 
 import com.axonivy.solutions.process.analyser.bo.Node;
@@ -43,7 +43,7 @@ public class NodeFrequencyResolver {
     Objects.requireNonNull(nodes, "Nodes must not be empty");
     this.processElements = processElements;
     this.nodes = nodes;
-    this.processPidAndElementsMap = new HashedMap<>();
+    this.processPidAndElementsMap = new HashMap<>();
   }
 
   /**

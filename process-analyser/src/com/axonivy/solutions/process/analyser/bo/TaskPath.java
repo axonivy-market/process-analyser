@@ -62,6 +62,9 @@ public class TaskPath {
     do {
       triggeredPath = getPathTriggeredGivenPath(targetPathId);
       if (triggeredPath != null) {
+        if (relatedPaths.contains(triggeredPath.getStartPathId())) {
+          break;
+        }
         relatedPaths.addAll(0, triggeredPath.getNodesInPath());
         targetPathId = triggeredPath.getStartPathId();
       }
