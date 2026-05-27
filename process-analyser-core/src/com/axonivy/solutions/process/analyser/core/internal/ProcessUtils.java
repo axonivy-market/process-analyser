@@ -30,6 +30,7 @@ import ch.ivyteam.ivy.process.model.element.EmbeddedProcessElement;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.element.activity.SubProcessCall;
 import ch.ivyteam.ivy.process.model.element.activity.UserTask;
+import ch.ivyteam.ivy.process.model.element.activity.value.ProcessCallSignature;
 import ch.ivyteam.ivy.process.model.element.event.end.CallSubEnd;
 import ch.ivyteam.ivy.process.model.element.event.end.EmbeddedEnd;
 import ch.ivyteam.ivy.process.model.element.event.end.TaskEnd;
@@ -105,25 +106,17 @@ public class ProcessUtils {
     return switch (element) {
     case EmbeddedProcessElement embeddedElement -> {
       List<ProcessElement> processElements = new ArrayList<>();
-      List<ProcessElement> nestedProcessElements = new ArrayList<>();
       processElements.add(embeddedElement);
       // Loop through all process elements and find in deep one more level of embedded
       for (var processElement : getEmbbedProcessElements(embeddedElement)) {
+        // Add target element
         processElements.add(processElement);
         // Find nested elements
-        nestedProcessElements.addAll(getEmbbedProcessElements(processElement));
+        processElements.addAll(getEmbbedProcessElements(processElement));
       }
-      processElements.addAll(nestedProcessElements);
       yield processElements;
     }
-    case SubProcessCall subProcessCall -> {
-      var subCallTarget = subProcessCall.getCallTarget();
-      String subProcessPath = subCallTarget.getProcessName().getName();
-      String targetStartSignature = subCallTarget.getSignature().toSimpleNameSignature();
-      List<ProcessElement> elementsOfSubCallableProcess = getProcessElementsFromCallableSubProcessPath(subProcessPath,
-          targetStartSignature);
-      yield elementsOfSubCallableProcess;
-    }
+    case SubProcessCall subProcessCall -> getProcessElementsFromCallableSubProcessPath(subProcessCall.getCallTarget());
     default -> Collections.emptyList();
     };
   }
@@ -154,15 +147,13 @@ public class ProcessUtils {
    *  2) find all of process element from this process.
    *  3) (Optional) find nested embedded process inside the BPMN sub (if exist)
    */
-  private static List<ProcessElement> getProcessElementsFromCallableSubProcessPath(String subProcessPath,
-      String targetStartSignature) {
-    List<ProcessElement> finalProcessElements = new ArrayList<>();
-    IProcess callableProcess = IProcessManager.instance().getProjectDataModels().stream()
-        .map(model -> model.getProcessByPath(subProcessPath))
-        .filter(Objects::nonNull).findAny().orElse(null);
+  private static List<ProcessElement> getProcessElementsFromCallableSubProcessPath(ProcessCallSignature subCallTarget) {
+    IProcess callableProcess = findCallSubProcess(subCallTarget);
     if (callableProcess == null) {
       return Collections.emptyList();
     }
+
+    String targetStartSignature = subCallTarget.getSignature().toSimpleNameSignature();
     List<ProcessElement> processElements = new ArrayList<>(callableProcess.getModel().getProcessElements());
     var callSubStartElement = processElements.stream()
         .filter(processElement -> CallSubStart.class.isInstance(processElement))
@@ -173,20 +164,23 @@ public class ProcessUtils {
       return Collections.emptyList();
     }
 
-    ProcessElement sourceElement = callSubStartElement;
-    finalProcessElements.add(sourceElement);
-    removeElementByPID(sourceElement.getPid(), processElements);
+    removeElementByPID(callSubStartElement.getPid(), processElements);
 
-    ProcessElement targetElement = null;
-    do {
-      targetElement = collectAllLinkedElementsOfStartProcess(finalProcessElements, processElements, sourceElement);
-      if (targetElement != null) {
-        removeElementByPID(targetElement.getPid(), processElements);
-        sourceElement = targetElement;
-      }
-    } while (targetElement != null);
-
+    List<ProcessElement> finalProcessElements = collectAllLinkedElementsOfStartProcess(processElements,
+        callSubStartElement);
+    finalProcessElements.add(0, callSubStartElement);
     return finalProcessElements;
+  }
+
+  private static IProcess findCallSubProcess(ProcessCallSignature subCallTarget) {
+    if (subCallTarget == null) {
+      return null;
+    }
+    final String subProcessPath = subCallTarget.getProcessName().getName();
+    return IProcessManager.instance().getProjectDataModels().stream()
+        .map(model -> model.getProcessByPath(subProcessPath))
+        .filter(Objects::nonNull)
+        .findAny().orElse(null);
   }
 
   private static void removeElementByPID(final PID removePID, List<ProcessElement> processElements) {
@@ -196,17 +190,28 @@ public class ProcessUtils {
     processElements.removeIf(element -> Objects.equals(element.getPid(), removePID));
   }
 
-  private static ProcessElement collectAllLinkedElementsOfStartProcess(List<ProcessElement> finalProcessElements,
-      List<ProcessElement> processElements, ProcessElement sourceElement) {
-    for (var processElement : processElements) {
-      if (sourceElement.isConnectedTo(processElement)) {
-        finalProcessElements.add(processElement);
-        List<ProcessElement> nestedProcessElements = getNestedProcessElementsFromSub(processElement);
-        finalProcessElements.addAll(nestedProcessElements);
-        return processElement;
+  private static List<ProcessElement> collectAllLinkedElementsOfStartProcess(List<ProcessElement> processElements,
+      ProcessElement sourceElement) {
+    List<ProcessElement> finalProcessElements = new ArrayList<>();
+    boolean foundConnection;
+    do {
+      var processElementIterator = processElements.iterator();
+      foundConnection = false;
+      while (processElementIterator.hasNext()) {
+        ProcessElement processElement = processElementIterator.next();
+        if (sourceElement.isConnectedTo(processElement)) {
+          finalProcessElements.add(processElement);
+          List<ProcessElement> nestedProcessElements = getNestedProcessElementsFromSub(processElement);
+          finalProcessElements.addAll(nestedProcessElements);
+          processElementIterator.remove();
+          sourceElement = processElement;
+          foundConnection = true;
+          break;
+        }
       }
-    }
-    return null;
+    } while (foundConnection);
+
+    return finalProcessElements;
   }
 
   public static List<ProcessElement> getProcessElementsFrom(String processId, IProcessModelVersion pmv) {
@@ -224,8 +229,8 @@ public class ProcessUtils {
     // Get all process elements, including nested ones
     List<ProcessElement> processElements = new ArrayList<>();
     for (var processElement : foundProcess.getModel().getProcessElements()) {
-      List<ProcessElement> nestedElement = getNestedProcessElementsFromSub(processElement);
-      processElements.addAll(nestedElement);
+      List<ProcessElement> nestedElements = getNestedProcessElementsFromSub(processElement);
+      processElements.addAll(nestedElements);
     }
     return processElements;
   }
