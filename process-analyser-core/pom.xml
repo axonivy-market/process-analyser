@@ -9,11 +9,7 @@
   </parent>
   <groupId>com.axonivy.solutions.process.analyser</groupId>
   <artifactId>process-analyser-core</artifactId>
-<<<<<<< HEAD
   <version>13.2.5-SNAPSHOT</version>
-=======
-  <version>13.2.4</version>
->>>>>>> bugfix/MARP-StackOverflowError
   <packaging>iar</packaging>
   <dependencies>
     <dependency>

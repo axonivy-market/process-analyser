@@ -202,7 +202,9 @@ public class ProcessUtils {
         if (sourceElement.isConnectedTo(processElement)) {
           finalProcessElements.add(processElement);
           List<ProcessElement> nestedProcessElements = getNestedProcessElementsFromSub(processElement);
-          finalProcessElements.addAll(nestedProcessElements);
+          if (CollectionUtils.isNotEmpty(nestedProcessElements)) {
+            finalProcessElements.addAll(nestedProcessElements);
+          }
           processElementIterator.remove();
           sourceElement = processElement;
           foundConnection = true;
