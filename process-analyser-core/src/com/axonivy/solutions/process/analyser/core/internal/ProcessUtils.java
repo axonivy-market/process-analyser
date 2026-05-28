@@ -2,7 +2,9 @@ package com.axonivy.solutions.process.analyser.core.internal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -102,22 +104,32 @@ public class ProcessUtils {
     return EmbeddedEnd.class.isInstance(element);
   }
 
-  public static List<ProcessElement> getNestedProcessElementsFromSub(Object element) {
+  public static Set<ProcessElement> getNestedProcessElementsFromSub(ProcessElement element) {
+    Set<ProcessElement> processElements = new HashSet<>();
+    processElements.add((ProcessElement) element);
     return switch (element) {
     case EmbeddedProcessElement embeddedElement -> {
-      List<ProcessElement> processElements = new ArrayList<>();
-      processElements.add(embeddedElement);
       // Loop through all process elements and find in deep one more level of embedded
       for (var processElement : getEmbbedProcessElements(embeddedElement)) {
-        // Add target element
+        // Add main element
         processElements.add(processElement);
-        // Find nested elements
-        processElements.addAll(getEmbbedProcessElements(processElement));
+        // Find nested elements of this target
+        List<ProcessElement> embbedElements = getEmbbedProcessElements(processElement);
+        if (CollectionUtils.isNotEmpty(embbedElements)) {
+          processElements.addAll(embbedElements);
+        }
       }
       yield processElements;
     }
-    case SubProcessCall subProcessCall -> getProcessElementsFromCallableSubProcessPath(subProcessCall.getCallTarget());
-    default -> Collections.emptyList();
+    case SubProcessCall subProcessCall -> {
+      ProcessCallSignature caller = subProcessCall.getCallTarget();
+      List<ProcessElement> linkedElementsOfSub = getProcessElementsFromCallableSubProcessPath(caller);
+      if (CollectionUtils.isNotEmpty(linkedElementsOfSub)) {
+        processElements.addAll(linkedElementsOfSub);
+      }
+      yield processElements;
+    }
+    default -> processElements;
     };
   }
 
@@ -131,13 +143,15 @@ public class ProcessUtils {
     return Collections.emptyList();
   }
 
-  public static ProcessElement getStartElementFromSubProcessCall(Object element) {
+  public static ProcessElement getStartElementFromSubProcessCall(ProcessElement element) {
     if (!isSubProcessCallInstance(element)) {
       return null;
     }
     String targetName = SubProcessCall.class.cast(element).getCallTarget().getSignature().getName();
-    return getNestedProcessElementsFromSub(element).stream().filter(CallSubStart.class::isInstance)
-        .map(CallSubStart.class::cast).filter(start -> Strings.CS.equals(start.getSignature().getName(), targetName))
+    return getNestedProcessElementsFromSub(element).stream()
+        .filter(CallSubStart.class::isInstance)
+        .map(CallSubStart.class::cast)
+        .filter(start -> Strings.CS.equals(start.getSignature().getName(), targetName))
         .findAny().orElse(null);
   }
 
@@ -201,7 +215,7 @@ public class ProcessUtils {
         ProcessElement processElement = processElementIterator.next();
         if (sourceElement.isConnectedTo(processElement)) {
           finalProcessElements.add(processElement);
-          List<ProcessElement> nestedProcessElements = getNestedProcessElementsFromSub(processElement);
+          Set<ProcessElement> nestedProcessElements = getNestedProcessElementsFromSub(processElement);
           if (CollectionUtils.isNotEmpty(nestedProcessElements)) {
             finalProcessElements.addAll(nestedProcessElements);
           }
@@ -216,23 +230,22 @@ public class ProcessUtils {
     return finalProcessElements;
   }
 
-  public static List<ProcessElement> getProcessElementsFrom(String processId, IProcessModelVersion pmv) {
+  public static Set<ProcessElement> getProcessElementsFrom(String processId, IProcessModelVersion pmv) {
     if (StringUtils.isBlank(processId)) {
-      return Collections.emptyList();
+      return Collections.emptySet();
     }
 
     String processRawPid = getProcessPidFromElement(processId);
     IProjectProcessManager manager = IProcessManager.instance().getProjectDataModelFor(pmv);
     IProcess foundProcess = manager.findProcess(processRawPid, true);
     if (foundProcess == null) {
-      return Collections.emptyList();
+      return Collections.emptySet();
     }
 
     // Get all process elements, including nested ones
-    List<ProcessElement> processElements = new ArrayList<>();
+    Set<ProcessElement> processElements = new HashSet<>();
     for (var processElement : foundProcess.getModel().getProcessElements()) {
-      processElements.add(processElement);
-      List<ProcessElement> nestedElements = getNestedProcessElementsFromSub(processElement);
+      Set<ProcessElement> nestedElements = getNestedProcessElementsFromSub(processElement);
       if (CollectionUtils.isNotEmpty(nestedElements)) {
         processElements.addAll(nestedElements);
       }
@@ -240,7 +253,7 @@ public class ProcessUtils {
     return processElements;
   }
 
-  public static List<SequenceFlow> getSequenceFlowsFrom(List<ProcessElement> elements) {
+  public static List<SequenceFlow> getSequenceFlowsFrom(Collection<ProcessElement> elements) {
     return elements.stream().flatMap(element -> element.getOutgoing().stream()).collect(Collectors.toList());
   }
 
@@ -379,9 +392,9 @@ public class ProcessUtils {
         .filter(ProcessUtils::isComplexElementWithMultiIncomings).collect(Collectors.toList());
   }
 
-  public static List<ProcessElement> getTaskStart(List<ProcessElement> processElements) {
+  public static Set<ProcessElement> getTaskStart(Collection<ProcessElement> processElements) {
     return Optional.ofNullable(processElements).orElse(new ArrayList<>()).stream()
-        .filter(ProcessUtils::isTaskStartElement).collect(Collectors.toList());
+        .filter(ProcessUtils::isTaskStartElement).collect(Collectors.toSet());
   }
 
   public static boolean isTaskStartElement(ProcessElement element) {

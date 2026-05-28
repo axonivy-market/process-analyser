@@ -3,13 +3,17 @@ package com.axonivy.solutions.process.analyser.resolver;
 import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.SLASH;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.Strings;
@@ -34,15 +38,15 @@ import ch.ivyteam.ivy.workflow.ITaskSwitchEvent;
 @SuppressWarnings("restriction")
 public class NodeFrequencyResolver {
   private static final Pattern SEQUENCE_FLOW_CONDITION_PATTERN = Pattern.compile("ivp==\\\"([^\\\"]+)\\\"");
-  private List<Node> nodes;
-  private List<ProcessElement> processElements;
-  private Map<String, List<ProcessElement>> processPidAndElementsMap;
+  private Set<Node> nodes;
+  private Set<ProcessElement> processElements;
+  private Map<String, Set<ProcessElement>> processPidAndElementsMap;
 
-  public NodeFrequencyResolver(List<Node> nodes, List<ProcessElement> processElements) {
+  public NodeFrequencyResolver(Collection<Node> nodes, Collection<ProcessElement> processElements) {
     Objects.requireNonNull(processElements, "ProcessElements must not be null");
     Objects.requireNonNull(nodes, "Nodes must not be empty");
-    this.processElements = processElements;
-    this.nodes = nodes;
+    this.processElements = processElements.stream().collect(Collectors.toSet());
+    this.nodes = nodes.stream().collect(Collectors.toSet());
     this.processPidAndElementsMap = new HashMap<>();
   }
 
@@ -75,10 +79,10 @@ public class NodeFrequencyResolver {
   /**
    * Increase the frequency of found node to 1
    * 
-   * @param nodes         is list of nodes from selected ivyProcess
+   * @param nodes         is set of nodes from selected ivyProcess
    * @param nodeIdsInPath is list of nodeId that the ivyTask visited
    */
-  private static void updateFrequencyForNodeById(List<Node> nodes, List<String> nodeIdsInPath) {
+  private static void updateFrequencyForNodeById(Set<Node> nodes, List<String> nodeIdsInPath) {
     for (var nodeId : nodeIdsInPath) {
       nodes.stream().filter(node -> node.getId().contentEquals(nodeId))
           .forEach(node -> node.setFrequency(node.getFrequency() + 1));
@@ -96,7 +100,7 @@ public class NodeFrequencyResolver {
    *                         to
    * @return foundNodeIdsInPath: list of nodes related to the found way
    */
-  private List<String> findShortestWayFromTaskStartToEnd(ITask task, List<ProcessElement> processElements) {
+  private List<String> findShortestWayFromTaskStartToEnd(ITask task, Set<ProcessElement> processElements) {
     var taskStartPid = extractTaskSwitchEventElementPid(task.getStartSwitchEvent());
     var taskEndPid = extractTaskSwitchEventElementPid(task.getEndSwitchEvent());
 
@@ -262,13 +266,13 @@ public class NodeFrequencyResolver {
   }
 
   private static ProcessElement findProcessElementStartedTask(String taskStartProcessElementId,
-      List<ProcessElement> processElements) {
+      Set<ProcessElement> processElements) {
     return CollectionUtils.emptyIfNull(processElements).stream()
         .filter(element -> PIDUtils.getId(element.getPid()).contentEquals(taskStartProcessElementId)).findAny()
         .orElse(null);
   }
 
-  private static List<ProcessElement> filterSubProcessCallElements(List<ProcessElement> processElements) {
+  private static List<ProcessElement> filterSubProcessCallElements(Set<ProcessElement> processElements) {
     return CollectionUtils.emptyIfNull(processElements).stream().filter(SubProcessCall.class::isInstance).toList();
   }
 
@@ -330,8 +334,8 @@ public class NodeFrequencyResolver {
     List<String> allNodesOfCurrentPath = taskPath.getRelatedNodesOfGivenPath(currentPath);
     String targetPID = ProcessUtils.getElementPid(element);
     String processID = ProcessUtils.getElementPid(element.getRootProcess());
-    List<ProcessElement> elementsOfCurrentProcess = processPidAndElementsMap.computeIfAbsent(processID,
-        pid -> element.getRootProcess().getProcessElements());
+    Set<ProcessElement> elementsOfCurrentProcess = processPidAndElementsMap.computeIfAbsent(processID,
+        pid -> new HashSet<>(element.getRootProcess().getProcessElements()));
     List<ProcessElement> subCallOfCurrentProcess = filterSubProcessCallElements(elementsOfCurrentProcess);
     // Find in the current process itself
     containerElement = findSubProcessCallContainsElement(targetPID, allNodesOfCurrentPath, subCallOfCurrentProcess);
@@ -370,7 +374,7 @@ public class NodeFrequencyResolver {
     ProcessElement containerElement = null;
     for (var subCallElement : subProcessCalls) {
       String subCallPID = ProcessUtils.getElementPid(subCallElement);
-      List<ProcessElement> processElements = processPidAndElementsMap.computeIfAbsent(subCallPID,
+      Set<ProcessElement> processElements = processPidAndElementsMap.computeIfAbsent(subCallPID,
           pid -> ProcessUtils.getNestedProcessElementsFromSub(subCallElement));
       List<String> processElementPIDs = processElements.stream().map(ProcessUtils::getElementPid).toList();
       // Check if the wrapper process contains the target element
@@ -404,19 +408,19 @@ public class NodeFrequencyResolver {
     };
   }
 
-  public List<Node> getNodes() {
+  public Set<Node> getNodes() {
     return nodes;
   }
 
-  public void setNodes(List<Node> nodes) {
+  public void setNodes(Set<Node> nodes) {
     this.nodes = nodes;
   }
 
-  public List<ProcessElement> getProcessElements() {
+  public Set<ProcessElement> getProcessElements() {
     return processElements;
   }
 
-  public void setProcessElements(List<ProcessElement> processElements) {
+  public void setProcessElements(Set<ProcessElement> processElements) {
     this.processElements = processElements;
   }
 }

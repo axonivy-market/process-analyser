@@ -18,7 +18,10 @@ import static com.axonivy.solutions.process.analyser.core.enums.ElementType.TASK
 import static com.axonivy.solutions.process.analyser.core.enums.ElementType.TASK_SWITCH_EVENT;
 import static com.axonivy.solutions.process.analyser.core.enums.ElementType.TASK_SWITCH_GATEWAY;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -58,7 +61,7 @@ public class ProcessElementUtils {
 
   public static List<ElementDisplayName> listAllProcessElementAsRawPID(IProcessModelVersion pmv, String processId,
       String startElementPID) {
-    List<ProcessElement> processElements = ProcessUtils.getProcessElementsFrom(processId, pmv);
+    Set<ProcessElement> processElements = ProcessUtils.getProcessElementsFrom(processId, pmv);
     removeAnotherStartElementsBySelectedStartPID(processElements, startElementPID);
     return processElements.stream()
         .map(element -> buildElementDisplayName(element))
@@ -96,21 +99,17 @@ public class ProcessElementUtils {
     };
   }
 
-  public static void removeAnotherStartElementsBySelectedStartPID(List<ProcessElement> processElements,
+  public static void removeAnotherStartElementsBySelectedStartPID(Collection<ProcessElement> processElements,
       String startElementPID) {
     if (CollectionUtils.isEmpty(processElements)) {
       return;
     }
 
-    List<ProcessElement> remainingStartElementOnProcess = processElements.stream()
-        .filter(filterProcessStartElement())
-        .filter(element -> !PIDUtils.getId(element.getPid()).equals(startElementPID))
-        .toList();
-    for (var startElement : remainingStartElementOnProcess) {
-      boolean foundStartPoint = processElements.stream()
-          .anyMatch(element -> PIDUtils.equalsPID(element.getPid(), startElement.getPid()));
-      if (foundStartPoint) {
-        processElements.remove(startElement);
+    Iterator<ProcessElement> elementIterator = processElements.iterator();
+    while (elementIterator.hasNext()) {
+      ProcessElement element = elementIterator.next();
+      if (!PIDUtils.getId(element.getPid()).equals(startElementPID)) {
+        elementIterator.remove();
       }
     }
   }
