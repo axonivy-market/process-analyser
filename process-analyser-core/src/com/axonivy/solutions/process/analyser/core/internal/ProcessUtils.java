@@ -24,6 +24,7 @@ import com.axonivy.solutions.process.analyser.core.util.PIDUtils;
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.application.IProcessModelVersion;
 import ch.ivyteam.ivy.environment.Ivy;
+import ch.ivyteam.ivy.process.loader.ProcessLoader;
 import ch.ivyteam.ivy.process.model.BaseElement;
 import ch.ivyteam.ivy.process.model.ProcessKind;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
@@ -43,9 +44,6 @@ import ch.ivyteam.ivy.process.model.element.gateway.TaskSwitchGateway;
 import ch.ivyteam.ivy.process.model.element.value.task.ResponsibleType;
 import ch.ivyteam.ivy.process.model.element.value.task.TaskConfig;
 import ch.ivyteam.ivy.process.model.value.PID;
-import ch.ivyteam.ivy.process.rdm.IProcess;
-import ch.ivyteam.ivy.process.rdm.IProcessManager;
-import ch.ivyteam.ivy.process.rdm.IProjectProcessManager;
 import ch.ivyteam.ivy.security.exec.Sudo;
 import ch.ivyteam.ivy.workflow.IProcessStart;
 import ch.ivyteam.ivy.workflow.ITask;
@@ -134,9 +132,9 @@ public class ProcessUtils {
    * sub (if exist)
    */
   private static List<ProcessElement> getProcessElementsFromCallableSubProcessPath(String subProcessPath) {
-    return IProcessManager.instance().getProjectDataModels().stream()
-        .map(model -> model.getProcessByPath(subProcessPath)).filter(Objects::nonNull).findAny()
-        .map(process -> process.getModel().getProcessElements().stream()
+    return new ProcessLoader(IProcessModelVersion.current())
+        .loadByPath(subProcessPath)
+        .map(p -> p.getProcessElements().stream()
             .flatMap(pe -> Stream.concat(Stream.of(pe), getNestedProcessElementsFromSub(pe).stream()))
             .collect(Collectors.toList()))
         .orElse(Collections.emptyList());
@@ -148,14 +146,14 @@ public class ProcessUtils {
     }
 
     String processRawPid = getProcessPidFromElement(processId);
-    IProjectProcessManager manager = IProcessManager.instance().getProjectDataModelFor(pmv);
-    IProcess foundProcess = manager.findProcess(processRawPid, true);
-    if (foundProcess == null) {
-      return Collections.emptyList();
+
+    var process = new ProcessLoader(pmv).loadById(processRawPid);
+    if (process.isEmpty()) {
+      return List.of();
     }
 
     // Get all process elements, including nested ones
-    return foundProcess.getModel().getProcessElements().stream()
+    return process.get().getProcessElements().stream()
         .flatMap(element -> Stream.concat(Stream.of(element), getNestedProcessElementsFromSub(element).stream()))
         .collect(Collectors.toList());
   }
@@ -177,6 +175,7 @@ public class ProcessUtils {
         .collect(Collectors.groupingBy(start -> PIDUtils.getId(start.pid(), true)));
 
       for (var processFile : getProcessesInCurrentPMV(pmv)) {
+        // TODO: get rid of this code duplication ... before adapting new APIs!!
         String processFileId = processFile.getIdentifier();
         var process = new Process(processFileId, processFile.getName(), new ArrayList<>());
         if (Strings.CI.equalsAny(process.getName(), skipProcesses)){
@@ -226,7 +225,7 @@ public class ProcessUtils {
         .stream().filter(StringUtils::isNoneBlank)
         .map(String::trim).toArray(String[]::new);
     return pmv -> {
-      String pmName = pmv.getProcessModel().getName();
+      String pmName = pmv.getLibraryId(); // TODO qualified or not?
       return !(Strings.CS.equals(pmName, CoreConstants.PROCESS_ANALYSER_PMV_NAME)
           || Strings.CS.contains(pmName, CoreConstants.PORTAL_PMV_SUFFIX)
           || Strings.CI.equalsAny(pmName, skipPMVs));
@@ -256,29 +255,33 @@ public class ProcessUtils {
     Map<String, List<IProcessStart>> startsByProcessId =
         processStarts.stream().collect(Collectors.groupingBy(start -> PIDUtils.getId(start.pid(), true)));
     for (var processFile : getProcessesInCurrentPMV(pmv)) {
-      String processFileId = processFile.getIdentifier();
-      var process = new Process(processFileId, processFile.getName(), new ArrayList<>());
-      process.setPmvId(pmv.getId());
-      process.setPmvName(pmv.getName());
-      process.setPmv(pmv);
-      process.setProjectRelativePath(processFile.getResource().getProjectRelativePath().toString());
-
-      List<IProcessStart> starts = startsByProcessId.getOrDefault(processFileId, Collections.emptyList());
-      if (CollectionUtils.isEmpty(starts)) {
-        continue;
-      }
-
-      for (var start : starts) {
-        var taskStart = start.getTaskStart();
-        StartElement startElement = new StartElement();
-        startElement.setPid(PIDUtils.getId(taskStart.getProcessElementId()));
-        startElement.setTaskStartId(taskStart.getId());
-        ProcessStartFactory.extractDisplayNameAndType(start, startElement);
-        process.getStartElements().add(startElement);
-      }
+      
       processes.add(process);
     }
     return processes;
+  }
+
+  private static void toProc(IProcess processFile) {
+    String processFileId = processFile.getIdentifier();
+    var process = new Process(processFileId, processFile.getName(), new ArrayList<>());
+    process.setPmvId(pmv.getId());
+    process.setPmvName(pmv.getName());
+    process.setPmv(pmv);
+    process.setProjectRelativePath(processFile.getResource().getProjectRelativePath().toString());
+
+    List<IProcessStart> starts = startsByProcessId.getOrDefault(processFileId, Collections.emptyList());
+    if (CollectionUtils.isEmpty(starts)) {
+      continue;
+    }
+
+    for (var start : starts) {
+      var taskStart = start.getTaskStart();
+      StartElement startElement = new StartElement();
+      startElement.setPid(PIDUtils.getId(taskStart.getProcessElementId()));
+      startElement.setTaskStartId(taskStart.getId());
+      ProcessStartFactory.extractDisplayNameAndType(start, startElement);
+      process.getStartElements().add(startElement);
+    }
   }
 
   public static boolean isIWebStartableNeedToRecordStatistic(IWebStartable process) {
