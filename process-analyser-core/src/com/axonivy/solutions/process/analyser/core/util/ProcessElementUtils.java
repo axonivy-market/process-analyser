@@ -19,7 +19,6 @@ import static com.axonivy.solutions.process.analyser.core.enums.ElementType.TASK
 import static com.axonivy.solutions.process.analyser.core.enums.ElementType.TASK_SWITCH_GATEWAY;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -105,11 +104,15 @@ public class ProcessElementUtils {
       return;
     }
 
-    Iterator<ProcessElement> elementIterator = processElements.iterator();
-    while (elementIterator.hasNext()) {
-      ProcessElement element = elementIterator.next();
-      if (!PIDUtils.getId(element.getPid()).equals(startElementPID)) {
-        elementIterator.remove();
+    List<ProcessElement> remainingStartElementOnProcess = processElements.stream()
+        .filter(filterProcessStartElement())
+        .filter(element -> !PIDUtils.getId(element.getPid()).equals(startElementPID))
+        .toList();
+    for (var startElement : remainingStartElementOnProcess) {
+      boolean foundStartPoint = processElements.stream()
+          .anyMatch(element -> PIDUtils.equalsPID(element.getPid(), startElement.getPid()));
+      if (foundStartPoint) {
+        processElements.remove(startElement);
       }
     }
   }
