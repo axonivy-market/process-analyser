@@ -1,6 +1,7 @@
 package com.axonivy.solutions.process.analyser.resolver;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,7 +28,7 @@ import ch.ivyteam.ivy.process.model.value.PID;
 @SuppressWarnings("restriction")
 public class NodeResolver {
 
-  public static List<Node> convertToNodes(List<ProcessElement> processElements, List<SequenceFlow> sequenceFlows) {
+  public static List<Node> convertToNodes(Collection<ProcessElement> processElements, Collection<SequenceFlow> sequenceFlows) {
     return Stream.concat(
           processElements.stream().flatMap(processElement -> convertProcessElementToNode(processElement).stream()),
           sequenceFlows.stream().map(flow -> convertSequenceFlowToNode(flow)))
@@ -86,7 +87,7 @@ public class NodeResolver {
     }};
   }
 
-  public static void updateRelativeValueForNodes(List<Node> nodes) {
+  public static void updateRelativeValueForNodes(Collection<Node> nodes) {
     if (CollectionUtils.isEmpty(nodes)) {
       return;
     }
