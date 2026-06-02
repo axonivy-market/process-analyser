@@ -15,7 +15,7 @@
   <c:set var="kpiType" value="#{cc.attrs.kpiType}" />
   <c:set var="isWidgetMode" value="#{cc.attrs.isWidgetMode}" />
   <c:set var="rendered" value="#{cc.attrs.rendered}"/>
-  <c:set var="isFrequecyKpi" value="#{kpiType eq 'FREQUENCY'}"/>
+  <c:set var="isFrequencyKpi" value="#{kpiType eq 'FREQUENCY'}"/>
   <f:event listener="#{colorPickerBean.initBean(kpiType, isWidgetMode)}" type="preRenderComponent"/>
   <h:panelGroup id="color-container" layout="block"
     styleClass="color-container #{isWidgetMode? 'align-items-start' : 'align-items-end'}"
@@ -27,10 +27,10 @@
         <h:panelGroup layout="block"
           styleClass="duration-labels #{isWidgetMode ? 'w-full' : ''}">
           <h:outputText styleClass="duration-label left"
-            value="#{ivy.cms.co(isFrequecyKpi ? '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/LowExecution' : '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/LowDuration')}"
+            value="#{ivy.cms.co(isFrequencyKpi ? '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/LowExecution' : '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/LowDuration')}"
             escape="false" />
           <h:outputText styleClass="duration-label right"
-            value="#{ivy.cms.co(isFrequecyKpi ? '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/HighExecution' : '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/HighDuration')}"
+            value="#{ivy.cms.co(isFrequencyKpi ? '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/HighExecution' : '/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/HighDuration')}"
             escape="false" />
         </h:panelGroup>
         <h:panelGroup layout="block"

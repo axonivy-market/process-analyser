@@ -97,12 +97,12 @@ public class ColorPickerBean implements Serializable {
     updateColorProperties();
   }
 
-  public String getCalulatedCellColor(Double value) {
+  public String getCalculatedCellColor(Double value) {
     return ColorUtils.calculateColorFromList(value, colorSegments);
   }
 
   public String getAccessibleTextColor(Double value) {
-    return ColorUtils.getAccessibleTextColor(getCalulatedCellColor(value));
+    return ColorUtils.getAccessibleTextColor(getCalculatedCellColor(value));
   }
 
   private void updateColorProperties() {
