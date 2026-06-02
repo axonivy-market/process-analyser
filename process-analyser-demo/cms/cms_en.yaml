@@ -1,6 +1,6 @@
 Processes:
   Process:
-    AutomicHotelBooking:
+    AutomaticHotelBooking:
       description: Automatic demo project for process analyser
       name: Automatic Hotel Booking
     FlightBookingDemo:

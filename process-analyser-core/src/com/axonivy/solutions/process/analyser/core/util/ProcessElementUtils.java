@@ -18,7 +18,9 @@ import static com.axonivy.solutions.process.analyser.core.enums.ElementType.TASK
 import static com.axonivy.solutions.process.analyser.core.enums.ElementType.TASK_SWITCH_EVENT;
 import static com.axonivy.solutions.process.analyser.core.enums.ElementType.TASK_SWITCH_GATEWAY;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -58,7 +60,7 @@ public class ProcessElementUtils {
 
   public static List<ElementDisplayName> listAllProcessElementAsRawPID(IProcessModelVersion pmv, String processId,
       String startElementPID) {
-    List<ProcessElement> processElements = ProcessUtils.getProcessElementsFrom(processId, pmv);
+    Set<ProcessElement> processElements = ProcessUtils.getProcessElementsFrom(processId, pmv);
     removeAnotherStartElementsBySelectedStartPID(processElements, startElementPID);
     return processElements.stream()
         .map(element -> buildElementDisplayName(element))
@@ -96,7 +98,7 @@ public class ProcessElementUtils {
     };
   }
 
-  public static void removeAnotherStartElementsBySelectedStartPID(List<ProcessElement> processElements,
+  public static void removeAnotherStartElementsBySelectedStartPID(Collection<ProcessElement> processElements,
       String startElementPID) {
     if (CollectionUtils.isEmpty(processElements)) {
       return;

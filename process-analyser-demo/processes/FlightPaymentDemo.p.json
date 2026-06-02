@@ -7,7 +7,7 @@
   "elements" : [ {
       "id" : "f0",
       "type" : "RequestStart",
-      "name" : "flightPayment.ivp",
+      "name" : "flightPaymentByUserProcess",
       "config" : {
         "signature" : "flightPayment",
         "request" : {
@@ -16,23 +16,18 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 96, "y" : 384 }
+        "at" : { "x" : 112, "y" : 144 },
+        "labelOffset" : { "x" : 57, "y" : 33 }
       },
       "connect" : [
-        { "id" : "f4", "to" : "f29", "label" : {
-            "name" : [
-              "create new task",
-              "to validate payment"
-            ],
-            "offset" : { "x" : 5, "y" : -26 }
-          } }
+        { "id" : "f4", "to" : "f29", "via" : [ { "x" : 176, "y" : 144 } ] }
       ]
     }, {
       "id" : "f1",
       "type" : "TaskEnd",
       "name" : "End",
       "visual" : {
-        "at" : { "x" : 1888, "y" : 384 }
+        "at" : { "x" : 1592, "y" : 592 }
       }
     }, {
       "id" : "f3",
@@ -47,12 +42,13 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 288, "y" : 384 },
-        "labelOffset" : { "x" : 14, "y" : 34 }
+        "at" : { "x" : 464, "y" : 96 },
+        "labelOffset" : { "x" : 57, "y" : -15 }
       },
       "connect" : [
         { "id" : "f21", "to" : "S20", "label" : {
-            "name" : "f6"
+            "name" : "start validation phase",
+            "offset" : { "x" : -71, "y" : 38 }
           } }
       ]
     }, {
@@ -71,14 +67,13 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1024, "y" : 384 }
+        "at" : { "x" : 1064, "y" : 352 },
+        "labelOffset" : { "x" : 1, "y" : 33 }
       },
       "connect" : [
         { "id" : "f18", "to" : "S10", "label" : {
-            "name" : [
-              "save record from",
-              "e-wallet"
-            ]
+            "name" : "save record from e-wallet",
+            "offset" : { "x" : 12, "y" : -10 }
           } }
       ]
     }, {
@@ -94,18 +89,19 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 880, "y" : 384 },
-        "labelOffset" : { "x" : 24, "y" : 32 }
+        "at" : { "x" : 944, "y" : 256 },
+        "labelOffset" : { "x" : 24, "y" : -32 }
       },
       "connect" : [
-        { "id" : "f8", "to" : "f7", "label" : {
+        { "id" : "f8", "to" : "f7", "via" : [ { "x" : 944, "y" : 352 } ], "label" : {
             "name" : "start 7",
-            "offset" : { "x" : 1, "y" : -10 }
+            "segment" : 1.12,
+            "offset" : { "x" : -35, "y" : -42 }
           } },
-        { "id" : "f13", "to" : "f14", "via" : [ { "x" : 880, "y" : 272 } ], "label" : {
+        { "id" : "f13", "to" : "f14", "via" : [ { "x" : 960, "y" : 256 } ], "label" : {
             "name" : "start 3",
-            "segment" : 1.36,
-            "offset" : { "x" : -71, "y" : 36 }
+            "segment" : 1.59,
+            "offset" : { "x" : -15, "y" : -11 }
           } }
       ]
     }, {
@@ -124,8 +120,8 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1024, "y" : 272 },
-        "labelOffset" : { "x" : -15, "y" : 41 }
+        "at" : { "x" : 1064, "y" : 256 },
+        "labelOffset" : { "x" : 17, "y" : 33 }
       },
       "connect" : [
         { "id" : "f15", "to" : "f16", "color" : "default" }
@@ -138,10 +134,11 @@
         "processCall" : "demo/VisaValidation:visaValidation()"
       },
       "visual" : {
-        "at" : { "x" : 1152, "y" : 272 }
+        "at" : { "x" : 1220, "y" : 256 },
+        "size" : { "width" : 120, "height" : 62 }
       },
       "connect" : [
-        { "id" : "f19", "to" : "S10", "via" : [ { "x" : 1408, "y" : 272 } ] }
+        { "id" : "f19", "to" : "S10", "via" : [ { "x" : 1328, "y" : 257 } ] }
       ]
     }, {
       "id" : "S10",
@@ -152,7 +149,7 @@
           "type" : "EmbeddedStart",
           "name" : "in 1",
           "visual" : {
-            "at" : { "x" : 64, "y" : 160 },
+            "at" : { "x" : 120, "y" : 160 },
             "labelOffset" : { "x" : 3, "y" : 23 }
           },
           "parentConnector" : "f18",
@@ -164,7 +161,7 @@
           "type" : "EmbeddedStart",
           "name" : "in 2",
           "visual" : {
-            "at" : { "x" : 32, "y" : 64 },
+            "at" : { "x" : 48, "y" : 64 },
             "labelOffset" : { "x" : 3, "y" : 23 }
           },
           "parentConnector" : "f19",
@@ -176,7 +173,7 @@
           "type" : "EmbeddedEnd",
           "name" : "out 1",
           "visual" : {
-            "at" : { "x" : 504, "y" : 160 },
+            "at" : { "x" : 496, "y" : 160 },
             "labelOffset" : { "x" : 3, "y" : 23 }
           },
           "parentConnector" : "f20"
@@ -201,7 +198,7 @@
                 }
               },
               "visual" : {
-                "at" : { "x" : 192, "y" : 160 }
+                "at" : { "x" : 192, "y" : 208 }
               },
               "connect" : [
                 { "id" : "S10-S10-f2", "to" : "S10-S10-f3", "label" : {
@@ -214,7 +211,7 @@
               "type" : "Script",
               "name" : "process payment",
               "visual" : {
-                "at" : { "x" : 352, "y" : 160 }
+                "at" : { "x" : 400, "y" : 208 }
               },
               "connect" : [
                 { "id" : "S10-S10-f4", "to" : "S10-S10-f5", "color" : "default" }
@@ -224,7 +221,7 @@
               "type" : "EmbeddedStart",
               "name" : "in 1",
               "visual" : {
-                "at" : { "x" : 64, "y" : 160 },
+                "at" : { "x" : 64, "y" : 208 },
                 "labelOffset" : { "x" : 3, "y" : 23 }
               },
               "parentConnector" : "S10-f5",
@@ -244,7 +241,7 @@
               },
               "parentConnector" : "S10-f1",
               "connect" : [
-                { "id" : "S10-S10-f1", "to" : "S10-S10-f9", "via" : [ { "x" : 192, "y" : 64 } ], "label" : {
+                { "id" : "S10-S10-f1", "to" : "S10-S10-f10", "label" : {
                     "name" : "end 6",
                     "segment" : 0.8,
                     "offset" : { "x" : -28, "y" : -18 }
@@ -255,7 +252,7 @@
               "type" : "EmbeddedEnd",
               "name" : "out 1",
               "visual" : {
-                "at" : { "x" : 640, "y" : 160 },
+                "at" : { "x" : 688, "y" : 208 },
                 "labelOffset" : { "x" : 3, "y" : 23 }
               },
               "parentConnector" : "S10-f7"
@@ -264,14 +261,27 @@
               "type" : "Script",
               "name" : "confirm payment",
               "visual" : {
-                "at" : { "x" : 512, "y" : 160 }
+                "at" : { "x" : 560, "y" : 208 }
               },
               "connect" : [
                 { "id" : "S10-S10-f6", "to" : "S10-S10-g2", "color" : "default" }
               ]
+            }, {
+              "id" : "S10-S10-f10",
+              "type" : "SubProcessCall",
+              "name" : "Validate in MEM",
+              "config" : {
+                "processCall" : "demo/VisaValidation:validateInMem()"
+              },
+              "visual" : {
+                "at" : { "x" : 192, "y" : 64 }
+              },
+              "connect" : [
+                { "id" : "S10-S10-f11", "to" : "S10-S10-f9", "color" : "default" }
+              ]
             } ],
           "visual" : {
-            "at" : { "x" : 296, "y" : 160 }
+            "at" : { "x" : 352, "y" : 160 }
           },
           "connect" : [
             { "id" : "S10-f7", "to" : "S10-g2" }
@@ -294,16 +304,17 @@
             "labelOffset" : { "x" : 14, "y" : 34 }
           },
           "connect" : [
-            { "id" : "S10-f1", "to" : "S10-S10", "via" : [ { "x" : 296, "y" : 64 } ], "color" : "default" }
+            { "id" : "S10-f1", "to" : "S10-S10", "via" : [ { "x" : 288, "y" : 64 } ], "color" : "default" }
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 1408, "y" : 384 }
+        "at" : { "x" : 1328, "y" : 352 },
+        "size" : { "width" : 120, "height" : 62 }
       },
       "connect" : [
         { "id" : "f20", "to" : "f2", "label" : {
             "name" : "end 8",
-            "offset" : { "x" : 5, "y" : 14 }
+            "offset" : { "x" : 17, "y" : -5 }
           } }
       ]
     }, {
@@ -317,18 +328,18 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1536, "y" : 384 },
-        "labelOffset" : { "y" : -24 }
+        "at" : { "x" : 1328, "y" : 448 },
+        "labelOffset" : { "x" : 104, "y" : 8 }
       },
       "connect" : [
-        { "id" : "f17", "to" : "f5", "via" : [ { "x" : 1536, "y" : 480 } ], "label" : {
+        { "id" : "f17", "to" : "f5", "label" : {
             "name" : "start 2",
-            "segment" : 0.32,
-            "offset" : { "x" : 31, "y" : 26 }
+            "segment" : 0.27,
+            "offset" : { "x" : -81, "y" : -10 }
           } },
         { "id" : "f9", "to" : "f25", "label" : {
             "name" : "yes",
-            "offset" : { "x" : -47, "y" : 14 }
+            "offset" : { "x" : 17, "y" : -2 }
           }, "color" : "default" }
       ]
     }, {
@@ -369,7 +380,7 @@
             "at" : { "x" : 320, "y" : 272 },
             "labelOffset" : { "x" : 3, "y" : 23 }
           },
-          "parentConnector" : "f6",
+          "parentConnector" : "f34",
           "connect" : [
             { "id" : "S20-f0", "to" : "S20-f5", "via" : [ { "x" : 192, "y" : 272 } ], "label" : {
                 "name" : "end 2",
@@ -400,7 +411,7 @@
           "parentConnector" : "f22"
         } ],
       "visual" : {
-        "at" : { "x" : 432, "y" : 384 }
+        "at" : { "x" : 464, "y" : 256 }
       },
       "connect" : [
         { "id" : "f22", "to" : "f10" }
@@ -419,18 +430,18 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1136, "y" : 480 },
+        "at" : { "x" : 1032, "y" : 448 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
-        { "id" : "f6", "to" : "S20", "via" : [ { "x" : 432, "y" : 480 } ], "color" : "default" }
+        { "id" : "f6", "to" : "f33", "color" : "default" }
       ]
     }, {
       "id" : "f10",
       "type" : "Script",
       "name" : "get payment provider",
       "visual" : {
-        "at" : { "x" : 592, "y" : 384 }
+        "at" : { "x" : 632, "y" : 256 }
       },
       "connect" : [
         { "id" : "f12", "to" : "f23", "color" : "default" }
@@ -440,7 +451,7 @@
       "type" : "Script",
       "name" : "validate payment provider",
       "visual" : {
-        "at" : { "x" : 752, "y" : 384 }
+        "at" : { "x" : 808, "y" : 256 }
       },
       "connect" : [
         { "id" : "f24", "to" : "f11", "label" : {
@@ -461,53 +472,95 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1632, "y" : 384 },
+        "at" : { "x" : 1328, "y" : 592 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
-        { "id" : "f26", "to" : "f27", "color" : "default" }
-      ]
-    }, {
-      "id" : "f27",
-      "type" : "Script",
-      "name" : "send confirmation mail",
-      "visual" : {
-        "at" : { "x" : 1760, "y" : 384 }
-      },
-      "connect" : [
-        { "id" : "f28", "to" : "f1", "color" : "default" }
+        { "id" : "f26", "to" : "f37", "color" : "default" }
       ]
     }, {
       "id" : "f29",
       "type" : "Alternative",
       "visual" : {
-        "at" : { "x" : 192, "y" : 384 },
+        "at" : { "x" : 224, "y" : 96 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
-        { "id" : "f30", "to" : "f3", "color" : "default" }
+        { "id" : "f30", "to" : "f35", "color" : "default" }
       ]
     }, {
       "id" : "f31",
       "type" : "SignalStartEvent",
-      "name" : "flightPayment",
+      "name" : "flightPaymentBySignal",
       "config" : {
         "signalCode" : "flightPayment"
       },
       "visual" : {
-        "at" : { "x" : 192, "y" : 496 },
-        "labelOffset" : { "x" : 13, "y" : 33 }
+        "at" : { "x" : 112, "y" : 48 },
+        "labelOffset" : { "x" : 33, "y" : -23 }
       },
       "connect" : [
-        { "id" : "f32", "to" : "f29" }
+        { "id" : "f32", "to" : "f29", "via" : [ { "x" : 176, "y" : 48 } ] }
+      ]
+    }, {
+      "id" : "f33",
+      "type" : "SubProcessCall",
+      "name" : "Validate data in DB",
+      "config" : {
+        "processCall" : "demo/VisaValidation:validateInDB()"
+      },
+      "visual" : {
+        "at" : { "x" : 712, "y" : 448 }
+      },
+      "connect" : [
+        { "id" : "f34", "to" : "S20", "via" : [ { "x" : 464, "y" : 448 } ], "color" : "default" }
+      ]
+    }, {
+      "id" : "f35",
+      "type" : "SubProcessCall",
+      "name" : "Check in DB record",
+      "config" : {
+        "processCall" : "demo/VisaValidation:validateInDB()"
+      },
+      "visual" : {
+        "at" : { "x" : 344, "y" : 96 }
+      },
+      "connect" : [
+        { "id" : "f36", "to" : "f3", "color" : "default" }
+      ]
+    }, {
+      "id" : "f37",
+      "type" : "EMail",
+      "name" : "send confirmation mail",
+      "config" : {
+        "headers" : {
+          "subject" : "Send Confirmation",
+          "from" : "no-reply@mail.localhost",
+          "to" : "no-reply@mail.localhost",
+          "replyTo" : "no-reply@mail.localhost"
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 1456, "y" : 592 }
+      },
+      "connect" : [
+        { "id" : "f38", "to" : "f1", "color" : "default" }
       ]
     } ],
   "layout" : {
     "lanes" : [ {
         "name" : "FlightPaymentDemo",
-        "offset" : 208,
-        "size" : 384,
-        "lanes" : [ ]
+        "size" : 672,
+        "lanes" : [ {
+            "name" : "Create new Payment",
+            "size" : 192
+          }, {
+            "name" : "Validate Payment",
+            "size" : 336
+          }, {
+            "name" : "Notification",
+            "size" : 144
+          } ]
       } ]
   }
 }

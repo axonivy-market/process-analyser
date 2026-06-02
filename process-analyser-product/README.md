@@ -49,7 +49,7 @@ To view the result, start the Process Analyzer and select the PMV that matches t
   3. **Open in New Tab:** Open the mining viewer in a new browser tab for a larger, fully controllable view.
   4. **Expand Viewer Panel:** Hover over the bottom corner of the viewer and drag downward to increase the viewing area.
 
-![expand viewr](images/expand-viewer.gif)
+![expand viewer](images/expand-viewer.gif)
 
 - **Reporting Options:** Use the buttons in the bottom-right corner to export data for reporting.
 
@@ -57,7 +57,7 @@ To view the result, start the Process Analyzer and select the PMV that matches t
   2. **Capture entire process:** Export the complete process diagram at the top (first) BPMN level in Full HD resolution, including all KPI values.
   3. **Capture current view:** Export only the currently visible mining diagram as it appears on the screen.
 
-![downoad and export demo](images/capture-images.gif)
+![download and export demo](images/capture-images.gif)
 
 - **Color Bar Selection:** illustrates the progression from lower to higher KPI values.
   1. **Custom Color:** Customize the color of each KPI value using a gradient from light to dark.
@@ -92,8 +92,8 @@ To collect data and analyze your processes, please follow these steps:
 
 ![analyze process](images/analyze-process.png)
 
-4. (Optional) Update the process display name to avoid the process start technical name (e.g. FlightPlanningDemo/recommendDestination.ivp) being shown in the selection options. Multilanguage support for process names is also available.
-![multilanguage process name support](images/multilanguage-process-name.png)
+4. (Optional) Update the process display name to avoid the process start technical name (e.g. FlightPlanningDemo/recommendDestination.ivp) being shown in the selection options. Multilingual support for process names is also available.
+![multilingual process name support](images/multilanguage-process-name.png)
 
 ```
 @variables.yaml@

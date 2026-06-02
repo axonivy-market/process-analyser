@@ -1,8 +1,11 @@
 package com.axonivy.solutions.process.analyser.test;
 
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.RGB_REGEX_PATTERN;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Strings;
 
@@ -16,7 +19,6 @@ import ch.ivyteam.ivy.process.model.NodeElement;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 
-@SuppressWarnings("restriction")
 public class BaseSetup {
   protected static final String TEST_REQUEST_PATH = "193485C5ABDFEA93/193485C5ABDFEA93-f0/test.ivp";
   protected static final String TEST_PROCESS_ELEMENT_START_PID = "193485C5ABDFEA93-f0";
@@ -54,7 +56,8 @@ public class BaseSetup {
     testPMV = IApplication.current().getProcessModelVersions().toList().get(0);
     testProcess = ProcessUtils.getAllProcesses().stream()
         .filter(start -> Strings.CS.contains(start.getName(), TEST_PROCESS_NAME)).findAny().orElse(null);
-    testProcessElements = ProcessUtils.getProcessElementsFrom(testProcess.getId(), testProcess.getPmv());
+    testProcessElements = ProcessUtils.getProcessElementsFrom(testProcess.getId(), testProcess.getPmv()).stream()
+        .collect(Collectors.toList());
     multiIncomingsElement = getProcessElementByPid(MULTI_INCOMINGS_ELEMENT_PID);
     subProcessElement = getProcessElementByPid(EMBEDDED_PID);
     subProcessCall = getProcessElementByPid(REST_CALL_PID);

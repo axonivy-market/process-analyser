@@ -330,8 +330,8 @@ public class ProcessesAnalyticsBean {
     return masterDataBean.isDurationKpiType();
   }
 
-  public String getCalulatedCellColor(Double value) {
-    return colorPickerBean.getCalulatedCellColor(value);
+  public String getCalculatedCellColor(Double value) {
+    return colorPickerBean.getCalculatedCellColor(value);
   }
 
   public String getAccessibleTextColor(Double value) {
