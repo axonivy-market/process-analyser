@@ -11,8 +11,8 @@
       "config" : {
         "signature" : "HotelBooking",
         "request" : {
-          "name" : "<%=ivy.cms.co(\"/Processes/Process/AutomicHotelBooking/name\")%>",
-          "description" : "<%=ivy.cms.co(\"/Processes/Process/AutomicHotelBooking/description\")%>"
+          "name" : "<%=ivy.cms.co(\"/Processes/Process/AutomicHotelBooking/name\")%><%=ivy.cms.co(\"/Processes/Process/AutomaticHotelBooking/name\")%>",
+          "description" : "<%=ivy.cms.co(\"/Processes/Process/AutomicHotelBooking/description\")%><%=ivy.cms.co(\"/Processes/Process/AutomaticHotelBooking/description\")%>"
         },
         "case" : {
           "attachToBusinessCase" : false
