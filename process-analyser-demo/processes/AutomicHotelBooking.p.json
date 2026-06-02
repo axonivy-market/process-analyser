@@ -19,7 +19,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 16, "y" : 32 }
+        "at" : { "x" : 40, "y" : 48 }
       },
       "connect" : [
         { "id" : "f2", "to" : "f37" }
@@ -28,7 +28,7 @@
       "id" : "f1",
       "type" : "TaskEnd",
       "visual" : {
-        "at" : { "x" : 1088, "y" : 32 },
+        "at" : { "x" : 1112, "y" : 48 },
         "labelOffset" : { "x" : 13, "y" : 33 }
       }
     }, {
@@ -41,7 +41,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 320, "y" : 32 },
+        "at" : { "x" : 344, "y" : 48 },
         "labelOffset" : { "x" : 8, "y" : -24 }
       },
       "connect" : [
@@ -49,7 +49,7 @@
             "name" : "yes",
             "offset" : { "x" : 1, "y" : -34 }
           }, "color" : "default" },
-        { "id" : "f9", "to" : "f12", "via" : [ { "x" : 320, "y" : 152 } ], "label" : {
+        { "id" : "f9", "to" : "f12", "via" : [ { "x" : 344, "y" : 168 } ], "label" : {
             "name" : "no",
             "segment" : 1.16,
             "offset" : { "x" : 9, "y" : -89 }
@@ -60,7 +60,7 @@
       "type" : "Script",
       "name" : "Record Booking",
       "visual" : {
-        "at" : { "x" : 656, "y" : 32 }
+        "at" : { "x" : 680, "y" : 48 }
       },
       "connect" : [
         { "id" : "f4", "to" : "f7" }
@@ -80,7 +80,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 496, "y" : 32 },
+        "at" : { "x" : 520, "y" : 48 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
@@ -101,7 +101,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 376, "y" : 152 },
+        "at" : { "x" : 400, "y" : 168 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
@@ -121,7 +121,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 208, "y" : 32 },
+        "at" : { "x" : 232, "y" : 48 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
@@ -141,7 +141,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 832, "y" : 32 },
+        "at" : { "x" : 856, "y" : 48 },
         "labelOffset" : { "x" : 1, "y" : -15 }
       },
       "connect" : [
@@ -157,7 +157,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 656, "y" : 152 },
+        "at" : { "x" : 680, "y" : 168 },
         "labelOffset" : { "y" : 56 }
       },
       "connect" : [
@@ -176,7 +176,7 @@
       "type" : "Script",
       "name" : "Refer other available option",
       "visual" : {
-        "at" : { "x" : 520, "y" : 152 }
+        "at" : { "x" : 544, "y" : 168 }
       },
       "connect" : [
         { "id" : "f19", "to" : "f16", "color" : "default" }
@@ -195,7 +195,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 832, "y" : 152 },
+        "at" : { "x" : 856, "y" : 168 },
         "labelOffset" : { "x" : 33, "y" : -47 }
       },
       "connect" : [
@@ -205,7 +205,7 @@
       "id" : "f23",
       "type" : "TaskEnd",
       "visual" : {
-        "at" : { "x" : 952, "y" : 152 },
+        "at" : { "x" : 976, "y" : 168 },
         "labelOffset" : { "x" : 13, "y" : 33 }
       }
     }, {
@@ -213,7 +213,7 @@
       "type" : "Script",
       "name" : "Send confirmation email",
       "visual" : {
-        "at" : { "x" : 960, "y" : 32 }
+        "at" : { "x" : 984, "y" : 48 }
       },
       "connect" : [
         { "id" : "f25", "to" : "f1", "color" : "default" }
@@ -234,7 +234,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 656, "y" : 96 },
+        "at" : { "x" : 680, "y" : 112 },
         "labelOffset" : { "x" : -55, "y" : 9 }
       },
       "connect" : [
@@ -248,7 +248,7 @@
         "signalCode" : "hotelBooking"
       },
       "visual" : {
-        "at" : { "x" : 112, "y" : 112 },
+        "at" : { "x" : 136, "y" : 128 },
         "labelOffset" : { "x" : 13, "y" : 33 }
       },
       "connect" : [
@@ -258,7 +258,7 @@
       "id" : "f37",
       "type" : "Alternative",
       "visual" : {
-        "at" : { "x" : 112, "y" : 32 },
+        "at" : { "x" : 136, "y" : 48 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [

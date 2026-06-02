@@ -2,9 +2,9 @@ package com.axonivy.solutions.process.analyser.bo;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.Strings;
 
 public class TaskPath {
   private String taskUUID;
@@ -75,8 +75,8 @@ public class TaskPath {
   }
 
   private Path getPathTriggeredGivenPath(final String targetPathId) {
-    return paths.stream().filter(path -> Objects.nonNull(path.getEndPathId()))
-        .filter(path -> path.getEndPathId().equals(targetPathId))
+    return paths.stream()
+        .filter(path -> Strings.CS.equals(path.getEndPathId(), targetPathId))
         .findAny().orElse(null);
   }
 

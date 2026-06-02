@@ -180,10 +180,10 @@ public class ProcessUtils {
 
     removeElementByPID(callSubStartElement.getPid(), processElements);
 
-    List<ProcessElement> finalProcessElements = collectAllLinkedElementsOfStartProcess(processElements,
+    List<ProcessElement> allLinkedProcessElements = collectAllLinkedElementsOfStartProcess(processElements,
         callSubStartElement);
-    finalProcessElements.add(0, callSubStartElement);
-    return finalProcessElements;
+    allLinkedProcessElements.add(0, callSubStartElement);
+    return allLinkedProcessElements;
   }
 
   private static IProcess findCallSubProcess(ProcessCallSignature subCallTarget) {
@@ -206,7 +206,7 @@ public class ProcessUtils {
 
   private static List<ProcessElement> collectAllLinkedElementsOfStartProcess(List<ProcessElement> processElements,
       ProcessElement sourceElement) {
-    List<ProcessElement> finalProcessElements = new ArrayList<>();
+    List<ProcessElement> allLinkedProcessElements = new ArrayList<>();
     boolean foundConnection;
     do {
       var processElementIterator = processElements.iterator();
@@ -214,11 +214,8 @@ public class ProcessUtils {
       while (processElementIterator.hasNext()) {
         ProcessElement processElement = processElementIterator.next();
         if (sourceElement.isConnectedTo(processElement)) {
-          finalProcessElements.add(processElement);
           Set<ProcessElement> nestedProcessElements = getNestedProcessElementsFromSub(processElement);
-          if (CollectionUtils.isNotEmpty(nestedProcessElements)) {
-            finalProcessElements.addAll(nestedProcessElements);
-          }
+          allLinkedProcessElements.addAll(nestedProcessElements);
           processElementIterator.remove();
           sourceElement = processElement;
           foundConnection = true;
@@ -227,7 +224,7 @@ public class ProcessUtils {
       }
     } while (foundConnection);
 
-    return finalProcessElements;
+    return allLinkedProcessElements;
   }
 
   public static Set<ProcessElement> getProcessElementsFrom(String processId, IProcessModelVersion pmv) {

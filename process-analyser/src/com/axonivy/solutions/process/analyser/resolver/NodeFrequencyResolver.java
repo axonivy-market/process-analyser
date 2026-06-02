@@ -332,16 +332,16 @@ public class NodeFrequencyResolver {
       Path currentPath, TaskPath taskPath) {
     ProcessElement containerElement = null;
     List<String> allNodesOfCurrentPath = taskPath.getRelatedNodesOfGivenPath(currentPath);
-    String targetPID = ProcessUtils.getElementPid(element);
-    String processID = ProcessUtils.getElementPid(element.getRootProcess());
-    Set<ProcessElement> elementsOfCurrentProcess = processPidAndElementsMap.computeIfAbsent(processID,
+    String targetPid = ProcessUtils.getElementPid(element);
+    String processPid = ProcessUtils.getElementPid(element.getRootProcess());
+    Set<ProcessElement> elementsOfCurrentProcess = processPidAndElementsMap.computeIfAbsent(processPid,
         pid -> new HashSet<>(element.getRootProcess().getProcessElements()));
     List<ProcessElement> subCallOfCurrentProcess = filterSubProcessCallElements(elementsOfCurrentProcess);
     // Find in the current process itself
-    containerElement = findSubProcessCallContainsElement(targetPID, allNodesOfCurrentPath, subCallOfCurrentProcess);
+    containerElement = findSubProcessCallContainsElement(targetPid, allNodesOfCurrentPath, subCallOfCurrentProcess);
     // Find in the request process
     if (containerElement == null) {
-      containerElement = findSubProcessCallContainsElement(targetPID, allNodesOfCurrentPath, subProcessCalls);
+      containerElement = findSubProcessCallContainsElement(targetPid, allNodesOfCurrentPath, subProcessCalls);
     }
     return containerElement;
   }
@@ -369,18 +369,18 @@ public class NodeFrequencyResolver {
    * - Find in current process
    * - Find in reference process
    * */
-  private ProcessElement findSubProcessCallContainsElement(String targetPID, List<String> allNodesOfCurrentPath,
+  private ProcessElement findSubProcessCallContainsElement(String targetPid, List<String> allNodesOfCurrentPath,
       List<ProcessElement> subProcessCalls) {
     ProcessElement containerElement = null;
     for (var subCallElement : subProcessCalls) {
-      String subCallPID = ProcessUtils.getElementPid(subCallElement);
-      Set<ProcessElement> processElements = processPidAndElementsMap.computeIfAbsent(subCallPID,
+      String subCallPid = ProcessUtils.getElementPid(subCallElement);
+      Set<ProcessElement> processElements = processPidAndElementsMap.computeIfAbsent(subCallPid,
           pid -> ProcessUtils.getNestedProcessElementsFromSub(subCallElement));
-      List<String> processElementPIDs = processElements.stream().map(ProcessUtils::getElementPid).toList();
+      List<String> processElementPids = processElements.stream().map(ProcessUtils::getElementPid).toList();
       // Check if the wrapper process contains the target element
       // If yes, the wrapper process must be a part of TaskPath
-      if ((processElementPIDs.contains(targetPID) || subCallPID.equals(targetPID))
-          && allNodesOfCurrentPath.contains(subCallPID)) {
+      if ((processElementPids.contains(targetPid) || subCallPid.equals(targetPid))
+          && allNodesOfCurrentPath.contains(subCallPid)) {
         containerElement = subCallElement;
         break;
       }

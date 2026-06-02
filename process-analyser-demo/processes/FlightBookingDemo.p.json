@@ -25,19 +25,21 @@
         "demo"
       ],
       "visual" : {
-        "at" : { "x" : 144, "y" : 392 }
+        "at" : { "x" : 96, "y" : 48 },
+        "labelOffset" : { "x" : 33, "y" : 33 }
       },
       "connect" : [
-        { "id" : "f2", "to" : "f22", "label" : {
+        { "id" : "f2", "to" : "f22", "via" : [ { "x" : 224, "y" : 48 } ], "label" : {
             "name" : "f2",
-            "offset" : { "x" : -6, "y" : -10 }
+            "segment" : 0.76,
+            "offset" : { "x" : -10, "y" : -6 }
           } }
       ]
     }, {
       "id" : "f1",
       "type" : "TaskEnd",
       "visual" : {
-        "at" : { "x" : 1552, "y" : 648 }
+        "at" : { "x" : 1584, "y" : 368 }
       }
     }, {
       "id" : "S10",
@@ -118,7 +120,7 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 368, "y" : 392 },
+        "at" : { "x" : 368, "y" : 104 },
         "size" : { "width" : 128 }
       },
       "connect" : [
@@ -231,7 +233,7 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 544, "y" : 392 },
+        "at" : { "x" : 544, "y" : 104 },
         "size" : { "width" : 144 }
       },
       "connect" : [
@@ -250,11 +252,11 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 696, "y" : 392 },
+        "at" : { "x" : 696, "y" : 104 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
-        { "id" : "f20", "to" : "S10", "via" : [ { "x" : 696, "y" : 328 }, { "x" : 368, "y" : 328 } ], "label" : {
+        { "id" : "f20", "to" : "S10", "via" : [ { "x" : 696, "y" : 40 }, { "x" : 368, "y" : 40 } ], "label" : {
             "name" : "Yes",
             "offset" : { "x" : -159, "y" : -18 }
           } },
@@ -266,24 +268,28 @@
     }, {
       "id" : "f7",
       "type" : "Alternative",
-      "name" : "Back to submit information step?",
+      "name" : [
+        "Back to submit",
+        "information step?"
+      ],
       "config" : {
         "conditions" : {
           "f24" : "in.isBackToSubmitInformationPage"
         }
       },
       "visual" : {
-        "at" : { "x" : 1016, "y" : 392 },
-        "labelOffset" : { "x" : 40, "y" : -24 }
+        "at" : { "x" : 992, "y" : 104 },
+        "labelOffset" : { "y" : -32 }
       },
       "connect" : [
-        { "id" : "f24", "to" : "S20", "via" : [ { "x" : 1016, "y" : 456 }, { "x" : 544, "y" : 456 } ], "label" : {
+        { "id" : "f24", "to" : "S20", "via" : [ { "x" : 992, "y" : 168 }, { "x" : 544, "y" : 168 } ], "label" : {
             "name" : "Yes",
-            "offset" : { "x" : -7, "y" : 14 }
+            "offset" : { "x" : -12, "y" : 10 }
           } },
-        { "id" : "f10", "to" : "f12", "via" : [ { "x" : 1112, "y" : 392 } ], "label" : {
+        { "id" : "f10", "to" : "f12", "label" : {
             "name" : "No",
-            "offset" : { "x" : 14, "y" : 9 }
+            "segment" : 0.46,
+            "offset" : { "x" : 15, "y" : 8 }
           } }
       ]
     }, {
@@ -365,7 +371,7 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 848, "y" : 392 },
+        "at" : { "x" : 848, "y" : 104 },
         "size" : { "width" : 144 }
       },
       "connect" : [
@@ -448,7 +454,7 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 1112, "y" : 768 },
+        "at" : { "x" : 1112, "y" : 480 },
         "size" : { "width" : 144 }
       },
       "connect" : [
@@ -467,8 +473,8 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1112, "y" : 544 },
-        "labelOffset" : { "x" : -40, "y" : 8 }
+        "at" : { "x" : 1112, "y" : 104 },
+        "labelOffset" : { "x" : 24, "y" : -16 }
       },
       "connect" : [
         { "id" : "f23", "to" : "S25", "label" : {
@@ -583,7 +589,7 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 1112, "y" : 648 },
+        "at" : { "x" : 1112, "y" : 368 },
         "size" : { "width" : 144 }
       },
       "connect" : [
@@ -656,7 +662,7 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 1264, "y" : 544 },
+        "at" : { "x" : 1264, "y" : 104 },
         "size" : { "width" : 144 }
       },
       "connect" : [
@@ -675,7 +681,7 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 1392, "y" : 648 },
+        "at" : { "x" : 1392, "y" : 368 },
         "labelOffset" : { "y" : 40 }
       },
       "connect" : [
@@ -756,14 +762,14 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 1263, "y" : 392 },
+        "at" : { "x" : 1263, "y" : 216 },
         "size" : { "width" : 161, "height" : 62 }
       },
       "connect" : [
-        { "id" : "f18", "to" : "f17", "via" : [ { "x" : 1392, "y" : 392 } ], "label" : {
+        { "id" : "f18", "to" : "f17", "via" : [ { "x" : 1392, "y" : 216 } ], "label" : {
             "name" : "f18",
-            "segment" : 1.23,
-            "offset" : { "x" : 18, "y" : 78 }
+            "segment" : 1.14,
+            "offset" : { "x" : -49, "y" : 63 }
           } }
       ]
     }, {
@@ -841,34 +847,35 @@
           ]
         } ],
       "visual" : {
-        "at" : { "x" : 1552, "y" : 768 },
+        "at" : { "x" : 1392, "y" : 480 },
         "size" : { "width" : 144 }
       },
       "connect" : [
-        { "id" : "f9", "to" : "f1", "label" : {
+        { "id" : "f9", "to" : "f1", "via" : [ { "x" : 1552, "y" : 480 } ], "label" : {
             "name" : "f9",
-            "offset" : { "x" : 17, "y" : 1 }
+            "segment" : 0.91,
+            "offset" : { "x" : 14, "y" : 10 }
           } }
       ]
     }, {
       "id" : "f21",
       "type" : "SignalStartEvent",
-      "name" : "bookFlight",
+      "name" : "bookFlightBySignal",
       "config" : {
         "signalCode" : "bookFlight"
       },
       "visual" : {
-        "at" : { "x" : 240, "y" : 520 },
-        "labelOffset" : { "x" : 13, "y" : 33 }
+        "at" : { "x" : 96, "y" : 168 },
+        "labelOffset" : { "x" : 17, "y" : 33 }
       },
       "connect" : [
-        { "id" : "f26", "to" : "f22" }
+        { "id" : "f26", "to" : "f22", "via" : [ { "x" : 224, "y" : 168 } ] }
       ]
     }, {
       "id" : "f22",
       "type" : "Alternative",
       "visual" : {
-        "at" : { "x" : 240, "y" : 392 },
+        "at" : { "x" : 240, "y" : 104 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
@@ -878,7 +885,6 @@
   "layout" : {
     "lanes" : [ {
         "name" : "FlightBookingDemo",
-        "offset" : 296,
         "size" : 624,
         "lanes" : [ {
             "name" : "End user",
