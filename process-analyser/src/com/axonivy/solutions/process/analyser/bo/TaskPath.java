@@ -1,8 +1,10 @@
 package com.axonivy.solutions.process.analyser.bo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.Strings;
 
 public class TaskPath {
   private String taskUUID;
@@ -48,6 +50,34 @@ public class TaskPath {
 
   public void setPaths(List<Path> paths) {
     this.paths = paths;
+  }
+
+  public List<String> getRelatedNodesOfGivenPath(Path path) {
+    if (path == null || paths == null) {
+      return List.of();
+    }
+    List<String> relatedPaths = new ArrayList<>();
+    String targetPathId = path.getStartPathId();
+    Path triggeredPath = null;
+    do {
+      triggeredPath = getPathTriggeredGivenPath(targetPathId);
+      if (triggeredPath != null) {
+        if (relatedPaths.contains(triggeredPath.getStartPathId())) {
+          break;
+        }
+        relatedPaths.addAll(0, triggeredPath.getNodesInPath());
+        targetPathId = triggeredPath.getStartPathId();
+      }
+    } while (triggeredPath != null);
+
+    relatedPaths.addAll(path.getNodesInPath());
+    return relatedPaths;
+  }
+
+  private Path getPathTriggeredGivenPath(final String targetPathId) {
+    return paths.stream()
+        .filter(path -> Strings.CS.equals(path.getEndPathId(), targetPathId))
+        .findAny().orElse(null);
   }
 
   @Override

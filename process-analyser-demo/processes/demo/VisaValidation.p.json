@@ -28,7 +28,7 @@
       "id" : "f1",
       "type" : "CallSubEnd",
       "visual" : {
-        "at" : { "x" : 704, "y" : 64 },
+        "at" : { "x" : 928, "y" : 64 },
         "labelOffset" : { "x" : 13, "y" : 33 }
       }
     }, {
@@ -117,14 +117,14 @@
         "labelOffset" : { "y" : -40 }
       },
       "connect" : [
-        { "id" : "f4", "to" : "f1", "label" : {
+        { "id" : "f4", "to" : "f23", "label" : {
             "name" : "start 6",
-            "offset" : { "x" : 1, "y" : -10 }
+            "offset" : { "y" : -10 }
           }, "color" : "default" },
         { "id" : "f10", "to" : "f11", "via" : [ { "x" : 608, "y" : 168 } ], "label" : {
             "name" : "start 5",
             "segment" : 1.26,
-            "offset" : { "x" : 30, "y" : -65 }
+            "offset" : { "x" : 54, "y" : -42 }
           } }
       ]
     }, {
@@ -156,14 +156,125 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 392, "y" : 168 },
+        "at" : { "x" : 480, "y" : 168 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
-        { "id" : "f12", "to" : "f6", "via" : [ { "x" : 224, "y" : 168 } ], "label" : {
+        { "id" : "f12", "to" : "f25", "label" : {
             "name" : "end 5",
             "segment" : 0.78,
-            "offset" : { "x" : 14, "y" : -8 }
+            "offset" : { "x" : 32, "y" : -10 }
+          }, "color" : "default" }
+      ]
+    }, {
+      "id" : "f13",
+      "type" : "CallSubStart",
+      "name" : "validateInMem()",
+      "config" : {
+        "signature" : "validateInMem"
+      },
+      "visual" : {
+        "at" : { "x" : 96, "y" : 272 }
+      },
+      "connect" : [
+        { "id" : "f15", "to" : "f19", "label" : {
+            "name" : "mem - start",
+            "offset" : { "x" : 2, "y" : -10 }
+          } }
+      ]
+    }, {
+      "id" : "f14",
+      "type" : "CallSubEnd",
+      "visual" : {
+        "at" : { "x" : 488, "y" : 272 }
+      }
+    }, {
+      "id" : "f16",
+      "type" : "CallSubStart",
+      "name" : "validateInDB()",
+      "config" : {
+        "signature" : "validateInDB"
+      },
+      "visual" : {
+        "at" : { "x" : 96, "y" : 384 }
+      },
+      "connect" : [
+        { "id" : "f17", "to" : "f21", "label" : {
+            "name" : "db -start",
+            "offset" : { "x" : -2, "y" : -10 }
+          } }
+      ]
+    }, {
+      "id" : "f18",
+      "type" : "CallSubEnd",
+      "visual" : {
+        "at" : { "x" : 488, "y" : 384 }
+      }
+    }, {
+      "id" : "f19",
+      "type" : "Script",
+      "name" : "Read in MEM",
+      "visual" : {
+        "at" : { "x" : 296, "y" : 272 }
+      },
+      "connect" : [
+        { "id" : "f20", "to" : "f14", "label" : {
+            "name" : "mem -end",
+            "offset" : { "x" : 1, "y" : -10 }
+          }, "color" : "default" }
+      ]
+    }, {
+      "id" : "f21",
+      "type" : "Database",
+      "name" : "Read DB Case",
+      "config" : {
+        "query" : {
+          "dbName" : "IvySystemDatabase",
+          "sql" : {
+            "table" : "IWA_CASE"
+          }
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 296, "y" : 384 }
+      },
+      "connect" : [
+        { "id" : "f22", "to" : "f18", "label" : {
+            "name" : "db - end",
+            "offset" : { "x" : 5, "y" : -10 }
+          }, "color" : "default" }
+      ]
+    }, {
+      "id" : "f23",
+      "type" : "SubProcessCall",
+      "name" : "Validate in MEM",
+      "config" : {
+        "processCall" : "demo/VisaValidation:validateInMem()"
+      },
+      "visual" : {
+        "at" : { "x" : 752, "y" : 64 }
+      },
+      "connect" : [
+        { "id" : "f24", "to" : "f1", "label" : {
+            "name" : "end 7",
+            "offset" : { "x" : -3, "y" : -10 }
+          }, "color" : "default" }
+      ]
+    }, {
+      "id" : "f25",
+      "type" : "SubProcessCall",
+      "name" : "Validate in DB",
+      "config" : {
+        "processCall" : "demo/VisaValidation:validateInDB()"
+      },
+      "visual" : {
+        "at" : { "x" : 336, "y" : 168 }
+      },
+      "connect" : [
+        { "id" : "f26", "to" : "f6", "via" : [ { "x" : 224, "y" : 168 } ], "label" : {
+            "name" : "end 6",
+            "segment" : 1.5,
+            "offset" : { "x" : -23, "y" : 11 }
           }, "color" : "default" }
       ]
     } ]
