@@ -50,7 +50,6 @@
     </dependency>
   </dependencies>
 
-
   <build>
     <testSourceDirectory>src_test</testSourceDirectory>
     <plugins>
@@ -81,7 +80,7 @@
             </goals>
           </execution>
 
-          <!-- 1️⃣ Deploy main project -->
+          <!-- Deploy main project -->
           <execution>
             <id>deploy.process.analyser</id>
             <goals>
@@ -96,7 +95,7 @@
             <phase>process-test-classes</phase>
           </execution>
 
-          <!-- 2️⃣ Deploy test project -->
+          <!-- Deploy test project -->
           <execution>
             <id>deploy.process.analyser.test</id>
             <goals>
@@ -125,7 +124,7 @@
             <phase>process-test-classes</phase>
           </execution>
 
-          <!-- 4️⃣ Stop test engine -->
+          <!-- Stop test engine -->
           <execution>
             <id>stop.test.engine</id>
             <phase>post-integration-test</phase>

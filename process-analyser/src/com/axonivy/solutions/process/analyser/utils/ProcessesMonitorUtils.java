@@ -4,6 +4,8 @@ import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -60,7 +62,7 @@ public class ProcessesMonitorUtils {
     if (Objects.isNull(processAnalyser)) {
       return Collections.emptyList();
     }
-    List<ProcessElement> processElements = getProcessElements(processAnalyser);
+    Set<ProcessElement> processElements = getProcessElements(processAnalyser);
     if (isDuration(analysisType)) {
       processElements = ProcessUtils.getTaskStart(processElements);
     }
@@ -68,14 +70,15 @@ public class ProcessesMonitorUtils {
   }
 
   public static Set<String> getActivatorRoleNameFromProcess(ProcessAnalyser processAnalyser) {
-    List<ProcessElement> elementsInProcess = getProcessElements(processAnalyser);
-    return elementsInProcess.stream().flatMap(element -> ProcessUtils.getTaskActivatorAsRoleName(element).stream())
+    Set<ProcessElement> elementsInProcess = getProcessElements(processAnalyser);
+    return elementsInProcess.stream()
+        .flatMap(element -> ProcessUtils.getTaskActivatorAsRoleName(element).stream())
         .collect(Collectors.toSet());
   }
 
-  private static List<ProcessElement> getProcessElements(ProcessAnalyser processAnalyser) {
+  private static Set<ProcessElement> getProcessElements(ProcessAnalyser processAnalyser) {
     if (Objects.isNull(processAnalyser)) {
-      return Collections.emptyList();
+      return Collections.emptySet();
     }
     var pmv = processAnalyser.getProcess().getPmv();
     String processId = processAnalyser.getProcess().getId();
@@ -85,7 +88,7 @@ public class ProcessesMonitorUtils {
         : ProcessUtils.getProcessElementsFrom(processId, pmv);
   }
 
-  private static List<Node> buildNodesAndApplyKpi(List<ProcessElement> processElements, KpiType analysisType,
+  private static List<Node> buildNodesAndApplyKpi(Collection<ProcessElement> processElements, KpiType analysisType,
       List<ITask> tasks) {
     List<SequenceFlow> sequenceFlows = ProcessUtils.getSequenceFlowsFrom(processElements);
     List<Node> nodes = NodeResolver.convertToNodes(processElements, sequenceFlows);
@@ -93,7 +96,8 @@ public class ProcessesMonitorUtils {
     if (isFrequency(analysisType)) {
       var nodeFrequencyResolver = new NodeFrequencyResolver(nodes, processElements);
       nodeFrequencyResolver.updateFrequencyByTasks(tasks);
-      nodes = nodeFrequencyResolver.getNodes();
+      nodes = new ArrayList<>();
+      nodes.addAll(nodeFrequencyResolver.getNodes());
     } else if (isDuration(analysisType)) {
       updateDurationForNodes(nodes, tasks, analysisType);
     }
@@ -101,9 +105,9 @@ public class ProcessesMonitorUtils {
     return NodeResolver.updateNodeByAnalysisType(nodes, analysisType);
   }
 
-  private static List<ProcessElement> collectProcessElementForProcess(IProcessModelVersion pmv, String processId,
+  private static Set<ProcessElement> collectProcessElementForProcess(IProcessModelVersion pmv, String processId,
       String startElementPID) {
-    List<ProcessElement> processElements = ProcessUtils.getProcessElementsFrom(processId, pmv);
+    Set<ProcessElement> processElements = ProcessUtils.getProcessElementsFrom(processId, pmv);
     ProcessElementUtils.removeAnotherStartElementsBySelectedStartPID(processElements, startElementPID);
     return processElements;
   }
@@ -116,7 +120,7 @@ public class ProcessesMonitorUtils {
     return kpiType != null && kpiType.isDescendantOf(KpiType.DURATION);
   }
 
-  public static void updateDurationForNodes(List<Node> nodes, List<ITask> tasks, KpiType durationKpiType) {
+  public static void updateDurationForNodes(Collection<Node> nodes, List<ITask> tasks, KpiType durationKpiType) {
     if (CollectionUtils.isEmpty(nodes) || CollectionUtils.isEmpty(tasks)) {
       return;
     }
@@ -141,7 +145,7 @@ public class ProcessesMonitorUtils {
     updateRelativeValueForDuration(nodes);
   }
 
-  private static void updateRelativeValueForDuration(List<Node> nodes) {
+  private static void updateRelativeValueForDuration(Collection<Node> nodes) {
     List<Node> arrows = nodes.stream().filter(node -> node.getType() == NodeType.ARROW)
         .sorted(Comparator.comparingDouble(Node::getMedianDuration)).toList();
 
@@ -157,7 +161,7 @@ public class ProcessesMonitorUtils {
     nodes.forEach(arrNode -> arrNode.setRelativeValue(arrNode.getMedianDuration() / maxMedian));
   }
 
-  private static Set<String> extractNodeAttributes(List<Node> nodes, Function<Node, String> attributeExtractor) {
+  private static Set<String> extractNodeAttributes(Collection<Node> nodes, Function<Node, String> attributeExtractor) {
     return nodes.stream().map(attributeExtractor).filter(Objects::nonNull).collect(Collectors.toSet());
   }
 
