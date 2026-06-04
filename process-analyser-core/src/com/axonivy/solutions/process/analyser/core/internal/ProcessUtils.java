@@ -495,7 +495,7 @@ public class ProcessUtils {
 
   public static boolean isEmbeddedStartConnectToSequenceFlow(ProcessElement element, String targetSequenceFlowId) {
     if (element instanceof EmbeddedStart embeddedStart) {
-      String connectedOutterFlowId = embeddedStart.getConnectedOuterSequenceFlow().getPid().toString();
+      String connectedOutterFlowId = getElementPid(embeddedStart.getConnectedOuterSequenceFlow());
       return StringUtils.defaultString(targetSequenceFlowId).equals(connectedOutterFlowId);
     }
     return false;
