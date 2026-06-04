@@ -84,7 +84,7 @@ public class ProcessesAnalyticsBean {
     colorPickerBean = FacesContexts.evaluateValueExpression("#{colorPickerBean}", ColorPickerBean.class);
     masterDataBean = FacesContexts.evaluateValueExpression("#{masterDataBean}", MasterDataBean.class);
     customFilterBean = FacesContexts.evaluateValueExpression("#{customFilterBean}", CustomFilterBean.class);
-    filteredNodesTree = new DefaultTreeNode<Object>("root", null);
+    filteredNodesTree = new DefaultTreeNode<>("root", null);
   }
 
   private void initDefaultVariableValue() {
@@ -109,7 +109,7 @@ public class ProcessesAnalyticsBean {
   }
 
   private void updateDataTableWithNodesPrefix(String prefix) {
-    filteredNodes = analyzedNode.stream().filter(node -> node.getId().startsWith(prefix)).collect(Collectors.toList());
+    filteredNodes = analyzedNode.stream().filter(node -> node.getId().startsWith(prefix)).toList();
     filteredNodesTree = ProcessesMonitorUtils.buildTreeFromNodes(filteredNodes);
   }
 
@@ -299,7 +299,7 @@ public class ProcessesAnalyticsBean {
   private List<Node> removeEmptyDataFromReport(List<Node> nodes, boolean isDurationKPI) {
     Predicate<Node> filterPredicate = isDurationKPI ? node -> node.getMedianDuration() != 0
         : node -> node.getFrequency() != 0;
-    return nodes.stream().filter(filterPredicate).collect(Collectors.toList());
+    return nodes.stream().filter(filterPredicate).toList();
   }
 
   private void initializingProcessMiningData() {
@@ -320,7 +320,7 @@ public class ProcessesAnalyticsBean {
   public void renderNodesByKPIType() {
     if (masterDataBean.isDurationKpiType()) {
       List<String> avaibleTaskIds =
-          filteredNodes.stream().filter(node -> node.getType() == NodeType.ARROW).map(node -> node.getSourceNodeId()).toList();
+          filteredNodes.stream().filter(node -> node.getType() == NodeType.ARROW).map(Node::getSourceNodeId).toList();
       filteredNodes = filteredNodes.stream().filter(node -> node.getType() != NodeType.ARROW && avaibleTaskIds.contains(node.getId()))
           .collect(Collectors.toList());
     }

@@ -51,7 +51,9 @@ public class Node {
     this.formattedMedianDuration = formattedMedianDuration;
   }
 
-  public Node() {}
+  public Node() {
+    // Default constructor for ObjectMapper parser
+  }
 
   public NodeType getType() {
     return type;

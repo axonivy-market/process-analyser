@@ -21,6 +21,11 @@ import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.RGB_REGEX_PATTERN;
 
 public class ColorUtils {
+
+  private ColorUtils() {
+    throw new IllegalStateException("Utility class");
+  }
+
   public static List<String> generateColorSegments(KpiType selectedKpiType) {
     return KpiColor.fromKpiType(selectedKpiType);
   }

@@ -374,9 +374,9 @@ public class NodeFrequencyResolver {
     ProcessElement containerElement = null;
     for (var subCallElement : subProcessCalls) {
       String subCallPid = ProcessUtils.getElementPid(subCallElement);
-      Set<ProcessElement> processElements = processPidAndElementsMap.computeIfAbsent(subCallPid,
+      Set<ProcessElement> childElementsOfSubCall = processPidAndElementsMap.computeIfAbsent(subCallPid,
           pid -> ProcessUtils.getNestedProcessElementsFromSub(subCallElement));
-      List<String> processElementPids = processElements.stream().map(ProcessUtils::getElementPid).toList();
+      List<String> processElementPids = childElementsOfSubCall.stream().map(ProcessUtils::getElementPid).toList();
       // Check if the wrapper process contains the target element
       // If yes, the wrapper process must be a part of TaskPath
       if ((processElementPids.contains(targetPid) || subCallPid.equals(targetPid))

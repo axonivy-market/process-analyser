@@ -85,7 +85,7 @@ public class ProcessUtils {
   }
 
   public static boolean isUserTaskInstance(Object element) {
-    return UserTask.class.isInstance(element);
+    return element instanceof UserTask;
   }
 
   public static boolean isTaskEndInstance(Object element) {
@@ -106,7 +106,7 @@ public class ProcessUtils {
 
   public static Set<ProcessElement> getNestedProcessElementsFromSub(ProcessElement element) {
     Set<ProcessElement> processElements = new HashSet<>();
-    processElements.add((ProcessElement) element);
+    processElements.add(element);
     return switch (element) {
     case EmbeddedProcessElement embeddedElement -> {
       // Loop through all process elements and find in deep one more level of embedded

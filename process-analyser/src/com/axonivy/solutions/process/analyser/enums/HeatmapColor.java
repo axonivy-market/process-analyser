@@ -2,7 +2,6 @@ package com.axonivy.solutions.process.analyser.enums;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Enum representing predefined heatmap colors that transition from green to red.
@@ -33,6 +32,6 @@ public enum HeatmapColor {
   public static List<String> getAllColors() {
     return Arrays.stream(values())
         .map(HeatmapColor::getRgbValue)
-        .collect(Collectors.toList());
+        .toList();
   }
 }

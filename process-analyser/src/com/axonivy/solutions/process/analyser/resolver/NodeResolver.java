@@ -28,10 +28,14 @@ import ch.ivyteam.ivy.process.model.value.PID;
 @SuppressWarnings("restriction")
 public class NodeResolver {
 
+  private NodeResolver( ) {
+    throw new IllegalStateException("Utility class");
+  }
+
   public static List<Node> convertToNodes(Collection<ProcessElement> processElements, Collection<SequenceFlow> sequenceFlows) {
     return Stream.concat(
           processElements.stream().flatMap(processElement -> convertProcessElementToNode(processElement).stream()),
-          sequenceFlows.stream().map(flow -> convertSequenceFlowToNode(flow)))
+          sequenceFlows.stream().map(NodeResolver::convertSequenceFlowToNode))
         .collect(Collectors.toList());
   }
 
