@@ -32,7 +32,6 @@ import ch.ivyteam.ivy.process.model.element.activity.SubProcessCall;
 import ch.ivyteam.ivy.process.model.element.event.EmbeddedEvent;
 import ch.ivyteam.ivy.process.model.element.event.end.CallSubEnd;
 import ch.ivyteam.ivy.process.model.element.event.end.EmbeddedEnd;
-import ch.ivyteam.ivy.process.model.value.PID;
 import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.ITaskElement;
 import ch.ivyteam.ivy.workflow.ITaskSwitchEvent;
