@@ -49,7 +49,7 @@ public class DateUtils {
   }
 
   public static String convertDuration(float durationSeconds) {
-    String result = StringUtils.EMPTY;
+    String result;
     if (durationSeconds > TWENTY_THREE_HOURS * SECONDS_PER_HOUR) {
       float days = durationSeconds / (HOURS_PER_DAY * SECONDS_PER_HOUR);
       result = formatFloat(days) + "d";
