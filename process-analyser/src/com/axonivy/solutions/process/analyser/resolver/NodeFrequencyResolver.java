@@ -294,12 +294,11 @@ public class NodeFrequencyResolver {
   private static ProcessElement getNextElementForSubToSub(ProcessElement destinationElement,
       ProcessElement nextElement) {
     for (var in : CollectionUtils.emptyIfNull(nextElement.getIncoming())) {
-      if (in.getEmbeddedSource().isEmpty() || in.getEmbeddedTarget().isEmpty()) {
-        continue;
-      }
-      PID embeddedSourcePid = in.getEmbeddedSource().get().getPid();
-      if (PIDUtils.equalsPID(embeddedSourcePid, destinationElement.getPid())) {
-        return ProcessElement.class.cast(in.getEmbeddedTarget().get());
+      if (in.getEmbeddedSource().isPresent() && in.getEmbeddedTarget().isPresent()) {
+        PID embeddedSourcePid = in.getEmbeddedSource().get().getPid();
+        if (PIDUtils.equalsPID(embeddedSourcePid, destinationElement.getPid())) {
+          return ProcessElement.class.cast(in.getEmbeddedTarget().get());
+        }
       }
     }
     return nextElement;
