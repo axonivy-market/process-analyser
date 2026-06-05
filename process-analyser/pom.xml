@@ -60,24 +60,6 @@
         <artifactId>project-build-plugin</artifactId>
         <extensions>true</extensions>
       </plugin>
-	  <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>make-assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <appendAssemblyId>false</appendAssemblyId>
-              <descriptors>
-                <descriptor>jar.xml</descriptor>
-              </descriptors>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 </project>

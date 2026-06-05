@@ -78,15 +78,15 @@ public class ProcessUtils {
   }
 
   public static boolean isEmbeddedElementInstance(Object element) {
-    return EmbeddedProcessElement.class.isInstance(element);
+    return element instanceof  EmbeddedProcessElement;
   }
 
   public static boolean isAlternativeInstance(Object element) {
-    return Alternative.class.isInstance(element);
+    return element instanceof  Alternative;
   }
 
   public static boolean isTaskSwitchInstance(Object element) {
-    return TaskSwitchEvent.class.isInstance(element);
+    return element instanceof TaskSwitchEvent;
   }
 
   public static boolean isUserTaskInstance(Object element) {
@@ -94,19 +94,19 @@ public class ProcessUtils {
   }
 
   public static boolean isTaskEndInstance(Object element) {
-    return TaskEnd.class.isInstance(element);
+    return element instanceof TaskEnd;
   }
 
   public static boolean isTaskSwitchGatewayInstance(Object element) {
-    return TaskSwitchGateway.class.isInstance(element);
+    return element instanceof TaskSwitchGateway;
   }
 
   public static boolean isSubProcessCallInstance(Object element) {
-    return SubProcessCall.class.isInstance(element);
+    return element instanceof SubProcessCall;
   }
 
   public static boolean isEmbeddedEndInstance(Object element) {
-    return EmbeddedEnd.class.isInstance(element);
+    return element instanceof EmbeddedEnd;
   }
 
   public static Set<ProcessElement> getNestedProcessElementsFromSub(ProcessElement element) {
@@ -423,10 +423,11 @@ public class ProcessUtils {
   }
 
   public static Set<String> getActivatorFromTaskConfigs(List<TaskConfig> taskConfigs) {
-    Set<String> configs = taskConfigs.stream().map(TaskConfig::responsible)
-        .filter(responsible -> responsible.type() == ResponsibleType.ROLES && CollectionUtils.isNotEmpty(responsible.roles()))
+    return taskConfigs.stream()
+        .map(TaskConfig::responsible)
+        .filter(responsible -> responsible.type() == ResponsibleType.ROLES
+                 && CollectionUtils.isNotEmpty(responsible.roles()))
         .map(t -> t.roles().getFirst()).collect(Collectors.toSet());
-    return configs;
   }
 
   public static Set<String> getTaskActivatorAsRoleName(ProcessElement element) {

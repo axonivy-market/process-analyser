@@ -117,7 +117,7 @@ public class ProcessElementUtils {
     }
   }
 
-  public static Predicate<? super ProcessElement> filterProcessStartElement() {
+  public static Predicate<ProcessElement> filterProcessStartElement() {
     return processElement -> PROCESS_START_CLASSES.stream()
         .anyMatch(startClass -> startClass.isInstance(processElement));
   }
