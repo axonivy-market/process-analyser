@@ -31,6 +31,7 @@ import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.element.activity.SubProcessCall;
 import ch.ivyteam.ivy.process.model.element.event.end.CallSubEnd;
 import ch.ivyteam.ivy.process.model.element.event.end.EmbeddedEnd;
+import ch.ivyteam.ivy.process.model.value.PID;
 import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.ITaskElement;
 import ch.ivyteam.ivy.workflow.ITaskSwitchEvent;
@@ -292,12 +293,13 @@ public class NodeFrequencyResolver {
 
   private static ProcessElement getNextElementForSubToSub(ProcessElement destinationElement,
       ProcessElement nextElement) {
-    for (var in : nextElement.getIncoming()) {
-      if (in.getEmbeddedSource().isPresent()
-          && PIDUtils.equalsPID(in.getEmbeddedSource().get().getPid(), destinationElement.getPid())
-          && in.getEmbeddedTarget().isPresent()) {
-        nextElement = ProcessElement.class.cast(in.getEmbeddedTarget().get());
-        break;
+    for (var in : CollectionUtils.emptyIfNull(nextElement.getIncoming())) {
+      if (in.getEmbeddedSource().isEmpty() || in.getEmbeddedTarget().isEmpty()) {
+        continue;
+      }
+      PID embeddedSourcePid = in.getEmbeddedSource().get().getPid();
+      if (PIDUtils.equalsPID(embeddedSourcePid, destinationElement.getPid())) {
+        return ProcessElement.class.cast(in.getEmbeddedTarget().get());
       }
     }
     return nextElement;

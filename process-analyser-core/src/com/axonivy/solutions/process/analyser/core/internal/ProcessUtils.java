@@ -62,10 +62,15 @@ public class ProcessUtils {
   static final String SKIP_PROJECTS_VARIABLE = "com.axonivy.solutions.process.analyser.skipProjects";
   static final String SKIP_PROCESSES_VARIABLE = "com.axonivy.solutions.process.analyser.skipProcesses";
 
-  private ProcessUtils() { }
+  private ProcessUtils() {
+    throw new IllegalStateException("Utility class");
+  }
 
   public static String getElementPid(BaseElement baseElement) {
-    return Optional.ofNullable(baseElement).map(BaseElement::getPid).map(PID::toString).orElse(StringUtils.EMPTY);
+    return Optional.ofNullable(baseElement)
+        .map(BaseElement::getPid)
+        .map(PID::toString)
+        .orElse(StringUtils.EMPTY);
   }
 
   public static String getProcessPidFromElement(String elementId) {

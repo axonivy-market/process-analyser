@@ -64,19 +64,25 @@ public class NodeResolver {
    * Convert process element to Node base on its class type
    **/
   public static List<Node> convertProcessElementToNode(ProcessElement element) {
-    String parentNodeId = Optional.ofNullable(element).map(ProcessElement::getParent).map(BaseElement::getPid).map(PID::toString).orElse(null);
-    Node node = createNode(element.getPid().toString(), element.getName(), NodeType.ELEMENT, parentNodeId);
-    node.setOutGoingPathIds(element.getOutgoing().stream().map(ProcessUtils::getElementPid).toList());
+    if (element == null) {
+      return List.of();
+    }
+
+    String parentNodeId = ProcessUtils.getElementPid(element.getParent());
+    Node node = createNode(ProcessUtils.getElementPid(element), element.getName(), NodeType.ELEMENT, parentNodeId);
+    List<String> outGoingPathIds = extractPidOfSequenceFlows(element.getOutgoing());
+    node.setOutGoingPathIds(outGoingPathIds);
 
     return switch (element) {
     case TaskSwitchGateway taskSwitchGateway -> {
-      node.setInCommingPathIds(taskSwitchGateway.getIncoming().stream().map(ProcessUtils::getElementPid).toList());
+      node.setInCommingPathIds(extractPidOfSequenceFlows(taskSwitchGateway.getIncoming()));
       node.setTaskSwitchGateway(true);
-      String elementId = taskSwitchGateway.getPid().toString();
-      List<Node> taskNodes = taskSwitchGateway.getAllTaskConfigs().stream()
-          .map(task -> createNode(
-              elementId + CoreConstants.SLASH + task.identifier().getTaskIvpLinkName(),
-              task.name().getRawMacro(), NodeType.ELEMENT))
+      String elementId = ProcessUtils.getElementPid(taskSwitchGateway);
+      List<Node> taskNodes = CollectionUtils.emptyIfNull(taskSwitchGateway.getAllTaskConfigs()).stream()
+          .map(task -> {
+            String taskId = elementId + CoreConstants.SLASH + task.identifier().getTaskIvpLinkName();
+            return createNode(taskId, task.name().getRawMacro(), NodeType.ELEMENT);
+          })
           .collect(Collectors.toList());
       taskNodes.add(0, node);
       yield taskNodes;
@@ -86,7 +92,7 @@ public class NodeResolver {
       yield List.of(node);
     }
     default -> {
-      node.setInCommingPathIds(element.getIncoming().stream().map(ProcessUtils::getElementPid).toList());
+      node.setInCommingPathIds(extractPidOfSequenceFlows(element.getIncoming()));
       yield List.of(node);
     }};
   }
@@ -109,12 +115,24 @@ public class NodeResolver {
   }
 
   public static Node convertSequenceFlowToNode(SequenceFlow flow) {
-    String parentNodeId = Optional.ofNullable(flow).map(SequenceFlow::getSource).map(NodeElement::getParent).map(BaseElement::getPid)
-        .map(PID::toString).orElse(null);
+    if (flow == null) {
+      return null;
+    }
+
+    String parentNodeId = ProcessUtils.getElementPid(Optional.ofNullable(flow)
+        .map(SequenceFlow::getSource)
+        .map(NodeElement::getParent)
+        .orElse(null));
     Node node = createNode(ProcessUtils.getElementPid(flow), flow.getName(), NodeType.ARROW, parentNodeId);
-    node.setTargetNodeId(flow.getTarget().getPid().toString());
-    node.setSourceNodeId(flow.getSource().getPid().toString());
+    node.setTargetNodeId(ProcessUtils.getElementPid(flow.getTarget()));
+    node.setSourceNodeId(ProcessUtils.getElementPid(flow.getSource()));
     return node;
+  }
+
+  private static List<String> extractPidOfSequenceFlows(List<SequenceFlow> sequenceFlows) {
+    return CollectionUtils.emptyIfNull(sequenceFlows).stream()
+        .map(ProcessUtils::getElementPid)
+        .toList();
   }
 
   private static Node createNode(String id, String label, NodeType type) {
