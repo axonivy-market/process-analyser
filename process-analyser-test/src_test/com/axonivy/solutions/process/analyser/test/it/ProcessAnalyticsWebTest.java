@@ -1,6 +1,7 @@
 package com.axonivy.solutions.process.analyser.test.it;
 
 import static com.codeborne.selenide.Condition.attribute;
+import static com.codeborne.selenide.Condition.enabled;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
@@ -82,13 +83,13 @@ public class ProcessAnalyticsWebTest extends WebBaseSetup {
     startAnalyzingProcess();
     $(SHOW_STATISTIC_BTN_CSS_SELECTOR).shouldBe(attribute(DISABLE_PROPERTY, "true"));
 
-    $(By.id(STANDARD_FILTER_PANEL_GROUP + "module-dropdown")).click();
-    $(By.id(STANDARD_FILTER_PANEL_GROUP + "module-dropdown_1")).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "module-dropdown")).should(enabled).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "module-dropdown_1")).should(enabled).click();
     Selenide.sleep(2000);
-    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmv-dropdown")).click();
-    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmv-dropdown_1")).click();
-    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmv-dropdown")).click();
-    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmv-dropdown_2")).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmv-dropdown")).should(enabled).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmv-dropdown_1")).should(enabled).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmv-dropdown")).should(enabled, DEFAULT_DURATION).click();
+    $(By.id(STANDARD_FILTER_PANEL_GROUP + "pmv-dropdown_2")).should(enabled).click();
   }
 
   private void verifyAndSelectAProcess(String startElementName) {
