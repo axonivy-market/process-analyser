@@ -12,6 +12,10 @@ import ch.ivyteam.ivy.environment.Ivy;
 public class JacksonUtils {
   private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
+  private JacksonUtils() {
+    throw new IllegalStateException("Utility class");
+  }
+
   public static String convertObjectToJSONString(Object object) {
     String result = StringUtils.EMPTY;
     try {

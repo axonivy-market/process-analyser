@@ -48,7 +48,7 @@ public class ProcessAnalyser {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj == null || process == null) {
+    if (obj == null || process == null || this.getClass() != obj.getClass()) {
       return false;
     }
     ProcessAnalyser target = (ProcessAnalyser) obj;

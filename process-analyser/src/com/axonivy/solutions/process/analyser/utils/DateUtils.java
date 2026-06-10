@@ -17,7 +17,7 @@ public class DateUtils {
   public static final String TIME_PATTERN = "HH:mm";
   public static final String DATE_PATTERN = "dd/MM/yyyy";
   public static final String DATE_TIME_PATTERN = DATE_PATTERN + StringUtils.SPACE + TIME_PATTERN;
-  private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_TIME_PATTERN);
+  private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat(DATE_TIME_PATTERN);
   private static final int SECONDS_PER_HOUR = 3600;
   private static final int SECONDS_PER_MINUTE = 60;
   private static final int FIFTY_NINE_MINUTES = 59;
@@ -35,12 +35,12 @@ public class DateUtils {
   }
 
   public static String getDateAsString(Date date) {
-    return simpleDateFormat.format(date);
+    return SIMPLE_DATE_FORMAT.format(date);
   }
 
   public static Date parseDateFromString(String source) {
     try {
-      return simpleDateFormat.parse(source);
+      return SIMPLE_DATE_FORMAT.parse(source);
     } catch (ParseException e) {
       Ivy.log().error("Cannot parse the source {0} to date", source);
       e.printStackTrace();
@@ -49,7 +49,7 @@ public class DateUtils {
   }
 
   public static String convertDuration(float durationSeconds) {
-    String result = StringUtils.EMPTY;
+    String result;
     if (durationSeconds > TWENTY_THREE_HOURS * SECONDS_PER_HOUR) {
       float days = durationSeconds / (HOURS_PER_DAY * SECONDS_PER_HOUR);
       result = formatFloat(days) + "d";

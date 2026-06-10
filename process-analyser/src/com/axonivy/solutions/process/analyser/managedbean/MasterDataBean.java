@@ -5,9 +5,9 @@ import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.SPACE_DASH_REGEX;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.UNDERSCORE;
 import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.HYPHEN_SIGN;
-import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartEventElement;
-import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartSignalEventElement;
-import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.WebServiceProcessStartElement;
+import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.START_EVENT_ELEMENT;
+import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.START_SIGNAL_EVENT_ELEMENT;
+import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.WEB_SERVICE_PROCESS_START_ELEMENT;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.io.Serializable;
@@ -218,10 +218,10 @@ public class MasterDataBean implements Serializable {
   private String getStartElementDisplayName(StartElement start) {
     final var enumCmsURI = "/Enums/StartElementType/%s/name";
     String cmsUrl = switch (start.getType()) {
-    case StartElement -> enumCmsURI.formatted(StartElementType.StartElement.name());
-    case StartEventElement -> enumCmsURI.formatted(StartEventElement.name());
-    case StartSignalEventElement -> enumCmsURI.formatted(StartSignalEventElement.name());
-    case WebServiceProcessStartElement -> enumCmsURI.formatted(WebServiceProcessStartElement.name());
+    case START_ELEMENT -> enumCmsURI.formatted(StartElementType.START_ELEMENT.name());
+    case START_EVENT_ELEMENT -> enumCmsURI.formatted(START_EVENT_ELEMENT.name());
+    case START_SIGNAL_EVENT_ELEMENT -> enumCmsURI.formatted(START_SIGNAL_EVENT_ELEMENT.name());
+    case WEB_SERVICE_PROCESS_START_ELEMENT -> enumCmsURI.formatted(WEB_SERVICE_PROCESS_START_ELEMENT.name());
     default -> start.getName();
     };
     return Ivy.cms().co(cmsUrl, List.of(start.getName()));

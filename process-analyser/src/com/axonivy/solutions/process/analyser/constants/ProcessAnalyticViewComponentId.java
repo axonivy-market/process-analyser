@@ -3,6 +3,10 @@ package com.axonivy.solutions.process.analyser.constants;
 import java.util.List;
 
 public class ProcessAnalyticViewComponentId {
+  private ProcessAnalyticViewComponentId() {
+    throw new IllegalStateException("Utility class");
+  }
+
   private static final String FORM = "process-analytics-form";
   public static final String ID_SECTION_SEPARATOR = ":";
   public static final String STANDARD_FILTER_PANEL_GROUP = FORM + ID_SECTION_SEPARATOR + "standard-filter-panel-group";
