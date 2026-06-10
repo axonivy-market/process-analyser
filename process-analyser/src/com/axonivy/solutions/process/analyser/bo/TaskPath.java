@@ -11,7 +11,9 @@ public class TaskPath {
   private List<String> nodesInPath;
   private List<Path> paths;
 
-  public TaskPath() { }
+  public TaskPath() {
+    // Default constructor for ObjectMapper parser
+  }
 
   public TaskPath(String taskUUID, List<Path> paths) {
     this.taskUUID = taskUUID;
@@ -33,7 +35,7 @@ public class TaskPath {
   }
 
   public boolean isFinished() {
-    return CollectionUtils.isEmpty(paths) ? false : paths.stream().anyMatch(Path::isFound);
+    return CollectionUtils.isNotEmpty(paths) && paths.stream().anyMatch(Path::isFound);
   }
 
   public List<String> getNodesInPath() {

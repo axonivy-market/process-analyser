@@ -29,6 +29,7 @@ import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.EmbeddedProcessElement;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.element.activity.SubProcessCall;
+import ch.ivyteam.ivy.process.model.element.event.EmbeddedEvent;
 import ch.ivyteam.ivy.process.model.element.event.end.CallSubEnd;
 import ch.ivyteam.ivy.process.model.element.event.end.EmbeddedEnd;
 import ch.ivyteam.ivy.workflow.ITask;
@@ -292,12 +293,12 @@ public class NodeFrequencyResolver {
 
   private static ProcessElement getNextElementForSubToSub(ProcessElement destinationElement,
       ProcessElement nextElement) {
-    for (var in : nextElement.getIncoming()) {
-      if (in.getEmbeddedSource().isPresent()
-          && PIDUtils.equalsPID(in.getEmbeddedSource().get().getPid(), destinationElement.getPid())
-          && in.getEmbeddedTarget().isPresent()) {
-        nextElement = ProcessElement.class.cast(in.getEmbeddedTarget().get());
-        break;
+    for (var in : CollectionUtils.emptyIfNull(nextElement.getIncoming())) {
+      EmbeddedEvent source = in.getEmbeddedSource().orElse(null);
+      EmbeddedEvent target = in.getEmbeddedTarget().orElse(null);
+      if (source != null && target != null
+          && PIDUtils.equalsPID(source.getPid(), destinationElement.getPid())) {
+        return ProcessElement.class.cast(target);
       }
     }
     return nextElement;
@@ -374,9 +375,9 @@ public class NodeFrequencyResolver {
     ProcessElement containerElement = null;
     for (var subCallElement : subProcessCalls) {
       String subCallPid = ProcessUtils.getElementPid(subCallElement);
-      Set<ProcessElement> processElements = processPidAndElementsMap.computeIfAbsent(subCallPid,
+      Set<ProcessElement> childElementsOfSubCall = processPidAndElementsMap.computeIfAbsent(subCallPid,
           pid -> ProcessUtils.getNestedProcessElementsFromSub(subCallElement));
-      List<String> processElementPids = processElements.stream().map(ProcessUtils::getElementPid).toList();
+      List<String> processElementPids = childElementsOfSubCall.stream().map(ProcessUtils::getElementPid).toList();
       // Check if the wrapper process contains the target element
       // If yes, the wrapper process must be a part of TaskPath
       if ((processElementPids.contains(targetPid) || subCallPid.equals(targetPid))

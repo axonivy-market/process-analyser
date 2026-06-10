@@ -25,8 +25,8 @@ public class ProcessModelVersionConverter implements Converter {
     if (value == null) {
       return "";
     }
-    if (IProcessModelVersion.class.isInstance(value)) {
-      return IProcessModelVersion.class.cast(value).getVersionName();
+    if (value instanceof IProcessModelVersion procesModelVersion) {
+      return procesModelVersion.getVersionName();
     }
     throw new ConverterException("Unexpected value type: " + value.getClass().getName());
   }

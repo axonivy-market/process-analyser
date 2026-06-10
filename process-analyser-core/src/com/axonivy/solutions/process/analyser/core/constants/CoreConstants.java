@@ -3,6 +3,10 @@ package com.axonivy.solutions.process.analyser.core.constants;
 import ch.ivyteam.ivy.process.rdm.IProcess;
 
 public class CoreConstants {
+  private CoreConstants() {
+    throw new IllegalStateException("Constant class");
+  }
+
   public static final String HYPHEN_SIGN = "-";
   public static final String PROCESS_ANALYSER_PMV_NAME = "process-analyser";
   public static final String PORTAL_PMV_SUFFIX = "portal";

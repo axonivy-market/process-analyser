@@ -44,8 +44,7 @@ public class ProcessStartConverter implements Converter {
     if (value == null) {
       return "";
     }
-    if (value instanceof ProcessAnalyser) {
-      var processAnalyser = ((ProcessAnalyser) value);
+    if (value instanceof ProcessAnalyser processAnalyser) {
       var process = processAnalyser.getProcess();
       if (process != null) {
         if (getMasterDataBean().isMergeProcessStarts()) {

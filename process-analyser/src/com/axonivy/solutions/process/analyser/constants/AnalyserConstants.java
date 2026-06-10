@@ -1,6 +1,10 @@
 package com.axonivy.solutions.process.analyser.constants;
 
 public class AnalyserConstants {
+  private AnalyserConstants() {
+    throw new IllegalStateException("Utility class");
+  }
+
   public static final String PROCESS_ANALYST_ROLE = "ProcessAnalyst";
   public static final int DEFAULT_INITIAL_STATISTIC_NUMBER = 0;
   public static final int GRADIENT_COLOR_LEVELS = 10;

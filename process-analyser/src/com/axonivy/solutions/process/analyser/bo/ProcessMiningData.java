@@ -17,8 +17,10 @@ public class ProcessMiningData {
   private int numberOfInstances;
   private List<String> colors;
   private List<String> textColors;
-  
-  public ProcessMiningData() {}
+
+  public ProcessMiningData() {
+    // Default constructor for ObjectMapper parser
+  }
 
   public String getProcessId() {
     return processId;

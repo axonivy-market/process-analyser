@@ -24,9 +24,10 @@ import ch.ivyteam.ivy.workflow.query.TaskQuery;
 public class IvyTaskOccurrenceService {
 
   private IvyTaskOccurrenceService() {
+    throw new IllegalStateException("Utility class");
   }
 
-  public static HashMap<String, Integer> countTaskOccurrencesByProcessId(String processId) {
+  public static Map<String, Integer> countTaskOccurrencesByProcessId(String processId) {
     HashMap<String, TaskOccurrence> taskOccurrenceMap = getHashMapTaskOccurrencesByProcessId(processId);
     return correctTaskOccurrences(taskOccurrenceMap);
   }
@@ -43,8 +44,8 @@ public class IvyTaskOccurrenceService {
   }
 
   private static void countTaskOccurrencesByTaskQuery(HashMap<String, TaskOccurrence> map, TaskQuery taskQuery) {
-    List<ITask> tasks = new ArrayList<>();
-    int maxQueryResults = Integer.valueOf(Ivy.var().get(IvyVariable.MAX_QUERY_RESULTS.getVariableName()));
+    List<ITask> tasks;
+    int maxQueryResults = Integer.parseInt(Ivy.var().get(IvyVariable.MAX_QUERY_RESULTS.getVariableName()));
     Integer startIndex = 0;
     do {
       tasks = Ivy.wf().getTaskQueryExecutor().getResults(taskQuery, startIndex, maxQueryResults);
@@ -104,7 +105,7 @@ public class IvyTaskOccurrenceService {
           .isLowerOrEqualThan(timeIntervalFilter.getTo());
 
       List<ITask> tasks = new ArrayList<>();
-      int maxQueryResults = Integer.valueOf(Ivy.var().get(IvyVariable.MAX_QUERY_RESULTS.getVariableName()));
+      int maxQueryResults = Integer.parseInt(Ivy.var().get(IvyVariable.MAX_QUERY_RESULTS.getVariableName()));
       int startIndex = 0;
 
       do {

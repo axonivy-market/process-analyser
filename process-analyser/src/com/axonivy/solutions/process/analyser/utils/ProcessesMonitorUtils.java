@@ -269,8 +269,10 @@ public class ProcessesMonitorUtils {
   }
 
   private static List<CustomFieldFilter> getValidCustomFilters(List<CustomFieldFilter> customFilters) {
-    return customFilters.stream().filter(filter -> ObjectUtils.isNotEmpty(filter.getCustomFieldValues())
-        || ObjectUtils.isNotEmpty(filter.getTimestampCustomFieldValues())).collect(Collectors.toList());
+    return customFilters.stream()
+        .filter(filter -> ObjectUtils.isNotEmpty(filter.getCustomFieldValues())
+            || ObjectUtils.isNotEmpty(filter.getTimestampCustomFieldValues()))
+        .toList();
   }
 
   private static void handleQueryForEachFieldType(CustomFieldFilter customFieldFilter, CaseQuery customFieldQuery) {
@@ -284,8 +286,7 @@ public class ProcessesMonitorUtils {
     case NUMBER:
       addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldFilter.getCustomFieldValues());
       break;
-    case STRING:
-    case TEXT:
+    case STRING, TEXT:
       for (Object customFieldValue : customFieldFilter.getCustomFieldValues()) {
         addCustomFieldSubQuery(customFieldQuery, customFieldFilter, customFieldValue);
       }
@@ -415,14 +416,14 @@ public class ProcessesMonitorUtils {
 
   public static TreeNode<Object> buildTreeFromNodes(List<Node> filteredNodes) {
     if (CollectionUtils.isEmpty(filteredNodes)) {
-      return new DefaultTreeNode<Object>();
+      return new DefaultTreeNode<>();
     }
     
     Map<String, TreeNode<Object>> nodeMap = new HashMap<>();
-    TreeNode<Object> root = new DefaultTreeNode<Object>();
+    TreeNode<Object> root = new DefaultTreeNode<>();
     
     for (Node node : filteredNodes) {
-      TreeNode<Object> treeNode = new DefaultTreeNode<Object>(node, null);
+      TreeNode<Object> treeNode = new DefaultTreeNode<>(node, null);
       treeNode.setExpanded(true);
       nodeMap.put(node.getId(), treeNode);
     }

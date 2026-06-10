@@ -48,8 +48,7 @@ public final class FacesContexts {
     ExpressionFactory expressionFactory = application.getExpressionFactory();
     MethodExpression methodExpression = expressionFactory.createMethodExpression(elContext, methodExpressionLiteral,
         returnedType, ClassUtils.toClass(parameters));
-    E returnData = invokeMethod(elContext, methodExpression, parameters, returnedType);
-    return returnData;
+    return invokeMethod(elContext, methodExpression, parameters, returnedType);
   }
 
   @SuppressWarnings("unchecked")
@@ -135,10 +134,10 @@ public final class FacesContexts {
   private static UIComponent foundComponent = null;
 
   public static UIComponent findComponentByClientId(final String clientId) {
-    boolean isFoundComponent = getCurrentInstance().getViewRoot().invokeOnComponent(getCurrentInstance(), clientId,
-        (context, component) -> {
-          foundComponent = component;
-        });
+    boolean isFoundComponent = getCurrentInstance().getViewRoot().invokeOnComponent(
+        getCurrentInstance(),
+        clientId,
+        (context, component) -> foundComponent = component);
     if (isFoundComponent) {
       return foundComponent;
     } else {
