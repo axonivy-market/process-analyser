@@ -1,0 +1,12 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/data-class/13.2.0/data-class.json",
+  "simpleName" : "LoginData",
+  "namespace" : "com.axonivy.utils.process.analyser.test",
+  "fields" : [ {
+    "name" : "username"
+  }, {
+    "name" : "password"
+  }, {
+    "name" : "locale"
+  } ]
+}

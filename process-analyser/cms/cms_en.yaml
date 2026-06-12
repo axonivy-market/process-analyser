@@ -4,7 +4,7 @@ Categories:
 Dialogs:
   com:
     axonivy:
-      solutions:
+      utils:
         process:
           analyser:
             ProcessAnalytics:

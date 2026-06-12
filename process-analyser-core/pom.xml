@@ -7,7 +7,7 @@
     <version>13.2.0</version>
     <relativePath />
   </parent>
-  <groupId>com.axonivy.solutions.process.analyser</groupId>
+  <groupId>com.axonivy.utils.process.analyser</groupId>
   <artifactId>process-analyser-core</artifactId>
   <version>13.2.6-SNAPSHOT</version>
   <packaging>iar</packaging>

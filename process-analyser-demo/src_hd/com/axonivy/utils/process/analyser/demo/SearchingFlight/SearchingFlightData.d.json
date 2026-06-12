@@ -1,0 +1,9 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/data-class/13.2.0/data-class.json",
+  "simpleName" : "SearchingFlightData",
+  "namespace" : "com.axonivy.utils.process.analyser.demo.SearchingFlight",
+  "fields" : [ {
+    "name" : "searchingFlight",
+    "type" : "com.axonivy.utils.process.analyser.demo.data.FlightInformation"
+  } ]
+}

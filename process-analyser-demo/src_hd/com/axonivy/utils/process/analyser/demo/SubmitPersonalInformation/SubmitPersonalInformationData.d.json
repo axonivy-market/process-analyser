@@ -1,0 +1,15 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/data-class/13.2.0/data-class.json",
+  "simpleName" : "SubmitPersonalInformationData",
+  "namespace" : "com.axonivy.utils.process.analyser.demo.SubmitPersonalInformation",
+  "fields" : [ {
+    "name" : "isChargeLater",
+    "type" : "Boolean"
+  }, {
+    "name" : "isBackToSearchPage",
+    "type" : "Boolean"
+  }, {
+    "name" : "flightInformation",
+    "type" : "com.axonivy.utils.process.analyser.demo.data.FlightInformation"
+  } ]
+}

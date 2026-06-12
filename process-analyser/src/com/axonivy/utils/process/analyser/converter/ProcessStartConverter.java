@@ -1,0 +1,64 @@
+package com.axonivy.utils.process.analyser.converter;
+
+import java.util.List;
+import java.util.Optional;
+
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+import javax.faces.convert.ConverterException;
+import javax.faces.convert.FacesConverter;
+
+import com.axonivy.utils.process.analyser.bo.ProcessAnalyser;
+import com.axonivy.utils.process.analyser.core.bo.Process;
+import com.axonivy.utils.process.analyser.core.bo.StartElement;
+import com.axonivy.utils.process.analyser.managedbean.MasterDataBean;
+import com.axonivy.utils.process.analyser.utils.FacesContexts;
+import com.axonivy.utils.process.analyser.utils.ProcessesMonitorUtils;
+
+
+@FacesConverter("processStartConverter")
+public class ProcessStartConverter implements Converter {
+  // Pattern contains: Module:::Process:::Start
+  private static final String PROCESS_ID_PATTERN = "%s:::%s:::%s";
+
+  // Pattern contains: Module:::Process
+  private static final String PROCESS_ID_PATTERN_WITHOUT_START_ELEMENT = "%s:::%s";
+
+  @Override
+  public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
+    if (value == null || value.isEmpty()) {
+      return null;
+    }
+    try {
+      var masterDataBean = getMasterDataBean();
+      List<Process> processElements = masterDataBean.getAvailableProcesses();
+      return ProcessesMonitorUtils.mappingProcessAnalyzerByProcesses(processElements, masterDataBean.isMergeProcessStarts(), value);
+    } catch (IllegalArgumentException e) {
+      throw new ConverterException("Invalid ProcessStart: " + value, e);
+    }
+  }
+
+  @Override
+  public String getAsString(FacesContext context, UIComponent component, Object value) throws ConverterException {
+    if (value == null) {
+      return "";
+    }
+    if (value instanceof ProcessAnalyser processAnalyser) {
+      var process = processAnalyser.getProcess();
+      if (process != null) {
+        if (getMasterDataBean().isMergeProcessStarts()) {
+          return PROCESS_ID_PATTERN_WITHOUT_START_ELEMENT.formatted(process.getPmvName(), process.getId());
+        } else {
+          String startPid = Optional.ofNullable(processAnalyser.getStartElement()).map(StartElement::getPid).orElse("");
+          return PROCESS_ID_PATTERN.formatted(process.getPmvName(), process.getId(), startPid);
+        }
+      }
+    }
+    throw new ConverterException("Unexpected value type: " + value.getClass().getName());
+  }
+
+  private MasterDataBean getMasterDataBean() {
+    return FacesContexts.evaluateValueExpression("#{masterDataBean}", MasterDataBean.class);
+  }
+}

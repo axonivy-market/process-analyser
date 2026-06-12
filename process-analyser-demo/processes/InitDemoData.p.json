@@ -2,14 +2,14 @@
   "$schema" : "https://json-schema.axonivy.com/process/13.2.0/process.json",
   "id" : "19A9F5FFBEE89B7F",
   "config" : {
-    "data" : "com.axonivy.solutions.process.analyser.demo.PrepareDataDemoData"
+    "data" : "com.axonivy.utils.process.analyser.demo.PrepareDataDemoData"
   },
   "elements" : [ {
       "id" : "f28",
       "type" : "ProgramStart",
       "name" : "Init Demo Data",
       "config" : {
-        "javaClass" : "com.axonivy.solutions.process.analyser.demo.managedbean.PrepareDataDemoBean",
+        "javaClass" : "com.axonivy.utils.process.analyser.demo.managedbean.PrepareDataDemoBean",
         "link" : "eventLink.ivp"
       },
       "visual" : {
