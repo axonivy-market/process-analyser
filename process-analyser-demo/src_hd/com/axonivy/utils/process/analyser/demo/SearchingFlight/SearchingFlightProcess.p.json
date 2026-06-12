@@ -1,0 +1,75 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/process/13.2.0/process.json",
+  "id" : "18F5139297C6D0E6",
+  "kind" : "HTML_DIALOG",
+  "config" : {
+    "data" : "com.axonivy.utils.process.analyser.demo.SearchingFlight.SearchingFlightData"
+  },
+  "elements" : [ {
+      "id" : "f0",
+      "type" : "HtmlDialogStart",
+      "name" : "start()",
+      "config" : {
+        "signature" : "start",
+        "result" : {
+          "params" : [
+            { "name" : "flightInformation", "type" : "com.axonivy.utils.process.analyser.demo.data.FlightInformation", "desc" : "" }
+          ],
+          "map" : {
+            "result.flightInformation" : "in.searchingFlight"
+          }
+        },
+        "guid" : "18F5139297FCC40E"
+      },
+      "visual" : {
+        "at" : { "x" : 80, "y" : 64 }
+      },
+      "connect" : [
+        { "id" : "f2", "to" : "f1" }
+      ]
+    }, {
+      "id" : "f1",
+      "type" : "HtmlDialogEnd",
+      "visual" : {
+        "at" : { "x" : 224, "y" : 64 }
+      }
+    }, {
+      "id" : "f4",
+      "type" : "HtmlDialogExit",
+      "visual" : {
+        "at" : { "x" : 424, "y" : 168 }
+      }
+    }, {
+      "id" : "f11",
+      "type" : "HtmlDialogMethodStart",
+      "name" : "updateInformation",
+      "config" : {
+        "signature" : "updateInformation",
+        "input" : {
+          "params" : [
+            { "name" : "flightInformation", "type" : "com.axonivy.utils.process.analyser.demo.data.FlightInformation", "desc" : "" }
+          ],
+          "map" : {
+            "out.searchingFlight" : "param.flightInformation"
+          }
+        },
+        "guid" : "1973FE6821A8B1EC"
+      },
+      "visual" : {
+        "at" : { "x" : 80, "y" : 168 }
+      },
+      "connect" : [
+        { "id" : "f3", "to" : "f5" }
+      ]
+    }, {
+      "id" : "f5",
+      "type" : "Script",
+      "name" : "print selection",
+      "visual" : {
+        "at" : { "x" : 240, "y" : 168 }
+      },
+      "connect" : [
+        { "id" : "f6", "to" : "f4", "color" : "default" }
+      ]
+    } ]
+}

@@ -1,0 +1,12 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/data-class/13.2.0/data-class.json",
+  "simpleName" : "DisplayBookingInformationData",
+  "namespace" : "com.axonivy.utils.process.analyser.demo.DisplayBookingInformation",
+  "fields" : [ {
+    "name" : "isBackToSubmitInformationPage",
+    "type" : "Boolean"
+  }, {
+    "name" : "flightBooking",
+    "type" : "com.axonivy.utils.process.analyser.demo.data.FlightInformation"
+  } ]
+}

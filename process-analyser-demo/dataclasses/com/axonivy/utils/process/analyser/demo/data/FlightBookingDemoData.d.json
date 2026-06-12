@@ -1,0 +1,21 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/data-class/13.2.0/data-class.json",
+  "simpleName" : "FlightBookingDemoData",
+  "namespace" : "com.axonivy.utils.process.analyser.demo.data",
+  "fields" : [ {
+    "name" : "isBackToSearchPage",
+    "type" : "Boolean"
+  }, {
+    "name" : "isBackToSubmitInformationPage",
+    "type" : "Boolean"
+  }, {
+    "name" : "isPaid",
+    "type" : "Boolean"
+  }, {
+    "name" : "isChargeLater",
+    "type" : "Boolean"
+  }, {
+    "name" : "flightInformation",
+    "type" : "com.axonivy.utils.process.analyser.demo.data.FlightInformation"
+  } ]
+}

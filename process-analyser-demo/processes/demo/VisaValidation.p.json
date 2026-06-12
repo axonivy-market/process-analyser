@@ -3,7 +3,7 @@
   "id" : "19746046194A390D",
   "kind" : "CALLABLE_SUB",
   "config" : {
-    "data" : "com.axonivy.solutions.process.analyser.demo.data.VisaValidationData"
+    "data" : "com.axonivy.utils.process.analyser.demo.data.VisaValidationData"
   },
   "elements" : [ {
       "id" : "f0",

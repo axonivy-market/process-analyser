@@ -9,7 +9,7 @@
 Variables:
   com:
     axonivy:
-      solutions:
+      utils:
         process:
           analyser:
             # Maximum query results per query task

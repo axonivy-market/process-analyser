@@ -6,12 +6,12 @@
       "data": {
         "projects": [
           {
-            "groupId": "com.axonivy.solutions.process.analyser",
+            "groupId": "com.axonivy.utils.process.analyser",
             "artifactId": "process-analyser-demo",
             "version": "${version}",
             "type": "iar"
           }, {
-            "groupId": "com.axonivy.solutions.process.analyser",
+            "groupId": "com.axonivy.utils.process.analyser",
             "artifactId": "process-analyser",
             "version": "${version}",
             "type": "iar"

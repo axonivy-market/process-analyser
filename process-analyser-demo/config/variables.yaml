@@ -9,7 +9,7 @@
 Variables:
   com:
     axonivy:
-      solutions:
+      utils:
         process:
           analyser:
             demo:

@@ -1,0 +1,15 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/data-class/13.2.0/data-class.json",
+  "simpleName" : "SearchingFlight",
+  "namespace" : "com.axonivy.utils.process.analyser.demo.data",
+  "fields" : [ {
+    "name" : "flightId"
+  }, {
+    "name" : "selectedFrom"
+  }, {
+    "name" : "selectedTo"
+  }, {
+    "name" : "selectedTime",
+    "type" : "java.util.Date"
+  } ]
+}

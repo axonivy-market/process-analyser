@@ -1,0 +1,9 @@
+{
+  "$schema" : "https://json-schema.axonivy.com/data-class/13.2.0/data-class.json",
+  "simpleName" : "CheckAircraftData",
+  "namespace" : "com.axonivy.utils.process.analyser.demo.CheckAircraft",
+  "fields" : [ {
+    "name" : "isEngineeringApproveAircraft",
+    "type" : "Boolean"
+  } ]
+}

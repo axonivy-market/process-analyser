@@ -2,7 +2,7 @@
   "$schema" : "https://json-schema.axonivy.com/process/13.2.0/process.json",
   "id" : "1973F53724EE655A",
   "config" : {
-    "data" : "com.axonivy.solutions.process.analyser.test.LoginData"
+    "data" : "com.axonivy.utils.process.analyser.test.LoginData"
   },
   "elements" : [ {
       "id" : "f0",

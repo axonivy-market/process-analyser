@@ -3,7 +3,7 @@
   "id" : "1975591B4FDDED13",
   "kind" : "CALLABLE_SUB",
   "config" : {
-    "data" : "com.axonivy.solutions.process.analyser.test.data.TestSubData"
+    "data" : "com.axonivy.utils.process.analyser.test.data.TestSubData"
   },
   "elements" : [ {
       "id" : "f0",
