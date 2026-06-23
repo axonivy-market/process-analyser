@@ -20,7 +20,11 @@
         "labelOffset" : { "x" : 57, "y" : 33 }
       },
       "connect" : [
-        { "id" : "f4", "to" : "f29", "via" : [ { "x" : 176, "y" : 144 } ] }
+        { "id" : "f4", "to" : "f29", "via" : [ { "x" : 176, "y" : 144 } ], "label" : {
+            "name" : "f4",
+            "segment" : 1.5,
+            "offset" : { "x" : -35, "y" : 10 }
+          } }
       ]
     }, {
       "id" : "f1",
@@ -32,7 +36,7 @@
     }, {
       "id" : "f3",
       "type" : "TaskSwitchEvent",
-      "name" : "Check payment method",
+      "name" : "Check payment method - f3",
       "config" : {
         "task" : {
           "name" : "Check payment method",
@@ -144,12 +148,16 @@
         "size" : { "width" : 120, "height" : 62 }
       },
       "connect" : [
-        { "id" : "f19", "to" : "S10", "via" : [ { "x" : 1328, "y" : 257 } ] }
+        { "id" : "f19", "to" : "S10", "via" : [ { "x" : 1328, "y" : 257 } ], "label" : {
+            "name" : "f19",
+            "segment" : 1.5,
+            "offset" : { "x" : 17, "y" : -3 }
+          } }
       ]
     }, {
       "id" : "S10",
       "type" : "EmbeddedProcess",
-      "name" : "Record payment",
+      "name" : "Record payment - S10",
       "elements" : [ {
           "id" : "S10-g0",
           "type" : "EmbeddedStart",
@@ -172,7 +180,10 @@
           },
           "parentConnector" : "f19",
           "connect" : [
-            { "id" : "S10-f6", "to" : "S10-f0" }
+            { "id" : "S10-f6", "to" : "S10-f0", "label" : {
+                "name" : "S10-f6",
+                "offset" : { "x" : -2, "y" : -10 }
+              } }
           ]
         }, {
           "id" : "S10-g2",
@@ -248,7 +259,7 @@
               "parentConnector" : "S10-f1",
               "connect" : [
                 { "id" : "S10-S10-f1", "to" : "S10-S10-f10", "label" : {
-                    "name" : "end 6",
+                    "name" : "S10-S10-f1",
                     "segment" : 0.8,
                     "offset" : { "x" : -28, "y" : -18 }
                   } }
@@ -256,10 +267,10 @@
             }, {
               "id" : "S10-S10-g2",
               "type" : "EmbeddedEnd",
-              "name" : "out 1",
+              "name" : "out 1 - S10-S10-g2",
               "visual" : {
                 "at" : { "x" : 688, "y" : 208 },
-                "labelOffset" : { "x" : 3, "y" : 23 }
+                "labelOffset" : { "x" : 3, "y" : 27 }
               },
               "parentConnector" : "S10-f7"
             }, {
@@ -275,7 +286,7 @@
             }, {
               "id" : "S10-S10-f10",
               "type" : "SubProcessCall",
-              "name" : "Validate in MEM",
+              "name" : "Validate in MEM - S10-S10-f10",
               "config" : {
                 "processCall" : "demo/VisaValidation:validateInMem()"
               },
@@ -283,7 +294,9 @@
                 "at" : { "x" : 192, "y" : 64 }
               },
               "connect" : [
-                { "id" : "S10-S10-f11", "to" : "S10-S10-f9", "color" : "default" }
+                { "id" : "S10-S10-f11", "to" : "S10-S10-f9", "label" : {
+                    "name" : "S10-S10-f11"
+                  }, "color" : "default" }
               ]
             } ],
           "visual" : {
@@ -295,7 +308,7 @@
         }, {
           "id" : "S10-f0",
           "type" : "TaskSwitchEvent",
-          "name" : "Record for e-wallet",
+          "name" : "Record for e-wallet - S10-f0",
           "config" : {
             "task" : {
               "name" : "Record for e-wallet",
@@ -322,7 +335,7 @@
       "connect" : [
         { "id" : "f20", "to" : "f2", "label" : {
             "name" : "end 8",
-            "offset" : { "x" : 17, "y" : -5 }
+            "offset" : { "x" : 17, "y" : -9 }
           } }
       ]
     }, {
@@ -493,12 +506,15 @@
     }, {
       "id" : "f29",
       "type" : "Alternative",
+      "name" : "f29",
       "visual" : {
         "at" : { "x" : 224, "y" : 96 },
-        "labelOffset" : { "x" : 14, "y" : 34 }
+        "labelOffset" : { "x" : 24, "y" : 40 }
       },
       "connect" : [
-        { "id" : "f30", "to" : "f35", "color" : "default" }
+        { "id" : "f30", "to" : "f35", "label" : {
+            "name" : "f30"
+          }, "color" : "default" }
       ]
     }, {
       "id" : "f31",
@@ -512,7 +528,11 @@
         "labelOffset" : { "x" : 33, "y" : -23 }
       },
       "connect" : [
-        { "id" : "f32", "to" : "f29", "via" : [ { "x" : 176, "y" : 48 } ] }
+        { "id" : "f32", "to" : "f29", "via" : [ { "x" : 176, "y" : 48 } ], "label" : {
+            "name" : "f32",
+            "segment" : 1.5,
+            "offset" : { "x" : -3, "y" : -22 }
+          } }
       ]
     }, {
       "id" : "f33",
@@ -530,7 +550,7 @@
     }, {
       "id" : "f35",
       "type" : "SubProcessCall",
-      "name" : "Check in DB record",
+      "name" : "Check in DB record - f35",
       "config" : {
         "processCall" : "demo/VisaValidation:validateInDB()"
       },
