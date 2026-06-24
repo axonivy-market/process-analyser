@@ -1,11 +1,11 @@
 package com.axonivy.solutions.process.analyser.demo.managedbean;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.eventstart.AbstractProcessStartEventBean;
-import ch.ivyteam.ivy.workflow.query.CaseQuery;
+import ch.ivyteam.ivy.process.eventstart.IProcessStartEventBeanRuntime;
+import ch.ivyteam.ivy.process.extension.ProgramConfig;
 
 public class PrepareDataDemoBean extends AbstractProcessStartEventBean {
   private static final int SIGNAL_SEND_REPEAT = 5;
@@ -17,20 +17,9 @@ public class PrepareDataDemoBean extends AbstractProcessStartEventBean {
   }
 
   @Override
-  public void poll() {
-    boolean hasData = isDemoDataAlreadyPersisted();
-    if (!hasData) {
-      sendSignals();
-    }
-    getEventBeanRuntime().poll().disable();
-  }
-
-  private boolean isDemoDataAlreadyPersisted() {
-    List<Long> taskStartIds = new ArrayList<>();
-//    List<IProcess> demoProcesses =  ProcessUtils.getProcessesInCurrentPMV(Ivy.request().getProcessModelVersion());
-    CaseQuery caseQuery = CaseQuery.create();
-    caseQuery.where().taskStartId().isIn(taskStartIds);
-    return false;
+  public void initialize(IProcessStartEventBeanRuntime eventRuntime, ProgramConfig programConfig) {
+    super.initialize(eventRuntime, programConfig);
+    sendSignals();
   }
 
   public static void sendSignals() {

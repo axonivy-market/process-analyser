@@ -49,7 +49,8 @@ public class ProcessViewerBuilder {
     String server = IHtmlDialogContext.current().baseLink().getAbsolute();
     try {
       URL appHomeURL = IHtmlDialogContext.current().appHomeLink().toAbsoluteUri().toURL();
-      server = appHomeURL.getAuthority() + StringUtils.substringBefore(appHomeURL.getPath(), IApplication.current().getName());
+      server = appHomeURL.getAuthority()
+          + StringUtils.substringBefore(appHomeURL.getPath(), IApplication.current().getName());
     } catch (MalformedURLException e) {
       Ivy.log().error(e);
     }

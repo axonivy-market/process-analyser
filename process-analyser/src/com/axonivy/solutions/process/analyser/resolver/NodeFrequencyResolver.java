@@ -205,7 +205,7 @@ public class NodeFrequencyResolver {
     if (nextElement instanceof CallSubEnd) {
       resolveByNestedSubElement(targetPid, nextElement, subProcessCalls, path, taskPath);
     } else {
-    // Retrieve all outgoing flows from the next element.
+      // Retrieve all outgoing flows from the next element.
       List<SequenceFlow> nextOutgoingFlows = getNextOutgoingFlows(nextElement);
       final boolean isAlternative = ProcessUtils.isAlternativeInstance(nextElement);
       final String nextElementPid = ProcessUtils.getElementPid(nextElement);
