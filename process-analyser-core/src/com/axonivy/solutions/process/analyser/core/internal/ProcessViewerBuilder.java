@@ -37,20 +37,21 @@ public class ProcessViewerBuilder {
   private static final String PARAM_TEMPLATE = "{%s}";
   private final Map<ViewerParam, String> queryParams = new HashMap<>();
   private final String contextPath;
+  private IApplication application;
 
   public ProcessViewerBuilder() {
-    IApplication application = IApplication.current();
+    application = IApplication.current();
     contextPath = application.getContextPath();
     setQueryParam(SERVER, detectServerParam());
     setQueryParam(APP, application.getName());
   }
 
   private String detectServerParam() {
-    String server = IHtmlDialogContext.current().baseLink().getAbsolute();
+    String server = "";
     try {
       URL appHomeURL = IHtmlDialogContext.current().appHomeLink().toAbsoluteUri().toURL();
       server = appHomeURL.getAuthority()
-          + StringUtils.substringBefore(appHomeURL.getPath(), IApplication.current().getName());
+          + StringUtils.substringBefore(appHomeURL.getPath(), application.getName());
     } catch (MalformedURLException e) {
       Ivy.log().error(e);
     }

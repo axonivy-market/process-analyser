@@ -265,14 +265,13 @@ public class ProcessUtils {
   private static void collectAllLinkedElementsOfGateway(ProcessElement processElement,
       List<ProcessElement> processElements, Map<String, ProcessElement> linkedProcessElementMap) {
     linkedProcessElementMap.putIfAbsent(getElementPid(processElement), processElement);
-    MultipleOutputsGateway multipleOutputsGateway = (MultipleOutputsGateway) processElement;
+    var multipleOutputsGateway = (MultipleOutputsGateway) processElement;
     for (var sequenceFlow : multipleOutputsGateway.getOutgoing()) {
-      final ProcessElement destinationElement = (ProcessElement) sequenceFlow.getTarget();
+      ProcessElement destinationElement = (ProcessElement) sequenceFlow.getTarget();
       linkedProcessElementMap.putIfAbsent(getElementPid(destinationElement), destinationElement);
       Set<ProcessElement> nestedProcessElements = getNestedProcessElementsFromSub(destinationElement, linkedProcessElementMap);
-      var nestedProcessElementsMap = CollectionUtils.emptyIfNull(nestedProcessElements).stream()
-          .collect(Collectors.toMap(ProcessUtils::getElementPid, process -> process));
-      linkedProcessElementMap.putAll(nestedProcessElementsMap);
+      linkedProcessElementMap.putAll(CollectionUtils.emptyIfNull(nestedProcessElements).stream()
+          .collect(Collectors.toMap(ProcessUtils::getElementPid, process -> process)));
       // Collect all linked elements for follow up output
       collectAllLinkedElementsOfStartProcess(processElements, destinationElement, linkedProcessElementMap);
     }
@@ -348,7 +347,7 @@ public class ProcessUtils {
     return processes;
   }
 
-  public static List<IProcess> getProcessesInCurrentPMV(IProcessModelVersion pmv) {
+  private static List<IProcess> getProcessesInCurrentPMV(IProcessModelVersion pmv) {
     return IProcessManager.instance().getProjectDataModelFor(pmv).getProcesses().stream()
         .filter(process -> process.getKind() == ProcessKind.NORMAL || process.getKind() == ProcessKind.WEB_SERVICE)
         .toList();
