@@ -1,10 +1,20 @@
 package com.axonivy.solutions.process.analyser.core.internal;
 
 import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.AND;
-import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.SLASH;
-import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.*;
+import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.APP;
+import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.FACES;
+import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.FILE;
+import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.HIGHLIGHT;
+import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.PMV;
+import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.PROCESS_MINER_FILE;
+import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.SELECT;
+import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.SERVER;
+import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.VIEW;
+import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.ZOOM;
 
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -19,27 +29,31 @@ import com.axonivy.solutions.process.analyser.core.enums.ViewerParam;
 
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.application.IProcessModel;
+import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.htmldialog.IHtmlDialogContext;
-import ch.ivyteam.ivy.security.ISecurityContext;
 
 public class ProcessViewerBuilder {
 
   private static final String PARAM_TEMPLATE = "{%s}";
   private final Map<ViewerParam, String> queryParams = new HashMap<>();
   private final String contextPath;
+  private IApplication application;
 
   public ProcessViewerBuilder() {
-    IApplication application = IApplication.current();
+    application = IApplication.current();
     contextPath = application.getContextPath();
     setQueryParam(SERVER, detectServerParam());
     setQueryParam(APP, application.getName());
   }
 
   private String detectServerParam() {
-    String server = IHtmlDialogContext.current().appHomeLink().toAbsoluteUri().getAuthority();
-    String securityContextName = ISecurityContext.current().getName();
-    if (!ISecurityContext.DEFAULT.equals(securityContextName)) {
-      server = StringUtils.join(server, SLASH, securityContextName);
+    String server = "";
+    try {
+      URL appHomeURL = IHtmlDialogContext.current().appHomeLink().toAbsoluteUri().toURL();
+      server = appHomeURL.getAuthority()
+          + StringUtils.substringBefore(appHomeURL.getPath(), application.getName());
+    } catch (MalformedURLException e) {
+      Ivy.log().error(e);
     }
     return server;
   }

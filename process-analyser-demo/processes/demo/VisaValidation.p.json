@@ -8,7 +8,7 @@
   "elements" : [ {
       "id" : "f0",
       "type" : "CallSubStart",
-      "name" : "visaValidation()",
+      "name" : "visaValidation() - f0",
       "config" : {
         "signature" : "visaValidation"
       },
@@ -16,7 +16,7 @@
         "connector"
       ],
       "visual" : {
-        "at" : { "x" : 96, "y" : 64 }
+        "at" : { "x" : 96, "y" : 80 }
       },
       "connect" : [
         { "id" : "f2", "to" : "f6", "label" : {
@@ -27,14 +27,15 @@
     }, {
       "id" : "f1",
       "type" : "CallSubEnd",
+      "name" : "f1",
       "visual" : {
-        "at" : { "x" : 928, "y" : 64 },
+        "at" : { "x" : 960, "y" : 80 },
         "labelOffset" : { "x" : 13, "y" : 33 }
       }
     }, {
       "id" : "f5",
       "type" : "TaskSwitchEvent",
-      "name" : "Check CVR number",
+      "name" : "Check CVR number - f5",
       "config" : {
         "task" : {
           "name" : "Check CVR number",
@@ -47,16 +48,18 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 352, "y" : 64 },
+        "at" : { "x" : 360, "y" : 80 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
-        { "id" : "f7", "to" : "S10", "color" : "default" }
+        { "id" : "f7", "to" : "S10", "label" : {
+            "name" : "f7"
+          }, "color" : "default" }
       ]
     }, {
       "id" : "S10",
       "type" : "EmbeddedProcess",
-      "name" : "validation step",
+      "name" : "validation step- S10",
       "elements" : [ {
           "id" : "S10-f3",
           "type" : "RestClientCall",
@@ -95,34 +98,34 @@
           "parentConnector" : "f8"
         } ],
       "visual" : {
-        "at" : { "x" : 480, "y" : 64 }
+        "at" : { "x" : 496, "y" : 80 }
       },
       "connect" : [
         { "id" : "f8", "to" : "f3", "label" : {
-            "name" : "end 4",
+            "name" : "end 4 - f8",
             "offset" : { "x" : 5, "y" : -10 }
           } }
       ]
     }, {
       "id" : "f3",
       "type" : "Alternative",
-      "name" : "validate successed?",
+      "name" : "validate successed - f3?",
       "config" : {
         "conditions" : {
           "f4" : "Math.random()>0.5"
         }
       },
       "visual" : {
-        "at" : { "x" : 608, "y" : 64 },
+        "at" : { "x" : 640, "y" : 80 },
         "labelOffset" : { "y" : -40 }
       },
       "connect" : [
         { "id" : "f4", "to" : "f23", "label" : {
-            "name" : "start 6",
+            "name" : "start 6 - f4",
             "offset" : { "y" : -10 }
           }, "color" : "default" },
-        { "id" : "f10", "to" : "f11", "via" : [ { "x" : 608, "y" : 168 } ], "label" : {
-            "name" : "start 5",
+        { "id" : "f10", "to" : "f11", "via" : [ { "x" : 640, "y" : 184 } ], "label" : {
+            "name" : "start 5 - f10",
             "segment" : 1.26,
             "offset" : { "x" : 54, "y" : -42 }
           } }
@@ -130,20 +133,20 @@
     }, {
       "id" : "f6",
       "type" : "Script",
-      "name" : "prepare data",
+      "name" : "prepare data - f6",
       "visual" : {
-        "at" : { "x" : 224, "y" : 64 }
+        "at" : { "x" : 224, "y" : 80 }
       },
       "connect" : [
         { "id" : "f9", "to" : "f5", "label" : {
-            "name" : "start 4",
+            "name" : "start 4 - f9",
             "offset" : { "x" : 5, "y" : -18 }
           }, "color" : "default" }
       ]
     }, {
       "id" : "f11",
       "type" : "TaskSwitchEvent",
-      "name" : "Retry",
+      "name" : "Retry - f11",
       "config" : {
         "task" : {
           "name" : "Retry",
@@ -156,12 +159,12 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 480, "y" : 168 },
+        "at" : { "x" : 496, "y" : 184 },
         "labelOffset" : { "x" : 14, "y" : 34 }
       },
       "connect" : [
         { "id" : "f12", "to" : "f25", "label" : {
-            "name" : "end 5",
+            "name" : "end 5 - f12",
             "segment" : 0.78,
             "offset" : { "x" : 32, "y" : -10 }
           }, "color" : "default" }
@@ -169,64 +172,66 @@
     }, {
       "id" : "f13",
       "type" : "CallSubStart",
-      "name" : "validateInMem()",
+      "name" : "validateInMem() - f13",
       "config" : {
         "signature" : "validateInMem"
       },
       "visual" : {
-        "at" : { "x" : 96, "y" : 272 }
+        "at" : { "x" : 96, "y" : 288 }
       },
       "connect" : [
         { "id" : "f15", "to" : "f19", "label" : {
-            "name" : "mem - start",
+            "name" : "mem - start - f15",
             "offset" : { "x" : 2, "y" : -10 }
           } }
       ]
     }, {
       "id" : "f14",
       "type" : "CallSubEnd",
+      "name" : "f14",
       "visual" : {
-        "at" : { "x" : 488, "y" : 272 }
+        "at" : { "x" : 496, "y" : 288 }
       }
     }, {
       "id" : "f16",
       "type" : "CallSubStart",
-      "name" : "validateInDB()",
+      "name" : "validateInDB() - f16",
       "config" : {
         "signature" : "validateInDB"
       },
       "visual" : {
-        "at" : { "x" : 96, "y" : 384 }
+        "at" : { "x" : 96, "y" : 400 }
       },
       "connect" : [
         { "id" : "f17", "to" : "f21", "label" : {
-            "name" : "db -start",
+            "name" : "db -start - f17",
             "offset" : { "x" : -2, "y" : -10 }
           } }
       ]
     }, {
       "id" : "f18",
       "type" : "CallSubEnd",
+      "name" : "f18",
       "visual" : {
-        "at" : { "x" : 488, "y" : 384 }
+        "at" : { "x" : 496, "y" : 400 }
       }
     }, {
       "id" : "f19",
       "type" : "Script",
-      "name" : "Read in MEM",
+      "name" : "Read in MEM - f19",
       "visual" : {
-        "at" : { "x" : 296, "y" : 272 }
+        "at" : { "x" : 296, "y" : 288 }
       },
       "connect" : [
         { "id" : "f20", "to" : "f14", "label" : {
-            "name" : "mem -end",
+            "name" : "mem -end - f20",
             "offset" : { "x" : 1, "y" : -10 }
           }, "color" : "default" }
       ]
     }, {
       "id" : "f21",
       "type" : "Database",
-      "name" : "Read DB Case",
+      "name" : "Read DB Case - f21",
       "config" : {
         "query" : {
           "dbName" : "IvySystemDatabase",
@@ -236,43 +241,43 @@
         }
       },
       "visual" : {
-        "at" : { "x" : 296, "y" : 384 }
+        "at" : { "x" : 296, "y" : 400 }
       },
       "connect" : [
         { "id" : "f22", "to" : "f18", "label" : {
-            "name" : "db - end",
+            "name" : "db - end - f22",
             "offset" : { "x" : 5, "y" : -10 }
           }, "color" : "default" }
       ]
     }, {
       "id" : "f23",
       "type" : "SubProcessCall",
-      "name" : "Validate in MEM",
+      "name" : "Validate in MEM - f23",
       "config" : {
         "processCall" : "demo/VisaValidation:validateInMem()"
       },
       "visual" : {
-        "at" : { "x" : 752, "y" : 64 }
+        "at" : { "x" : 784, "y" : 80 }
       },
       "connect" : [
         { "id" : "f24", "to" : "f1", "label" : {
-            "name" : "end 7",
+            "name" : "end 7 - f24",
             "offset" : { "x" : -3, "y" : -10 }
           }, "color" : "default" }
       ]
     }, {
       "id" : "f25",
       "type" : "SubProcessCall",
-      "name" : "Validate in DB",
+      "name" : "Validate in DB - f25",
       "config" : {
         "processCall" : "demo/VisaValidation:validateInDB()"
       },
       "visual" : {
-        "at" : { "x" : 336, "y" : 168 }
+        "at" : { "x" : 360, "y" : 184 }
       },
       "connect" : [
-        { "id" : "f26", "to" : "f6", "via" : [ { "x" : 224, "y" : 168 } ], "label" : {
-            "name" : "end 6",
+        { "id" : "f26", "to" : "f6", "via" : [ { "x" : 224, "y" : 184 } ], "label" : {
+            "name" : "end 6 - f26",
             "segment" : 1.5,
             "offset" : { "x" : -23, "y" : 11 }
           }, "color" : "default" }
