@@ -18,8 +18,8 @@
       <artifactId>ivy-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.axonivy.ivy.api</groupId>
-      <artifactId>ivy-runtime</artifactId>
+      <groupId>com.axonivy.ivy.api.extension</groupId>
+      <artifactId>ivy-process-model-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
