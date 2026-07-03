@@ -1,4 +1,4 @@
-package com.axonivy.solutions.process.analyser.core.util;
+package com.axonivy.solutions.process.analyser.utils;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 

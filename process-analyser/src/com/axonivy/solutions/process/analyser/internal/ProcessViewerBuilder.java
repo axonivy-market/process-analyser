@@ -1,4 +1,4 @@
-package com.axonivy.solutions.process.analyser.core.internal;
+package com.axonivy.solutions.process.analyser.internal;
 
 import java.net.URI;
 import java.util.Comparator;
@@ -11,19 +11,19 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.lang3.StringUtils;
 
-import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.AND;
-import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.SLASH;
-import com.axonivy.solutions.process.analyser.core.enums.ViewerParam;
-import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.APP;
-import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.FACES;
-import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.FILE;
-import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.HIGHLIGHT;
-import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.PMV;
-import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.PROCESS_MINER_FILE;
-import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.SELECT;
-import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.SERVER;
-import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.VIEW;
-import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.ZOOM;
+import static com.axonivy.solutions.process.analyser.constants.CoreConstants.AND;
+import static com.axonivy.solutions.process.analyser.constants.CoreConstants.SLASH;
+import com.axonivy.solutions.process.analyser.enums.ViewerParam;
+import static com.axonivy.solutions.process.analyser.enums.ViewerParam.APP;
+import static com.axonivy.solutions.process.analyser.enums.ViewerParam.FACES;
+import static com.axonivy.solutions.process.analyser.enums.ViewerParam.FILE;
+import static com.axonivy.solutions.process.analyser.enums.ViewerParam.HIGHLIGHT;
+import static com.axonivy.solutions.process.analyser.enums.ViewerParam.PMV;
+import static com.axonivy.solutions.process.analyser.enums.ViewerParam.PROCESS_MINER_FILE;
+import static com.axonivy.solutions.process.analyser.enums.ViewerParam.SELECT;
+import static com.axonivy.solutions.process.analyser.enums.ViewerParam.SERVER;
+import static com.axonivy.solutions.process.analyser.enums.ViewerParam.VIEW;
+import static com.axonivy.solutions.process.analyser.enums.ViewerParam.ZOOM;
 
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.application.IProcessModelVersion;
@@ -95,7 +95,7 @@ public class ProcessViewerBuilder {
   }
 
   private ProcessViewerBuilder addQueryParam(ViewerParam param, String value) {
-    queryParams.compute(param, (key, val) -> {
+    queryParams.compute(param, (_, val) -> {
       return StringUtils.isBlank(val) ? value : val.concat(AND).concat(value);
     });
     return this;

@@ -1,4 +1,4 @@
-package com.axonivy.solutions.process.analyser.core.bo;
+package com.axonivy.solutions.process.analyser.bo;
 
 import java.util.List;
 

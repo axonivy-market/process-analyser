@@ -24,17 +24,16 @@ import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
 import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
+import com.axonivy.solutions.process.analyser.bo.IvyProcess;
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
 import com.axonivy.solutions.process.analyser.bo.ProcessViewerConfig;
+import com.axonivy.solutions.process.analyser.bo.StartElement;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
-import com.axonivy.solutions.process.analyser.core.bo.IvyProcess;
-import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 import com.axonivy.solutions.process.analyser.constants.AnalyserConstants;
-import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
-import com.axonivy.solutions.process.analyser.core.util.ProcessElementUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
+import com.axonivy.solutions.process.analyser.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.resolver.NodeFrequencyResolver;
 import com.axonivy.solutions.process.analyser.resolver.NodeResolver;
 
@@ -49,7 +48,6 @@ import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 import ch.ivyteam.ivy.workflow.query.CaseQuery;
 import ch.ivyteam.ivy.workflow.query.TaskQuery;
 
-@SuppressWarnings("restriction")
 public class ProcessesMonitorUtils {
   private static final String KEY_SEPARATOR = ":::";
 
@@ -200,7 +198,7 @@ public class ProcessesMonitorUtils {
     } else if (durationKpiType.isDescendantOf(KpiType.DURATION_WORKING)) {
       return task -> task.getWorkingTime().toNumber();
     }
-    return task -> 0L;
+    return _ -> 0L;
   }
 
   private static long getOverallDuration(ITask task) {

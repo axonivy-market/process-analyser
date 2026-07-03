@@ -6,7 +6,7 @@ import java.net.URI;
 
 import org.junit.jupiter.api.Test;
 
-import com.axonivy.solutions.process.analyser.core.internal.ProcessViewerBuilder;
+import com.axonivy.solutions.process.analyser.internal.ProcessViewerBuilder;
 import com.axonivy.solutions.process.analyser.test.BaseSetup;
 
 import ch.ivyteam.ivy.environment.IvyTest;

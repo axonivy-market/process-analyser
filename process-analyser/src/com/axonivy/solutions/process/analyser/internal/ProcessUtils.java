@@ -1,4 +1,4 @@
-package com.axonivy.solutions.process.analyser.core.internal;
+package com.axonivy.solutions.process.analyser.internal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,10 +15,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 
-import com.axonivy.solutions.process.analyser.core.bo.IvyProcess;
-import com.axonivy.solutions.process.analyser.core.bo.StartElement;
-import com.axonivy.solutions.process.analyser.core.constants.CoreConstants;
-import com.axonivy.solutions.process.analyser.core.util.PIDUtils;
+import com.axonivy.solutions.process.analyser.bo.IvyProcess;
+import com.axonivy.solutions.process.analyser.bo.StartElement;
+import com.axonivy.solutions.process.analyser.constants.CoreConstants;
+import com.axonivy.solutions.process.analyser.utils.PIDUtils;
 
 import ch.ivyteam.ivy.application.IApplication;
 import ch.ivyteam.ivy.application.IProcessModelVersion;
@@ -162,6 +162,7 @@ public class ProcessUtils {
 
   public static List<IvyProcess> getAllProcesses() {
     String configSkipProcesses = StringUtils.trim(Ivy.var().get(SKIP_PROCESSES_VARIABLE));
+    // TODO We should also skip the processes which are in the skipProjects list, but we don't have the project name here, so we cannot filter them out yet.
     String[] skipProcesses = Arrays.asList(StringUtils.split(configSkipProcesses, CoreConstants.SEMI_COLONS))
         .stream().filter(StringUtils::isNotBlank)
         .map(String::trim).toArray(String[]::new);
@@ -288,9 +289,9 @@ public class ProcessUtils {
 
   public static boolean isComplexElementWithMultiIncomings(ProcessElement element) {
     return switch (element) {
-    case Join join -> false;
-    case EmbeddedProcessElement embeddedProcessElement -> false;
-    case SubProcessCall subProcessCall -> false;
+    case Join _ -> false;
+    case EmbeddedProcessElement _ -> false;
+    case SubProcessCall _ -> false;
     default -> isElementWithMultipleIncomingFlow(element);
     };
   }
@@ -361,11 +362,11 @@ public class ProcessUtils {
 
   public static boolean isAlternativePathEndElement(ProcessElement processElement) {
     return switch (processElement) {
-    case Alternative alternative -> true;
-    case CallSubEnd callSubEnd -> false;
-    case Join join -> false;
-    case EmbeddedProcessElement sub -> false;
-    case EmbeddedEnd subEnd -> false;
+    case Alternative _ -> true;
+    case CallSubEnd _ -> false;
+    case Join _ -> false;
+    case EmbeddedProcessElement _ -> false;
+    case EmbeddedEnd _ -> false;
     default -> isProcessPathEndElement(processElement) || isElementWithMultipleIncomingFlow(processElement);
     };
   }

@@ -1,5 +1,4 @@
-package com.axonivy.solutions.process.analyser.core.constants;
-
+package com.axonivy.solutions.process.analyser.constants;
 
 public class CoreConstants {
   public static final String HYPHEN_SIGN = "-";

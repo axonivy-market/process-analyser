@@ -9,9 +9,9 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 
+import com.axonivy.solutions.process.analyser.bo.IvyProcess;
 import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
-import com.axonivy.solutions.process.analyser.core.bo.IvyProcess;
-import com.axonivy.solutions.process.analyser.core.bo.StartElement;
+import com.axonivy.solutions.process.analyser.bo.StartElement;
 import com.axonivy.solutions.process.analyser.managedbean.MasterDataBean;
 import com.axonivy.solutions.process.analyser.utils.FacesContexts;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;

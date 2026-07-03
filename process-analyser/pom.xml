@@ -14,11 +14,6 @@
   <packaging>iar</packaging>
   <dependencies>
     <dependency>
-      <groupId>com.axonivy.solutions.process.analyser</groupId>
-      <artifactId>process-analyser-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>com.axonivy.ivy.api</groupId>
       <artifactId>ivy-api</artifactId>
     </dependency>

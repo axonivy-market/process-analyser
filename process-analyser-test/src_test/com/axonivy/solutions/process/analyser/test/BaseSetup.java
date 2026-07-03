@@ -6,8 +6,9 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.Strings;
 
-import com.axonivy.solutions.process.analyser.core.bo.IvyProcess;
-import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
+import com.axonivy.solutions.process.analyser.bo.IvyProcess;
+import com.axonivy.solutions.process.analyser.internal.ProcessUtils;
+
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.RGB_REGEX_PATTERN;
 
 import ch.ivyteam.ivy.application.IApplication;

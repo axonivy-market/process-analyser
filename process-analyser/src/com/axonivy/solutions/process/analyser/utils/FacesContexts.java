@@ -136,7 +136,7 @@ public final class FacesContexts {
 
   public static UIComponent findComponentByClientId(final String clientId) {
     boolean isFoundComponent = getCurrentInstance().getViewRoot().invokeOnComponent(getCurrentInstance(), clientId,
-        (context, component) -> {
+        (_, component) -> {
           foundComponent = component;
         });
     if (isFoundComponent) {

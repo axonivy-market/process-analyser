@@ -3,7 +3,7 @@ package com.axonivy.solutions.process.analyser.managedbean;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.COLOR_SEGMENT_ATTRIBUTE;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.GRADIENT_COLOR_LEVELS;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.HYPHEN_REGEX;
-import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.HYPHEN_SIGN;
+import static com.axonivy.solutions.process.analyser.constants.CoreConstants.HYPHEN_SIGN;
 import static com.axonivy.solutions.process.analyser.enums.KpiType.FREQUENCY;
 
 import java.io.Serializable;

@@ -3,9 +3,6 @@ package com.axonivy.solutions.process.analyser.bo;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import com.axonivy.solutions.process.analyser.core.bo.IvyProcess;
-import com.axonivy.solutions.process.analyser.core.bo.StartElement;
-
 public class ProcessAnalyser {
   private IvyProcess process;
   private StartElement startElement;

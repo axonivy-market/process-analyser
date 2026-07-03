@@ -4,7 +4,6 @@ import java.util.List;
 
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 
-@SuppressWarnings("restriction")
 public class AlternativePath {
   private List<String> precedingFlowIds;
   private List<String> nodeIdsInPath;

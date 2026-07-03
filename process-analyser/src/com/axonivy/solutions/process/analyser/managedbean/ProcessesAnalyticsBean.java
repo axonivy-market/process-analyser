@@ -30,14 +30,14 @@ import org.primefaces.model.TreeNode;
 import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.ProcessMiningData;
+import com.axonivy.solutions.process.analyser.bo.StartElement;
 import com.axonivy.solutions.process.analyser.bo.TimeFrame;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.constants.AnalyserConstants;
 import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
-import com.axonivy.solutions.process.analyser.core.bo.StartElement;
-import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
+import com.axonivy.solutions.process.analyser.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.service.IvyTaskOccurrenceService;
 import com.axonivy.solutions.process.analyser.utils.DateUtils;
 import com.axonivy.solutions.process.analyser.utils.FacesContexts;
@@ -281,7 +281,7 @@ public class ProcessesAnalyticsBean {
       if (CollectionUtils.isNotEmpty(cases)) {
         String role = masterDataBean.getSelectedRole();
         List<ITask> tasks = cases.stream().flatMap(ivyCase -> ivyCase.tasks().all().stream())
-            .filter(task -> isTaskMatchRoleFilter(task.getActivatorName(), role)).toList();
+            .filter(task -> isTaskMatchRoleFilter(task.responsibles().displayName(), role)).toList();
         customFilterBean.setCustomFieldsByType(
             IvyTaskOccurrenceService.getCaseAndTaskCustomFields(tasks, customFilterBean.getCustomFieldsByType()));
         analyzedNode = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(selectedProcessAnalyser,

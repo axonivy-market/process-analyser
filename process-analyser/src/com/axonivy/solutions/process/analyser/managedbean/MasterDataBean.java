@@ -22,23 +22,23 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import org.apache.commons.lang3.Strings;
 import org.primefaces.PF;
 
+import com.axonivy.solutions.process.analyser.bo.IvyProcess;
 import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
 import com.axonivy.solutions.process.analyser.bo.ProcessViewerConfig;
+import com.axonivy.solutions.process.analyser.bo.StartElement;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.ANALYSIS_EXCEL_FILE_PATTERN;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.MULTIPLE_UNDERSCORES_REGEX;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.SPACE_DASH_REGEX;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.UNDERSCORE;
+import com.axonivy.solutions.process.analyser.constants.CoreConstants;
+import static com.axonivy.solutions.process.analyser.constants.CoreConstants.HYPHEN_SIGN;
 import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
-import com.axonivy.solutions.process.analyser.core.bo.IvyProcess;
-import com.axonivy.solutions.process.analyser.core.bo.StartElement;
-import com.axonivy.solutions.process.analyser.core.constants.CoreConstants;
-import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.HYPHEN_SIGN;
-import com.axonivy.solutions.process.analyser.core.enums.StartElementType;
-import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartEventElement;
-import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartSignalEventElement;
-import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.WebServiceProcessStartElement;
-import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
+import com.axonivy.solutions.process.analyser.enums.StartElementType;
+import static com.axonivy.solutions.process.analyser.enums.StartElementType.StartEventElement;
+import static com.axonivy.solutions.process.analyser.enums.StartElementType.StartSignalEventElement;
+import static com.axonivy.solutions.process.analyser.enums.StartElementType.WebServiceProcessStartElement;
+import com.axonivy.solutions.process.analyser.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 
 import ch.ivyteam.ivy.application.IApplication;
@@ -228,6 +228,7 @@ public class MasterDataBean implements Serializable {
       return List.of();
     }
 
+    // TODO Need to be corrected after migrating to Jakarta
     return IApplication.current().getProcessModelVersions()
         .filter(Objects::nonNull)
         .filter(IProcessModelVersion::isReady)
@@ -236,6 +237,7 @@ public class MasterDataBean implements Serializable {
 
   private void resetDefaultPMV() {
     List<IProcessModelVersion> pmvs = getAvailablePMV().stream()
+        // TODO Need to be corrected after migrating to Jakarta
         // .filter(version -> version.isReady())
         .sorted(Comparator.comparing(IProcessModelVersion::getLastChangeDate).reversed()).toList();
     selectedPMV = ObjectUtils.isNotEmpty(pmvs) ? pmvs.get(0) : null;
