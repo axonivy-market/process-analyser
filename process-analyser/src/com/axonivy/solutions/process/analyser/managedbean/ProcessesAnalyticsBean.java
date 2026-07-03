@@ -281,6 +281,7 @@ public class ProcessesAnalyticsBean {
       if (CollectionUtils.isNotEmpty(cases)) {
         String role = masterDataBean.getSelectedRole();
         List<ITask> tasks = cases.stream().flatMap(ivyCase -> ivyCase.tasks().all().stream())
+            // TODO Need to verify task.responsibles().displayName() value with getActivatorName()
             .filter(task -> isTaskMatchRoleFilter(task.responsibles().displayName(), role)).toList();
         customFilterBean.setCustomFieldsByType(
             IvyTaskOccurrenceService.getCaseAndTaskCustomFields(tasks, customFilterBean.getCustomFieldsByType()));
