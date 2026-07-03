@@ -28,7 +28,7 @@ import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
 import com.axonivy.solutions.process.analyser.bo.ProcessViewerConfig;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
-import com.axonivy.solutions.process.analyser.core.bo.Process;
+import com.axonivy.solutions.process.analyser.core.bo.IvyProcess;
 import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 import com.axonivy.solutions.process.analyser.constants.AnalyserConstants;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
@@ -386,7 +386,7 @@ public class ProcessesMonitorUtils {
     return Ivy.session().has().role(AnalyserConstants.PROCESS_ANALYST_ROLE);
   }
 
-  public static ProcessAnalyser mappingProcessAnalyzerByProcesses(List<Process> processes,
+  public static ProcessAnalyser mappingProcessAnalyzerByProcesses(List<IvyProcess> processes,
       boolean isMergeProcessStarts, String processKeyId) {
     String[] data = processKeyId.split(KEY_SEPARATOR);
     var foundProcess = processes.stream()

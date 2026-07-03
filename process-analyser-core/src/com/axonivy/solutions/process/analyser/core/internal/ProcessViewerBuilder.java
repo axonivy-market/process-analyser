@@ -1,9 +1,5 @@
 package com.axonivy.solutions.process.analyser.core.internal;
 
-import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.AND;
-import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.SLASH;
-import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.*;
-
 import java.net.URI;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -15,10 +11,22 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.lang3.StringUtils;
 
+import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.AND;
+import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.SLASH;
 import com.axonivy.solutions.process.analyser.core.enums.ViewerParam;
+import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.APP;
+import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.FACES;
+import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.FILE;
+import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.HIGHLIGHT;
+import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.PMV;
+import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.PROCESS_MINER_FILE;
+import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.SELECT;
+import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.SERVER;
+import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.VIEW;
+import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.ZOOM;
 
 import ch.ivyteam.ivy.application.IApplication;
-import ch.ivyteam.ivy.application.IProcessModel;
+import ch.ivyteam.ivy.application.IProcessModelVersion;
 import ch.ivyteam.ivy.htmldialog.IHtmlDialogContext;
 import ch.ivyteam.ivy.security.ISecurityContext;
 
@@ -68,7 +76,7 @@ public class ProcessViewerBuilder {
     var uriBuilder = UriBuilder.fromPath(contextPath)
         .path(FACES.getValue())
         .path(VIEW.getValue())
-        .path(IProcessModel.current().getName())
+        .path(IProcessModelVersion.current().project().name())
         .path(PROCESS_MINER_FILE.getValue());
     // Build URI with template e.g /uri/param={param}
     List<String> queryParamKeys = queryParams.keySet().stream()

@@ -14,7 +14,7 @@ import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
-import com.axonivy.solutions.process.analyser.core.bo.Process;
+import com.axonivy.solutions.process.analyser.core.bo.IvyProcess;
 import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
@@ -200,7 +200,7 @@ public class ProcessMonitorUtilsTest extends BaseSetup {
 
   private void prepareProcessAnalyzer() {
     processAnalyser = new ProcessAnalyser();
-    processAnalyser.setProcess(new Process());
+    processAnalyser.setProcess(new IvyProcess());
     processAnalyser.setStartElement(new StartElement());
     processAnalyser.getStartElement().setPid(testProcess.getId());
     processAnalyser.setProcess(testProcess);

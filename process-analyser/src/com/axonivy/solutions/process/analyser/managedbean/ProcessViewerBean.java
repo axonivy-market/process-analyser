@@ -14,7 +14,7 @@ import org.primefaces.PF;
 import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
 import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
 import com.axonivy.solutions.process.analyser.core.bo.ElementDisplayName;
-import com.axonivy.solutions.process.analyser.core.bo.Process;
+import com.axonivy.solutions.process.analyser.core.bo.IvyProcess;
 import com.axonivy.solutions.process.analyser.constants.AnalyserConstants;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessViewerBuilder;
 import com.axonivy.solutions.process.analyser.core.util.ProcessElementUtils;
@@ -27,7 +27,7 @@ public class ProcessViewerBean implements Serializable {
 
   private static final long serialVersionUID = -2589140797903853427L;
   private String bpmnIframeSourceUrl;
-  private Process selectedProcess;
+  private IvyProcess selectedProcess;
   private String selectedStartElement;
   private String selectedItem;
   private Integer selectedZoom = 100;

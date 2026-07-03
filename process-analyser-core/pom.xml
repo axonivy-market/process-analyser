@@ -20,7 +20,6 @@
     <dependency>
       <groupId>com.axonivy.ivy.api.extension</groupId>
       <artifactId>ivy-process-model-api</artifactId>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.platform</groupId>

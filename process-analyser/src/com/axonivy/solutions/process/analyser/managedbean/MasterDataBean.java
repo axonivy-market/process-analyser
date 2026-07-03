@@ -1,22 +1,12 @@
 package com.axonivy.solutions.process.analyser.managedbean;
 
-import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.ANALYSIS_EXCEL_FILE_PATTERN;
-import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.MULTIPLE_UNDERSCORES_REGEX;
-import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.SPACE_DASH_REGEX;
-import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.UNDERSCORE;
-import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.HYPHEN_SIGN;
-import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartEventElement;
-import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartSignalEventElement;
-import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.WebServiceProcessStartElement;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -28,25 +18,31 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import org.apache.commons.lang3.Strings;
 import org.primefaces.PF;
 
 import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
 import com.axonivy.solutions.process.analyser.bo.ProcessViewerConfig;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.ANALYSIS_EXCEL_FILE_PATTERN;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.MULTIPLE_UNDERSCORES_REGEX;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.SPACE_DASH_REGEX;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.UNDERSCORE;
 import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
-import com.axonivy.solutions.process.analyser.core.bo.Process;
+import com.axonivy.solutions.process.analyser.core.bo.IvyProcess;
 import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 import com.axonivy.solutions.process.analyser.core.constants.CoreConstants;
+import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.HYPHEN_SIGN;
 import com.axonivy.solutions.process.analyser.core.enums.StartElementType;
+import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartEventElement;
+import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.StartSignalEventElement;
+import static com.axonivy.solutions.process.analyser.core.enums.StartElementType.WebServiceProcessStartElement;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 
-import ch.ivyteam.ivy.application.ActivityState;
 import ch.ivyteam.ivy.application.IApplication;
-import ch.ivyteam.ivy.application.ILibrary;
 import ch.ivyteam.ivy.application.IProcessModelVersion;
-import ch.ivyteam.ivy.application.ReleaseState;
 import ch.ivyteam.ivy.environment.Ivy;
 
 @ManagedBean
@@ -69,7 +65,7 @@ public class MasterDataBean implements Serializable {
   private String processSelectionGroupId;
   private String pmvGroupId;
   private String roleSelectionGroupId;
-  private List<Process> availableProcesses;
+  private List<IvyProcess> availableProcesses;
 
   @PostConstruct
   public void init() {
@@ -95,7 +91,7 @@ public class MasterDataBean implements Serializable {
     selectedModule = persistedConfig.getWidgetSelectedModule();
     isMergeProcessStarts = BooleanUtils.isTrue(persistedConfig.getWidgetMergedProcessStart());
     isIncludingRunningCases = BooleanUtils.isTrue(persistedConfig.getWidgetIncludeRunningCase());
-    selectedPMV = getAvailablePMV().stream().filter(pmv -> Strings.CS.equals(pmv.getVersionName(), persistedConfig.getWidgetSelectedPmv()))
+    selectedPMV = getAvailablePMV().stream().filter(pmv -> Strings.CS.equals(pmv.getLibraryVersion(), persistedConfig.getWidgetSelectedPmv()))
         .findAny().orElse(null);
     availableProcesses = ProcessUtils.getAllProcessByModule(selectedModule, selectedPMV);
     String selectedKpiTypeName = persistedConfig.getWidgetSelectedKpi();
@@ -150,7 +146,7 @@ public class MasterDataBean implements Serializable {
         selectedKpiType.getCmsName().replaceAll(SPACE_DASH_REGEX, UNDERSCORE).replaceAll(MULTIPLE_UNDERSCORES_REGEX, UNDERSCORE);
     var startName =
         Optional.ofNullable(selectedProcessAnalyser)
-            .map(analyser -> isMergeProcessStarts ? Optional.ofNullable(analyser.getProcess()).map(Process::getName).orElse(EMPTY)
+            .map(analyser -> isMergeProcessStarts ? Optional.ofNullable(analyser.getProcess()).map(IvyProcess::getName).orElse(EMPTY)
                 : Optional.ofNullable(analyser.getStartElement()).map(StartElement::getName).orElse(EMPTY))
             .orElse(EMPTY);
     return String.format(ANALYSIS_EXCEL_FILE_PATTERN, formattedKpiTypeName, startName);
@@ -174,12 +170,12 @@ public class MasterDataBean implements Serializable {
     return group;
   }
 
-  private void addMergeProcessStart(Process process, List<SelectItem> processStartsSelection) {
+  private void addMergeProcessStart(IvyProcess process, List<SelectItem> processStartsSelection) {
     var processItem = new SelectItem(new ProcessAnalyser(process), process.getName(), process.getName());
     processStartsSelection.add(processItem);
   }
 
-  private void handleProcessStarts(Process process, List<SelectItem> processStartsSelection) {
+  private void handleProcessStarts(IvyProcess process, List<SelectItem> processStartsSelection) {
     if (process.getStartElements().size() == 1) {
       addSingleStartElement(process, processStartsSelection);
     } else {
@@ -187,7 +183,7 @@ public class MasterDataBean implements Serializable {
     }
   }
 
-  private void addSingleStartElement(Process process, List<SelectItem> processStartsSelection) {
+  private void addSingleStartElement(IvyProcess process, List<SelectItem> processStartsSelection) {
     var startElement = process.getStartElements().getFirst();
     var item = createNewProcessItemForDropdown(process, startElement);
 
@@ -197,7 +193,7 @@ public class MasterDataBean implements Serializable {
     processStartsSelection.add(item);
   }
 
-  private void addMultipleStartElements(Process process, List<SelectItem> processStartsSelection) {
+  private void addMultipleStartElements(IvyProcess process, List<SelectItem> processStartsSelection) {
     var group = new SelectItemGroup(process.getName());
     group.setValue(new ProcessAnalyser(process));
 
@@ -208,7 +204,7 @@ public class MasterDataBean implements Serializable {
     processStartsSelection.add(group);
   }
 
-  private SelectItem createNewProcessItemForDropdown(Process process, StartElement startElement) {
+  private SelectItem createNewProcessItemForDropdown(IvyProcess process, StartElement startElement) {
     var processStartElement = new ProcessAnalyser(process, startElement);
     String displayName = getStartElementDisplayName(startElement);
     var description = process.getName().concat(CoreConstants.SLASH).concat(displayName);
@@ -231,20 +227,16 @@ public class MasterDataBean implements Serializable {
     if (StringUtils.isEmpty(selectedModule)) {
       return List.of();
     }
-    Predicate<ILibrary> filterReleasedAndActivePmv = library -> {
-      IProcessModelVersion pmv = library.getProcessModelVersion();
-      ReleaseState pmvState = pmv.getReleaseState();
-      return pmv.getVersionName().contains(selectedModule) && (pmvState == ReleaseState.ARCHIVED
-          || pmvState == ReleaseState.RELEASED || pmvState == ReleaseState.DEPRECATED);
-    };
 
-    return IApplication.current().getLibraries().stream().filter(filterReleasedAndActivePmv)
-        .map(ILibrary::getProcessModelVersion).toList();
+    return IApplication.current().getProcessModelVersions()
+        .filter(Objects::nonNull)
+        .filter(IProcessModelVersion::isReady)
+        .toList();
   }
 
   private void resetDefaultPMV() {
     List<IProcessModelVersion> pmvs = getAvailablePMV().stream()
-        .filter(version -> version.getActivityState() == ActivityState.ACTIVE && version.getReleaseState() == ReleaseState.RELEASED)
+        // .filter(version -> version.isReady())
         .sorted(Comparator.comparing(IProcessModelVersion::getLastChangeDate).reversed()).toList();
     selectedPMV = ObjectUtils.isNotEmpty(pmvs) ? pmvs.get(0) : null;
   }
@@ -275,7 +267,7 @@ public class MasterDataBean implements Serializable {
 
   public void handlePmvChange() {
     if (isWidgetMode) {
-      ProcessesMonitorUtils.updateUserConfig(persistedConfig -> persistedConfig.setWidgetSelectedPmv(selectedPMV.getVersionName()));
+      ProcessesMonitorUtils.updateUserConfig(persistedConfig -> persistedConfig.setWidgetSelectedPmv(selectedPMV.getLibraryVersion()));
     }
     selectedProcessAnalyser = null;
     availableProcesses = ProcessUtils.getAllProcessByModule(selectedModule, selectedPMV);
@@ -308,13 +300,13 @@ public class MasterDataBean implements Serializable {
     if (selectedProcessAnalyser == null) {
       return null;
     }
-    String selectedProcessId = Optional.ofNullable(selectedProcessAnalyser.getProcess()).map(Process::getId).orElse(EMPTY);
+    String selectedProcessId = Optional.ofNullable(selectedProcessAnalyser.getProcess()).map(IvyProcess::getId).orElse(EMPTY);
     String selectedStartId = Optional.ofNullable(selectedProcessAnalyser.getStartElement()).map(StartElement::getPid).orElse(EMPTY);
     return isMergeProcessStarts ? selectedProcessId : String.join(HYPHEN_SIGN, selectedProcessId, selectedStartId);
   }
 
   public String getPmvLabel(IProcessModelVersion pmv) {
-    return Ivy.cms().co("/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Version", List.of(pmv.getVersionNumber()));
+    return Ivy.cms().co("/Dialogs/com/axonivy/solutions/process/analyser/ProcessesMonitor/Version", List.of(pmv.getLibraryVersion()));
   }
 
   public boolean isStatisticReportRenderable() {
@@ -357,11 +349,11 @@ public class MasterDataBean implements Serializable {
     this.selectedProcessAnalyser = selectedProcessAnalyser;
   }
 
-  public List<Process> getAvailableProcesses() {
+  public List<IvyProcess> getAvailableProcesses() {
     return availableProcesses;
   }
 
-  public void setAvailableProcesses(List<Process> availableProcesses) {
+  public void setAvailableProcesses(List<IvyProcess> availableProcesses) {
     this.availableProcesses = availableProcesses;
   }
 

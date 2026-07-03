@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.Strings;
 
-import com.axonivy.solutions.process.analyser.core.bo.Process;
+import com.axonivy.solutions.process.analyser.core.bo.IvyProcess;
 import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.RGB_REGEX_PATTERN;
 
@@ -37,7 +37,7 @@ public class BaseSetup {
   protected static final String REST_CALL_PID = "193485C5ABDFEA93-f3";
   protected static final String MULTI_INCOMINGS_ELEMENT_PID = "193485C5ABDFEA93-f14";
 
-  protected static Process testProcess;
+  protected static IvyProcess testProcess;
   protected static ProcessElement startProcessElement;
   protected static List<ProcessElement> testProcessElements;
   protected static SequenceFlow flowFromStartElement;

@@ -3,30 +3,30 @@ package com.axonivy.solutions.process.analyser.bo;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import com.axonivy.solutions.process.analyser.core.bo.Process;
+import com.axonivy.solutions.process.analyser.core.bo.IvyProcess;
 import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 
 public class ProcessAnalyser {
-  private Process process;
+  private IvyProcess process;
   private StartElement startElement;
   private String processKeyId;
 
   public ProcessAnalyser() { }
 
-  public ProcessAnalyser(Process process) {
+  public ProcessAnalyser(IvyProcess process) {
     this.process = process;
   }
 
-  public ProcessAnalyser(Process process, StartElement startElement) {
+  public ProcessAnalyser(IvyProcess process, StartElement startElement) {
     this.process = process;
     this.startElement = startElement;
   }
 
-  public Process getProcess() {
+  public IvyProcess getProcess() {
     return process;
   }
 
-  public void setProcess(Process process) {
+  public void setProcess(IvyProcess process) {
     this.process = process;
   }
 

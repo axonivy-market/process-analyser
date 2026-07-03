@@ -10,7 +10,7 @@ import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 
 import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
-import com.axonivy.solutions.process.analyser.core.bo.Process;
+import com.axonivy.solutions.process.analyser.core.bo.IvyProcess;
 import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 import com.axonivy.solutions.process.analyser.managedbean.MasterDataBean;
 import com.axonivy.solutions.process.analyser.utils.FacesContexts;
@@ -32,7 +32,7 @@ public class ProcessStartConverter implements Converter {
     }
     try {
       var masterDataBean = getMasterDataBean();
-      List<Process> processElements = masterDataBean.getAvailableProcesses();
+      List<IvyProcess> processElements = masterDataBean.getAvailableProcesses();
       return ProcessesMonitorUtils.mappingProcessAnalyzerByProcesses(processElements, masterDataBean.isMergeProcessStarts(), value);
     } catch (IllegalArgumentException e) {
       throw new ConverterException("Invalid ProcessStart: " + value, e);

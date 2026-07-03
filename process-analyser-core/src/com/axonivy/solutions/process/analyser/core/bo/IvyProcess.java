@@ -4,7 +4,7 @@ import java.util.List;
 
 import ch.ivyteam.ivy.application.IProcessModelVersion;
 
-public class Process {
+public class IvyProcess {
 
   private String id;
   private long pmvId;
@@ -15,9 +15,9 @@ public class Process {
   private String projectRelativePath;
   private List<StartElement> startElements;
 
-  public Process() { }
+  public IvyProcess() { }
 
-  public Process(String id, String name, List<StartElement> startElements) {
+  public IvyProcess(String id, String name, List<StartElement> startElements) {
     this.id = id;
     this.name = name;
     this.startElements = startElements;
