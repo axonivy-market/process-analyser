@@ -1,5 +1,23 @@
 package com.axonivy.solutions.process.analyser.utils;
 
+import static com.axonivy.solutions.process.analyser.enums.ElementType.ALTERNATIVE;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.CALL_SUB_END;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.CALL_SUB_START;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.ELEMENT;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.EMBEDDED_END;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.EMBEDDED_PROCESS_ELEMENT;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.EMBEDDED_START;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.REQUEST_START;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.REST_CLIENT_CALL;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.SCRIPT;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.SCRIPT_BPMN_ELEMENT;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.SERVICE_BPMN_ELEMENT;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.SIGNAL_START_EVENT;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.SUB_PROCESS_CALL;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.TASK_END;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.TASK_SWITCH_EVENT;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.TASK_SWITCH_GATEWAY;
+
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -7,24 +25,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.axonivy.solutions.process.analyser.bo.ElementDisplayName;
+import com.axonivy.solutions.process.analyser.enums.ElementType;
 import com.axonivy.solutions.process.analyser.internal.ProcessUtils;
-import static com.axonivy.solutions.process.analyser.utils.ElementType.ALTERNATIVE;
-import static com.axonivy.solutions.process.analyser.utils.ElementType.CALL_SUB_END;
-import static com.axonivy.solutions.process.analyser.utils.ElementType.CALL_SUB_START;
-import static com.axonivy.solutions.process.analyser.utils.ElementType.ELEMENT;
-import static com.axonivy.solutions.process.analyser.utils.ElementType.EMBEDDED_END;
-import static com.axonivy.solutions.process.analyser.utils.ElementType.EMBEDDED_PROCESS_ELEMENT;
-import static com.axonivy.solutions.process.analyser.utils.ElementType.EMBEDDED_START;
-import static com.axonivy.solutions.process.analyser.utils.ElementType.REQUEST_START;
-import static com.axonivy.solutions.process.analyser.utils.ElementType.REST_CLIENT_CALL;
-import static com.axonivy.solutions.process.analyser.utils.ElementType.SCRIPT;
-import static com.axonivy.solutions.process.analyser.utils.ElementType.SCRIPT_BPMN_ELEMENT;
-import static com.axonivy.solutions.process.analyser.utils.ElementType.SERVICE_BPMN_ELEMENT;
-import static com.axonivy.solutions.process.analyser.utils.ElementType.SIGNAL_START_EVENT;
-import static com.axonivy.solutions.process.analyser.utils.ElementType.SUB_PROCESS_CALL;
-import static com.axonivy.solutions.process.analyser.utils.ElementType.TASK_END;
-import static com.axonivy.solutions.process.analyser.utils.ElementType.TASK_SWITCH_EVENT;
-import static com.axonivy.solutions.process.analyser.utils.ElementType.TASK_SWITCH_GATEWAY;
 
 import ch.ivyteam.ivy.application.IProcessModelVersion;
 import ch.ivyteam.ivy.process.model.element.EmbeddedProcessElement;
