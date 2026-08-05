@@ -1,7 +1,5 @@
 package com.axonivy.solutions.process.analyser.resolver;
 
-import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.SLASH;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -15,9 +13,10 @@ import org.apache.commons.lang3.Strings;
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.Path;
 import com.axonivy.solutions.process.analyser.bo.TaskPath;
-import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
-import com.axonivy.solutions.process.analyser.core.util.PIDUtils;
+import static com.axonivy.solutions.process.analyser.constants.CoreConstants.SLASH;
 import com.axonivy.solutions.process.analyser.enums.PathStatus;
+import com.axonivy.solutions.process.analyser.internal.ProcessUtils;
+import com.axonivy.solutions.process.analyser.utils.PIDUtils;
 
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.EmbeddedProcessElement;
@@ -29,7 +28,6 @@ import ch.ivyteam.ivy.workflow.ITask;
 import ch.ivyteam.ivy.workflow.ITaskElement;
 import ch.ivyteam.ivy.workflow.ITaskSwitchEvent;
 
-@SuppressWarnings("restriction")
 public class NodeFrequencyResolver {
   private static final Pattern SEQUENCE_FLOW_CONDITION_PATTERN = Pattern.compile("ivp==\\\"([^\\\"]+)\\\"");
   private List<Node> nodes;
@@ -351,7 +349,7 @@ public class NodeFrequencyResolver {
       String currentFlowPid) {
     return switch (element) {
     case EmbeddedProcessElement embedded -> ProcessUtils.getEmbeddedStartConnectToFlow(embedded, currentFlowPid);
-    case CallSubEnd callSubEnd -> element;
+    case CallSubEnd _ -> element;
     case SubProcessCall subProcess -> ProcessUtils.getStartElementFromSubProcessCall(subProcess);
     case EmbeddedEnd embeddedEnd -> {
       SequenceFlow outerFlow = embeddedEnd.getConnectedOuterSequenceFlow();

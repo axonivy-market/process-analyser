@@ -1,12 +1,13 @@
 package com.axonivy.solutions.process.analyser.demo.managedbean;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -16,9 +17,9 @@ import ch.ivyteam.ivy.security.IRole;
 import ch.ivyteam.ivy.security.IUser;
 import ch.ivyteam.ivy.security.exec.Sudo;
 
-@ManagedBean
+@Named
 @ViewScoped
-public class PlanningFlightBean {
+public class PlanningFlightBean implements Serializable {
 
 	private Map<String, String> aircrafts;
 	private Map<String, String> pilots;

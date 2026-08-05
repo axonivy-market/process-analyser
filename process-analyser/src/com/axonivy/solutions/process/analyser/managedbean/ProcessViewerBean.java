@@ -4,24 +4,24 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PF;
 
+import com.axonivy.solutions.process.analyser.bo.ElementDisplayName;
+import com.axonivy.solutions.process.analyser.bo.IvyProcess;
 import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
 import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
-import com.axonivy.solutions.process.analyser.core.bo.ElementDisplayName;
-import com.axonivy.solutions.process.analyser.core.bo.IvyProcess;
 import com.axonivy.solutions.process.analyser.constants.AnalyserConstants;
-import com.axonivy.solutions.process.analyser.core.internal.ProcessViewerBuilder;
-import com.axonivy.solutions.process.analyser.core.util.ProcessElementUtils;
+import com.axonivy.solutions.process.analyser.internal.ProcessViewerBuilder;
+import com.axonivy.solutions.process.analyser.utils.ProcessElementUtils;
 
 import ch.ivyteam.ivy.environment.Ivy;
 
-@ManagedBean
+@Named
 @ViewScoped
 public class ProcessViewerBean implements Serializable {
 

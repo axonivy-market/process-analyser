@@ -11,14 +11,14 @@ import org.junit.jupiter.api.Test;
 import org.primefaces.model.TreeNode;
 
 import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
+import com.axonivy.solutions.process.analyser.bo.IvyProcess;
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
+import com.axonivy.solutions.process.analyser.bo.StartElement;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
-import com.axonivy.solutions.process.analyser.core.bo.IvyProcess;
-import com.axonivy.solutions.process.analyser.core.bo.StartElement;
-import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
+import com.axonivy.solutions.process.analyser.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.resolver.NodeResolver;
 import com.axonivy.solutions.process.analyser.test.BaseSetup;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;

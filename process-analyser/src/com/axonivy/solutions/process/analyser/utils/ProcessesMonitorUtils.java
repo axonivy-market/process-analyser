@@ -1,7 +1,5 @@
 package com.axonivy.solutions.process.analyser.utils;
 
-import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.PROCESS_ANALYTIC_PERSISTED_CONFIG;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
@@ -24,21 +22,21 @@ import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
 import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
+import com.axonivy.solutions.process.analyser.bo.IvyProcess;
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
 import com.axonivy.solutions.process.analyser.bo.ProcessViewerConfig;
+import com.axonivy.solutions.process.analyser.bo.StartElement;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
-import com.axonivy.solutions.process.analyser.core.bo.IvyProcess;
-import com.axonivy.solutions.process.analyser.core.bo.StartElement;
 import com.axonivy.solutions.process.analyser.constants.AnalyserConstants;
-import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
-import com.axonivy.solutions.process.analyser.core.util.ProcessElementUtils;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.PROCESS_ANALYTIC_PERSISTED_CONFIG;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
+import com.axonivy.solutions.process.analyser.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.resolver.NodeFrequencyResolver;
 import com.axonivy.solutions.process.analyser.resolver.NodeResolver;
 
-import ch.ivyteam.ivy.application.IProcessModelVersion;
+import ch.ivyteam.ivy.application.project.Project;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
@@ -49,7 +47,6 @@ import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 import ch.ivyteam.ivy.workflow.query.CaseQuery;
 import ch.ivyteam.ivy.workflow.query.TaskQuery;
 
-@SuppressWarnings("restriction")
 public class ProcessesMonitorUtils {
   private static final String KEY_SEPARATOR = ":::";
 
@@ -101,7 +98,7 @@ public class ProcessesMonitorUtils {
     return NodeResolver.updateNodeByAnalysisType(nodes, analysisType);
   }
 
-  private static List<ProcessElement> collectProcessElementForProcess(IProcessModelVersion pmv, String processId,
+  private static List<ProcessElement> collectProcessElementForProcess(Project pmv, String processId,
       String startElementPID) {
     List<ProcessElement> processElements = ProcessUtils.getProcessElementsFrom(processId, pmv);
     ProcessElementUtils.removeAnotherStartElementsBySelectedStartPID(processElements, startElementPID);
@@ -200,7 +197,7 @@ public class ProcessesMonitorUtils {
     } else if (durationKpiType.isDescendantOf(KpiType.DURATION_WORKING)) {
       return task -> task.getWorkingTime().toNumber();
     }
-    return task -> 0L;
+    return _ -> 0L;
   }
 
   private static long getOverallDuration(ITask task) {
@@ -411,14 +408,14 @@ public class ProcessesMonitorUtils {
 
   public static TreeNode<Object> buildTreeFromNodes(List<Node> filteredNodes) {
     if (CollectionUtils.isEmpty(filteredNodes)) {
-      return new DefaultTreeNode<Object>();
+      return new DefaultTreeNode<>();
     }
     
     Map<String, TreeNode<Object>> nodeMap = new HashMap<>();
-    TreeNode<Object> root = new DefaultTreeNode<Object>();
+    TreeNode<Object> root = new DefaultTreeNode<>();
     
     for (Node node : filteredNodes) {
-      TreeNode<Object> treeNode = new DefaultTreeNode<Object>(node, null);
+      TreeNode<Object> treeNode = new DefaultTreeNode<>(node, null);
       treeNode.setExpanded(true);
       nodeMap.put(node.getId(), treeNode);
     }

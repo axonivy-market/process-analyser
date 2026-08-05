@@ -3,7 +3,7 @@ package com.axonivy.solutions.process.analyser.managedbean;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.COLOR_SEGMENT_ATTRIBUTE;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.GRADIENT_COLOR_LEVELS;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.HYPHEN_REGEX;
-import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.HYPHEN_SIGN;
+import static com.axonivy.solutions.process.analyser.constants.CoreConstants.HYPHEN_SIGN;
 import static com.axonivy.solutions.process.analyser.enums.KpiType.FREQUENCY;
 
 import java.io.Serializable;
@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.faces.event.ActionEvent;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.faces.event.ActionEvent;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -26,7 +26,7 @@ import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.utils.ColorUtils;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 
-@ManagedBean
+@Named
 @ViewScoped
 public class ColorPickerBean implements Serializable {
 

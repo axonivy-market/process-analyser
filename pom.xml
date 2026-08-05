@@ -7,7 +7,6 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>process-analyser-core</module>
     <module>process-analyser</module>
     <module>process-analyser-demo</module>
     <module>process-analyser-internal-support</module>

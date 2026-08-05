@@ -10,10 +10,10 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.constants.AnalyserConstants;
-import com.axonivy.solutions.process.analyser.core.constants.CoreConstants;
-import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
+import com.axonivy.solutions.process.analyser.constants.CoreConstants;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
+import com.axonivy.solutions.process.analyser.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.utils.DateUtils;
 
 import ch.ivyteam.ivy.process.model.BaseElement;
@@ -24,7 +24,6 @@ import ch.ivyteam.ivy.process.model.element.event.start.RequestStart;
 import ch.ivyteam.ivy.process.model.element.gateway.TaskSwitchGateway;
 import ch.ivyteam.ivy.process.model.value.PID;
 
-@SuppressWarnings("restriction")
 public class NodeResolver {
 
   public static List<Node> convertToNodes(List<ProcessElement> processElements, List<SequenceFlow> sequenceFlows) {
