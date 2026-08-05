@@ -1,5 +1,13 @@
 package com.axonivy.solutions.process.analyser.utils;
 
+import java.util.List;
+import java.util.function.Predicate;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import com.axonivy.solutions.process.analyser.bo.ElementDisplayName;
+import com.axonivy.solutions.process.analyser.enums.ElementType;
 import static com.axonivy.solutions.process.analyser.enums.ElementType.ALTERNATIVE;
 import static com.axonivy.solutions.process.analyser.enums.ElementType.CALL_SUB_END;
 import static com.axonivy.solutions.process.analyser.enums.ElementType.CALL_SUB_START;
@@ -17,18 +25,9 @@ import static com.axonivy.solutions.process.analyser.enums.ElementType.SUB_PROCE
 import static com.axonivy.solutions.process.analyser.enums.ElementType.TASK_END;
 import static com.axonivy.solutions.process.analyser.enums.ElementType.TASK_SWITCH_EVENT;
 import static com.axonivy.solutions.process.analyser.enums.ElementType.TASK_SWITCH_GATEWAY;
-
-import java.util.List;
-import java.util.function.Predicate;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import com.axonivy.solutions.process.analyser.bo.ElementDisplayName;
-import com.axonivy.solutions.process.analyser.enums.ElementType;
 import com.axonivy.solutions.process.analyser.internal.ProcessUtils;
 
-import ch.ivyteam.ivy.application.IProcessModelVersion;
+import ch.ivyteam.ivy.application.project.Project;
 import ch.ivyteam.ivy.process.model.element.EmbeddedProcessElement;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.element.activity.RestClientCall;
@@ -56,7 +55,7 @@ public class ProcessElementUtils {
 
   private ProcessElementUtils() { }
 
-  public static List<ElementDisplayName> listAllProcessElementAsRawPID(IProcessModelVersion pmv, String processId,
+  public static List<ElementDisplayName> listAllProcessElementAsRawPID(Project pmv, String processId,
       String startElementPID) {
     List<ProcessElement> processElements = ProcessUtils.getProcessElementsFrom(processId, pmv);
     removeAnotherStartElementsBySelectedStartPID(processElements, startElementPID);

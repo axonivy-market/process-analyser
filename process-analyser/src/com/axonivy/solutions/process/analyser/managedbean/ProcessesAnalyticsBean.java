@@ -1,5 +1,7 @@
 package com.axonivy.solutions.process.analyser.managedbean;
 
+import java.io.Serializable;
+
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.DATA_CMS_PATH;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.EN_CMS_LOCALE;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.FROM;
@@ -14,10 +16,10 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.faces.context.FacesContext;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -44,16 +46,16 @@ import com.axonivy.solutions.process.analyser.utils.FacesContexts;
 import com.axonivy.solutions.process.analyser.utils.JacksonUtils;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 
-import ch.ivyteam.ivy.application.IApplication;
+import ch.ivyteam.ivy.application.app.Application;
 import ch.ivyteam.ivy.cm.ContentObject;
 import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.security.ISecurityConstants;
 import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.ITask;
 
-@ManagedBean
+@Named
 @ViewScoped
-public class ProcessesAnalyticsBean {
+public class ProcessesAnalyticsBean implements Serializable {
   private static final String SUB_PROCESS_CALL_PID_PARAM_NAME = "subProcessCallPid";
   private List<Node> analyzedNode;
   private List<Node> filteredNodes;
@@ -90,7 +92,7 @@ public class ProcessesAnalyticsBean {
   private void initDefaultVariableValue() {
     var isWidgetModeValue = FacesContexts.evaluateValueExpression("#{data.isWidgetMode}", Boolean.class);
     isWidgetMode = BooleanUtils.isTrue(isWidgetModeValue);
-    processMiningDataJsonFile = ContentManagement.cms(IApplication.current()).root().child().folder(PROCESS_ANALYSER_CMS_PATH).child()
+    processMiningDataJsonFile = ContentManagement.cms(Application.current()).root().child().folder(PROCESS_ANALYSER_CMS_PATH).child()
         .file(DATA_CMS_PATH, JSON_EXTENSION);
     miningUrl = processMiningDataJsonFile.uri();
     timeIntervalFilter = TimeIntervalFilter.getDefaultFilterSet();
@@ -181,12 +183,12 @@ public class ProcessesAnalyticsBean {
     }
   }
 
-  public void onPmvSelect() {
-    masterDataBean.handlePmvChange();
-    if (!isWidgetMode) {
-      refreshAnalyzedData();
-    }
-  }
+  // public void onPmvSelect() {
+  //   masterDataBean.handlePmvChange();
+  //   if (!isWidgetMode) {
+  //     refreshAnalyzedData();
+  //   }
+  // }
 
   public void onProcessSelect() {
     masterDataBean.handleProcessChange();

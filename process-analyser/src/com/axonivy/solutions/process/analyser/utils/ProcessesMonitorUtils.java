@@ -1,7 +1,5 @@
 package com.axonivy.solutions.process.analyser.utils;
 
-import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.PROCESS_ANALYTIC_PERSISTED_CONFIG;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
@@ -31,13 +29,14 @@ import com.axonivy.solutions.process.analyser.bo.ProcessViewerConfig;
 import com.axonivy.solutions.process.analyser.bo.StartElement;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.constants.AnalyserConstants;
+import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.PROCESS_ANALYTIC_PERSISTED_CONFIG;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
 import com.axonivy.solutions.process.analyser.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.resolver.NodeFrequencyResolver;
 import com.axonivy.solutions.process.analyser.resolver.NodeResolver;
 
-import ch.ivyteam.ivy.application.IProcessModelVersion;
+import ch.ivyteam.ivy.application.project.Project;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
@@ -99,7 +98,7 @@ public class ProcessesMonitorUtils {
     return NodeResolver.updateNodeByAnalysisType(nodes, analysisType);
   }
 
-  private static List<ProcessElement> collectProcessElementForProcess(IProcessModelVersion pmv, String processId,
+  private static List<ProcessElement> collectProcessElementForProcess(Project pmv, String processId,
       String startElementPID) {
     List<ProcessElement> processElements = ProcessUtils.getProcessElementsFrom(processId, pmv);
     ProcessElementUtils.removeAnotherStartElementsBySelectedStartPID(processElements, startElementPID);
@@ -409,14 +408,14 @@ public class ProcessesMonitorUtils {
 
   public static TreeNode<Object> buildTreeFromNodes(List<Node> filteredNodes) {
     if (CollectionUtils.isEmpty(filteredNodes)) {
-      return new DefaultTreeNode<Object>();
+      return new DefaultTreeNode<>();
     }
     
     Map<String, TreeNode<Object>> nodeMap = new HashMap<>();
-    TreeNode<Object> root = new DefaultTreeNode<Object>();
+    TreeNode<Object> root = new DefaultTreeNode<>();
     
     for (Node node : filteredNodes) {
-      TreeNode<Object> treeNode = new DefaultTreeNode<Object>(node, null);
+      TreeNode<Object> treeNode = new DefaultTreeNode<>(node, null);
       treeNode.setExpanded(true);
       nodeMap.put(node.getId(), treeNode);
     }

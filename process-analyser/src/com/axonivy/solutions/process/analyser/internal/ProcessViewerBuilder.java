@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.ws.rs.core.UriBuilder;
-
 import org.apache.commons.lang3.StringUtils;
 
 import static com.axonivy.solutions.process.analyser.constants.CoreConstants.AND;
@@ -25,10 +23,11 @@ import static com.axonivy.solutions.process.analyser.enums.ViewerParam.SERVER;
 import static com.axonivy.solutions.process.analyser.enums.ViewerParam.VIEW;
 import static com.axonivy.solutions.process.analyser.enums.ViewerParam.ZOOM;
 
-import ch.ivyteam.ivy.application.IApplication;
-import ch.ivyteam.ivy.application.IProcessModelVersion;
+import ch.ivyteam.ivy.application.app.Application;
+import ch.ivyteam.ivy.application.project.Project;
 import ch.ivyteam.ivy.htmldialog.IHtmlDialogContext;
 import ch.ivyteam.ivy.security.ISecurityContext;
+import jakarta.ws.rs.core.UriBuilder;
 
 public class ProcessViewerBuilder {
 
@@ -37,10 +36,10 @@ public class ProcessViewerBuilder {
   private final String contextPath;
 
   public ProcessViewerBuilder() {
-    IApplication application = IApplication.current();
-    contextPath = application.getContextPath();
+    Application application = Application.current();
+    contextPath = application.contextPath();
     setQueryParam(SERVER, detectServerParam());
-    setQueryParam(APP, application.getName());
+    setQueryParam(APP, application.name());
   }
 
   private String detectServerParam() {
@@ -76,7 +75,7 @@ public class ProcessViewerBuilder {
     var uriBuilder = UriBuilder.fromPath(contextPath)
         .path(FACES.getValue())
         .path(VIEW.getValue())
-        .path(IProcessModelVersion.current().project().name())
+        .path(Project.current().name())
         .path(PROCESS_MINER_FILE.getValue());
     // Build URI with template e.g /uri/param={param}
     List<String> queryParamKeys = queryParams.keySet().stream()

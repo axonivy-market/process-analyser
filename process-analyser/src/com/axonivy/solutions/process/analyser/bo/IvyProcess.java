@@ -2,14 +2,14 @@ package com.axonivy.solutions.process.analyser.bo;
 
 import java.util.List;
 
-import ch.ivyteam.ivy.application.IProcessModelVersion;
+import ch.ivyteam.ivy.application.project.Project;
 
 public class IvyProcess {
 
   private String id;
   private long pmvId;
   private String pmvName;
-  private IProcessModelVersion pmv;
+  private Project pmv;
   private String requestPath;
   private String name;
   private String projectRelativePath;
@@ -47,11 +47,11 @@ public class IvyProcess {
     this.pmvName = pmvName;
   }
 
-  public IProcessModelVersion getPmv() {
+  public Project getPmv() {
     return pmv;
   }
 
-  public void setPmv(IProcessModelVersion pmv) {
+  public void setPmv(Project pmv) {
     this.pmv = pmv;
   }
 
