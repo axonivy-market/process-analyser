@@ -50,6 +50,7 @@ public class BaseSetup {
   protected static Project testPMV;
   
   protected static void prepareData() {
+    // TODO Consider to refactor this property due to PMV has not available anymore
     testPMV = Application.current().projects().all().toList().get(0);
     testProcess = ProcessUtils.getAllProcesses().stream()
         .filter(start -> Strings.CS.contains(start.getName(), TEST_PROCESS_NAME)).findAny().orElse(null);

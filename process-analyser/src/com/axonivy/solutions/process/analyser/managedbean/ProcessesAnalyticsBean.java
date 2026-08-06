@@ -183,12 +183,15 @@ public class ProcessesAnalyticsBean implements Serializable {
     }
   }
 
-  // public void onPmvSelect() {
-  //   masterDataBean.handlePmvChange();
-  //   if (!isWidgetMode) {
-  //     refreshAnalyzedData();
-  //   }
-  // }
+  // TODO Consider to remove PMV option due to PMV has not available anymore
+  /**
+  public void onPmvSelect() {
+    masterDataBean.handlePmvChange();
+    if (!isWidgetMode) {
+      refreshAnalyzedData();
+    }
+  }
+  */
 
   public void onProcessSelect() {
     masterDataBean.handleProcessChange();
