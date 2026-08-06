@@ -1,14 +1,5 @@
 {
   "$schema" : "https://json-schema.axonivy.com/14.0-dev/project/data-class.json",
   "simpleName" : "TestSupportData",
-<<<<<<< HEAD
-  "namespace" : "process.analyser.internal.support",
-  "fields" : [ {
-    "name" : "newAttribute",
-    "comment" : "For testing",
-    "modifiers" : [ ]
-  } ]
-=======
   "namespace" : "process.analyser.internal.support"
->>>>>>> dev/14.0
 }
