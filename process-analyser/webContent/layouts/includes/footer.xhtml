@@ -11,7 +11,8 @@
 			<h:outputText value="Powered by " />
 			<h:outputLink value="https://developer.axonivy.com/">#{ivyAdvisor.applicationName}</h:outputLink>
 			<h:outputText value=" #{ivyAdvisor.buildVersion}" />
-			<h:outputText value=" - #{ivyAdvisor.copyrightHtml}" escape="false" />
+			<h:outputText value=" - &#169; #{ivyAdvisor.vendorYear}-#{ivyAdvisor.currentYear} " />
+			<h:outputLink value="#{ivyAdvisor.vendorUrl}">#{ivyAdvisor.vendorName}</h:outputLink>
 		</div>
 	</ui:composition>
 </body>
