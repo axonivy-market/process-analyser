@@ -3,22 +3,24 @@ package com.axonivy.solutions.process.analyser.converter;
 import java.util.List;
 import java.util.Optional;
 
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
-import javax.faces.convert.FacesConverter;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.Converter;
+import jakarta.faces.convert.ConverterException;
+import jakarta.faces.convert.FacesConverter;
 
+import com.axonivy.solutions.process.analyser.bo.IvyProcess;
 import com.axonivy.solutions.process.analyser.bo.ProcessAnalyser;
-import com.axonivy.solutions.process.analyser.core.bo.Process;
-import com.axonivy.solutions.process.analyser.core.bo.StartElement;
+import com.axonivy.solutions.process.analyser.bo.StartElement;
 import com.axonivy.solutions.process.analyser.managedbean.MasterDataBean;
 import com.axonivy.solutions.process.analyser.utils.FacesContexts;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
+import jakarta.enterprise.context.ApplicationScoped;
 
 
-@FacesConverter("processStartConverter")
-public class ProcessStartConverter implements Converter {
+@FacesConverter(value = "processStartConverter", managed = true)
+@ApplicationScoped
+public class ProcessStartConverter implements Converter<Object> {
   // Pattern contains: Module:::Process:::Start
   private static final String PROCESS_ID_PATTERN = "%s:::%s:::%s";
 
@@ -32,7 +34,7 @@ public class ProcessStartConverter implements Converter {
     }
     try {
       var masterDataBean = getMasterDataBean();
-      List<Process> processElements = masterDataBean.getAvailableProcesses();
+      List<IvyProcess> processElements = masterDataBean.getAvailableProcesses();
       return ProcessesMonitorUtils.mappingProcessAnalyzerByProcesses(processElements, masterDataBean.isMergeProcessStarts(), value);
     } catch (IllegalArgumentException e) {
       throw new ConverterException("Invalid ProcessStart: " + value, e);

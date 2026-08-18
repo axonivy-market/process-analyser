@@ -4,17 +4,17 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.el.ELContext;
-import javax.el.ELException;
-import javax.el.ExpressionFactory;
-import javax.el.MethodExpression;
-import javax.faces.application.Application;
-import javax.faces.application.FacesMessage;
-import javax.faces.application.FacesMessage.Severity;
-import javax.faces.component.UIComponent;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.faces.event.AjaxBehaviorEvent;
+import jakarta.el.ELContext;
+import jakarta.el.ELException;
+import jakarta.el.ExpressionFactory;
+import jakarta.el.MethodExpression;
+import jakarta.faces.application.Application;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.application.FacesMessage.Severity;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.ExternalContext;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.AjaxBehaviorEvent;
 
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -136,7 +136,7 @@ public final class FacesContexts {
 
   public static UIComponent findComponentByClientId(final String clientId) {
     boolean isFoundComponent = getCurrentInstance().getViewRoot().invokeOnComponent(getCurrentInstance(), clientId,
-        (context, component) -> {
+        (_, component) -> {
           foundComponent = component;
         });
     if (isFoundComponent) {

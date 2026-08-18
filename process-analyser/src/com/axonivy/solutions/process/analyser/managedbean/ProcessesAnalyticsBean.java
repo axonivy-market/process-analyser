@@ -1,5 +1,7 @@
 package com.axonivy.solutions.process.analyser.managedbean;
 
+import java.io.Serializable;
+
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.DATA_CMS_PATH;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.EN_CMS_LOCALE;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.FROM;
@@ -14,10 +16,10 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.faces.context.FacesContext;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -30,30 +32,30 @@ import org.primefaces.model.TreeNode;
 import com.axonivy.solutions.process.analyser.bo.CustomFieldFilter;
 import com.axonivy.solutions.process.analyser.bo.Node;
 import com.axonivy.solutions.process.analyser.bo.ProcessMiningData;
+import com.axonivy.solutions.process.analyser.bo.StartElement;
 import com.axonivy.solutions.process.analyser.bo.TimeFrame;
 import com.axonivy.solutions.process.analyser.bo.TimeIntervalFilter;
 import com.axonivy.solutions.process.analyser.constants.AnalyserConstants;
 import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewComponentId;
-import com.axonivy.solutions.process.analyser.core.bo.StartElement;
-import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.enums.NodeType;
+import com.axonivy.solutions.process.analyser.internal.ProcessUtils;
 import com.axonivy.solutions.process.analyser.service.IvyTaskOccurrenceService;
 import com.axonivy.solutions.process.analyser.utils.DateUtils;
 import com.axonivy.solutions.process.analyser.utils.FacesContexts;
 import com.axonivy.solutions.process.analyser.utils.JacksonUtils;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 
-import ch.ivyteam.ivy.application.IApplication;
+import ch.ivyteam.ivy.application.app.Application;
 import ch.ivyteam.ivy.cm.ContentObject;
 import ch.ivyteam.ivy.cm.exec.ContentManagement;
 import ch.ivyteam.ivy.security.ISecurityConstants;
 import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.ITask;
 
-@ManagedBean
+@Named
 @ViewScoped
-public class ProcessesAnalyticsBean {
+public class ProcessesAnalyticsBean implements Serializable {
   private static final String SUB_PROCESS_CALL_PID_PARAM_NAME = "subProcessCallPid";
   private List<Node> analyzedNode;
   private List<Node> filteredNodes;
@@ -90,7 +92,7 @@ public class ProcessesAnalyticsBean {
   private void initDefaultVariableValue() {
     var isWidgetModeValue = FacesContexts.evaluateValueExpression("#{data.isWidgetMode}", Boolean.class);
     isWidgetMode = BooleanUtils.isTrue(isWidgetModeValue);
-    processMiningDataJsonFile = ContentManagement.cms(IApplication.current()).root().child().folder(PROCESS_ANALYSER_CMS_PATH).child()
+    processMiningDataJsonFile = ContentManagement.cms(Application.current()).root().child().folder(PROCESS_ANALYSER_CMS_PATH).child()
         .file(DATA_CMS_PATH, JSON_EXTENSION);
     miningUrl = processMiningDataJsonFile.uri();
     timeIntervalFilter = TimeIntervalFilter.getDefaultFilterSet();
@@ -181,12 +183,15 @@ public class ProcessesAnalyticsBean {
     }
   }
 
+  // TODO Consider to remove PMV option due to PMV has not available anymore
+  /**
   public void onPmvSelect() {
     masterDataBean.handlePmvChange();
     if (!isWidgetMode) {
       refreshAnalyzedData();
     }
   }
+  */
 
   public void onProcessSelect() {
     masterDataBean.handleProcessChange();
@@ -281,7 +286,8 @@ public class ProcessesAnalyticsBean {
       if (CollectionUtils.isNotEmpty(cases)) {
         String role = masterDataBean.getSelectedRole();
         List<ITask> tasks = cases.stream().flatMap(ivyCase -> ivyCase.tasks().all().stream())
-            .filter(task -> isTaskMatchRoleFilter(task.getActivatorName(), role)).toList();
+            // TODO Need to verify task.responsibles().displayName() value with getActivatorName()
+            .filter(task -> isTaskMatchRoleFilter(task.responsibles().displayName(), role)).toList();
         customFilterBean.setCustomFieldsByType(
             IvyTaskOccurrenceService.getCaseAndTaskCustomFields(tasks, customFilterBean.getCustomFieldsByType()));
         analyzedNode = ProcessesMonitorUtils.filterInitialStatisticByIntervalTime(selectedProcessAnalyser,

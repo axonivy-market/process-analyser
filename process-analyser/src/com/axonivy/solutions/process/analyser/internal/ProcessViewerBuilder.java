@@ -1,8 +1,4 @@
-package com.axonivy.solutions.process.analyser.core.internal;
-
-import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.AND;
-import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.SLASH;
-import static com.axonivy.solutions.process.analyser.core.enums.ViewerParam.*;
+package com.axonivy.solutions.process.analyser.internal;
 
 import java.net.URI;
 import java.util.Comparator;
@@ -11,16 +7,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import jakarta.ws.rs.core.UriBuilder;
-
 import org.apache.commons.lang3.StringUtils;
 
-import com.axonivy.solutions.process.analyser.core.enums.ViewerParam;
+import static com.axonivy.solutions.process.analyser.constants.CoreConstants.AND;
+import static com.axonivy.solutions.process.analyser.constants.CoreConstants.SLASH;
+import com.axonivy.solutions.process.analyser.enums.ViewerParam;
+import static com.axonivy.solutions.process.analyser.enums.ViewerParam.APP;
+import static com.axonivy.solutions.process.analyser.enums.ViewerParam.FACES;
+import static com.axonivy.solutions.process.analyser.enums.ViewerParam.FILE;
+import static com.axonivy.solutions.process.analyser.enums.ViewerParam.HIGHLIGHT;
+import static com.axonivy.solutions.process.analyser.enums.ViewerParam.PMV;
+import static com.axonivy.solutions.process.analyser.enums.ViewerParam.PROCESS_MINER_FILE;
+import static com.axonivy.solutions.process.analyser.enums.ViewerParam.SELECT;
+import static com.axonivy.solutions.process.analyser.enums.ViewerParam.SERVER;
+import static com.axonivy.solutions.process.analyser.enums.ViewerParam.VIEW;
+import static com.axonivy.solutions.process.analyser.enums.ViewerParam.ZOOM;
 
-import ch.ivyteam.ivy.application.IApplication;
-import ch.ivyteam.ivy.application.IProcessModel;
+import ch.ivyteam.ivy.application.app.Application;
+import ch.ivyteam.ivy.application.project.Project;
 import ch.ivyteam.ivy.htmldialog.IHtmlDialogContext;
 import ch.ivyteam.ivy.security.ISecurityContext;
+import jakarta.ws.rs.core.UriBuilder;
 
 public class ProcessViewerBuilder {
 
@@ -29,10 +36,10 @@ public class ProcessViewerBuilder {
   private final String contextPath;
 
   public ProcessViewerBuilder() {
-    IApplication application = IApplication.current();
-    contextPath = application.getContextPath();
+    Application application = Application.current();
+    contextPath = application.contextPath();
     setQueryParam(SERVER, detectServerParam());
-    setQueryParam(APP, application.getName());
+    setQueryParam(APP, application.name());
   }
 
   private String detectServerParam() {
@@ -68,7 +75,7 @@ public class ProcessViewerBuilder {
     var uriBuilder = UriBuilder.fromPath(contextPath)
         .path(FACES.getValue())
         .path(VIEW.getValue())
-        .path(IProcessModel.current().getName())
+        .path(Project.current().name())
         .path(PROCESS_MINER_FILE.getValue());
     // Build URI with template e.g /uri/param={param}
     List<String> queryParamKeys = queryParams.keySet().stream()
@@ -87,7 +94,7 @@ public class ProcessViewerBuilder {
   }
 
   private ProcessViewerBuilder addQueryParam(ViewerParam param, String value) {
-    queryParams.compute(param, (key, val) -> {
+    queryParams.compute(param, (_, val) -> {
       return StringUtils.isBlank(val) ? value : val.concat(AND).concat(value);
     });
     return this;

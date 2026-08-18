@@ -1,6 +1,6 @@
-package com.axonivy.solutions.process.analyser.core.bo;
+package com.axonivy.solutions.process.analyser.bo;
 
-import com.axonivy.solutions.process.analyser.core.enums.ElementType;
+import com.axonivy.solutions.process.analyser.enums.ElementType;
 
 public class ElementDisplayName {
   private String pid;

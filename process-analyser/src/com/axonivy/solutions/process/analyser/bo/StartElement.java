@@ -1,6 +1,6 @@
-package com.axonivy.solutions.process.analyser.core.bo;
+package com.axonivy.solutions.process.analyser.bo;
 
-import com.axonivy.solutions.process.analyser.core.enums.StartElementType;
+import com.axonivy.solutions.process.analyser.enums.StartElementType;
 
 public class StartElement {
   private Long taskStartId;

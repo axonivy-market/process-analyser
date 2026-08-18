@@ -1,4 +1,4 @@
-package com.axonivy.solutions.process.analyser.core.enums;
+package com.axonivy.solutions.process.analyser.enums;
 
 public enum ViewerParam {
   FACES("faces"), VIEW("view"), SERVER("server"), APP("app"), PMV("pmv"), FILE("file"), HIGHLIGHT("highlight"),

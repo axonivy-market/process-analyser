@@ -7,9 +7,9 @@ import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.stream.DoubleStream;
 
-import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,7 +22,7 @@ import com.axonivy.solutions.process.analyser.constants.ProcessAnalyticViewCompo
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.workflow.custom.field.CustomFieldType;
 
-@ManagedBean
+@Named
 @ViewScoped
 public class CustomFilterBean implements Serializable {
 

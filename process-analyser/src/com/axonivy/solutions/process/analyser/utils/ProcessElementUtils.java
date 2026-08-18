@@ -1,22 +1,4 @@
-package com.axonivy.solutions.process.analyser.core.util;
-
-import static com.axonivy.solutions.process.analyser.core.enums.ElementType.ALTERNATIVE;
-import static com.axonivy.solutions.process.analyser.core.enums.ElementType.CALL_SUB_END;
-import static com.axonivy.solutions.process.analyser.core.enums.ElementType.CALL_SUB_START;
-import static com.axonivy.solutions.process.analyser.core.enums.ElementType.ELEMENT;
-import static com.axonivy.solutions.process.analyser.core.enums.ElementType.EMBEDDED_END;
-import static com.axonivy.solutions.process.analyser.core.enums.ElementType.EMBEDDED_PROCESS_ELEMENT;
-import static com.axonivy.solutions.process.analyser.core.enums.ElementType.EMBEDDED_START;
-import static com.axonivy.solutions.process.analyser.core.enums.ElementType.REQUEST_START;
-import static com.axonivy.solutions.process.analyser.core.enums.ElementType.REST_CLIENT_CALL;
-import static com.axonivy.solutions.process.analyser.core.enums.ElementType.SCRIPT;
-import static com.axonivy.solutions.process.analyser.core.enums.ElementType.SCRIPT_BPMN_ELEMENT;
-import static com.axonivy.solutions.process.analyser.core.enums.ElementType.SERVICE_BPMN_ELEMENT;
-import static com.axonivy.solutions.process.analyser.core.enums.ElementType.SIGNAL_START_EVENT;
-import static com.axonivy.solutions.process.analyser.core.enums.ElementType.SUB_PROCESS_CALL;
-import static com.axonivy.solutions.process.analyser.core.enums.ElementType.TASK_END;
-import static com.axonivy.solutions.process.analyser.core.enums.ElementType.TASK_SWITCH_EVENT;
-import static com.axonivy.solutions.process.analyser.core.enums.ElementType.TASK_SWITCH_GATEWAY;
+package com.axonivy.solutions.process.analyser.utils;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -24,11 +6,28 @@ import java.util.function.Predicate;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.axonivy.solutions.process.analyser.core.bo.ElementDisplayName;
-import com.axonivy.solutions.process.analyser.core.enums.ElementType;
-import com.axonivy.solutions.process.analyser.core.internal.ProcessUtils;
+import com.axonivy.solutions.process.analyser.bo.ElementDisplayName;
+import com.axonivy.solutions.process.analyser.enums.ElementType;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.ALTERNATIVE;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.CALL_SUB_END;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.CALL_SUB_START;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.ELEMENT;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.EMBEDDED_END;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.EMBEDDED_PROCESS_ELEMENT;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.EMBEDDED_START;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.REQUEST_START;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.REST_CLIENT_CALL;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.SCRIPT;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.SCRIPT_BPMN_ELEMENT;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.SERVICE_BPMN_ELEMENT;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.SIGNAL_START_EVENT;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.SUB_PROCESS_CALL;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.TASK_END;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.TASK_SWITCH_EVENT;
+import static com.axonivy.solutions.process.analyser.enums.ElementType.TASK_SWITCH_GATEWAY;
+import com.axonivy.solutions.process.analyser.internal.ProcessUtils;
 
-import ch.ivyteam.ivy.application.IProcessModelVersion;
+import ch.ivyteam.ivy.application.project.Project;
 import ch.ivyteam.ivy.process.model.element.EmbeddedProcessElement;
 import ch.ivyteam.ivy.process.model.element.ProcessElement;
 import ch.ivyteam.ivy.process.model.element.activity.RestClientCall;
@@ -48,7 +47,7 @@ import ch.ivyteam.ivy.process.model.element.event.start.RequestStart;
 import ch.ivyteam.ivy.process.model.element.event.start.SignalStartEvent;
 import ch.ivyteam.ivy.process.model.element.gateway.Alternative;
 import ch.ivyteam.ivy.process.model.element.gateway.TaskSwitchGateway;
-@SuppressWarnings("restriction")
+
 public class ProcessElementUtils {
 
   private static final List<Class<?>> PROCESS_START_CLASSES = List.of(RequestStart.class, ProgramStart.class,
@@ -56,7 +55,7 @@ public class ProcessElementUtils {
 
   private ProcessElementUtils() { }
 
-  public static List<ElementDisplayName> listAllProcessElementAsRawPID(IProcessModelVersion pmv, String processId,
+  public static List<ElementDisplayName> listAllProcessElementAsRawPID(Project pmv, String processId,
       String startElementPID) {
     List<ProcessElement> processElements = ProcessUtils.getProcessElementsFrom(processId, pmv);
     removeAnotherStartElementsBySelectedStartPID(processElements, startElementPID);
@@ -76,22 +75,22 @@ public class ProcessElementUtils {
 
   private static ElementType determineElementType(ProcessElement processElement) {
     return switch (processElement) {
-      case RequestStart requestStart -> REQUEST_START;
-      case SignalStartEvent signalStart -> SIGNAL_START_EVENT;
-      case TaskEnd taskEnd -> TASK_END;
-      case Alternative alternative -> ALTERNATIVE;
-      case Script script -> SCRIPT;
-      case ScriptBpmnElement script -> SCRIPT_BPMN_ELEMENT;
-      case ServiceBpmnElement service -> SERVICE_BPMN_ELEMENT;
-      case EmbeddedProcessElement embeddedProcess -> EMBEDDED_PROCESS_ELEMENT;
-      case EmbeddedStart embedddedStart -> EMBEDDED_START;
-      case EmbeddedEnd embedddedEnd -> EMBEDDED_END;
-      case CallSubStart callSubStart -> CALL_SUB_START;
-      case CallSubEnd callSubEnd -> CALL_SUB_END;
-      case SubProcessCall subProcessCall -> SUB_PROCESS_CALL;
-      case TaskSwitchEvent taskSwitchEvent -> TASK_SWITCH_EVENT;
-      case TaskSwitchGateway taskSwitchGateway -> TASK_SWITCH_GATEWAY;
-      case RestClientCall restClientCall -> REST_CLIENT_CALL;
+      case RequestStart _ -> REQUEST_START;
+      case SignalStartEvent _ -> SIGNAL_START_EVENT;
+      case TaskEnd _ -> TASK_END;
+      case Alternative _ -> ALTERNATIVE;
+      case Script _ -> SCRIPT;
+      case ScriptBpmnElement _ -> SCRIPT_BPMN_ELEMENT;
+      case ServiceBpmnElement _ -> SERVICE_BPMN_ELEMENT;
+      case EmbeddedProcessElement _ -> EMBEDDED_PROCESS_ELEMENT;
+      case EmbeddedStart _ -> EMBEDDED_START;
+      case EmbeddedEnd _ -> EMBEDDED_END;
+      case CallSubStart _ -> CALL_SUB_START;
+      case CallSubEnd _ -> CALL_SUB_END;
+      case SubProcessCall _ -> SUB_PROCESS_CALL;
+      case TaskSwitchEvent _ -> TASK_SWITCH_EVENT;
+      case TaskSwitchGateway _ -> TASK_SWITCH_GATEWAY;
+      case RestClientCall _ -> REST_CLIENT_CALL;
       default -> ELEMENT;
     };
   }

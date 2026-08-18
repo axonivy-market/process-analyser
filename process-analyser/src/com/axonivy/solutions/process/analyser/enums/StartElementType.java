@@ -1,4 +1,4 @@
-package com.axonivy.solutions.process.analyser.core.enums;
+package com.axonivy.solutions.process.analyser.enums;
 
 public enum StartElementType {
   StartElement, StartEventElement, StartSignalEventElement, WebServiceProcessStartElement;

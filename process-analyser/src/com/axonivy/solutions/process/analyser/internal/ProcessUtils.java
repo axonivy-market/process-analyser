@@ -1,11 +1,11 @@
-package com.axonivy.solutions.process.analyser.core.internal;
+package com.axonivy.solutions.process.analyser.internal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -16,16 +16,17 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 
-import com.axonivy.solutions.process.analyser.core.bo.Process;
-import com.axonivy.solutions.process.analyser.core.bo.StartElement;
-import com.axonivy.solutions.process.analyser.core.constants.CoreConstants;
-import com.axonivy.solutions.process.analyser.core.util.PIDUtils;
+import com.axonivy.solutions.process.analyser.bo.IvyProcess;
+import com.axonivy.solutions.process.analyser.bo.StartElement;
+import com.axonivy.solutions.process.analyser.constants.CoreConstants;
+import com.axonivy.solutions.process.analyser.utils.PIDUtils;
 
-import ch.ivyteam.ivy.application.IApplication;
-import ch.ivyteam.ivy.application.IProcessModelVersion;
+import ch.ivyteam.ivy.application.app.Application;
+import ch.ivyteam.ivy.application.project.Project;
 import ch.ivyteam.ivy.environment.Ivy;
 import ch.ivyteam.ivy.process.loader.ProcessLoader;
 import ch.ivyteam.ivy.process.model.BaseElement;
+import ch.ivyteam.ivy.process.model.Process;
 import ch.ivyteam.ivy.process.model.ProcessKind;
 import ch.ivyteam.ivy.process.model.connector.SequenceFlow;
 import ch.ivyteam.ivy.process.model.element.EmbeddedProcessElement;
@@ -51,7 +52,6 @@ import ch.ivyteam.ivy.workflow.IWorkflowProcessModelVersion;
 import ch.ivyteam.ivy.workflow.start.IProcessWebStartable;
 import ch.ivyteam.ivy.workflow.start.IWebStartable;
 
-@SuppressWarnings("restriction")
 public class ProcessUtils {
 
   static final String SKIP_PROJECTS_VARIABLE = "com.axonivy.solutions.process.analyser.skipProjects";
@@ -140,7 +140,7 @@ public class ProcessUtils {
         .orElse(Collections.emptyList());
   }
 
-  public static List<ProcessElement> getProcessElementsFrom(String processId, IProcessModelVersion pmv) {
+  public static List<ProcessElement> getProcessElementsFrom(String processId, Project pmv) {
     if (StringUtils.isBlank(processId)) {
       return Collections.emptyList();
     }
@@ -161,12 +161,13 @@ public class ProcessUtils {
     return elements.stream().flatMap(element -> element.getOutgoing().stream()).collect(Collectors.toList());
   }
 
-  public static List<Process> getAllProcesses() {
+  public static List<IvyProcess> getAllProcesses() {
     String configSkipProcesses = StringUtils.trim(Ivy.var().get(SKIP_PROCESSES_VARIABLE));
+    // TODO We should also skip the processes which are in the skipProjects list, but we don't have the project name here, so we cannot filter them out yet.
     String[] skipProcesses = Arrays.asList(StringUtils.split(configSkipProcesses, CoreConstants.SEMI_COLONS))
         .stream().filter(StringUtils::isNotBlank)
         .map(String::trim).toArray(String[]::new);
-    List<Process> processes = new ArrayList<>();
+    List<IvyProcess> processes = new ArrayList<>();
     for (var pmv : getProcessModelVersionsInCurrentApp()) {
       List<IProcessStart> processStarts = getProcessStartsForPMV(pmv);
       // Index process starts by processFileId for fast lookup
@@ -174,57 +175,33 @@ public class ProcessUtils {
         .collect(Collectors.groupingBy(start -> PIDUtils.getId(start.pid(), true)));
 
       for (var processFile : getProcessesInCurrentPMV(pmv)) {
-        // TODO: get rid of this code duplication ... before adapting new APIs!!
-        String processFileId = processFile.getIdentifier();
-        var process = new Process(processFileId, processFile.getName(), new ArrayList<>());
-        if (Strings.CI.equalsAny(process.getName(), skipProcesses)){
-          continue;
-        }
-        process.setPmvId(pmv.getId());
-        process.setPmvName(pmv.getName());
-        process.setPmv(pmv);
-        process.setProjectRelativePath(processFile.getResource().getProjectRelativePath().toString());
-
-        List<IProcessStart> starts = startsByProcessId.getOrDefault(processFileId, Collections.emptyList());
-
-        if (CollectionUtils.isEmpty(starts)) {
-          continue;
-        }
-
-        for (var start : starts) {
-          var taskStart = start.getTaskStart();
-          StartElement startElement = new StartElement();
-          startElement.setPid(PIDUtils.getId(taskStart.getProcessElementId()));
-          startElement.setTaskStartId(taskStart.getId());
-          ProcessStartFactory.extractDisplayNameAndType(start, startElement);
-          process.getStartElements().add(startElement);
-        }
+        IvyProcess process = toIvyProcess(processFile, pmv, startsByProcessId);
         processes.add(process);
       }
     }
     return processes;
   }
 
-  private static List<IProcess> getProcessesInCurrentPMV(IProcessModelVersion pmv) {
-    return IProcessManager.instance().getProjectDataModelFor(pmv).getProcesses().stream()
+  private static List<Process> getProcessesInCurrentPMV(Project pmv) {
+    return ProcessLoader.of(pmv).loadAll()
         .filter(process -> process.getKind() == ProcessKind.NORMAL || process.getKind() == ProcessKind.WEB_SERVICE)
         .toList();
   }
 
-  private static List<IProcessModelVersion> getProcessModelVersionsInCurrentApp() {
-    return IApplication.current().getProcessModelVersions()
+  private static List<Project> getProcessModelVersionsInCurrentApp() {
+    return Application.current().projects().all()
         .filter(isPMVNeedToRecordStatistic())
-        .sorted((pmv1, pmv2) -> pmv1.getName().compareTo(pmv2.getName()))
+        .sorted(Comparator.comparing(Project::name))
         .toList();
   }
 
-  private static Predicate<? super IProcessModelVersion> isPMVNeedToRecordStatistic() {
+  private static Predicate<? super Project> isPMVNeedToRecordStatistic() {
     String configSkipProjects = StringUtils.trim(Ivy.var().get(SKIP_PROJECTS_VARIABLE));
     String[] skipPMVs = Arrays.asList(StringUtils.split(configSkipProjects, CoreConstants.SEMI_COLONS))
         .stream().filter(StringUtils::isNoneBlank)
         .map(String::trim).toArray(String[]::new);
     return pmv -> {
-      String pmName = pmv.getLibraryId(); // TODO qualified or not?
+      String pmName = pmv.name(); // TODO qualified or not?
       return !(Strings.CS.equals(pmName, CoreConstants.PROCESS_ANALYSER_PMV_NAME)
           || Strings.CS.contains(pmName, CoreConstants.PORTAL_PMV_SUFFIX)
           || Strings.CI.equalsAny(pmName, skipPMVs));
@@ -232,45 +209,45 @@ public class ProcessUtils {
   }
 
   @SuppressWarnings("removal")
-  private static List<IProcessStart> getProcessStartsForPMV(IProcessModelVersion pmv) {
+  private static List<IProcessStart> getProcessStartsForPMV(Project pmv) {
     return Sudo.get(() -> {
       return IWorkflowProcessModelVersion.of(pmv).getProcessStarts();
     });
   }
   
   public static Set<String> getAllAvaiableModule() {
-    return getProcessModelVersionsInCurrentApp().stream().map(IProcessModelVersion::getName)
+    return getProcessModelVersionsInCurrentApp().stream().map(Project::name)
         .collect(Collectors.toSet());
   }
 
-  public static List<Process> getAllProcessByModule(String selectedModule, IProcessModelVersion pmv) {
-    List<Process> processes = new ArrayList<>();
-    if (StringUtils.isEmpty(selectedModule) || null == pmv ) {
+  public static List<IvyProcess> getAllProcessByModule(Project pmv) {
+    List<IvyProcess> processes = new ArrayList<>();
+    if (null == pmv ) {
       return processes;
     }
 
     List<IProcessStart> processStarts = getProcessStartsForPMV(pmv);
     // Index process starts by processFileId for fast lookup
-    Map<String, List<IProcessStart>> startsByProcessId =
-        processStarts.stream().collect(Collectors.groupingBy(start -> PIDUtils.getId(start.pid(), true)));
+    Map<String, List<IProcessStart>> startsByProcessId = processStarts.stream()
+        .collect(Collectors.groupingBy(start -> PIDUtils.getId(start.pid(), true)));
     for (var processFile : getProcessesInCurrentPMV(pmv)) {
-      
+      var process = toIvyProcess(processFile, pmv, startsByProcessId);
       processes.add(process);
     }
     return processes;
   }
 
-  private static void toProc(IProcess processFile) {
-    String processFileId = processFile.getIdentifier();
-    var process = new Process(processFileId, processFile.getName(), new ArrayList<>());
-    process.setPmvId(pmv.getId());
-    process.setPmvName(pmv.getName());
+  private static IvyProcess toIvyProcess(Process processFile, Project pmv, Map<String, List<IProcessStart>> startsByProcessId) {
+    String processFileId = processFile.getBpmnId();
+    var process = new IvyProcess(processFileId, processFile.getName(), new ArrayList<>());
+    process.setPmvId(pmv.id());
+    process.setPmvName(pmv.name());
     process.setPmv(pmv);
-    process.setProjectRelativePath(processFile.getResource().getProjectRelativePath().toString());
+    process.setProjectRelativePath(processFile.getFullQualifiedName().getPath());
 
     List<IProcessStart> starts = startsByProcessId.getOrDefault(processFileId, Collections.emptyList());
     if (CollectionUtils.isEmpty(starts)) {
-      continue;
+      return process;
     }
 
     for (var start : starts) {
@@ -281,10 +258,11 @@ public class ProcessUtils {
       ProcessStartFactory.extractDisplayNameAndType(start, startElement);
       process.getStartElements().add(startElement);
     }
+    return process;
   }
 
   public static boolean isIWebStartableNeedToRecordStatistic(IWebStartable process) {
-    String pmName = process.pmv().getProcessModel().getName();
+    String pmName = process.project().name();
     return !(Strings.CS.equals(pmName, CoreConstants.PROCESS_ANALYSER_PMV_NAME)
         || Strings.CS.contains(pmName, CoreConstants.PORTAL_PMV_SUFFIX))
         && IProcessWebStartable.class.isInstance(process);
@@ -312,9 +290,9 @@ public class ProcessUtils {
 
   public static boolean isComplexElementWithMultiIncomings(ProcessElement element) {
     return switch (element) {
-    case Join join -> false;
-    case EmbeddedProcessElement embeddedProcessElement -> false;
-    case SubProcessCall subProcessCall -> false;
+    case Join _ -> false;
+    case EmbeddedProcessElement _ -> false;
+    case SubProcessCall _ -> false;
     default -> isElementWithMultipleIncomingFlow(element);
     };
   }
@@ -385,11 +363,11 @@ public class ProcessUtils {
 
   public static boolean isAlternativePathEndElement(ProcessElement processElement) {
     return switch (processElement) {
-    case Alternative alternative -> true;
-    case CallSubEnd callSubEnd -> false;
-    case Join join -> false;
-    case EmbeddedProcessElement sub -> false;
-    case EmbeddedEnd subEnd -> false;
+    case Alternative _ -> true;
+    case CallSubEnd _ -> false;
+    case Join _ -> false;
+    case EmbeddedProcessElement _ -> false;
+    case EmbeddedEnd _ -> false;
     default -> isProcessPathEndElement(processElement) || isElementWithMultipleIncomingFlow(processElement);
     };
   }

@@ -1,11 +1,10 @@
-package com.axonivy.solutions.process.analyser.core.internal;
+package com.axonivy.solutions.process.analyser.internal;
 
-import static com.axonivy.solutions.process.analyser.core.constants.CoreConstants.SLASH;
-
+import static com.axonivy.solutions.process.analyser.constants.CoreConstants.SLASH;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 
-import com.axonivy.solutions.process.analyser.core.enums.StartElementType;
+import com.axonivy.solutions.process.analyser.enums.StartElementType;
 
 import ch.ivyteam.ivy.workflow.IProcessStart;
 import ch.ivyteam.ivy.workflow.IStartElement;
@@ -15,8 +14,8 @@ import ch.ivyteam.ivy.workflow.signal.IStartSignalEventElement;
 
 public class ProcessStartFactory {
 
-  public static com.axonivy.solutions.process.analyser.core.bo.StartElement extractDisplayNameAndType(
-      IProcessStart processStart, com.axonivy.solutions.process.analyser.core.bo.StartElement start) {
+  public static com.axonivy.solutions.process.analyser.bo.StartElement extractDisplayNameAndType(
+      IProcessStart processStart, com.axonivy.solutions.process.analyser.bo.StartElement start) {
     return switch (processStart) {
     case IStartElement startElement -> {
       start.setName(getStartName(startElement));

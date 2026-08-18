@@ -48,7 +48,8 @@
             listener="#{managedBean.onModuleSelect}" />
         </p:selectOneMenu>
       </h:panelGroup>
-      <h:panelGroup id="pmv-selection-group" styleClass="#{isWidgetMode? 'col mb-2': 'col-3 px-1'} p-0 m-0"
+      <!-- TODO: Consider to remove PMV dropdown -->
+      <!-- <h:panelGroup id="pmv-selection-group" styleClass="#{isWidgetMode? 'col mb-2': 'col-3 px-1'} p-0 m-0"
         layout="block">
         <div class="mb-2">
           <p:outputLabel for="@next"
@@ -63,7 +64,7 @@
             itemValue="#{pmv}" />
           <p:ajax event="change" partialSubmit="true" process="@this" listener="#{managedBean.onPmvSelect}" />
         </p:selectOneMenu>
-      </h:panelGroup>
+      </h:panelGroup> -->
       <h:panelGroup id="process-selection-group" styleClass="#{isWidgetMode? 'col mb-2 px-0': 'col-3 px-1'} p-0 m-0"
         layout="block">
         <div class="mb-2">

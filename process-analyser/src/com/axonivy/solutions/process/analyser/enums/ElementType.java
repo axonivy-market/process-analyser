@@ -1,4 +1,4 @@
-package com.axonivy.solutions.process.analyser.core.enums;
+package com.axonivy.solutions.process.analyser.enums;
 
 public enum ElementType {
   REQUEST_START, SIGNAL_START_EVENT, TASK_END, ALTERNATIVE, SCRIPT, SCRIPT_BPMN_ELEMENT, SERVICE_BPMN_ELEMENT,
