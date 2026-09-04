@@ -4,6 +4,7 @@
   "namespace" : "com.axonivy.solutions.process.analyser.demo.SearchingFlight",
   "fields" : [ {
     "name" : "searchingFlight",
-    "type" : "com.axonivy.solutions.process.analyser.demo.data.FlightInformation"
+    "type" : "com.axonivy.solutions.process.analyser.demo.data.FlightInformation",
+    "modifiers" : [ ]
   } ]
 }

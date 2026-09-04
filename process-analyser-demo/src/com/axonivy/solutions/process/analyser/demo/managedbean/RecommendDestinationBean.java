@@ -1,13 +1,14 @@
 package com.axonivy.solutions.process.analyser.demo.managedbean;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import java.io.Serializable;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
 
 import org.apache.commons.lang3.StringUtils;
 
-@ManagedBean
+@Named
 @ViewScoped
-public class RecommendDestinationBean {
+public class RecommendDestinationBean implements Serializable {
   private String from;
   private String to;
   private Integer rating;

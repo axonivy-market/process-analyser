@@ -4,6 +4,7 @@
   "namespace" : "com.axonivy.solutions.process.analyser.ViewNotPermittedPage",
   "fields" : [ {
     "name" : "isWidgetMode",
-    "type" : "Boolean"
+    "type" : "Boolean",
+    "modifiers" : [ ]
   } ]
 }

@@ -4,6 +4,7 @@
   "namespace" : "com.axonivy.solutions.process.analyser.demo.ChargeForTickets",
   "fields" : [ {
     "name" : "isCharge",
-    "type" : "Boolean"
+    "type" : "Boolean",
+    "modifiers" : [ ]
   } ]
 }
