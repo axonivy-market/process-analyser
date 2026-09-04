@@ -1,5 +1,6 @@
 package com.axonivy.solutions.process.analyser.managedbean;
 
+import java.io.Serializable;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.DATA_CMS_PATH;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.EN_CMS_LOCALE;
 import static com.axonivy.solutions.process.analyser.constants.AnalyserConstants.FROM;
@@ -14,10 +15,10 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.faces.context.FacesContext;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -51,9 +52,9 @@ import ch.ivyteam.ivy.security.ISecurityConstants;
 import ch.ivyteam.ivy.workflow.ICase;
 import ch.ivyteam.ivy.workflow.ITask;
 
-@ManagedBean
+@Named
 @ViewScoped
-public class ProcessesAnalyticsBean {
+public class ProcessesAnalyticsBean implements Serializable {
   private static final String SUB_PROCESS_CALL_PID_PARAM_NAME = "subProcessCallPid";
   private List<Node> analyzedNode;
   private List<Node> filteredNodes;

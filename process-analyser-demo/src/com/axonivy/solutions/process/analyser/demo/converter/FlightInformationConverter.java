@@ -1,15 +1,17 @@
 package com.axonivy.solutions.process.analyser.demo.converter;
 
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.FacesConverter;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.Converter;
+import jakarta.faces.convert.FacesConverter;
 
 import com.axonivy.solutions.process.analyser.demo.data.FlightInformation;
 import com.axonivy.solutions.process.analyser.demo.managedbean.SearchingFlightBean;
+import jakarta.enterprise.context.ApplicationScoped;
 
-@FacesConverter(value = "flightInformationConverter", forClass = FlightInformation.class)
-public class FlightInformationConverter implements Converter {
+@FacesConverter(value = "flightInformationConverter", forClass = FlightInformation.class, managed = true)
+@ApplicationScoped
+public class FlightInformationConverter implements Converter<Object> {
 
 	@Override
 	public Object getAsObject(FacesContext context, UIComponent component, String value) {

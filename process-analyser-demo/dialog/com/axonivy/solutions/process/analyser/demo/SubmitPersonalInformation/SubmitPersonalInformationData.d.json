@@ -4,12 +4,15 @@
   "namespace" : "com.axonivy.solutions.process.analyser.demo.SubmitPersonalInformation",
   "fields" : [ {
     "name" : "isChargeLater",
-    "type" : "Boolean"
+    "type" : "Boolean",
+    "modifiers" : [ ]
   }, {
     "name" : "isBackToSearchPage",
-    "type" : "Boolean"
+    "type" : "Boolean",
+    "modifiers" : [ ]
   }, {
     "name" : "flightInformation",
-    "type" : "com.axonivy.solutions.process.analyser.demo.data.FlightInformation"
+    "type" : "com.axonivy.solutions.process.analyser.demo.data.FlightInformation",
+    "modifiers" : [ ]
   } ]
 }

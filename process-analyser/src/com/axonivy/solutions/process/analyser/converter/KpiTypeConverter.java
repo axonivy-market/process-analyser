@@ -1,14 +1,16 @@
 package com.axonivy.solutions.process.analyser.converter;
 
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
-import javax.faces.convert.FacesConverter;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.Converter;
+import jakarta.faces.convert.ConverterException;
+import jakarta.faces.convert.FacesConverter;
 import com.axonivy.solutions.process.analyser.enums.KpiType;
+import jakarta.enterprise.context.ApplicationScoped;
 
-@FacesConverter("kpiTypeConverter")
-public class KpiTypeConverter implements Converter {
+@FacesConverter(value = "kpiTypeConverter", managed = true)
+@ApplicationScoped
+public class KpiTypeConverter implements Converter<Object> {
 
   @Override
   public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
