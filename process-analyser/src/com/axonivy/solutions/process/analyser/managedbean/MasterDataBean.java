@@ -18,11 +18,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.faces.model.SelectItem;
-import javax.faces.model.SelectItemGroup;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.faces.model.SelectItem;
+import jakarta.faces.model.SelectItemGroup;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -43,13 +43,13 @@ import com.axonivy.solutions.process.analyser.enums.KpiType;
 import com.axonivy.solutions.process.analyser.utils.ProcessesMonitorUtils;
 
 import ch.ivyteam.ivy.application.ActivityState;
-import ch.ivyteam.ivy.application.IApplication;
+import ch.ivyteam.ivy.application.app.Application;
 import ch.ivyteam.ivy.application.ILibrary;
 import ch.ivyteam.ivy.application.IProcessModelVersion;
 import ch.ivyteam.ivy.application.ReleaseState;
 import ch.ivyteam.ivy.environment.Ivy;
 
-@ManagedBean
+@Named
 @ViewScoped
 public class MasterDataBean implements Serializable {
 
@@ -238,7 +238,7 @@ public class MasterDataBean implements Serializable {
           || pmvState == ReleaseState.RELEASED || pmvState == ReleaseState.DEPRECATED);
     };
 
-    return IApplication.current().getLibraries().stream().filter(filterReleasedAndActivePmv)
+    return Application.current().getLibraries().stream().filter(filterReleasedAndActivePmv)
         .map(ILibrary::getProcessModelVersion).toList();
   }
 
