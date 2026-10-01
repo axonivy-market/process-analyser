@@ -1,23 +1,25 @@
 package com.axonivy.solutions.process.analyser.converter;
 
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
-import javax.faces.convert.FacesConverter;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.Converter;
+import jakarta.faces.convert.ConverterException;
+import jakarta.faces.convert.FacesConverter;
 
-import ch.ivyteam.ivy.application.IApplication;
+import ch.ivyteam.ivy.application.app.Application;
 import ch.ivyteam.ivy.application.IProcessModelVersion;
+import jakarta.enterprise.context.ApplicationScoped;
 
-@FacesConverter(value = "pmvConverter")
-public class ProcessModelVersionConverter implements Converter {
+@FacesConverter(value = "pmvConverter", managed = true)
+@ApplicationScoped
+public class ProcessModelVersionConverter implements Converter<Object> {
 
   @Override
   public IProcessModelVersion getAsObject(FacesContext arg0, UIComponent arg1, String value) throws ConverterException {
     if (value == null || value.isBlank()) {
       return null;
     }
-    return IApplication.current().findProcessModelVersion(value);
+    return Application.current().findProcessModelVersion(value);
   }
 
   @Override

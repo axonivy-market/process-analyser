@@ -1,5 +1,6 @@
 package com.axonivy.solutions.process.analyser.demo.managedbean;
 
+import java.io.Serializable;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -8,14 +9,14 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
 
 import com.axonivy.solutions.process.analyser.demo.data.FlightInformation;
 
-@ManagedBean
+@Named
 @ViewScoped
-public class SearchingFlightBean {
+public class SearchingFlightBean implements Serializable {
 	private FlightInformation selectedFlight;
 
 	public FlightInformation getSelectedFlight() {
